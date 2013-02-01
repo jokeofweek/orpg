@@ -1,1 +1,7 @@
 *.class
+
+# eclipse files
+.settings/
+.classpath
+.project
+.metadata
