@@ -135,6 +135,13 @@ public class ServerSession implements Runnable {
 					} catch (IOException e) {
 						disconnect();
 					}
+				} else {
+					try {
+						Thread.sleep(5);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			} while (ticks > System.currentTimeMillis());
 		}

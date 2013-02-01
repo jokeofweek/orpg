@@ -33,6 +33,12 @@ public class ServerSentPacket implements Comparable<ServerSentPacket> {
 				priority, objects);
 	}
 
+	public static ServerSentPacket getGlobalExceptForPacket(ServerPacketType type,
+			Priority priority, ServerSentPacket session, Object... objects) {
+		return new ServerSentPacket(type, DestinationType.GLOBAL_EXCEPT_FOR, session,
+				priority, objects);
+	}
+
 	public static ServerSentPacket getSessionPacket(ServerPacketType type,
 			Priority priority, ServerSession session, Object... objects) {
 		return new ServerSentPacket(type, DestinationType.SINGLE_SESSION,

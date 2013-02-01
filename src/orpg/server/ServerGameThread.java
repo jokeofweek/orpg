@@ -4,6 +4,7 @@ import java.util.PriorityQueue;
 
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.ServerSentPacket;
+import orpg.shared.ByteStream;
 import orpg.shared.Priority;
 import orpg.shared.ServerPacketType;
 
@@ -30,9 +31,11 @@ public class ServerGameThread implements Runnable {
 		while (true) {
 			if (!inputQueue.isEmpty()) {
 				p = inputQueue.remove();
+				
+				Object[] o = ByteStream.unserialize(p.getBytes(), String.class);
 				outputQueue.add(ServerSentPacket.getSessionPacket(
 						ServerPacketType.PONG, Priority.MEDIUM,
-						p.getSession(), "Pong"));
+						p.getSession(), o[0]));
 			}
 		}
 	}

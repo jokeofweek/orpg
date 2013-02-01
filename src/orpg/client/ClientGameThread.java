@@ -26,12 +26,19 @@ public class ClientGameThread implements Runnable {
 		while (true) {
 			if (!inputQueue.isEmpty()) {
 				p = inputQueue.remove();
-				
+
 				// Just print out the message.
-				Object[] objects = ByteStream.unserialize(p.getBytes(), String.class);
-				System.out.println("Received: " + objects[0]);
+				Object[] objects = ByteStream.unserialize(p.getBytes(),
+						String.class);
+				ClientWindow.textArea.setText(ClientWindow.textArea
+						.getText() + objects[0] + "\r\n");
 			} else {
-				Thread.yield();
+				try {
+					Thread.sleep(5);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	}

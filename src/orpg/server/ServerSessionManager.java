@@ -27,15 +27,15 @@ public class ServerSessionManager implements Runnable {
 	}
 
 	public void addSession(ServerSession session) {
-		outputQueue.add(ServerSentPacket.getGlobalPacket(ServerPacketType.HELLO,
-				 Priority.MEDIUM, "Welcome"));
+		outputQueue.add(ServerSentPacket.getGlobalPacket(
+				ServerPacketType.HELLO, Priority.MEDIUM, "Welcome"));
 		sessions.add(session);
 	}
 
 	public void removeSession(ServerSession session) {
 		sessions.remove(session);
-		outputQueue.add(ServerSentPacket.getGlobalPacket(ServerPacketType.GOODBYE,
-				 Priority.MEDIUM, "Goodbye"));
+		outputQueue.add(ServerSentPacket.getGlobalPacket(
+				ServerPacketType.GOODBYE, Priority.MEDIUM, "Goodbye"));
 	}
 
 	@Override
@@ -56,7 +56,22 @@ public class ServerSessionManager implements Runnable {
 						session.getOutputQueue().add(packet);
 					}
 					break;
+				case GLOBAL_EXCEPT_FOR:
+					for (ServerSession session : sessions) {
+						if (session != packet.getDestinationObject()) {
+							session.getOutputQueue().add(packet);
+						}
+					}
+					break;
 				}
+			} else {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 			}
 		}
 

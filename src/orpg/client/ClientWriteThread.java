@@ -39,7 +39,12 @@ public class ClientWriteThread implements Runnable {
 					p = outputQueue.remove();
 					p.write(socket);
 				} else {
-					Thread.yield();
+					try {
+						Thread.sleep(5);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
 		} catch (IOException io) {

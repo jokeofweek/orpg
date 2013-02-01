@@ -5,6 +5,9 @@ import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.data.ClientSentPacket;
 import orpg.shared.ClientPacketType;
@@ -26,13 +29,13 @@ public class BaseClient {
 		this.outputQueue = new LinkedList<ClientSentPacket>();
 		this.socket = socket;
 		
+		new ClientWindow(this);
+		
 		// Setup the necessary threads
 		this.gameThread = new ClientGameThread(this);
 		this.readThread = new ClientReadThread(socket, this);
 		this.writeThread = new ClientWriteThread(socket, this);
-		
-		this.outputQueue.add(new ClientSentPacket(ClientPacketType.PING));
-		
+				
 		// Run the threads
 		new Thread(gameThread).start();
 		new Thread(readThread).start();

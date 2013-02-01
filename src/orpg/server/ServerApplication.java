@@ -6,7 +6,7 @@ import orpg.server.console.BaseServerConsole;
 
 public class ServerApplication {
 
-	public static void main(String... args) {
+	public static void main(String... args) throws InterruptedException {
 		// Setup the console
 		BaseServerConsole console = new BaseServerConsole();
 		console.out().println("Starting server...");
@@ -17,7 +17,9 @@ public class ServerApplication {
 		console.out().println("Configuration manager setup...");
 		
 		new BaseServer(config, console);
-		while (true);
+		while (true) {
+			Thread.sleep(1000000);
+		}
 	}
 
 }
