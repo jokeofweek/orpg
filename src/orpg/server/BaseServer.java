@@ -5,8 +5,8 @@ import java.util.PriorityQueue;
 
 import orpg.server.config.ConfigurationManager;
 import orpg.server.console.ServerConsole;
-import orpg.server.data.ReceivedPacket;
-import orpg.server.data.SentPacket;
+import orpg.server.data.ServerReceivedPacket;
+import orpg.server.data.ServerSentPacket;
 
 public class BaseServer {
 
@@ -15,8 +15,8 @@ public class BaseServer {
 	private ServerGameThread serverGameThread;
 	private ServerSocketThread serverSocketThread;
 	private ServerConsole console;
-	private PriorityQueue<ReceivedPacket> input;
-	private PriorityQueue<SentPacket> output;
+	private PriorityQueue<ServerReceivedPacket> inputQueue;
+	private PriorityQueue<ServerSentPacket> outputQueue;
 
 	public BaseServer(ConfigurationManager config, ServerConsole console) {
 		this.config = config;
@@ -25,8 +25,8 @@ public class BaseServer {
 		boolean encounteredSetupProblems = false;
 
 		// Set up our queues
-		this.input = new PriorityQueue<ReceivedPacket>(1000);
-		this.output = new PriorityQueue<SentPacket>(1000);
+		this.inputQueue = new PriorityQueue<ServerReceivedPacket>(1000);
+		this.outputQueue = new PriorityQueue<ServerSentPacket>(1000);
 
 		// Set up the various threads
 		this.serverSessionManager = new ServerSessionManager(this);
@@ -65,12 +65,12 @@ public class BaseServer {
 		return console;
 	}
 
-	public PriorityQueue<ReceivedPacket> getInputQueue() {
-		return input;
+	public PriorityQueue<ServerReceivedPacket> getInputQueue() {
+		return inputQueue;
 	}
 
-	public PriorityQueue<SentPacket> getOutputQueue() {
-		return output;
+	public PriorityQueue<ServerSentPacket> getOutputQueue() {
+		return outputQueue;
 	}
 
 	public ServerSessionManager getServerSessionManager() {

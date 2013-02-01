@@ -7,8 +7,8 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.PriorityQueue;
 
-import orpg.server.data.ReceivedPacket;
-import orpg.server.data.SentPacket;
+import orpg.server.data.ServerReceivedPacket;
+import orpg.server.data.ServerSentPacket;
 import orpg.shared.ClientPacketType;
 import orpg.shared.Priority;
 
@@ -16,8 +16,8 @@ public class ServerSession implements Runnable {
 
 	private Socket socket;
 	private BaseServer baseServer;
-	private PriorityQueue<ReceivedPacket> inputQueue;
-	private PriorityQueue<SentPacket> outputQueue;
+	private PriorityQueue<ServerReceivedPacket> inputQueue;
+	private PriorityQueue<ServerSentPacket> outputQueue;
 	private volatile boolean connected;
 	
 	private static final int READ_TICKS = 25;
@@ -29,7 +29,7 @@ public class ServerSession implements Runnable {
 		this.socket.setSoTimeout(READ_TICKS);
 		this.baseServer = baseServer;
 		this.inputQueue = baseServer.getInputQueue();
-		this.outputQueue = new PriorityQueue<SentPacket>();
+		this.outputQueue = new PriorityQueue<ServerSentPacket>();
 		this.connected = true;
 	}
 
@@ -44,7 +44,7 @@ public class ServerSession implements Runnable {
 		int readBytes;
 		int sizeBytes = 0;
 
-		SentPacket outgoingPacket;
+		ServerSentPacket outgoingPacket;
 
 		long ticks;
 
@@ -111,7 +111,7 @@ public class ServerSession implements Runnable {
 						// If we have 0 remaining, then we have a complete
 						// packet.
 						if (remaining == 0) {
-							inputQueue.add(new ReceivedPacket(this, type, data, Priority.MEDIUM));
+							inputQueue.add(new ServerReceivedPacket(this, type, data, Priority.MEDIUM));
 							currentPosition = 0;
 						}
 					}
@@ -158,7 +158,7 @@ public class ServerSession implements Runnable {
 		this.connected = false;
 	}
 
-	public PriorityQueue<SentPacket> getOutputQueue() {
+	public PriorityQueue<ServerSentPacket> getOutputQueue() {
 		return outputQueue;
 	}
 

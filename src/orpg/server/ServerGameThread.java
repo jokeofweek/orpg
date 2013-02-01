@@ -2,8 +2,8 @@ package orpg.server;
 
 import java.util.PriorityQueue;
 
-import orpg.server.data.ReceivedPacket;
-import orpg.server.data.SentPacket;
+import orpg.server.data.ServerReceivedPacket;
+import orpg.server.data.ServerSentPacket;
 import orpg.shared.Priority;
 import orpg.shared.ServerPacketType;
 
@@ -16,8 +16,8 @@ import orpg.shared.ServerPacketType;
  */
 public class ServerGameThread implements Runnable {
 
-	private PriorityQueue<ReceivedPacket> inputQueue;
-	private PriorityQueue<SentPacket> outputQueue;
+	private PriorityQueue<ServerReceivedPacket> inputQueue;
+	private PriorityQueue<ServerSentPacket> outputQueue;
 
 	public ServerGameThread(BaseServer server) {
 		this.inputQueue = server.getInputQueue();
@@ -26,14 +26,13 @@ public class ServerGameThread implements Runnable {
 
 	@Override
 	public void run() {
-		ReceivedPacket p = null;
+		ServerReceivedPacket p = null;
 		while (true) {
 			if (!inputQueue.isEmpty()) {
 				p = inputQueue.remove();
-				System.out.println("Removed a packet!");
-				outputQueue.add(SentPacket.getGlobalPacket(
-						ServerPacketType.PONG, p.getBytes(),
-						Priority.MEDIUM));
+				outputQueue.add(ServerSentPacket.getSessionPacket(
+						ServerPacketType.PONG, Priority.MEDIUM,
+						p.getSession(), "Pong"));
 			}
 		}
 	}

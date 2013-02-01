@@ -3,7 +3,7 @@ package orpg.server;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 
-import orpg.server.data.SentPacket;
+import orpg.server.data.ServerSentPacket;
 import orpg.shared.Priority;
 import orpg.shared.ServerPacketType;
 
@@ -18,7 +18,7 @@ public class ServerSessionManager implements Runnable {
 
 	private HashSet<ServerSession> sessions;
 	private BaseServer server;
-	private PriorityQueue<SentPacket> outputQueue;
+	private PriorityQueue<ServerSentPacket> outputQueue;
 
 	public ServerSessionManager(BaseServer server) {
 		this.server = server;
@@ -27,20 +27,20 @@ public class ServerSessionManager implements Runnable {
 	}
 
 	public void addSession(ServerSession session) {
-		outputQueue.add(SentPacket.getGlobalPacket(ServerPacketType.HELLO,
-				new byte[] {}, Priority.MEDIUM));
+		outputQueue.add(ServerSentPacket.getGlobalPacket(ServerPacketType.HELLO,
+				 Priority.MEDIUM, "Welcome"));
 		sessions.add(session);
 	}
 
 	public void removeSession(ServerSession session) {
 		sessions.remove(session);
-		outputQueue.add(SentPacket.getGlobalPacket(ServerPacketType.GOODBYE,
-				new byte[] {}, Priority.MEDIUM));
+		outputQueue.add(ServerSentPacket.getGlobalPacket(ServerPacketType.GOODBYE,
+				 Priority.MEDIUM, "Goodbye"));
 	}
 
 	@Override
 	public void run() {
-		SentPacket packet;
+		ServerSentPacket packet;
 		// Repeatedly pop a packet from the output queue
 		// dispatching it based on the destination type.
 		while (true) {
