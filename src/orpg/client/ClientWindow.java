@@ -12,6 +12,7 @@ import javax.swing.JTextField;
 
 import orpg.client.data.ClientSentPacket;
 import orpg.shared.ClientPacketType;
+import orpg.shared.net.OutputByteBuffer;
 
 public class ClientWindow extends JFrame {
 
@@ -21,7 +22,7 @@ public class ClientWindow extends JFrame {
 
 	public ClientWindow(BaseClient baseClient) {
 		super("Chat Client");
-		
+
 		this.baseClient = baseClient;
 
 		setupUI();
@@ -49,17 +50,20 @@ public class ClientWindow extends JFrame {
 				if (enterTextField.getText().length() == 0) {
 					return;
 				}
-				
+
+				OutputByteBuffer buffer = new OutputByteBuffer(
+						enterTextField.getText());
+
 				baseClient.getOutputQueue().add(
-						new ClientSentPacket(ClientPacketType.PING,
-								enterTextField.getText()));
+						new ClientSentPacket(ClientPacketType.PING, buffer
+								.getBytes()));
 				enterTextField.setText("");
 
 			}
 		});
 
 		basePanel.add(entryPanel, BorderLayout.SOUTH);
-		
+
 		this.add(basePanel);
 
 	}

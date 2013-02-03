@@ -4,9 +4,10 @@ import java.util.PriorityQueue;
 
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.ServerSentPacket;
-import orpg.shared.ByteStream;
 import orpg.shared.Priority;
 import orpg.shared.ServerPacketType;
+import orpg.shared.net.InputByteBuffer;
+import orpg.shared.net.OutputByteBuffer;
 
 /**
  * This thread is responsible for handling all packets in the input queue as
@@ -31,11 +32,14 @@ public class ServerGameThread implements Runnable {
 		while (true) {
 			if (!inputQueue.isEmpty()) {
 				p = inputQueue.remove();
-				
-				Object[] o = ByteStream.unserialize(p.getBytes(), String.class);
-				outputQueue.add(ServerSentPacket.getSessionPacket(
+
+				InputByteBuffer buffer = p.getByteBuffer();
+				OutputByteBuffer outBuffer = new OutputByteBuffer();
+				outBuffer.putString("Repeat " + buffer.getString());
+
+				outputQueue.add(ServerSentPacket.getGlobalPacket(
 						ServerPacketType.PONG, Priority.MEDIUM,
-						p.getSession(), o[0]));
+						outBuffer.getBytes()));
 			}
 		}
 	}

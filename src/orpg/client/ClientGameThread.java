@@ -3,7 +3,6 @@ package orpg.client;
 import java.util.Queue;
 
 import orpg.client.data.ClientReceivedPacket;
-import orpg.shared.ByteStream;
 
 /**
  * This thread is responsible for processing packets in the client's input
@@ -28,10 +27,10 @@ public class ClientGameThread implements Runnable {
 				p = inputQueue.remove();
 
 				// Just print out the message.
-				Object[] objects = ByteStream.unserialize(p.getBytes(),
-						String.class);
 				ClientWindow.textArea.setText(ClientWindow.textArea
-						.getText() + objects[0] + "\r\n");
+						.getText()
+						+ p.getByteBuffer().getString()
+						+ "\r\n");
 			} else {
 				try {
 					Thread.sleep(5);

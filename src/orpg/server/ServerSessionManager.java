@@ -6,6 +6,7 @@ import java.util.PriorityQueue;
 import orpg.server.data.ServerSentPacket;
 import orpg.shared.Priority;
 import orpg.shared.ServerPacketType;
+import orpg.shared.net.OutputByteBuffer;
 
 /**
  * The server sessions manager is responsible for keeping track of the current
@@ -27,15 +28,17 @@ public class ServerSessionManager implements Runnable {
 	}
 
 	public void addSession(ServerSession session) {
+		OutputByteBuffer buffer = new OutputByteBuffer("Welcome!");
 		outputQueue.add(ServerSentPacket.getGlobalPacket(
-				ServerPacketType.HELLO, Priority.MEDIUM, "Welcome"));
+				ServerPacketType.HELLO, Priority.MEDIUM, buffer.getBytes()));
 		sessions.add(session);
 	}
 
 	public void removeSession(ServerSession session) {
 		sessions.remove(session);
+		OutputByteBuffer buffer = new OutputByteBuffer("Goodbye!");
 		outputQueue.add(ServerSentPacket.getGlobalPacket(
-				ServerPacketType.GOODBYE, Priority.MEDIUM, "Goodbye"));
+				ServerPacketType.GOODBYE, Priority.MEDIUM, buffer.getBytes()));
 	}
 
 	@Override

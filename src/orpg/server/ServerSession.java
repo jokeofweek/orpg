@@ -63,7 +63,9 @@ public class ServerSession implements Runnable {
 						if (tmpRead == -1) {
 							throw new EOFException("End of stream");
 						}
-						remaining += tmpRead;
+						remaining |= (tmpRead & 0xff);
+						// bitmask the remaining in order to treat the value as unsigned
+						remaining &= 0x0ffff;
 						data = new byte[remaining];
 						sizeBytes--;
 						
@@ -81,12 +83,16 @@ public class ServerSession implements Runnable {
 						if (tmpRead == -1) {
 							throw new EOFException("End of stream");
 						}
-						remaining += tmpRead;
+						remaining |= (tmpRead & 0xff);
+						// bitmask the remaining in order to treat the value as unsigned
+						remaining &= 0x0ffff;
 						data = new byte[remaining];
 						sizeBytes--;
 					} else if (remaining == 0) {
 						// New packet
 						tmpRead = this.socket.getInputStream().read();
+						// Bit-twiddling must be done here to convert it back to an integer [0-255]
+						tmpRead &= 0x00ff;
 						if (tmpRead >= ClientPacketType.values().length) {
 							// Invalid packet type...
 							this.disconnect("Invalid packet type.");

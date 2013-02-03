@@ -7,7 +7,6 @@ import java.net.Socket;
 import java.util.Queue;
 
 import orpg.client.data.ClientReceivedPacket;
-import orpg.shared.ByteStream;
 import orpg.shared.ServerPacketType;
 
 /**
@@ -36,7 +35,6 @@ public class ClientReadThread implements Runnable {
 		ServerPacketType type;
 		short length;
 
-		byte lengthBytes[] = new byte[2];
 		byte bytes[];
 
 		try {
@@ -54,20 +52,26 @@ public class ClientReadThread implements Runnable {
 					break;
 				}
 
+				// Must do some bit twiddling to convert the range of value from [-128,127] to [0, 255]
+				tmpVal &= 0x00ff;
 				type = ServerPacketType.values()[tmpVal];
 
-				// Read in length
-				remaining = 2;
-				while (remaining > 0) {
-					tmpVal = in
-							.read(lengthBytes, 2 - remaining, remaining);
-					if (tmpVal == -1) {
-						throw new EOFException("End of stream.");
-					}
-					remaining -= tmpVal;
+				// Read in length bytes
+				tmpVal = in.read();
+				if (tmpVal == -1) {
+					throw new EOFException("End of stream.");
 				}
-
-				length = ByteStream.readShort(lengthBytes, 0);
+				length = (short) (tmpVal << 8);
+			
+				tmpVal = in.read();
+				if (tmpVal == -1) {
+					throw new EOFException("End of stream.");
+				}
+				length |= (tmpVal & 0xff);
+				
+				// bitmask the remaining in order to treat the value as unsigned
+				length &= 0x0ffff;
+				
 				bytes = new byte[length];
 
 				// Read in packet data

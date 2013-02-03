@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.Socket;
 
 import orpg.server.ServerSession;
-import orpg.shared.ByteStream;
 import orpg.shared.Priority;
 import orpg.shared.ServerPacketType;
 
@@ -12,37 +11,42 @@ public class ServerSentPacket implements Comparable<ServerSentPacket> {
 
 	private DestinationType destinationType;
 	private Object destinationObject;
-	private byte[] data;
+	private byte[] bytes;
 	private Priority priority;
 
 	private ServerSentPacket(ServerPacketType type,
 			DestinationType destinationType, Object destinationObject,
-			Priority priority, Object[] objects) {
+			Priority priority, byte[] data) {
 		super();
+
 		this.destinationType = destinationType;
 		this.destinationObject = destinationObject;
 		this.priority = priority;
-
-		// serialize the objects right away
-		this.data = ByteStream.serialize((byte) type.ordinal(), objects);
+		
+		// Create the bytes to send right away
+		this.bytes = new byte[data.length + 3];
+		this.bytes[0] = (byte)type.ordinal();
+		this.bytes[1] = (byte)((data.length >> 8) & 0xff);
+		this.bytes[2] = (byte)(data.length & 0xff);
+		System.arraycopy(data, 0, bytes, 3, data.length);
 	}
 
 	public static ServerSentPacket getGlobalPacket(ServerPacketType type,
-			Priority priority, Object... objects) {
+			Priority priority, byte[] bytes) {
 		return new ServerSentPacket(type, DestinationType.GLOBAL, null,
-				priority, objects);
+				priority, bytes);
 	}
 
 	public static ServerSentPacket getGlobalExceptForPacket(ServerPacketType type,
-			Priority priority, ServerSentPacket session, Object... objects) {
+			Priority priority, ServerSentPacket session, byte[] bytes) {
 		return new ServerSentPacket(type, DestinationType.GLOBAL_EXCEPT_FOR, session,
-				priority, objects);
+				priority, bytes);
 	}
 
 	public static ServerSentPacket getSessionPacket(ServerPacketType type,
-			Priority priority, ServerSession session, Object... objects) {
+			Priority priority, ServerSession session, byte[] bytes) {
 		return new ServerSentPacket(type, DestinationType.SINGLE_SESSION,
-				session, priority, objects);
+				session, priority, bytes);
 	}
 
 	public Priority getPriority() {
@@ -70,7 +74,7 @@ public class ServerSentPacket implements Comparable<ServerSentPacket> {
 	}
 
 	public void write(Socket s) throws IOException {
-		s.getOutputStream().write(data);
+		s.getOutputStream().write(bytes);
 	}
 
 }

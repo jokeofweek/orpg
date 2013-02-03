@@ -1,24 +1,24 @@
 package orpg.client.data;
 
 import orpg.shared.ServerPacketType;
+import orpg.shared.net.InputByteBuffer;
 
 public class ClientReceivedPacket {
 
 	private ServerPacketType type;
-	private byte[] bytes;
+	private InputByteBuffer byteBuffer;
 
 	public ClientReceivedPacket(ServerPacketType type, byte[] bytes) {
 		super();
 		this.type = type;
-		this.bytes = bytes;
+		this.byteBuffer = new InputByteBuffer(bytes);
 	}
 
 	public ServerPacketType getType() {
 		return type;
 	}
 
-	public byte[] getBytes() {
-		return bytes;
+	public InputByteBuffer getByteBuffer() {
+		return this.byteBuffer;
 	}
-
 }

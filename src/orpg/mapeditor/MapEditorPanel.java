@@ -72,10 +72,12 @@ public class MapEditorPanel extends FillPane {
 		try {
 			tilesView = new TilesView(Image.load(new File("gfx/tiles.png")
 					.toURI().toURL()));
-		} catch (MalformedURLException | TaskExecutionException e) {
+		} catch (MalformedURLException e) {
 			e.printStackTrace();
 			System.exit(1);
-
+		} catch (TaskExecutionException e) {
+			e.printStackTrace();
+			System.exit(1);
 		}
 		ScrollPane tilesScrollPane = new ScrollPane(ScrollBarPolicy.ALWAYS,
 				ScrollBarPolicy.ALWAYS);

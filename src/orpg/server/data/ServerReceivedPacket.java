@@ -3,26 +3,29 @@ package orpg.server.data;
 import orpg.server.ServerSession;
 import orpg.shared.ClientPacketType;
 import orpg.shared.Priority;
+import orpg.shared.net.InputByteBuffer;
+import orpg.shared.net.OutputByteBuffer;
 
 public class ServerReceivedPacket implements Comparable<ServerReceivedPacket> {
 
 	private ServerSession session;
 	private ClientPacketType type;
-	private byte[] bytes;	
+	private InputByteBuffer buffer;
 	private Priority priority;
 	
 	public ServerReceivedPacket(ServerSession session, ClientPacketType type, byte[] bytes, Priority priority) {
 		super();
 		this.session = session;
 		this.type = type;
-		this.bytes = bytes;
+		this.buffer = new InputByteBuffer(bytes);
 	}
 	
 	public ClientPacketType getType() {
 		return type;
 	}
-	public byte[] getBytes() {
-		return bytes;
+
+	public InputByteBuffer getByteBuffer() {
+		return buffer;
 	}
 	
 	public ServerSession getSession() {

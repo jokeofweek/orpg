@@ -8,7 +8,6 @@ import java.util.Queue;
 
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.data.ClientSentPacket;
-import orpg.shared.ByteStream;
 import orpg.shared.ServerPacketType;
 
 /**
