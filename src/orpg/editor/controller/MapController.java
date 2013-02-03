@@ -16,20 +16,58 @@ public class MapController extends Observable {
 	public int getMapHeight() {
 		return this.map.getHeight();
 	}
-	
+
 	public int getMapWidth() {
 		return this.map.getHeight();
 	}
-	
+
 	public short[][][] getMapTiles() {
 		return this.map.getTiles();
 	}
 
+	/**
+	 * This updates a given tile value at a coordinate point and layer, and will
+	 * notify all observers.
+	 * 
+	 * @param x
+	 *            the x-coordinate in the map to update
+	 * @param y
+	 *            the y-coordinate in the map to update
+	 * @param layer
+	 *            the layer to update
+	 * @param tile
+	 *            the new tile value.
+	 */
 	public void updateTile(int x, int y, MapLayer layer, short tile) {
+		batchUpdateTile(x, y, layer, tile);
+		triggerTileUpdate();
+	}
+
+	/**
+	 * This updates a given tile value at a coordinate point and layer, and will
+	 * <b>not</b> notify observers. It permits batch tile updating. In order to
+	 * notify observers, a call to {@link #triggerTileUpdate()} must be done.
+	 * 
+	 * @param x
+	 *            the x-coordinate in the map to update
+	 * @param y
+	 *            the y-coordinate in the map to update
+	 * @param layer
+	 *            the layer to update
+	 * @param tile
+	 *            the new tile value.
+	 */
+	public void batchUpdateTile(int x, int y, MapLayer layer, short tile) {
 		this.map.getTiles()[y][x][layer.ordinal()] = tile;
+
+	}
+
+	/**
+	 * This notifies observers that tile values have been changed.
+	 */
+	public void triggerTileUpdate() {
 		this.setChanged();
-		this.notifyObservers("tileUpdate[" + x + "," + y + ","
-				+ layer.ordinal() + "]");
+		this.notifyObservers();
 	}
 
 }

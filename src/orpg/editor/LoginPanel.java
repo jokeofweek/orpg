@@ -1,5 +1,7 @@
 package orpg.editor;
 
+import java.io.IOException;
+
 import org.apache.pivot.wtk.Button;
 import org.apache.pivot.wtk.ButtonPressListener;
 import org.apache.pivot.wtk.FillPane;
@@ -13,14 +15,14 @@ public class LoginPanel extends FillPane {
 
 		PushButton button = new PushButton("Login");
 		button.getButtonPressListeners().add(new ButtonPressListener() {
-			
+
 			@Override
 			public void buttonPressed(Button button) {
 				window.setContent(new MapEditorPanel());
 			}
 		});
 		add(button);
-		
+
 	}
 
 }

@@ -4,7 +4,11 @@ import org.apache.pivot.collections.Map;
 import org.apache.pivot.wtk.Application;
 import org.apache.pivot.wtk.DesktopApplicationContext;
 import org.apache.pivot.wtk.Display;
+import org.apache.pivot.wtk.Theme;
 import org.apache.pivot.wtk.Window;
+
+import orpg.editor.ui.MapView;
+import orpg.editor.ui.MapViewSkin;
 import orpg.shared.Strings;
 
 public class EditorApplication implements Application {
@@ -31,6 +35,8 @@ public class EditorApplication implements Application {
 		window.setTitle(String.format("%s - %s", Strings.ENGINE_NAME,
 				Strings.MAP_EDITOR_NAME));
 		window.setMaximized(true);
+		
+		Theme.getTheme().set(MapView.class, MapViewSkin.class);
 
 		window.open(display);
 		
