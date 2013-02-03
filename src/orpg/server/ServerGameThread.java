@@ -5,9 +5,9 @@ import java.util.PriorityQueue;
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.ServerSentPacket;
 import orpg.shared.Priority;
-import orpg.shared.ServerPacketType;
 import orpg.shared.net.InputByteBuffer;
 import orpg.shared.net.OutputByteBuffer;
+import orpg.shared.net.ServerPacketType;
 
 /**
  * This thread is responsible for handling all packets in the input queue as

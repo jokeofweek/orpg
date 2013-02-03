@@ -1,8 +1,8 @@
 package orpg.server.data;
 
 import orpg.server.ServerSession;
-import orpg.shared.ClientPacketType;
 import orpg.shared.Priority;
+import orpg.shared.net.ClientPacketType;
 import orpg.shared.net.InputByteBuffer;
 import orpg.shared.net.OutputByteBuffer;
 

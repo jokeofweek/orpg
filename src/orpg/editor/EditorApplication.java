@@ -1,4 +1,4 @@
-package orpg.mapeditor;
+package orpg.editor;
 
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.wtk.Application;

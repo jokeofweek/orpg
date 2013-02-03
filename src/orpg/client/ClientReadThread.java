@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.util.Queue;
 
 import orpg.client.data.ClientReceivedPacket;
-import orpg.shared.ServerPacketType;
+import orpg.shared.net.ServerPacketType;
 
 /**
  * This thread is responsible for reading data from the client's socket and

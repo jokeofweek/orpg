@@ -3,7 +3,7 @@ package orpg.client.data;
 import java.io.IOException;
 import java.net.Socket;
 
-import orpg.shared.ClientPacketType;
+import orpg.shared.net.ClientPacketType;
 
 public class ClientSentPacket {
 

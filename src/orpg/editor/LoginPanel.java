@@ -1,4 +1,4 @@
-package orpg.mapeditor;
+package orpg.editor;
 
 import org.apache.pivot.wtk.Button;
 import org.apache.pivot.wtk.ButtonPressListener;

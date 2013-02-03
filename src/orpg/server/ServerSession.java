@@ -9,8 +9,8 @@ import java.util.PriorityQueue;
 
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.ServerSentPacket;
-import orpg.shared.ClientPacketType;
 import orpg.shared.Priority;
+import orpg.shared.net.ClientPacketType;
 
 public class ServerSession implements Runnable {
 

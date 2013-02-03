@@ -1,4 +1,4 @@
-package orpg.shared;
+package orpg.shared.net;
 
 public enum ServerPacketType {
 	PONG,

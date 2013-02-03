@@ -5,7 +5,7 @@ import java.net.Socket;
 
 import orpg.server.ServerSession;
 import orpg.shared.Priority;
-import orpg.shared.ServerPacketType;
+import orpg.shared.net.ServerPacketType;
 
 public class ServerSentPacket implements Comparable<ServerSentPacket> {
 

@@ -1,7 +1,7 @@
 package orpg.client.data;
 
-import orpg.shared.ServerPacketType;
 import orpg.shared.net.InputByteBuffer;
+import orpg.shared.net.ServerPacketType;
 
 public class ClientReceivedPacket {
 

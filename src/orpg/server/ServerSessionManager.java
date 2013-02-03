@@ -5,8 +5,8 @@ import java.util.PriorityQueue;
 
 import orpg.server.data.ServerSentPacket;
 import orpg.shared.Priority;
-import orpg.shared.ServerPacketType;
 import orpg.shared.net.OutputByteBuffer;
+import orpg.shared.net.ServerPacketType;
 
 /**
  * The server sessions manager is responsible for keeping track of the current

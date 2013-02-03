@@ -1,4 +1,4 @@
-package orpg.shared;
+package orpg.shared.data;
 
 public enum MapLayer {
 

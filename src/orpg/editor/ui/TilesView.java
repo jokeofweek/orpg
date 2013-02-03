@@ -1,18 +1,12 @@
-package orpg.mapeditor.ui;
+package orpg.editor.ui;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import org.apache.pivot.util.concurrent.TaskExecutionException;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.ComponentMouseButtonListener;
 import org.apache.pivot.wtk.ComponentMouseListener;
-import org.apache.pivot.wtk.Dimensions;
 import org.apache.pivot.wtk.ImageView;
 import org.apache.pivot.wtk.Mouse.Button;
-import org.apache.pivot.wtk.Panel;
 import org.apache.pivot.wtk.media.Image;
 
 import orpg.shared.Constants;

@@ -11,7 +11,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import orpg.client.data.ClientSentPacket;
-import orpg.shared.ClientPacketType;
+import orpg.shared.net.ClientPacketType;
 import orpg.shared.net.OutputByteBuffer;
 
 public class ClientWindow extends JFrame {

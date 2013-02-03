@@ -1,4 +1,4 @@
-package orpg.mapeditor;
+package orpg.editor;
 
 import java.awt.Font;
 import java.io.File;
@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import org.apache.pivot.util.concurrent.TaskExecutionException;
 import org.apache.pivot.wtk.BoxPane;
 import org.apache.pivot.wtk.ButtonGroup;
+import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.FillPane;
 import org.apache.pivot.wtk.FlowPane;
 import org.apache.pivot.wtk.Label;
@@ -20,14 +21,23 @@ import org.apache.pivot.wtk.TablePane.Column;
 import org.apache.pivot.wtk.TablePane.Row;
 import org.apache.pivot.wtk.media.Image;
 
-import orpg.mapeditor.ui.TilesView;
-import orpg.shared.MapLayer;
+import orpg.editor.controller.MapController;
+import orpg.editor.ui.MapView;
+import orpg.editor.ui.TilesView;
+import orpg.shared.data.Map;
+import orpg.shared.data.MapLayer;
 
 public class MapEditorPanel extends FillPane {
 
 	public MapEditorPanel() {
 
-		TabPane pickerPane = new TabPane();
+		this.add(getTabPane());
+		Map map = new Map(100, 100);
+		this.add(new MapView(new MapController(map)));
+	}
+
+	private Component getTabPane() {
+		TabPane tabPane = new TabPane();
 
 		// Set up the title tab table
 		TablePane tilesTabTable = new TablePane();
@@ -79,20 +89,16 @@ public class MapEditorPanel extends FillPane {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		ScrollPane tilesScrollPane = new ScrollPane(ScrollBarPolicy.ALWAYS,
-				ScrollBarPolicy.ALWAYS);
+		ScrollPane tilesScrollPane = new ScrollPane(
+				ScrollBarPolicy.ALWAYS, ScrollBarPolicy.ALWAYS);
 		tilesScrollPane.setView(tilesView);
 
 		row = new Row(1, true);
 		row.add(tilesScrollPane);
 		tilesTabTable.getRows().add(row);
 
-		pickerPane.getTabs().add(tilesTabTable);
-
-		FillPane mapPane = new FillPane();
-
-		this.add(pickerPane);
-		this.add(mapPane);
+		tabPane.getTabs().add(tilesTabTable);
+		return tabPane;
 	}
 
 }

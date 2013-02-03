@@ -8,7 +8,7 @@ import java.util.Queue;
 
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.data.ClientSentPacket;
-import orpg.shared.ServerPacketType;
+import orpg.shared.net.ServerPacketType;
 
 /**
  * This thread is responsible for writing data from the output queue

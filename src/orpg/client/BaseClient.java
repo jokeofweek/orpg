@@ -10,7 +10,7 @@ import javax.swing.SwingUtilities;
 
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.data.ClientSentPacket;
-import orpg.shared.ClientPacketType;
+import orpg.shared.net.ClientPacketType;
 
 public class BaseClient {
 
