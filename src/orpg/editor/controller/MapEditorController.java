@@ -2,6 +2,9 @@ package orpg.editor.controller;
 
 import java.util.Observable;
 
+import java.util.List;
+
+import orpg.editor.data.EditorChange;
 import orpg.editor.data.TileRange;
 import orpg.shared.data.MapLayer;
 
@@ -10,11 +13,15 @@ public class MapEditorController extends Observable {
 	private MapLayer currentLayer;
 	private TileRange tileRange;
 
+	private List<EditorChange> editorChanges;
+	private int changePosition;
+
 	public MapEditorController() {
 		currentLayer = MapLayer.GROUND;
 		tileRange = new TileRange();
+		
 	}
-	
+
 	public MapLayer getCurrentLayer() {
 		return currentLayer;
 	}

@@ -1,11 +1,22 @@
 package orpg.editor.data;
 
-public class TileRange {
+public class TileRange implements Cloneable {
 
 	private int startX;
 	private int startY;
 	private int endX;
 	private int endY;
+	
+	public TileRange() {
+		
+	}
+	
+	public TileRange(TileRange t) {
+		this.startX = t.getStartX();
+		this.startY = t.getStartY();
+		this.endX = t.getEndX();
+		this.endY = t.getEndY();
+	}
 	
 	public int getStartX() {
 		return startX;
@@ -32,5 +43,9 @@ public class TileRange {
 		this.endY = endY;
 	}
 	
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return new TileRange(this);
+	}
 	
 }
