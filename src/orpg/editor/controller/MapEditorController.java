@@ -1,25 +1,26 @@
 package orpg.editor.controller;
 
 import java.util.Observable;
+import java.util.Observer;
 
 import java.util.List;
 
 import orpg.editor.data.EditorChange;
+import orpg.editor.data.EditorChangeManager;
 import orpg.editor.data.TileRange;
 import orpg.shared.data.MapLayer;
 
-public class MapEditorController extends Observable {
+public class MapEditorController extends Observable implements Observer {
 
 	private MapLayer currentLayer;
 	private TileRange tileRange;
-
-	private List<EditorChange> editorChanges;
-	private int changePosition;
+	private EditorChangeManager changeManager;
 
 	public MapEditorController() {
-		currentLayer = MapLayer.GROUND;
-		tileRange = new TileRange();
-		
+		this.currentLayer = MapLayer.GROUND;
+		this.tileRange = new TileRange();
+		this.changeManager = new EditorChangeManager();
+		this.changeManager.addObserver(this);
 	}
 
 	public MapLayer getCurrentLayer() {
@@ -45,5 +46,18 @@ public class MapEditorController extends Observable {
 		this.tileRange.setEndY(endY);
 		this.setChanged();
 		this.notifyObservers();
+	}
+
+	public EditorChangeManager getChangeManager() {
+		return changeManager;
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		// If the observable is the change manager, notify all our observers.
+		if (o == changeManager) {
+			this.setChanged();
+			this.notifyObservers();
+		}
 	}
 }

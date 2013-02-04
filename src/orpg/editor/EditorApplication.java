@@ -4,16 +4,18 @@ import org.apache.pivot.collections.Map;
 import org.apache.pivot.wtk.Application;
 import org.apache.pivot.wtk.DesktopApplicationContext;
 import org.apache.pivot.wtk.Display;
+import org.apache.pivot.wtk.Frame;
 import org.apache.pivot.wtk.Theme;
 import org.apache.pivot.wtk.Window;
 
+import orpg.editor.ui.MapEditorMenuBar;
 import orpg.editor.ui.MapView;
 import orpg.editor.ui.MapViewSkin;
 import orpg.shared.Strings;
 
 public class EditorApplication implements Application {
 
-	private Window window = null;
+	private Frame applicationFrame = null;
 
 	@Override
 	public void resume() throws Exception {
@@ -30,17 +32,19 @@ public class EditorApplication implements Application {
 	@Override
 	public void startup(Display display, Map<String, String> properties)
 			throws Exception {
-		window = new Window();
-		window.setContent(new LoginPanel(window));
-		window.setTitle(String.format("%s - %s", Strings.ENGINE_NAME,
-				Strings.MAP_EDITOR_NAME));
-		window.setMaximized(true);
-		
+
+		// Setup custom controls
 		Theme.getTheme().set(MapView.class, MapViewSkin.class);
 
-		window.open(display);
-		
+		// Setup the application frame
+		applicationFrame = new Frame();
+		applicationFrame.setMaximized(true);
+		applicationFrame.getStyles().put("showWindowControls", false);
+		applicationFrame.open(display);
 
+		// Setup the window manager
+		WindowManager windowManager = new WindowManager(applicationFrame);
+		windowManager.switchWindow(new LoginPanel(windowManager));
 	}
 
 	@Override

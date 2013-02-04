@@ -13,9 +13,13 @@ import org.apache.pivot.wtk.Button;
 import org.apache.pivot.wtk.ButtonGroup;
 import org.apache.pivot.wtk.ButtonGroupListener;
 import org.apache.pivot.wtk.Component;
+import org.apache.pivot.wtk.Display;
 import org.apache.pivot.wtk.FillPane;
 import org.apache.pivot.wtk.FlowPane;
+import org.apache.pivot.wtk.Frame;
 import org.apache.pivot.wtk.Label;
+import org.apache.pivot.wtk.MenuBar;
+import org.apache.pivot.wtk.MenuHandler;
 import org.apache.pivot.wtk.Orientation;
 import org.apache.pivot.wtk.RadioButton;
 import org.apache.pivot.wtk.ScrollPane;
@@ -28,35 +32,47 @@ import org.apache.pivot.wtk.media.Image;
 
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
+import orpg.editor.ui.MapEditorMenuBar;
 import orpg.editor.ui.MapView;
 import orpg.editor.ui.TilesView;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
 
-public class MapEditorPanel extends TablePane implements Observer {
+public class MapEditorPanel extends BasicWindow implements Observer {
 
 	private MapEditorController editorController;
+	private MapController mapController;
+	private TablePane content;
+	private MenuBar menuBar;
 
-	public MapEditorPanel() {
+	public MapEditorPanel(WindowManager windowManager) {
+		super(windowManager);
+		Map map = new Map(100, 100);
 
 		this.editorController = new MapEditorController();
+		this.mapController = new MapController(map);
 
-		this.getColumns().add(new Column(-1));
-		this.getColumns().add(new Column(1, true));
+		this.setupContent();
+		this.setupMenuBar();
+	}
+
+	private void setupContent() {
+		content = new TablePane();
+		content.getColumns().add(new Column(-1));
+		content.getColumns().add(new Column(1, true));
 
 		Row row = new Row(1, true);
 		row.add(getTabPane());
 
-		Map map = new Map(100, 100);
-		MapView mapView = new MapView(new MapController(map), editorController);
+		MapView mapView = new MapView(mapController, editorController);
 		ScrollPane mapScrollPane = new ScrollPane(ScrollBarPolicy.ALWAYS,
 				ScrollBarPolicy.ALWAYS);
 		mapScrollPane.setView(mapView);
 		row.add(mapScrollPane);
-		this.getRows().add(row);
 
-		this.getStyles().put("padding", 5);
-		this.getStyles().put("horizontalSpacing", 5);
+		content.getRows().add(row);
+		content.getStyles().put("padding", 5);
+		content.getStyles().put("horizontalSpacing", 5);
 	}
 
 	private Component getTabPane() {
@@ -88,8 +104,8 @@ public class MapEditorPanel extends TablePane implements Observer {
 		// Build the tiles view
 		TilesView tilesView = null;
 		try {
-			tilesView = new TilesView(editorController, Image.load(new File("gfx/tiles.png")
-					.toURI().toURL()));
+			tilesView = new TilesView(editorController,
+					Image.load(new File("gfx/tiles.png").toURI().toURL()));
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -97,8 +113,8 @@ public class MapEditorPanel extends TablePane implements Observer {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		ScrollPane tilesScrollPane = new ScrollPane(ScrollBarPolicy.ALWAYS,
-				ScrollBarPolicy.ALWAYS);
+		ScrollPane tilesScrollPane = new ScrollPane(
+				ScrollBarPolicy.ALWAYS, ScrollBarPolicy.ALWAYS);
 		tilesScrollPane.setView(tilesView);
 
 		row = new Row(1, true);
@@ -126,32 +142,64 @@ public class MapEditorPanel extends TablePane implements Observer {
 			layersPane.add(layerButton);
 		}
 
-		layerGroup.getButtonGroupListeners().add(new ButtonGroupListener() {
+		layerGroup.getButtonGroupListeners().add(
+				new ButtonGroupListener() {
 
-			@Override
-			public void selectionChanged(ButtonGroup buttonGroup,
-					Button previousSelection) {
-				editorController.setCurrentLayer(MapLayer.values()[Integer
-						.parseInt(buttonGroup.getSelection().getButtonDataKey())]);
-			}
+					@Override
+					public void selectionChanged(ButtonGroup buttonGroup,
+							Button previousSelection) {
+						editorController.setCurrentLayer(MapLayer.values()[Integer
+								.parseInt(buttonGroup.getSelection()
+										.getButtonDataKey())]);
+					}
 
-			@Override
-			public void buttonRemoved(ButtonGroup buttonGroup, Button button) {
-			}
+					@Override
+					public void buttonRemoved(ButtonGroup buttonGroup,
+							Button button) {
+					}
 
-			@Override
-			public void buttonAdded(ButtonGroup buttonGroup, Button button) {
-			}
-		});
+					@Override
+					public void buttonAdded(ButtonGroup buttonGroup,
+							Button button) {
+					}
+				});
 
 		return layersPane;
+	}
+
+	private void setupMenuBar() {
+		this.menuBar = new MapEditorMenuBar(editorController,
+				mapController);
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o == editorController) {
-			repaint();
+			content.repaint();
 		}
+	}
+
+	@Override
+	public void enter(Frame applicationFrame) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public Component getContent() {
+		return content;
+	}
+	
+	@Override
+	public MenuBar getMenuBar() {
+		return this.menuBar;
+	}
+	
+	@Override
+	public void exit(Frame applicationFrame) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

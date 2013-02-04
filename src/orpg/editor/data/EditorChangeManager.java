@@ -5,52 +5,88 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-public class EditorChangeManager extends Observable{
+public class EditorChangeManager extends Observable {
 
 	private List<EditorChange> editorChanges;
-	
+
 	// this will always point at the index after the last change applied
-	private int changePosition;
+	private int nextChange;
 
 	public EditorChangeManager() {
 		this.editorChanges = new ArrayList<EditorChange>();
-		this.changePosition = 0;
+		this.nextChange = 0;
 	}
-	
+
 	public void addChange(EditorChange change) {
 		// We must remove everything after current change position
-		int i = editorChanges.size() - 1;
-		while (editorChanges.size() > changePosition) {
+		for (int i = editorChanges.size() - 1; i > nextChange; i--) {
 			editorChanges.remove(i);
-			i--;
 		}
-		
+
 		// Add the change
 		change.apply();
 		editorChanges.add(change);
-		changePosition++;
+		nextChange++;
+
+		// Notify
+		this.setChanged();
+		this.notifyObservers();
+	}
+
+	/**
+	 * This redoes the next change in the list of changes.
+	 * 
+	 * @throws IllegalStateException
+	 *             if there are no changes to redo. This can be checked with
+	 *             {@link #canRedo()}.
+	 */
+	public void redo() throws IllegalStateException {
+		if (!canRedo()) {
+			throw new IllegalStateException("No changes to redo.");
+		}
+
+		// Apply the next change
+		editorChanges.get(nextChange).apply();
+		nextChange++;
+
+		// Notify
+		this.setChanged();
+		this.notifyObservers();
+	}
+
+	/**
+	 * @return whether there is currently a change which can be redone.
+	 */
+	public boolean canRedo() {
+		return this.nextChange != this.editorChanges.size();
+	}
+
+	/**
+	 * This undoes the current last change in the list of changes.
+	 * 
+	 * @throws IllegalStateException
+	 *             if there are no changes to undo. This can be checked with
+	 *             {@link #canUndo()}.
+	 */
+	public void undo() {
+		if (!canUndo()) {
+			throw new IllegalStateException("No changes to undo.");
+		}
+		
+		// Undo the previous change
+		nextChange--;
+		editorChanges.get(nextChange).undo();
 		
 		// Notify
 		this.setChanged();
 		this.notifyObservers();
 	}
-	
-	public void redo() {
-		if (!canRedo()) {
-			throw new IllegalStateException("Cannot redo.");
-		}
-	}
-	
-	public boolean canRedo() {
-		return this.changePosition != this.editorChanges.size();
-	}
-	
-	public void undo() {
-		// Undo the hnage
-	}
-	
+
+	/**
+	 * @return whether there is currently a change which can be undone.
+	 */
 	public boolean canUndo() {
-		return this.changePosition != 0;
+		return this.nextChange != 0;
 	}
 
 }

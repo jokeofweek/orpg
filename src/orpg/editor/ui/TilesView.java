@@ -15,8 +15,8 @@ import org.apache.pivot.wtk.media.Image;
 import orpg.editor.controller.MapEditorController;
 import orpg.shared.Constants;
 
-public class TilesView extends ImageView implements ComponentMouseListener,
-		ComponentMouseButtonListener, Observer {
+public class TilesView extends ImageView implements
+		ComponentMouseListener, ComponentMouseButtonListener, Observer {
 
 	private Image image;
 
@@ -31,7 +31,6 @@ public class TilesView extends ImageView implements ComponentMouseListener,
 		this.editorController.addObserver(this);
 		getComponentMouseButtonListeners().add(this);
 		getComponentMouseListeners().add(this);
-
 	}
 
 	@Override
@@ -44,69 +43,87 @@ public class TilesView extends ImageView implements ComponentMouseListener,
 				.getStartY() * Constants.TILE_HEIGHT, (editorController
 				.getTileRange().getEndX()
 				- editorController.getTileRange().getStartX() + 1)
-				* Constants.TILE_WIDTH, (editorController.getTileRange()
-				.getEndY() - editorController.getTileRange().getStartY() + 1)
-				* Constants.TILE_HEIGHT);
+				* Constants.TILE_WIDTH,
+				(editorController.getTileRange().getEndY()
+						- editorController.getTileRange().getStartY() + 1)
+						* Constants.TILE_HEIGHT);
 	}
 
 	@Override
-	public boolean mouseClick(Component component, Button button, int x, int y,
-			int count) {
+	public boolean mouseClick(Component component, Button button, int x,
+			int y, int count) {
 		return false;
 	}
 
 	@Override
-	public boolean mouseDown(Component component, Button button, int x, int y) {
-		if (button == Button.LEFT) {
-			leftDown = true;
-		} else if (button == Button.RIGHT) {
-			rightDown = true;
+	public boolean mouseDown(Component component, Button button, int x,
+			int y) {
+		if (component == this) {
+			if (button == Button.LEFT) {
+				leftDown = true;
+			} else if (button == Button.RIGHT) {
+				rightDown = true;
+			}
+			mouseMove(component, x, y);
+			return true;
 		}
-		mouseMove(component, x, y);
 		return false;
 	}
 
 	@Override
 	public boolean mouseUp(Component component, Button button, int x, int y) {
-		if (button == Button.LEFT) {
-			leftDown = false;
-		} else if (button == Button.RIGHT) {
-			rightDown = false;
-			inMultiSelect = false;
+		if (component == this) {
+			if (button == Button.LEFT) {
+				leftDown = false;
+			} else if (button == Button.RIGHT) {
+				rightDown = false;
+				inMultiSelect = false;
+			}
+			return true;
 		}
 		return false;
 	}
 
 	@Override
 	public boolean mouseMove(Component component, int x, int y) {
-		if (leftDown) {
-			// Detect if our selected change, and if so update it. Only
-			// update once to avoid flickering.
-			editorController.updateTileRange(x / Constants.TILE_WIDTH, y
-					/ Constants.TILE_HEIGHT, x / Constants.TILE_WIDTH, y
-					/ Constants.TILE_HEIGHT);
-			repaint();
-		} else if (rightDown) {
-			if (inMultiSelect) {
-				// Essentially we only update our tile range if we move right or
-				// down.
-				int newX = x / Constants.TILE_WIDTH;
-				int newY = y / Constants.TILE_HEIGHT;
+		if (component == this) {
+			if (leftDown) {
+				// Detect if our selected change, and if so update it.
+				editorController.updateTileRange(x / Constants.TILE_WIDTH,
+						y / Constants.TILE_HEIGHT, x
+								/ Constants.TILE_WIDTH, y
+								/ Constants.TILE_HEIGHT);
+				repaint();
+			} else if (rightDown) {
+				if (inMultiSelect) {
+					// Essentially we only update our tile range if we move
+					// right or
+					// down.
+					int newX = x / Constants.TILE_WIDTH;
+					int newY = y / Constants.TILE_HEIGHT;
 
-				if (newX > editorController.getTileRange().getStartX()
-						&& newY > editorController.getTileRange().getStartY()) {
-					editorController.updateTileRange(editorController
-							.getTileRange().getStartX(), editorController
-							.getTileRange().getStartY(), newX, newY);
+					if (newX >= editorController.getTileRange()
+							.getStartX()
+							&& newY >= editorController.getTileRange()
+									.getStartY()) {
+						editorController.updateTileRange(editorController
+								.getTileRange().getStartX(),
+								editorController.getTileRange()
+										.getStartY(), newX, newY);
+					}
+				} else {
+					// If it is the first rightclick, then just update the
+					// starting
+					// position and mark that we are in multi-select mode.
+					editorController.updateTileRange(x
+							/ Constants.TILE_WIDTH, y
+							/ Constants.TILE_HEIGHT, x
+							/ Constants.TILE_WIDTH, y
+							/ Constants.TILE_HEIGHT);
+					inMultiSelect = true;
 				}
-			} else {
-				// If it is the first rightclick, then just update the starting
-				// position and mark that we are in multi-select mode.
-				editorController.updateTileRange(x / Constants.TILE_WIDTH, y
-						/ Constants.TILE_HEIGHT, x / Constants.TILE_WIDTH, y
-						/ Constants.TILE_HEIGHT);
-				inMultiSelect = true;
 			}
+			return true;
 		}
 		return false;
 	}

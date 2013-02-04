@@ -16,6 +16,8 @@ import org.apache.pivot.wtk.ComponentMouseListener;
 import org.apache.pivot.wtk.Mouse.Button;
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
+import orpg.editor.data.MapEditorTileUpdateChange;
+import orpg.editor.data.MapEditorTileEraseChange;
 import orpg.shared.Constants;
 import orpg.shared.data.MapLayer;
 
@@ -59,65 +61,57 @@ public class MapView extends Component implements Observer,
 	}
 
 	@Override
-	public boolean mouseClick(Component component, Button button, int x, int y,
-			int count) {
+	public boolean mouseClick(Component component, Button button, int x,
+			int y, int count) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean mouseDown(Component component, Button button, int x, int y) {
-		if (button == Button.LEFT) {
-			leftDown = true;
-		} else if (button == Button.RIGHT) {
-			rightDown = true;
+	public boolean mouseDown(Component component, Button button, int x,
+			int y) {
+		if (component == this) {
+			if (button == Button.LEFT) {
+				leftDown = true;
+			} else if (button == Button.RIGHT) {
+				rightDown = true;
+			}
+			mouseMove(component, x, y);
+			return true;
 		}
-		mouseMove(component, x, y);
 		return false;
 	}
 
 	@Override
 	public boolean mouseUp(Component component, Button button, int x, int y) {
-		if (button == Button.LEFT) {
-			leftDown = false;
-		} else if (button == Button.RIGHT) {
-			rightDown = false;
+		if (component == this) {
+			if (button == Button.LEFT) {
+				leftDown = false;
+			} else if (button == Button.RIGHT) {
+				rightDown = false;
+			}
+			return true;
 		}
 		return false;
 	}
 
 	@Override
 	public boolean mouseMove(Component component, int x, int y) {
-		if (leftDown) {
-			// If left click, then we attempt to place as much of our tile range
-			// as possible
-			int startX = x / Constants.TILE_WIDTH;
-			int startY = y / Constants.TILE_HEIGHT;
-			short tile = (short) (editorController.getTileRange().getStartX() + (editorController
-					.getTileRange().getStartY() * Constants.TILESET_WIDTH));
-			
-			// Here we determine how much of the tiles in our range we can actually place.
-			int endX = Math.min(mapController.getMapWidth(), startX
-					+ (editorController.getTileRange().getEndX()
-							- editorController.getTileRange().getStartX() + 1));
-			int endY = Math.min(mapController.getMapHeight(), startY
-					+ (editorController.getTileRange().getEndY()
-							- editorController.getTileRange().getStartY() + 1));
-
-			for (int ty = startY; ty < endY; ty++) {
-				for (int tx = startX; tx < endX; tx++) {
-					mapController.batchUpdateTile(tx, ty,
-							editorController.getCurrentLayer(),
-							(short) (tile + (tx - startX)));
-				}
-				tile += Constants.TILESET_WIDTH;
+		if (component == this) {
+			if (leftDown) {
+				// If a left-click, then signal that we've made a change
+				editorController.getChangeManager().addChange(
+						new MapEditorTileUpdateChange(editorController,
+								mapController, x / Constants.TILE_WIDTH, y
+										/ Constants.TILE_HEIGHT));
+			} else if (rightDown) {
+				// If a right-click, then erase the tile
+				editorController.getChangeManager().addChange(
+						new MapEditorTileEraseChange(editorController,
+								mapController, x / Constants.TILE_WIDTH, y
+										/ Constants.TILE_HEIGHT));
 			}
-
-			mapController.triggerTileUpdate();
-		} else if (rightDown) {
-			mapController.updateTile(x / Constants.TILE_WIDTH, y
-					/ Constants.TILE_HEIGHT,
-					editorController.getCurrentLayer(), (short) 0);
+			return true;
 		}
 		return false;
 	}
