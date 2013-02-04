@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.ComponentMouseButtonListener;
 import org.apache.pivot.wtk.ComponentMouseListener;
+import org.apache.pivot.wtk.ScrollPane;
 import org.apache.pivot.wtk.Mouse.Button;
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
@@ -31,11 +32,16 @@ public class MapView extends Component implements Observer,
 	private boolean leftDown;
 	private boolean rightDown;
 
+	private int tileWidth;
+	private int tileHeight;
+
 	public MapView(MapController controller,
 			MapEditorController editorController) {
 		this.mapController = controller;
 		this.editorController = editorController;
+
 		this.mapController.addObserver(this);
+		this.editorController.addObserver(this);
 
 		try {
 			this.image = ImageIO.read(new File("gfx/tiles.png"));
@@ -44,6 +50,11 @@ public class MapView extends Component implements Observer,
 			throw new RuntimeException(e);
 		}
 		installSkin(MapView.class);
+
+		this.tileWidth = Constants.TILE_WIDTH
+				/ editorController.getScaleFactor();
+		this.tileHeight = Constants.TILE_HEIGHT
+				/ editorController.getScaleFactor();
 
 		this.getComponentMouseListeners().add(this);
 		this.getComponentMouseButtonListeners().add(this);
@@ -55,9 +66,20 @@ public class MapView extends Component implements Observer,
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if ((Object) o instanceof MapController) {
-			repaint();
+		int oldTileWidth = tileWidth;
+		int oldTileHeight = tileHeight;
+		this.tileWidth = Constants.TILE_WIDTH
+				/ editorController.getScaleFactor();
+		this.tileHeight = Constants.TILE_HEIGHT
+				/ editorController.getScaleFactor();
+
+		// If we zoomed in / out, then we must invalidate everyhing first
+		// else just repaint
+		if (tileHeight != oldTileHeight || tileWidth != oldTileWidth) {
+			invalidate();
 		}
+		repaint();
+
 	}
 
 	@Override
@@ -98,6 +120,13 @@ public class MapView extends Component implements Observer,
 	public boolean mouseMove(Component component, int x, int y) {
 		if (component == this) {
 			if (leftDown) {
+				// Make sure we fit in (could be possible not to, because of
+				// scale)
+				if (x / tileWidth >= mapController.getMapWidth()
+						|| y / tileHeight >= mapController.getMapHeight()) {
+					return false;
+				}
+
 				// Make sure there is a change:
 				int startX = editorController.getTileRange().getStartX();
 				int startY = editorController.getTileRange().getStartY();
@@ -112,11 +141,14 @@ public class MapView extends Component implements Observer,
 
 				boolean changed = false;
 				// Convert to positional values
-				int pX = x / Constants.TILE_WIDTH;
-				int pY = y / Constants.TILE_WIDTH;
+				int pX = x / tileWidth;
+				int pY = y / tileHeight;
+
 				// Check each x/y value
-				for (int cY = pY; cY < pY + diffY && !changed; cY++) {
-					for (int cX = pX; cX < pX + diffX; cX++) {
+				for (int cY = pY; cY < Math.min(mapController.getMapHeight(),
+						pY + diffY) && !changed; cY++) {
+					for (int cX = pX; cX < Math.min(
+							mapController.getMapWidth(), pX + diffX); cX++) {
 						if (tiles[cY][cX][layer] != currentTile + (cX - pX)) {
 							changed = true;
 							break;
@@ -130,20 +162,26 @@ public class MapView extends Component implements Observer,
 
 					editorController.getChangeManager().addChange(
 							new MapEditorTileUpdateChange(editorController,
-									mapController, x / Constants.TILE_WIDTH, y
-											/ Constants.TILE_HEIGHT));
+									mapController, x / tileWidth, y
+											/ tileHeight));
 				}
 
 			} else if (rightDown) {
+				// Make sure we fit in (could be possible not to, because of
+				// scale)
+				if (x / tileWidth >= mapController.getMapWidth()
+						|| y / tileHeight >= mapController.getMapHeight()) {
+					return false;
+				}
+
 				// If a right-click, then erase the tile if not already empty.
-				if (mapController.getMapTiles()[y / Constants.TILE_HEIGHT][x
-						/ Constants.TILE_WIDTH][editorController
+				if (mapController.getMapTiles()[y / tileHeight][x / tileWidth][editorController
 						.getCurrentLayer().ordinal()] != 0) {
 
 					editorController.getChangeManager().addChange(
 							new MapEditorTileEraseChange(editorController,
-									mapController, x / Constants.TILE_WIDTH, y
-											/ Constants.TILE_HEIGHT));
+									mapController, x / tileWidth, y
+											/ tileHeight));
 				}
 			}
 			return true;
@@ -153,7 +191,8 @@ public class MapView extends Component implements Observer,
 
 	@Override
 	public void mouseOut(Component component) {
-
+		leftDown = false;
+		rightDown = false;
 	}
 
 	@Override
@@ -163,25 +202,24 @@ public class MapView extends Component implements Observer,
 
 	@Override
 	public int getWidth() {
-		return mapController.getMapWidth() * Constants.TILE_WIDTH;
+		return mapController.getMapWidth() * tileWidth;
 	}
 
 	@Override
 	public int getHeight() {
-		return mapController.getMapHeight() * Constants.TILE_HEIGHT;
+		return mapController.getMapHeight() * tileHeight;
 	}
 
 	@Override
 	public void paint(Graphics2D graphics) {
-		// MapController controller = ((MapView)getComponent()).getController();
 		int h = mapController.getMapHeight();
 		int w = mapController.getMapWidth();
 		int l = MapLayer.values().length;
 		short[][][] tiles = mapController.getMapTiles();
 
-		graphics.setBackground(Color.white);
+		graphics.setBackground(Color.black);
 		graphics.setColor(Color.black);
-
+		graphics.clearRect(0, 0, getWidth(), getHeight());
 		int dx = 0;
 		int dy = 0;
 
@@ -191,9 +229,8 @@ public class MapView extends Component implements Observer,
 				for (int z = 0; z < l; z++) {
 					if (tiles[y][x][z] == 0) {
 						if (z == 0) {
-							graphics.drawImage(image, dx, dy, dx
-									+ Constants.TILE_HEIGHT, dy
-									+ Constants.TILE_WIDTH, 0, 0,
+							graphics.drawImage(image, dx, dy, dx + tileWidth,
+									dy + tileHeight, 0, 0,
 									Constants.TILE_WIDTH,
 									Constants.TILE_HEIGHT, null);
 						}
@@ -202,8 +239,8 @@ public class MapView extends Component implements Observer,
 								image,
 								dx,
 								dy,
-								dx + Constants.TILE_HEIGHT,
-								dy + Constants.TILE_WIDTH,
+								dx + tileWidth,
+								dy + tileHeight,
 								(tiles[y][x][z] % Constants.TILESET_WIDTH)
 										* Constants.TILE_WIDTH,
 								(tiles[y][x][z] / Constants.TILESET_WIDTH)
@@ -214,9 +251,9 @@ public class MapView extends Component implements Observer,
 										* Constants.TILE_HEIGHT, null);
 					}
 				}
-				dx += Constants.TILE_WIDTH;
+				dx += tileWidth;
 			}
-			dy += Constants.TILE_HEIGHT;
+			dy += tileHeight;
 		}
 	}
 }

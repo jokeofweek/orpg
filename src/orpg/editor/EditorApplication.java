@@ -22,13 +22,10 @@ public class EditorApplication implements Application {
 
 	@Override
 	public void resume() throws Exception {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public boolean shutdown(boolean arg0) throws Exception {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -44,7 +41,7 @@ public class EditorApplication implements Application {
 		applicationFrame.setMaximized(true);
 		applicationFrame.getStyles().put("showWindowControls", false);
 		applicationFrame.open(display);
-		
+
 		// Setup the window manager
 		WindowManager windowManager = new WindowManager(applicationFrame);
 		windowManager.switchWindow(new LoginWindow(windowManager));
@@ -52,11 +49,7 @@ public class EditorApplication implements Application {
 
 	@Override
 	public void suspend() throws Exception {
-		// TODO Auto-generated method stub
-
 	}
-	
-	
 
 	public static void main(String[] args) {
 		DesktopApplicationContext.main(EditorApplication.class, args);

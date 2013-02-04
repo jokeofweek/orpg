@@ -130,7 +130,10 @@ public class TilesView extends ImageView implements
 
 	@Override
 	public void mouseOut(Component component) {
-		// TODO Auto-generated method stub
+
+		leftDown = false;
+		rightDown = false;
+		inMultiSelect = false;
 
 	}
 

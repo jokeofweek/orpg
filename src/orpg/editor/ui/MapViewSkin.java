@@ -14,8 +14,7 @@ public class MapViewSkin extends ComponentSkin {
 	
 	@Override
 	public void layout() {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override

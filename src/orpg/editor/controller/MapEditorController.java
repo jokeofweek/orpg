@@ -20,28 +20,19 @@ public class MapEditorController extends Observable implements Observer {
 	private EditorChangeManager changeManager;
 	private Action undoAction;
 	private Action redoAction;
+	private Action zoomInAction;
+	private Action zoomOutAction;
+
+	private static final int SCALE_FACTORS[] = new int[] { 1, 2, 4, 8 };
+	private int scaleFactorPosition;
 
 	public MapEditorController() {
 		this.currentLayer = MapLayer.GROUND;
 		this.tileRange = new TileRange();
 		this.changeManager = new EditorChangeManager();
 		this.changeManager.addObserver(this);
-		
-		this.undoAction = new Action() {
-			@Override
-			public void perform(Component source) {
-				getChangeManager().undo();
-			}			
-		};
-		this.undoAction.setEnabled(changeManager.canUndo());
-		
-		this.redoAction = new Action() {
-			@Override
-			public void perform(Component source) {
-				getChangeManager().redo();
-			}			
-		};
-		this.redoAction.setEnabled(changeManager.canRedo());
+
+		setupActions();
 	}
 
 	public MapLayer getCurrentLayer() {
@@ -73,14 +64,56 @@ public class MapEditorController extends Observable implements Observer {
 		return changeManager;
 	}
 
+	private void setupActions() {
+		this.undoAction = new Action() {
+			@Override
+			public void perform(Component source) {
+				getChangeManager().undo();
+			}
+		};
+		this.undoAction.setEnabled(changeManager.canUndo());
+
+		this.redoAction = new Action() {
+			@Override
+			public void perform(Component source) {
+				getChangeManager().redo();
+			}
+		};
+		this.redoAction.setEnabled(changeManager.canRedo());
+
+		this.zoomInAction = new Action() {
+			@Override
+			public void perform(Component source) {
+				zoomIn();
+			}
+		};
+		this.zoomInAction.setEnabled(canZoomIn());
+
+		this.zoomOutAction = new Action() {
+			@Override
+			public void perform(Component source) {
+				zoomOut();
+			}
+		};
+		this.zoomOutAction.setEnabled(canZoomOut());
+	}
+
 	public Action getUndoAction() {
 		return undoAction;
 	}
-	
+
 	public Action getRedoAction() {
 		return redoAction;
 	}
-	
+
+	public Action getZoomInAction() {
+		return zoomInAction;
+	}
+
+	public Action getZoomOutAction() {
+		return zoomOutAction;
+	}
+
 	@Override
 	public void update(Observable o, Object arg) {
 		// If the observable is the change manager, notify all our observers.
@@ -90,5 +123,39 @@ public class MapEditorController extends Observable implements Observer {
 			this.setChanged();
 			this.notifyObservers();
 		}
+	}
+
+	public int getScaleFactor() {
+		return MapEditorController.SCALE_FACTORS[scaleFactorPosition];
+	}
+
+	public boolean canZoomIn() {
+		return scaleFactorPosition > 0;
+	}
+
+	public void zoomIn() {
+		if (!canZoomIn()) {
+			throw new IllegalStateException("Cannot zoom in any closer.");
+		}
+		scaleFactorPosition--;
+		zoomOutAction.setEnabled(canZoomOut());
+		zoomInAction.setEnabled(canZoomIn());
+		this.setChanged();
+		this.notifyObservers();
+	}
+
+	public boolean canZoomOut() {
+		return scaleFactorPosition < SCALE_FACTORS.length - 1;
+	}
+
+	public void zoomOut() {
+		if (!canZoomOut()) {
+			throw new IllegalStateException("Cannot zoom out any further.");
+		}
+		scaleFactorPosition++;
+		zoomOutAction.setEnabled(canZoomOut());
+		zoomInAction.setEnabled(canZoomIn());
+		this.setChanged();
+		this.notifyObservers();
 	}
 }

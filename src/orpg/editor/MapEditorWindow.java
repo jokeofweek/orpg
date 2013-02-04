@@ -1,6 +1,7 @@
 package orpg.editor;
 
 import java.awt.Font;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.List;
@@ -29,6 +30,8 @@ import org.apache.pivot.wtk.TablePane.Column;
 import org.apache.pivot.wtk.TablePane.Row;
 import org.apache.pivot.wtk.Window.ActionMapping;
 import org.apache.pivot.wtk.media.Image;
+
+import java.awt.Color;
 
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
@@ -65,9 +68,11 @@ public class MapEditorWindow extends BasicWindow implements Observer {
 		row.add(getTabPane());
 
 		MapView mapView = new MapView(mapController, editorController);
-		ScrollPane mapScrollPane = new ScrollPane(ScrollBarPolicy.ALWAYS,
-				ScrollBarPolicy.ALWAYS);
+		ScrollPane mapScrollPane = new ScrollPane(ScrollBarPolicy.AUTO,
+				ScrollBarPolicy.AUTO);
+
 		mapScrollPane.setView(mapView);
+		mapScrollPane.getStyles().put("backgroundColor", Color.black);
 		row.add(mapScrollPane);
 
 		content.getRows().add(row);
@@ -104,8 +109,8 @@ public class MapEditorWindow extends BasicWindow implements Observer {
 		// Build the tiles view
 		TilesView tilesView = null;
 		try {
-			tilesView = new TilesView(editorController,
-					Image.load(new File("gfx/tiles.png").toURI().toURL()));
+			tilesView = new TilesView(editorController, Image.load(new File(
+					"gfx/tiles.png").toURI().toURL()));
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -113,8 +118,8 @@ public class MapEditorWindow extends BasicWindow implements Observer {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		ScrollPane tilesScrollPane = new ScrollPane(
-				ScrollBarPolicy.ALWAYS, ScrollBarPolicy.ALWAYS);
+		ScrollPane tilesScrollPane = new ScrollPane(ScrollBarPolicy.ALWAYS,
+				ScrollBarPolicy.ALWAYS);
 		tilesScrollPane.setView(tilesView);
 
 		row = new Row(1, true);
@@ -142,34 +147,29 @@ public class MapEditorWindow extends BasicWindow implements Observer {
 			layersPane.add(layerButton);
 		}
 
-		layerGroup.getButtonGroupListeners().add(
-				new ButtonGroupListener() {
+		layerGroup.getButtonGroupListeners().add(new ButtonGroupListener() {
 
-					@Override
-					public void selectionChanged(ButtonGroup buttonGroup,
-							Button previousSelection) {
-						editorController.setCurrentLayer(MapLayer.values()[Integer
-								.parseInt(buttonGroup.getSelection()
-										.getButtonDataKey())]);
-					}
+			@Override
+			public void selectionChanged(ButtonGroup buttonGroup,
+					Button previousSelection) {
+				editorController.setCurrentLayer(MapLayer.values()[Integer
+						.parseInt(buttonGroup.getSelection().getButtonDataKey())]);
+			}
 
-					@Override
-					public void buttonRemoved(ButtonGroup buttonGroup,
-							Button button) {
-					}
+			@Override
+			public void buttonRemoved(ButtonGroup buttonGroup, Button button) {
+			}
 
-					@Override
-					public void buttonAdded(ButtonGroup buttonGroup,
-							Button button) {
-					}
-				});
+			@Override
+			public void buttonAdded(ButtonGroup buttonGroup, Button button) {
+			}
+		});
 
 		return layersPane;
 	}
 
 	private void setupMenuBar() {
-		this.menuBar = new MapEditorMenuBar(editorController,
-				mapController);
+		this.menuBar = new MapEditorMenuBar(editorController, mapController);
 	}
 
 	@Override
@@ -180,28 +180,40 @@ public class MapEditorWindow extends BasicWindow implements Observer {
 	}
 
 	@Override
-	public void enter(Frame applicationFrame) {}
-
+	public void enter(Frame applicationFrame) {
+	}
 
 	@Override
 	public Component getContent() {
 		return content;
 	}
-	
+
 	@Override
 	public MenuBar getMenuBar() {
 		return this.menuBar;
 	}
-	
+
 	@Override
 	public List<ActionMapping> getActionMappings() {
-		List<ActionMapping> actionMappings = new ArrayList<ActionMapping>(2);
-		actionMappings.add(new ActionMapping(KeyStroke.decode(KeyStroke.COMMAND_ABBREVIATION + "-Y"), editorController.getRedoAction()));
-		actionMappings.add(new ActionMapping(KeyStroke.decode(KeyStroke.COMMAND_ABBREVIATION + "-Z"), editorController.getUndoAction()));
+		List<ActionMapping> actionMappings = new ArrayList<ActionMapping>(4);
+		actionMappings.add(new ActionMapping(KeyStroke
+				.decode(KeyStroke.COMMAND_ABBREVIATION + "-Y"),
+				editorController.getRedoAction()));
+		actionMappings.add(new ActionMapping(KeyStroke
+				.decode(KeyStroke.COMMAND_ABBREVIATION + "-Z"),
+				editorController.getUndoAction()));
+		actionMappings.add(new ActionMapping(KeyStroke
+				.decode(KeyStroke.COMMAND_ABBREVIATION + "-EQUALS"),
+				editorController.getZoomInAction()));
+		actionMappings.add(new ActionMapping(KeyStroke
+				.decode(KeyStroke.COMMAND_ABBREVIATION + "-MINUS"),
+				editorController.getZoomOutAction()));
+
 		return actionMappings;
 	}
-	
+
 	@Override
-	public void exit(Frame applicationFrame) {}
+	public void exit(Frame applicationFrame) {
+	}
 
 }
