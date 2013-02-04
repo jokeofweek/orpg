@@ -7,6 +7,9 @@ import org.apache.pivot.wtk.Display;
 import org.apache.pivot.wtk.Frame;
 import org.apache.pivot.wtk.Theme;
 import org.apache.pivot.wtk.Window;
+import org.apache.pivot.wtk.WindowActionMappingListener;
+import org.apache.pivot.wtk.Keyboard.KeyStroke;
+import org.apache.pivot.wtk.Window.ActionMapping;
 
 import orpg.editor.ui.MapEditorMenuBar;
 import orpg.editor.ui.MapView;
@@ -41,7 +44,7 @@ public class EditorApplication implements Application {
 		applicationFrame.setMaximized(true);
 		applicationFrame.getStyles().put("showWindowControls", false);
 		applicationFrame.open(display);
-
+		
 		// Setup the window manager
 		WindowManager windowManager = new WindowManager(applicationFrame);
 		windowManager.switchWindow(new LoginWindow(windowManager));
@@ -52,6 +55,8 @@ public class EditorApplication implements Application {
 		// TODO Auto-generated method stub
 
 	}
+	
+	
 
 	public static void main(String[] args) {
 		DesktopApplicationContext.main(EditorApplication.class, args);

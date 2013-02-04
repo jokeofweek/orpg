@@ -1,4 +1,4 @@
-package orpg.editor.data;
+package orpg.editor.data.change;
 
 import java.util.ArrayList;
 import java.util.List;

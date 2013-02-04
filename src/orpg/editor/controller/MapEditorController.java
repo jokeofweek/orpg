@@ -8,9 +8,9 @@ import java.util.List;
 import org.apache.pivot.wtk.Action;
 import org.apache.pivot.wtk.Component;
 
-import orpg.editor.data.EditorChange;
-import orpg.editor.data.EditorChangeManager;
 import orpg.editor.data.TileRange;
+import orpg.editor.data.change.EditorChange;
+import orpg.editor.data.change.EditorChangeManager;
 import orpg.shared.data.MapLayer;
 
 public class MapEditorController extends Observable implements Observer {

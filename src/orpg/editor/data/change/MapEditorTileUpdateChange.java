@@ -1,11 +1,12 @@
-package orpg.editor.data;
+package orpg.editor.data.change;
 
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
+import orpg.editor.data.TileRange;
 import orpg.shared.Constants;
 import orpg.shared.data.MapLayer;
 
-public class MapEditorTileChange implements EditorChange {
+public class MapEditorTileUpdateChange implements EditorChange {
 
 	private MapEditorController editorController;
 	private MapController mapController;
@@ -15,7 +16,7 @@ public class MapEditorTileChange implements EditorChange {
 	private int x;
 	private int y;
 
-	public MapEditorTileChange(MapEditorController editorController,
+	public MapEditorTileUpdateChange(MapEditorController editorController,
 			MapController mapController, int x, int y) {
 		this.range = new TileRange(editorController.getTileRange());
 		this.layer = editorController.getCurrentLayer();
@@ -46,22 +47,18 @@ public class MapEditorTileChange implements EditorChange {
 
 		// Here we determine how much of the tiles in our range we can actually
 		// place.
-		int endX = Math.min(mapController.getMapWidth(), startX
-				+ (editorController.getTileRange().getEndX()
-						- editorController.getTileRange().getStartX() + 1));
-		int endY = Math.min(mapController.getMapHeight(), startY
-				+ (editorController.getTileRange().getEndY()
-						- editorController.getTileRange().getStartY() + 1));
-
-		short tile = (short) (editorController.getTileRange().getStartX() + (editorController
-				.getTileRange().getStartY() * Constants.TILESET_WIDTH));
+		int endX = Math.min(mapController.getMapWidth(),
+				startX + (range.getEndX() - range.getStartX() + 1));
+		int endY = Math.min(mapController.getMapHeight(),
+				startY + (this.range.getEndY() - this.range.getStartY() + 1));
 
 		// Update the tiles
+		short tile = (short) (range.getStartX() + (range.getStartY() * Constants.TILESET_WIDTH));
 
-		for (int dY = startY; dY < endY; dY++) {
-			for (int dX = startX; dX < endX; dX++) {
-				mapController.batchUpdateTile(dX, dY, layer,
-						(short) (tile + (dX - startX)));
+		for (int dY = 0; dY < endY - startY; dY++) {
+			for (int dX = 0; dX < endX - startX; dX++) {
+				mapController.batchUpdateTile(this.x + dX, this.y + dY, layer,
+						(short) (tile + dX));
 			}
 			tile += Constants.TILESET_WIDTH;
 		}
@@ -83,18 +80,17 @@ public class MapEditorTileChange implements EditorChange {
 
 		// Here we determine how much of the tiles in our range we can actually
 		// place.
-		int endX = Math.min(mapController.getMapWidth(), startX
-				+ (editorController.getTileRange().getEndX()
-						- editorController.getTileRange().getStartX() + 1));
-		int endY = Math.min(mapController.getMapHeight(), startY
-				+ (editorController.getTileRange().getEndY()
-						- editorController.getTileRange().getStartY() + 1));
+		int endX = Math.min(mapController.getMapWidth(),
+				startX + (this.range.getEndX() - this.range.getStartX() + 1));
+		int endY = Math.min(mapController.getMapHeight(),
+				startY + (this.range.getEndY() - this.range.getStartY() + 1));
 
 		// Update the tiles, only we use the tiles from the tiles array
 		for (int dY = startY; dY < endY; dY++) {
 			for (int dX = startX; dX < endX; dX++) {
-				mapController.batchUpdateTile(dX, dY, layer,
-						this.oldTiles[dY - startY][dX - startX]);
+				mapController.batchUpdateTile(this.x + (dX - startX), this.y
+						+ (dY - startY), layer, this.oldTiles[dY - startY][dX
+						- startX]);
 			}
 		}
 
@@ -103,7 +99,7 @@ public class MapEditorTileChange implements EditorChange {
 
 	@Override
 	public boolean canUndo() {
-		return false;
+		return true;
 	}
 
 }

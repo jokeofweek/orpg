@@ -1,4 +1,4 @@
-package orpg.editor.data;
+package orpg.editor.data.change;
 
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;

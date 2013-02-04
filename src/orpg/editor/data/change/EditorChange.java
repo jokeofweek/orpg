@@ -1,4 +1,4 @@
-package orpg.editor.data;
+package orpg.editor.data.change;
 
 public interface EditorChange {
 

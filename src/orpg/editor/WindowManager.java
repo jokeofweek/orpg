@@ -44,6 +44,7 @@ public class WindowManager {
 		}
 		
 		applicationFrame.setContent(newWindow.getContent());
+		applicationFrame.requestFocus();
 		
 	}
 

@@ -196,8 +196,8 @@ public class MapEditorWindow extends BasicWindow implements Observer {
 	@Override
 	public List<ActionMapping> getActionMappings() {
 		List<ActionMapping> actionMappings = new ArrayList<ActionMapping>(2);
-		actionMappings.add(new ActionMapping(KeyStroke.decode(KeyStroke.COMMAND_ABBREVIATION + "-y"), editorController.getRedoAction()));
-		actionMappings.add(new ActionMapping(KeyStroke.decode(KeyStroke.COMMAND_ABBREVIATION + "-z"), editorController.getUndoAction()));
+		actionMappings.add(new ActionMapping(KeyStroke.decode(KeyStroke.COMMAND_ABBREVIATION + "-Y"), editorController.getRedoAction()));
+		actionMappings.add(new ActionMapping(KeyStroke.decode(KeyStroke.COMMAND_ABBREVIATION + "-Z"), editorController.getUndoAction()));
 		return actionMappings;
 	}
 	

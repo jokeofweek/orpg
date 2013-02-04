@@ -15,6 +15,7 @@ public class LoginWindow extends BasicWindow {
 
 	@Override
 	public void enter(Frame applicationFrame) {
+
 	}
 
 	@Override

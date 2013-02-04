@@ -16,8 +16,8 @@ import org.apache.pivot.wtk.ComponentMouseListener;
 import org.apache.pivot.wtk.Mouse.Button;
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
-import orpg.editor.data.MapEditorTileUpdateChange;
-import orpg.editor.data.MapEditorTileEraseChange;
+import orpg.editor.data.change.MapEditorTileEraseChange;
+import orpg.editor.data.change.MapEditorTileUpdateChange;
 import orpg.shared.Constants;
 import orpg.shared.data.MapLayer;
 
@@ -61,15 +61,14 @@ public class MapView extends Component implements Observer,
 	}
 
 	@Override
-	public boolean mouseClick(Component component, Button button, int x,
-			int y, int count) {
+	public boolean mouseClick(Component component, Button button, int x, int y,
+			int count) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean mouseDown(Component component, Button button, int x,
-			int y) {
+	public boolean mouseDown(Component component, Button button, int x, int y) {
 		if (component == this) {
 			if (button == Button.LEFT) {
 				leftDown = true;
@@ -99,17 +98,53 @@ public class MapView extends Component implements Observer,
 	public boolean mouseMove(Component component, int x, int y) {
 		if (component == this) {
 			if (leftDown) {
-				// If a left-click, then signal that we've made a change
-				editorController.getChangeManager().addChange(
-						new MapEditorTileUpdateChange(editorController,
-								mapController, x / Constants.TILE_WIDTH, y
-										/ Constants.TILE_HEIGHT));
+				// Make sure there is a change:
+				int startX = editorController.getTileRange().getStartX();
+				int startY = editorController.getTileRange().getStartY();
+				int diffX = editorController.getTileRange().getEndX() - startX
+						+ 1;
+				int diffY = editorController.getTileRange().getEndY() - startY
+						+ 1;
+				int currentTile = startX + (startY * Constants.TILESET_WIDTH);
+
+				short[][][] tiles = mapController.getMapTiles();
+				int layer = editorController.getCurrentLayer().ordinal();
+
+				boolean changed = false;
+				// Convert to positional values
+				int pX = x / Constants.TILE_WIDTH;
+				int pY = y / Constants.TILE_WIDTH;
+				// Check each x/y value
+				for (int cY = pY; cY < pY + diffY && !changed; cY++) {
+					for (int cX = pX; cX < pX + diffX; cX++) {
+						if (tiles[cY][cX][layer] != currentTile + (cX - pX)) {
+							changed = true;
+							break;
+						}
+					}
+					currentTile += Constants.TILESET_WIDTH;
+				}
+
+				// If there was a change, add it
+				if (changed) {
+
+					editorController.getChangeManager().addChange(
+							new MapEditorTileUpdateChange(editorController,
+									mapController, x / Constants.TILE_WIDTH, y
+											/ Constants.TILE_HEIGHT));
+				}
+
 			} else if (rightDown) {
-				// If a right-click, then erase the tile
-				editorController.getChangeManager().addChange(
-						new MapEditorTileEraseChange(editorController,
-								mapController, x / Constants.TILE_WIDTH, y
-										/ Constants.TILE_HEIGHT));
+				// If a right-click, then erase the tile if not already empty.
+				if (mapController.getMapTiles()[y / Constants.TILE_HEIGHT][x
+						/ Constants.TILE_WIDTH][editorController
+						.getCurrentLayer().ordinal()] != 0) {
+
+					editorController.getChangeManager().addChange(
+							new MapEditorTileEraseChange(editorController,
+									mapController, x / Constants.TILE_WIDTH, y
+											/ Constants.TILE_HEIGHT));
+				}
 			}
 			return true;
 		}
