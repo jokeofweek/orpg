@@ -1,5 +1,6 @@
 package orpg.editor.ui;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -83,14 +84,15 @@ public class MapView extends Component implements Observer,
 	}
 
 	@Override
-	public boolean mouseClick(Component component, Button button, int x, int y,
-			int count) {
+	public boolean mouseClick(Component component, Button button, int x,
+			int y, int count) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean mouseDown(Component component, Button button, int x, int y) {
+	public boolean mouseDown(Component component, Button button, int x,
+			int y) {
 		if (component == this) {
 			if (button == Button.LEFT) {
 				leftDown = true;
@@ -130,11 +132,12 @@ public class MapView extends Component implements Observer,
 				// Make sure there is a change:
 				int startX = editorController.getTileRange().getStartX();
 				int startY = editorController.getTileRange().getStartY();
-				int diffX = editorController.getTileRange().getEndX() - startX
-						+ 1;
-				int diffY = editorController.getTileRange().getEndY() - startY
-						+ 1;
-				int currentTile = startX + (startY * Constants.TILESET_WIDTH);
+				int diffX = editorController.getTileRange().getEndX()
+						- startX + 1;
+				int diffY = editorController.getTileRange().getEndY()
+						- startY + 1;
+				int currentTile = startX
+						+ (startY * Constants.TILESET_WIDTH);
 
 				short[][][] tiles = mapController.getMapTiles();
 				int layer = editorController.getCurrentLayer().ordinal();
@@ -145,11 +148,13 @@ public class MapView extends Component implements Observer,
 				int pY = y / tileHeight;
 
 				// Check each x/y value
-				for (int cY = pY; cY < Math.min(mapController.getMapHeight(),
-						pY + diffY) && !changed; cY++) {
+				for (int cY = pY; cY < Math.min(
+						mapController.getMapHeight(), pY + diffY)
+						&& !changed; cY++) {
 					for (int cX = pX; cX < Math.min(
 							mapController.getMapWidth(), pX + diffX); cX++) {
-						if (tiles[cY][cX][layer] != currentTile + (cX - pX)) {
+						if (tiles[cY][cX][layer] != currentTile
+								+ (cX - pX)) {
 							changed = true;
 							break;
 						}
@@ -161,9 +166,9 @@ public class MapView extends Component implements Observer,
 				if (changed) {
 
 					editorController.getChangeManager().addChange(
-							new MapEditorTileUpdateChange(editorController,
-									mapController, x / tileWidth, y
-											/ tileHeight));
+							new MapEditorTileUpdateChange(
+									editorController, mapController, x
+											/ tileWidth, y / tileHeight));
 				}
 
 			} else if (rightDown) {
@@ -175,8 +180,9 @@ public class MapView extends Component implements Observer,
 				}
 
 				// If a right-click, then erase the tile if not already empty.
-				if (mapController.getMapTiles()[y / tileHeight][x / tileWidth][editorController
-						.getCurrentLayer().ordinal()] != 0) {
+				if (mapController.getMapTiles()[y / tileHeight][x
+						/ tileWidth][editorController.getCurrentLayer()
+						.ordinal()] != 0) {
 
 					editorController.getChangeManager().addChange(
 							new MapEditorTileEraseChange(editorController,
@@ -220,27 +226,32 @@ public class MapView extends Component implements Observer,
 		graphics.setBackground(Color.black);
 		graphics.setColor(Color.black);
 		graphics.clearRect(0, 0, getWidth(), getHeight());
-		int dx = 0;
-		int dy = 0;
+		int dX = 0;
+		int dY = 0;
 
-		for (int y = 0; y < h; y++) {
-			dx = 0;
-			for (int x = 0; x < w; x++) {
-				for (int z = 0; z < l; z++) {
+		// Example of alphablending. Use setComposite to do per layer blending.
+		// AlphaComposite regular = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+		// AlphaComposite blended = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
+
+		for (int z = 0; z < l; z++) {
+			dY = 0;
+			for (int y = 0; y < h; y++) {
+				dX = 0;
+				for (int x = 0; x < w; x++) {
 					if (tiles[y][x][z] == 0) {
 						if (z == 0) {
-							graphics.drawImage(image, dx, dy, dx + tileWidth,
-									dy + tileHeight, 0, 0,
+							graphics.drawImage(image, dX, dY, dX
+									+ tileWidth, dY + tileHeight, 0, 0,
 									Constants.TILE_WIDTH,
 									Constants.TILE_HEIGHT, null);
 						}
 					} else {
 						graphics.drawImage(
 								image,
-								dx,
-								dy,
-								dx + tileWidth,
-								dy + tileHeight,
+								dX,
+								dY,
+								dX + tileWidth,
+								dY + tileHeight,
 								(tiles[y][x][z] % Constants.TILESET_WIDTH)
 										* Constants.TILE_WIDTH,
 								(tiles[y][x][z] / Constants.TILESET_WIDTH)
@@ -250,10 +261,11 @@ public class MapView extends Component implements Observer,
 								(1 + (tiles[y][x][z] / Constants.TILESET_WIDTH))
 										* Constants.TILE_HEIGHT, null);
 					}
+
+					dX += tileWidth;
 				}
-				dx += tileWidth;
+				dY += tileHeight;
 			}
-			dy += tileHeight;
 		}
 	}
 }
