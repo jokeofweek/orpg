@@ -111,7 +111,7 @@ public class MapEditorTileUpdateChange implements EditorChange {
 
 	@Override
 	public boolean canUndo() {
-		return false;
+		return true;
 	}
 
 }

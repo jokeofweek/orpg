@@ -44,7 +44,7 @@ public class EditorApplication implements Application {
 
 		// Setup the window manager
 		WindowManager windowManager = new WindowManager(applicationFrame);
-		windowManager.switchWindow(new LoginPanel(windowManager));
+		windowManager.switchWindow(new LoginWindow(windowManager));
 	}
 
 	@Override

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.apache.pivot.wtk.Action;
+
 public class EditorChangeManager extends Observable {
 
 	private List<EditorChange> editorChanges;
@@ -19,10 +21,10 @@ public class EditorChangeManager extends Observable {
 
 	public void addChange(EditorChange change) {
 		// We must remove everything after current change position
-		for (int i = editorChanges.size() - 1; i > nextChange; i--) {
-			editorChanges.remove(i);
+		while (editorChanges.size() > nextChange) {
+			editorChanges.remove(editorChanges.size() - 1);
 		}
-
+		
 		// Add the change
 		change.apply();
 		editorChanges.add(change);
