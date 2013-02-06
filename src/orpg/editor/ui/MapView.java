@@ -233,6 +233,9 @@ public class MapView extends JComponent implements Observer, MouseListener,
 		int y = e.getY();
 
 		if (e.getComponent() == this) {
+			if (inComponent) {
+				updateHoverPosition(e.getX(), e.getY());
+			}
 			if (leftDown) {
 				// Make sure we fit in (could be possible not to, because of
 				// scale)
@@ -306,15 +309,7 @@ public class MapView extends JComponent implements Observer, MouseListener,
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		if (inComponent) {
-			int tmpX = this.hoverOverTileX;
-			int tmpY = this.hoverOverTileY;
-
-			this.hoverOverTileX = e.getX() / tileWidth;
-			this.hoverOverTileY = e.getY() / tileHeight;
-
-			if (tmpX != hoverOverTileX || tmpY != hoverOverTileY) {
-				repaint();
-			}
+			updateHoverPosition(e.getX(), e.getY());
 		}
 	}
 
@@ -335,6 +330,18 @@ public class MapView extends JComponent implements Observer, MouseListener,
 		}
 		repaint();
 
+	}
+
+	public void updateHoverPosition(int x, int y) {
+		int tmpX = this.hoverOverTileX;
+		int tmpY = this.hoverOverTileY;
+
+		this.hoverOverTileX = x / tileWidth;
+		this.hoverOverTileY = y / tileHeight;
+
+		if (tmpX != hoverOverTileX || tmpY != hoverOverTileY) {
+			repaint();
+		}
 	}
 
 }
