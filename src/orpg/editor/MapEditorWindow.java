@@ -33,6 +33,7 @@ import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
 import orpg.editor.ui.MapView;
 import orpg.editor.ui.TilesView;
+import orpg.shared.Constants;
 import orpg.shared.Strings;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
@@ -111,7 +112,7 @@ public class MapEditorWindow extends JFrame implements Observer {
 		// Build the tiles view
 		TilesView tilesView = null;
 		try {
-			tilesView = new TilesView(editorController, ImageIO.read(new File(
+			tilesView = new TilesView(editorController, ImageIO.read(new File(Constants.CLIENT_DATA_PATH + 
 					"gfx/tiles.png").toURI().toURL()));
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
