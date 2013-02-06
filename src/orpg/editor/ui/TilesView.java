@@ -8,7 +8,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-import java.beans.Transient;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -71,7 +70,6 @@ public class TilesView extends JPanel implements MouseMotionListener,
 	}
 
 	@Override
-	@Transient
 	public Dimension getPreferredSize() {
 		return new Dimension(getWidth(), getHeight());
 	}

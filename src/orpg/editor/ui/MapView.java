@@ -8,7 +8,6 @@ import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.beans.Transient;
 import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
@@ -96,7 +95,6 @@ public class MapView extends JComponent implements Observer, MouseListener,
 	}
 	
 	@Override
-	@Transient
 	public Dimension getPreferredSize() {
 		return new Dimension(getWidth(), getHeight());
 	}
