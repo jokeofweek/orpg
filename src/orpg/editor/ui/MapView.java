@@ -38,6 +38,10 @@ public class MapView extends JComponent implements Observer, MouseListener,
 	private int tileWidth;
 	private int tileHeight;
 
+	private boolean inComponent;
+	private int hoverOverTileX;
+	private int hoverOverTileY;
+
 	public MapView(MapController controller,
 			MapEditorController editorController) {
 		this.mapController = controller;
@@ -101,6 +105,8 @@ public class MapView extends JComponent implements Observer, MouseListener,
 		// AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
 		// AlphaComposite blended =
 		// AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
+		AlphaComposite regular = AlphaComposite.getInstance(
+				AlphaComposite.SRC_OVER, 1.0f);
 
 		for (int z = 0; z < l; z++) {
 			dY = 0;
@@ -135,21 +141,48 @@ public class MapView extends JComponent implements Observer, MouseListener,
 				}
 				dY += tileHeight;
 			}
+
+			// If we are hovering over the map, render overlay after.
+			if (inComponent
+					&& z == editorController.getCurrentLayer().ordinal()) {
+				graphics.setComposite(AlphaComposite.getInstance(
+						AlphaComposite.SRC_OVER,
+						Constants.MAP_EDITOR_TILE_OVERLAY_TRANSPARENCY));
+				graphics.setColor(Color.blue);
+				// Render the entire tilerange
+				int xWide = editorController.getTileRange().getEndX()
+						- editorController.getTileRange().getStartX() + 1;
+				int yWide = editorController.getTileRange().getEndY()
+						- editorController.getTileRange().getStartY() + 1;
+				graphics.drawImage(image, hoverOverTileX * tileWidth,
+						hoverOverTileY * tileHeight, (hoverOverTileX + xWide)
+								* tileWidth, (hoverOverTileY + yWide)
+								* tileHeight, editorController.getTileRange()
+								.getStartX() * Constants.TILE_WIDTH,
+						editorController.getTileRange().getStartY()
+								* Constants.TILE_HEIGHT, (editorController
+								.getTileRange().getEndX() + 1)
+								* Constants.TILE_WIDTH, (editorController
+								.getTileRange().getEndY() + 1)
+								* Constants.TILE_HEIGHT, null);
+				graphics.setComposite(regular);
+			}
 		}
 
 		// Render grid above everything if necessary
 		if (editorController.isGridEnabled()) {
 			graphics.setComposite(AlphaComposite.getInstance(
-					AlphaComposite.SRC_OVER, Constants.MAP_EDITOR_GRID_TRANSPARENCY));
+					AlphaComposite.SRC_OVER,
+					Constants.MAP_EDITOR_GRID_TRANSPARENCY));
 			graphics.setColor(Color.gray);
+			// Render the entire tilerange
 			for (int y = 0; y < h; y++) {
 				for (int x = 0; x < w; x++) {
 					graphics.drawRect(x * tileWidth, y * tileHeight, tileWidth,
 							tileHeight);
 				}
 			}
-			graphics.setComposite(AlphaComposite.getInstance(
-					AlphaComposite.SRC_OVER, 1.0f));
+			graphics.setComposite(regular);
 		}
 
 	}
@@ -185,10 +218,13 @@ public class MapView extends JComponent implements Observer, MouseListener,
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
+		inComponent = true;
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
+		inComponent = false;
+		repaint();
 	}
 
 	@Override
@@ -269,7 +305,17 @@ public class MapView extends JComponent implements Observer, MouseListener,
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
+		if (inComponent) {
+			int tmpX = this.hoverOverTileX;
+			int tmpY = this.hoverOverTileY;
 
+			this.hoverOverTileX = e.getX() / tileWidth;
+			this.hoverOverTileY = e.getY() / tileHeight;
+
+			if (tmpX != hoverOverTileX || tmpY != hoverOverTileY) {
+				repaint();
+			}
+		}
 	}
 
 	@Override

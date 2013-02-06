@@ -9,8 +9,9 @@ public final class Constants {
 	public static final int TILESET_WIDTH = 8;
 	
 	public static final Charset CHARSET = Charset.forName("UTF-8");
-	
+
 	public static final float MAP_EDITOR_GRID_TRANSPARENCY = 0.60f;
+	public static final float MAP_EDITOR_TILE_OVERLAY_TRANSPARENCY = 0.60f;
 	
 	private Constants() {};
 	
