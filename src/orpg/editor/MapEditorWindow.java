@@ -42,7 +42,8 @@ public class MapEditorWindow extends JFrame implements Observer {
 	private MapEditorController editorController;
 	private MapController mapController;
 
-	private JCheckBoxMenuItem mapGridToggleMenuItem;
+	private JCheckBoxMenuItem gridToggleMenuItem;
+	private JCheckBoxMenuItem hoverPreviewToggleMenuItem;
 
 	public MapEditorWindow() {
 		Map map = new Map(100, 100);
@@ -206,16 +207,28 @@ public class MapEditorWindow extends JFrame implements Observer {
 				KeyEvent.CTRL_DOWN_MASK));
 		viewMenu.add(zoomOutItem);
 
-		mapGridToggleMenuItem = new JCheckBoxMenuItem("Grid",
+		gridToggleMenuItem = new JCheckBoxMenuItem("Grid",
 				editorController.isGridEnabled());
-		viewMenu.add(mapGridToggleMenuItem);
-		mapGridToggleMenuItem.addItemListener(new ItemListener() {
+		viewMenu.add(gridToggleMenuItem);
+		gridToggleMenuItem.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				editorController.setGridEnabled(mapGridToggleMenuItem
+				editorController.setGridEnabled(gridToggleMenuItem
 						.getState());
 			}
 		});
+		
+		hoverPreviewToggleMenuItem = new JCheckBoxMenuItem("Mouse Preview",
+				editorController.isHoverPreviewEnabled());
+		viewMenu.add(hoverPreviewToggleMenuItem);
+		hoverPreviewToggleMenuItem.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				editorController.setHoverPreviewEnabled(hoverPreviewToggleMenuItem
+						.getState());
+			}
+		});
+
 
 		this.setJMenuBar(menuBar);
 
@@ -226,8 +239,9 @@ public class MapEditorWindow extends JFrame implements Observer {
 		if (o == editorController) {
 			this.repaint();
 
-			// Update grid in case it was from somewhere else.
-			editorController.setGridEnabled(mapGridToggleMenuItem.getState());
+			// Update toggle menu items.
+			gridToggleMenuItem.setState(editorController.isGridEnabled());
+			hoverPreviewToggleMenuItem.setState(editorController.isHoverPreviewEnabled());
 		}
 	}
 }

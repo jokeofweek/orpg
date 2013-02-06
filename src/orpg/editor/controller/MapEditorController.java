@@ -16,12 +16,14 @@ public class MapEditorController extends Observable implements Observer {
 	private MapLayer currentLayer;
 	private TileRange tileRange;
 	private EditorChangeManager changeManager;
-	private boolean gridEnabled;
 
 	private Action undoAction;
 	private Action redoAction;
 	private Action zoomInAction;
 	private Action zoomOutAction;
+
+	private boolean gridEnabled;
+	private boolean hoverPreviewEnabled;
 
 	private static final int SCALE_FACTORS[] = new int[] { 1, 2, 4, 8 };
 	private int scaleFactorPosition;
@@ -31,6 +33,10 @@ public class MapEditorController extends Observable implements Observer {
 		this.tileRange = new TileRange();
 		this.changeManager = new EditorChangeManager();
 		this.changeManager.addObserver(this);
+
+		this.gridEnabled = false;
+		this.hoverPreviewEnabled = true;
+
 		setupActions();
 	}
 
@@ -171,6 +177,18 @@ public class MapEditorController extends Observable implements Observer {
 			this.setChanged();
 		}
 		this.gridEnabled = gridEnabled;
+		this.notifyObservers();
+	}
+
+	public boolean isHoverPreviewEnabled() {
+		return hoverPreviewEnabled;
+	}
+
+	public void setHoverPreviewEnabled(boolean hoverPreviewEnabled) {
+		if (hoverPreviewEnabled != this.hoverPreviewEnabled) {
+			this.setChanged();
+		}
+		this.hoverPreviewEnabled = hoverPreviewEnabled;
 		this.notifyObservers();
 	}
 }

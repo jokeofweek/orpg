@@ -144,6 +144,7 @@ public class MapView extends JComponent implements Observer, MouseListener,
 
 			// If we are hovering over the map, render overlay after.
 			if (inComponent
+					&& editorController.isHoverPreviewEnabled()
 					&& z == editorController.getCurrentLayer().ordinal()) {
 				graphics.setComposite(AlphaComposite.getInstance(
 						AlphaComposite.SRC_OVER,
