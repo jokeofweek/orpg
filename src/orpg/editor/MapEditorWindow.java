@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -41,7 +42,7 @@ public class MapEditorWindow extends JFrame implements Observer {
 	private MapEditorController editorController;
 	private MapController mapController;
 
-	// private MenuBar menuBar;
+	private JCheckBoxMenuItem mapGridToggleMenuItem;
 
 	public MapEditorWindow() {
 		Map map = new Map(100, 100);
@@ -56,7 +57,7 @@ public class MapEditorWindow extends JFrame implements Observer {
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
-		this.setExtendedState(MAXIMIZED_BOTH);
+		this.setSize(800, 600);
 		this.requestFocusInWindow();
 	}
 
@@ -103,7 +104,7 @@ public class MapEditorWindow extends JFrame implements Observer {
 		JComponent layersPane = getLayersPane();
 		layersPane.setAlignmentX(LEFT_ALIGNMENT);
 		layerOptionsPane.add(layersPane);
-		
+
 		tilesTabPanel.add(layerOptionsPane, BorderLayout.NORTH);
 
 		// Build the tiles view
@@ -167,66 +168,66 @@ public class MapEditorWindow extends JFrame implements Observer {
 
 	private void setupMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
-		
+
 		// File menu
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		menuBar.add(fileMenu);
-		
+
 		// Edit menu
 		JMenu editMenu = new JMenu("Edit");
 		editMenu.setMnemonic(KeyEvent.VK_E);
 		menuBar.add(editMenu);
 
 		JMenuItem undoItem = new JMenuItem(editorController.getUndoAction());
-		undoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK));
+		undoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,
+				KeyEvent.CTRL_DOWN_MASK));
 		editMenu.add(undoItem);
-		
+
 		JMenuItem redoItem = new JMenuItem(editorController.getRedoAction());
-		redoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK));
+		redoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y,
+				KeyEvent.CTRL_DOWN_MASK));
 		editMenu.add(redoItem);
-		
+
 		// View menu
 		JMenu viewMenu = new JMenu("View");
 		viewMenu.setMnemonic(KeyEvent.VK_V);
 		menuBar.add(viewMenu);
-		
+
 		JMenuItem zoomInItem = new JMenuItem(editorController.getZoomInAction());
-		zoomInItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, KeyEvent.CTRL_DOWN_MASK));
-		
+		zoomInItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS,
+				KeyEvent.CTRL_DOWN_MASK));
+
 		viewMenu.add(zoomInItem);
-		
-		JMenuItem zoomOutItem = new JMenuItem(editorController.getZoomOutAction());
-		zoomOutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, KeyEvent.CTRL_DOWN_MASK));
+
+		JMenuItem zoomOutItem = new JMenuItem(
+				editorController.getZoomOutAction());
+		zoomOutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS,
+				KeyEvent.CTRL_DOWN_MASK));
 		viewMenu.add(zoomOutItem);
 
-		
-		
+		mapGridToggleMenuItem = new JCheckBoxMenuItem("Grid",
+				editorController.isGridEnabled());
+		viewMenu.add(mapGridToggleMenuItem);
+		mapGridToggleMenuItem.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				editorController.setGridEnabled(mapGridToggleMenuItem
+						.getState());
+			}
+		});
+
 		this.setJMenuBar(menuBar);
-		
+
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o == editorController) {
 			this.repaint();
+
+			// Update grid in case it was from somewhere else.
+			editorController.setGridEnabled(mapGridToggleMenuItem.getState());
 		}
 	}
-
-	/*
-	 * @Override public List<ActionMapping> getActionMappings() {
-	 * List<ActionMapping> actionMappings = new ArrayList<ActionMapping>(4);
-	 * actionMappings.add(new ActionMapping(KeyStroke
-	 * .decode(KeyStroke.COMMAND_ABBREVIATION + "-Y"),
-	 * editorController.getRedoAction())); actionMappings.add(new
-	 * ActionMapping(KeyStroke .decode(KeyStroke.COMMAND_ABBREVIATION + "-Z"),
-	 * editorController.getUndoAction())); actionMappings.add(new
-	 * ActionMapping(KeyStroke .decode(KeyStroke.COMMAND_ABBREVIATION +
-	 * "-EQUALS"), editorController.getZoomInAction())); actionMappings.add(new
-	 * ActionMapping(KeyStroke .decode(KeyStroke.COMMAND_ABBREVIATION +
-	 * "-MINUS"), editorController.getZoomOutAction()));
-	 * 
-	 * return actionMappings; }
-	 */
-
 }

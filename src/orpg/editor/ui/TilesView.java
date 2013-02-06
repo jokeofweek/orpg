@@ -25,6 +25,8 @@ public class TilesView extends JPanel implements MouseMotionListener,
 	private boolean leftDown;
 	private boolean rightDown;
 	private boolean inMultiSelect;
+	private int multiSelectX;
+	private int multiSelectY;
 	private MapEditorController editorController;
 
 	public TilesView(MapEditorController editorController, BufferedImage image) {
@@ -108,9 +110,6 @@ public class TilesView extends JPanel implements MouseMotionListener,
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		leftDown = false;
-		rightDown = false;
-		inMultiSelect = false;
 	}
 
 	@Override
@@ -127,19 +126,36 @@ public class TilesView extends JPanel implements MouseMotionListener,
 				repaint();
 			} else if (rightDown) {
 				if (inMultiSelect) {
-					// Essentially we only update our tile range if we move
-					// right or
-					// down.
-					int newX = x / Constants.TILE_WIDTH;
-					int newY = y / Constants.TILE_HEIGHT;
+					// Update tile range based on quadrant
+					int newX = Math
+							.max(0,
+									Math.min(
+											x / Constants.TILE_WIDTH,
+											(this.image.getWidth() / Constants.TILE_WIDTH) - 1));
+					int newY = Math
+							.max(0,
+									Math.min(
+											y / Constants.TILE_HEIGHT,
+											(this.image.getHeight() / Constants.TILE_HEIGHT) - 1));
 
-					if (newX >= editorController.getTileRange().getStartX()
-							&& newY >= editorController.getTileRange()
-									.getStartY()) {
-						editorController.updateTileRange(editorController
-								.getTileRange().getStartX(), editorController
-								.getTileRange().getStartY(), newX, newY);
+					if (newX < multiSelectX) {
+						if (newY < multiSelectY) {
+							editorController.updateTileRange(newX, newY,
+									multiSelectX, multiSelectY);
+						} else {
+							editorController.updateTileRange(newX,
+									multiSelectY, multiSelectX, newY);
+						}
+					} else {
+						if (newY < multiSelectY) {
+							editorController.updateTileRange(multiSelectX,
+									newY, newX, multiSelectY);
+						} else {
+							editorController.updateTileRange(multiSelectX,
+									multiSelectY, newX, newY);
+						}
 					}
+
 				} else {
 					// If it is the first rightclick, then just update the
 					// starting
@@ -150,6 +166,8 @@ public class TilesView extends JPanel implements MouseMotionListener,
 									/ Constants.TILE_WIDTH, y
 									/ Constants.TILE_HEIGHT);
 					inMultiSelect = true;
+					multiSelectX = x / Constants.TILE_WIDTH;
+					multiSelectY = y / Constants.TILE_HEIGHT;
 				}
 			}
 		}

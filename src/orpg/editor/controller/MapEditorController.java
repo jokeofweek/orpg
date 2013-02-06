@@ -16,6 +16,8 @@ public class MapEditorController extends Observable implements Observer {
 	private MapLayer currentLayer;
 	private TileRange tileRange;
 	private EditorChangeManager changeManager;
+	private boolean gridEnabled;
+
 	private Action undoAction;
 	private Action redoAction;
 	private Action zoomInAction;
@@ -29,7 +31,6 @@ public class MapEditorController extends Observable implements Observer {
 		this.tileRange = new TileRange();
 		this.changeManager = new EditorChangeManager();
 		this.changeManager.addObserver(this);
-
 		setupActions();
 	}
 
@@ -70,9 +71,9 @@ public class MapEditorController extends Observable implements Observer {
 			public void actionPerformed(ActionEvent e) {
 				getChangeManager().undo();
 			}
-			
+
 		};
-		
+
 		this.undoAction.setEnabled(changeManager.canUndo());
 
 		this.redoAction = new AbstractAction("Redo") {
@@ -158,6 +159,18 @@ public class MapEditorController extends Observable implements Observer {
 		zoomOutAction.setEnabled(canZoomOut());
 		zoomInAction.setEnabled(canZoomIn());
 		this.setChanged();
+		this.notifyObservers();
+	}
+
+	public boolean isGridEnabled() {
+		return gridEnabled;
+	}
+
+	public void setGridEnabled(boolean gridEnabled) {
+		if (gridEnabled != this.gridEnabled) {
+			this.setChanged();
+		}
+		this.gridEnabled = gridEnabled;
 		this.notifyObservers();
 	}
 }
