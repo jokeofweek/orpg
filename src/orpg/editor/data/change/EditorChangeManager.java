@@ -3,9 +3,7 @@ package orpg.editor.data.change;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
-import java.util.Observer;
 
-import org.apache.pivot.wtk.Action;
 
 public class EditorChangeManager extends Observable {
 

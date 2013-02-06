@@ -4,7 +4,6 @@ import orpg.server.ServerSession;
 import orpg.shared.Priority;
 import orpg.shared.net.ClientPacketType;
 import orpg.shared.net.InputByteBuffer;
-import orpg.shared.net.OutputByteBuffer;
 
 public class ServerReceivedPacket implements Comparable<ServerReceivedPacket> {
 

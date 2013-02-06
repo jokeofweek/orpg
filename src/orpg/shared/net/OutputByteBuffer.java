@@ -1,6 +1,5 @@
 package orpg.shared.net;
 
-import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 
 import orpg.shared.Constants;

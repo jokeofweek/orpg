@@ -1,21 +1,23 @@
 package orpg.editor.ui;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.beans.Transient;
 import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.imageio.ImageIO;
+import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 
-import org.apache.pivot.wtk.Component;
-import org.apache.pivot.wtk.ComponentMouseButtonListener;
-import org.apache.pivot.wtk.ComponentMouseListener;
-import org.apache.pivot.wtk.ScrollPane;
-import org.apache.pivot.wtk.Mouse.Button;
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
 import orpg.editor.data.change.MapEditorTileEraseChange;
@@ -23,8 +25,8 @@ import orpg.editor.data.change.MapEditorTileUpdateChange;
 import orpg.shared.Constants;
 import orpg.shared.data.MapLayer;
 
-public class MapView extends Component implements Observer,
-		ComponentMouseButtonListener, ComponentMouseListener {
+public class MapView extends JComponent implements Observer, MouseListener,
+		MouseMotionListener {
 
 	private MapController mapController;
 	private MapEditorController editorController;
@@ -50,15 +52,14 @@ public class MapView extends Component implements Observer,
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
-		installSkin(MapView.class);
 
 		this.tileWidth = Constants.TILE_WIDTH
 				/ editorController.getScaleFactor();
 		this.tileHeight = Constants.TILE_HEIGHT
 				/ editorController.getScaleFactor();
 
-		this.getComponentMouseListeners().add(this);
-		this.getComponentMouseButtonListeners().add(this);
+		this.addMouseListener(this);
+		this.addMouseMotionListener(this);
 	}
 
 	public MapController getMapController() {
@@ -77,132 +78,10 @@ public class MapView extends Component implements Observer,
 		// If we zoomed in / out, then we must invalidate everyhing first
 		// else just repaint
 		if (tileHeight != oldTileHeight || tileWidth != oldTileWidth) {
-			invalidate();
+			revalidate();
+			getParent().getParent().repaint();
 		}
 		repaint();
-
-	}
-
-	@Override
-	public boolean mouseClick(Component component, Button button, int x,
-			int y, int count) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean mouseDown(Component component, Button button, int x,
-			int y) {
-		if (component == this) {
-			if (button == Button.LEFT) {
-				leftDown = true;
-			} else if (button == Button.RIGHT) {
-				rightDown = true;
-			}
-			mouseMove(component, x, y);
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public boolean mouseUp(Component component, Button button, int x, int y) {
-		if (component == this) {
-			if (button == Button.LEFT) {
-				leftDown = false;
-			} else if (button == Button.RIGHT) {
-				rightDown = false;
-			}
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public boolean mouseMove(Component component, int x, int y) {
-		if (component == this) {
-			if (leftDown) {
-				// Make sure we fit in (could be possible not to, because of
-				// scale)
-				if (x / tileWidth >= mapController.getMapWidth()
-						|| y / tileHeight >= mapController.getMapHeight()) {
-					return false;
-				}
-
-				// Make sure there is a change:
-				int startX = editorController.getTileRange().getStartX();
-				int startY = editorController.getTileRange().getStartY();
-				int diffX = editorController.getTileRange().getEndX()
-						- startX + 1;
-				int diffY = editorController.getTileRange().getEndY()
-						- startY + 1;
-				int currentTile = startX
-						+ (startY * Constants.TILESET_WIDTH);
-
-				short[][][] tiles = mapController.getMapTiles();
-				int layer = editorController.getCurrentLayer().ordinal();
-
-				boolean changed = false;
-				// Convert to positional values
-				int pX = x / tileWidth;
-				int pY = y / tileHeight;
-
-				// Check each x/y value
-				for (int cY = pY; cY < Math.min(
-						mapController.getMapHeight(), pY + diffY)
-						&& !changed; cY++) {
-					for (int cX = pX; cX < Math.min(
-							mapController.getMapWidth(), pX + diffX); cX++) {
-						if (tiles[cY][cX][layer] != currentTile
-								+ (cX - pX)) {
-							changed = true;
-							break;
-						}
-					}
-					currentTile += Constants.TILESET_WIDTH;
-				}
-
-				// If there was a change, add it
-				if (changed) {
-
-					editorController.getChangeManager().addChange(
-							new MapEditorTileUpdateChange(
-									editorController, mapController, x
-											/ tileWidth, y / tileHeight));
-				}
-
-			} else if (rightDown) {
-				// Make sure we fit in (could be possible not to, because of
-				// scale)
-				if (x / tileWidth >= mapController.getMapWidth()
-						|| y / tileHeight >= mapController.getMapHeight()) {
-					return false;
-				}
-
-				// If a right-click, then erase the tile if not already empty.
-				if (mapController.getMapTiles()[y / tileHeight][x
-						/ tileWidth][editorController.getCurrentLayer()
-						.ordinal()] != 0) {
-
-					editorController.getChangeManager().addChange(
-							new MapEditorTileEraseChange(editorController,
-									mapController, x / tileWidth, y
-											/ tileHeight));
-				}
-			}
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public void mouseOut(Component component) {
-		leftDown = false;
-		rightDown = false;
-	}
-
-	@Override
-	public void mouseOver(Component component) {
 
 	}
 
@@ -215,9 +94,17 @@ public class MapView extends Component implements Observer,
 	public int getHeight() {
 		return mapController.getMapHeight() * tileHeight;
 	}
+	
+	@Override
+	@Transient
+	public Dimension getPreferredSize() {
+		return new Dimension(getWidth(), getHeight());
+	}
 
 	@Override
-	public void paint(Graphics2D graphics) {
+	public void paint(Graphics g) {
+		super.paint(g);
+		Graphics2D graphics = (Graphics2D) g;
 		int h = mapController.getMapHeight();
 		int w = mapController.getMapWidth();
 		int l = MapLayer.values().length;
@@ -230,8 +117,10 @@ public class MapView extends Component implements Observer,
 		int dY = 0;
 
 		// Example of alphablending. Use setComposite to do per layer blending.
-		// AlphaComposite regular = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
-		// AlphaComposite blended = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
+		// AlphaComposite regular =
+		// AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+		// AlphaComposite blended =
+		// AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
 
 		for (int z = 0; z < l; z++) {
 			dY = 0;
@@ -240,8 +129,8 @@ public class MapView extends Component implements Observer,
 				for (int x = 0; x < w; x++) {
 					if (tiles[y][x][z] == 0) {
 						if (z == 0) {
-							graphics.drawImage(image, dX, dY, dX
-									+ tileWidth, dY + tileHeight, 0, 0,
+							graphics.drawImage(image, dX, dY, dX + tileWidth,
+									dY + tileHeight, 0, 0,
 									Constants.TILE_WIDTH,
 									Constants.TILE_HEIGHT, null);
 						}
@@ -267,5 +156,125 @@ public class MapView extends Component implements Observer,
 				dY += tileHeight;
 			}
 		}
+
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		if (e.getComponent() == this) {
+			if (SwingUtilities.isLeftMouseButton(e)) {
+				leftDown = true;
+			} else if (SwingUtilities.isRightMouseButton(e)) {
+				rightDown = true;
+			}
+			mouseDragged(e);
+			e.consume();
+		}
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+
+		if (e.getComponent() == this) {
+			if (SwingUtilities.isLeftMouseButton(e)) {
+				leftDown = false;
+			} else if (SwingUtilities.isRightMouseButton(e)) {
+				rightDown = false;
+			}
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		leftDown = SwingUtilities.isLeftMouseButton(e);
+		rightDown =  SwingUtilities.isRightMouseButton(e);
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {int x = e.getX();
+	int y = e.getY();
+
+	if (e.getComponent() == this) {
+		if (leftDown) {
+			// Make sure we fit in (could be possible not to, because of
+			// scale)
+			if (x / tileWidth >= mapController.getMapWidth()
+					|| y / tileHeight >= mapController.getMapHeight()) {
+				return;
+			}
+
+			// Make sure there is a change:
+			int startX = editorController.getTileRange().getStartX();
+			int startY = editorController.getTileRange().getStartY();
+			int diffX = editorController.getTileRange().getEndX() - startX
+					+ 1;
+			int diffY = editorController.getTileRange().getEndY() - startY
+					+ 1;
+			int currentTile = startX + (startY * Constants.TILESET_WIDTH);
+
+			short[][][] tiles = mapController.getMapTiles();
+			int layer = editorController.getCurrentLayer().ordinal();
+
+			boolean changed = false;
+			// Convert to positional values
+			int pX = x / tileWidth;
+			int pY = y / tileHeight;
+
+			// Check each x/y value
+			for (int cY = pY; cY < Math.min(mapController.getMapHeight(),
+					pY + diffY) && !changed; cY++) {
+				for (int cX = pX; cX < Math.min(
+						mapController.getMapWidth(), pX + diffX); cX++) {
+					if (tiles[cY][cX][layer] != currentTile + (cX - pX)) {
+						changed = true;
+						break;
+					}
+				}
+				currentTile += Constants.TILESET_WIDTH;
+			}
+
+			// If there was a change, add it
+			if (changed) {
+
+				editorController.getChangeManager().addChange(
+						new MapEditorTileUpdateChange(editorController,
+								mapController, x / tileWidth, y
+										/ tileHeight));
+			}
+
+		} else if (rightDown) {
+			// Make sure we fit in (could be possible not to, because of
+			// scale)
+			if (x / tileWidth >= mapController.getMapWidth()
+					|| y / tileHeight >= mapController.getMapHeight()) {
+				return;
+			}
+
+			// If a right-click, then erase the tile if not already empty.
+			if (mapController.getMapTiles()[y / tileHeight][x / tileWidth][editorController
+					.getCurrentLayer().ordinal()] != 0) {
+
+				editorController.getChangeManager().addChange(
+						new MapEditorTileEraseChange(editorController,
+								mapController, x / tileWidth, y
+										/ tileHeight));
+			}
+		}
+	}
+
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		
 	}
 }

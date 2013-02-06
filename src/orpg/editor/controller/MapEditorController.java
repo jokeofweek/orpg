@@ -1,15 +1,13 @@
 package orpg.editor.controller;
 
+import java.awt.event.ActionEvent;
 import java.util.Observable;
 import java.util.Observer;
 
-import java.util.List;
-
-import org.apache.pivot.wtk.Action;
-import org.apache.pivot.wtk.Component;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 
 import orpg.editor.data.TileRange;
-import orpg.editor.data.change.EditorChange;
 import orpg.editor.data.change.EditorChangeManager;
 import orpg.shared.data.MapLayer;
 
@@ -64,34 +62,38 @@ public class MapEditorController extends Observable implements Observer {
 		return changeManager;
 	}
 
+	@SuppressWarnings({ "serial" })
 	private void setupActions() {
-		this.undoAction = new Action() {
+
+		this.undoAction = new AbstractAction("Undo") {
 			@Override
-			public void perform(Component source) {
+			public void actionPerformed(ActionEvent e) {
 				getChangeManager().undo();
 			}
+			
 		};
+		
 		this.undoAction.setEnabled(changeManager.canUndo());
 
-		this.redoAction = new Action() {
+		this.redoAction = new AbstractAction("Redo") {
 			@Override
-			public void perform(Component source) {
+			public void actionPerformed(ActionEvent e) {
 				getChangeManager().redo();
 			}
 		};
 		this.redoAction.setEnabled(changeManager.canRedo());
 
-		this.zoomInAction = new Action() {
+		this.zoomInAction = new AbstractAction("Zoom In") {
 			@Override
-			public void perform(Component source) {
+			public void actionPerformed(ActionEvent e) {
 				zoomIn();
 			}
 		};
 		this.zoomInAction.setEnabled(canZoomIn());
 
-		this.zoomOutAction = new Action() {
+		this.zoomOutAction = new AbstractAction("Zoom Out") {
 			@Override
-			public void perform(Component source) {
+			public void actionPerformed(ActionEvent e) {
 				zoomOut();
 			}
 		};

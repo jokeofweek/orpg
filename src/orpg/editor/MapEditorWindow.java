@@ -1,219 +1,232 @@
 package orpg.editor;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.apache.pivot.util.concurrent.TaskExecutionException;
-import org.apache.pivot.wtk.BoxPane;
-import org.apache.pivot.wtk.Button;
-import org.apache.pivot.wtk.ButtonGroup;
-import org.apache.pivot.wtk.ButtonGroupListener;
-import org.apache.pivot.wtk.Component;
-import org.apache.pivot.wtk.FlowPane;
-import org.apache.pivot.wtk.Frame;
-import org.apache.pivot.wtk.Keyboard.KeyStroke;
-import org.apache.pivot.wtk.Label;
-import org.apache.pivot.wtk.MenuBar;
-import org.apache.pivot.wtk.Orientation;
-import org.apache.pivot.wtk.RadioButton;
-import org.apache.pivot.wtk.ScrollPane;
-import org.apache.pivot.wtk.ScrollPane.ScrollBarPolicy;
-import org.apache.pivot.wtk.TabPane;
-import org.apache.pivot.wtk.TablePane;
-import org.apache.pivot.wtk.TablePane.Column;
-import org.apache.pivot.wtk.TablePane.Row;
-import org.apache.pivot.wtk.Window.ActionMapping;
-import org.apache.pivot.wtk.media.Image;
-
-import java.awt.Color;
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
 
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
-import orpg.editor.ui.MapEditorMenuBar;
 import orpg.editor.ui.MapView;
 import orpg.editor.ui.TilesView;
+import orpg.shared.Strings;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
 
-public class MapEditorWindow extends BasicWindow implements Observer {
+public class MapEditorWindow extends JFrame implements Observer {
 
 	private MapEditorController editorController;
 	private MapController mapController;
-	private TablePane content;
-	private MenuBar menuBar;
 
-	public MapEditorWindow(WindowManager windowManager) {
-		super(windowManager);
+	// private MenuBar menuBar;
+
+	public MapEditorWindow() {
 		Map map = new Map(100, 100);
 
 		this.editorController = new MapEditorController();
 		this.mapController = new MapController(map);
 
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setTitle(Strings.ENGINE_NAME);
 		this.setupContent();
 		this.setupMenuBar();
+		this.pack();
+		this.setLocationRelativeTo(null);
+		this.setVisible(true);
+		this.setExtendedState(MAXIMIZED_BOTH);
+		this.requestFocusInWindow();
 	}
 
 	private void setupContent() {
-		content = new TablePane();
-		content.getColumns().add(new Column(-1));
-		content.getColumns().add(new Column(1, true));
+		JPanel contentPane = new JPanel(new BorderLayout());
 
-		Row row = new Row(1, true);
-		row.add(getTabPane());
+		JPanel mapContainer = new JPanel(new BorderLayout());
+		contentPane.add(getTabPane(), BorderLayout.WEST);
 
 		MapView mapView = new MapView(mapController, editorController);
-		ScrollPane mapScrollPane = new ScrollPane(ScrollBarPolicy.AUTO,
-				ScrollBarPolicy.AUTO);
+		JScrollPane mapScrollPane = new JScrollPane(mapView,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		mapScrollPane.getHorizontalScrollBar().setUnitIncrement(16);
+		mapScrollPane.getHorizontalScrollBar().setAutoscrolls(true);
+		mapScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+		mapScrollPane.setBackground(Color.black);
+		mapContainer.add(mapScrollPane);
+		mapContainer.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-		mapScrollPane.setView(mapView);
-		mapScrollPane.getStyles().put("backgroundColor", Color.black);
-		row.add(mapScrollPane);
-
-		content.getRows().add(row);
-		content.getStyles().put("padding", 5);
-		content.getStyles().put("horizontalSpacing", 5);
+		contentPane.add(mapContainer);
+		this.add(contentPane);
 	}
 
-	private Component getTabPane() {
-		TabPane tabPane = new TabPane();
+	private JComponent getTabPane() {
 
-		// Set up the title tab table
-		TablePane tilesTabTable = new TablePane();
-		tilesTabTable.getColumns().add(new Column(1, true));
-		tilesTabTable.getStyles().put("verticalSpacing", 10);
-		tilesTabTable.getStyles().put("padding", 5);
+		JTabbedPane tabPane = new JTabbedPane();
+
+		// Set up the tile tab panel
+		JPanel tilesTabPanel = new JPanel(new BorderLayout());
 
 		// Build the layer header
-		BoxPane layerOptionsPane = new BoxPane(Orientation.VERTICAL);
-		Label layersHeaderLabel = new Label("Layer:");
-		layersHeaderLabel.getStyles().put(
-				"font",
-				((Font) layersHeaderLabel.getStyles().get("font"))
-						.deriveFont(Font.BOLD));
+		JPanel layerOptionsPane = new JPanel();
+		layerOptionsPane.setLayout(new BoxLayout(layerOptionsPane,
+				BoxLayout.PAGE_AXIS));
+
+		JLabel layersHeaderLabel = new JLabel("Layer:");
+		layersHeaderLabel.setAlignmentX(LEFT_ALIGNMENT);
+		layersHeaderLabel.setFont(layersHeaderLabel.getFont().deriveFont(
+				Font.BOLD));
 		layerOptionsPane.add(layersHeaderLabel);
 
 		// Build layer options
-
-		layerOptionsPane.add(getLayersPane());
-
-		Row row = new Row(-1);
-		row.add(layerOptionsPane);
-		tilesTabTable.getRows().add(row);
+		JComponent layersPane = getLayersPane();
+		layersPane.setAlignmentX(LEFT_ALIGNMENT);
+		layerOptionsPane.add(layersPane);
+		
+		tilesTabPanel.add(layerOptionsPane, BorderLayout.NORTH);
 
 		// Build the tiles view
 		TilesView tilesView = null;
 		try {
-			tilesView = new TilesView(editorController, Image.load(new File(
+			tilesView = new TilesView(editorController, ImageIO.read(new File(
 					"gfx/tiles.png").toURI().toURL()));
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 			System.exit(1);
-		} catch (TaskExecutionException e) {
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.exit(1);
 		}
-		ScrollPane tilesScrollPane = new ScrollPane(ScrollBarPolicy.ALWAYS,
-				ScrollBarPolicy.ALWAYS);
-		tilesScrollPane.setView(tilesView);
 
-		row = new Row(1, true);
-		row.add(tilesScrollPane);
-		tilesTabTable.getRows().add(row);
+		JScrollPane tilesScrollPane = new JScrollPane(tilesView,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-		tabPane.getTabs().add(tilesTabTable);
+		tilesTabPanel.add(tilesScrollPane);
+		tabPane.addTab("Tiles", tilesTabPanel);
+		tabPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 0));
 
 		return tabPane;
 	}
 
-	public Component getLayersPane() {
-		FlowPane layersPane = new FlowPane();
-		ButtonGroup layerGroup = new ButtonGroup();
-		RadioButton layerButton;
+	public JComponent getLayersPane() {
+		JPanel layersPanel = new JPanel();
+
+		ItemListener layerItemListener = new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				JRadioButton button = (JRadioButton) e.getSource();
+				if (button.isSelected()) {
+					editorController.setCurrentLayer(MapLayer.values()[Integer
+							.parseInt(button.getActionCommand())]);
+				}
+			}
+		};
+
+		// Setup a radio button for each layer
+		final ButtonGroup layerGroup = new ButtonGroup();
+		JRadioButton layerButton;
 		for (MapLayer layer : MapLayer.values()) {
-			layerButton = new RadioButton(layerGroup, layer.getName());
-			layerButton.setButtonDataKey(layer.ordinal() + "");
+			layerButton = new JRadioButton(layer.getName());
+			layerButton.setActionCommand(layer.ordinal() + "");
+			layerButton.addItemListener(layerItemListener);
+			layerGroup.add(layerButton);
 
 			// Needed to select the first layer
 			if (layer == editorController.getCurrentLayer()) {
-				layerGroup.setSelection(layerButton);
+				layerGroup.setSelected(layerButton.getModel(), true);
 			}
 
-			layersPane.add(layerButton);
+			layersPanel.add(layerButton);
 		}
 
-		layerGroup.getButtonGroupListeners().add(new ButtonGroupListener() {
-
-			@Override
-			public void selectionChanged(ButtonGroup buttonGroup,
-					Button previousSelection) {
-				editorController.setCurrentLayer(MapLayer.values()[Integer
-						.parseInt(buttonGroup.getSelection().getButtonDataKey())]);
-			}
-
-			@Override
-			public void buttonRemoved(ButtonGroup buttonGroup, Button button) {
-			}
-
-			@Override
-			public void buttonAdded(ButtonGroup buttonGroup, Button button) {
-			}
-		});
-
-		return layersPane;
+		return layersPanel;
 	}
 
 	private void setupMenuBar() {
-		this.menuBar = new MapEditorMenuBar(editorController, mapController);
+		JMenuBar menuBar = new JMenuBar();
+		
+		// File menu
+		JMenu fileMenu = new JMenu("File");
+		fileMenu.setMnemonic(KeyEvent.VK_F);
+		menuBar.add(fileMenu);
+		
+		// Edit menu
+		JMenu editMenu = new JMenu("Edit");
+		editMenu.setMnemonic(KeyEvent.VK_E);
+		menuBar.add(editMenu);
+
+		JMenuItem undoItem = new JMenuItem(editorController.getUndoAction());
+		undoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK));
+		editMenu.add(undoItem);
+		
+		JMenuItem redoItem = new JMenuItem(editorController.getRedoAction());
+		redoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK));
+		editMenu.add(redoItem);
+		
+		// View menu
+		JMenu viewMenu = new JMenu("View");
+		viewMenu.setMnemonic(KeyEvent.VK_V);
+		menuBar.add(viewMenu);
+		
+		JMenuItem zoomInItem = new JMenuItem(editorController.getZoomInAction());
+		zoomInItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, KeyEvent.CTRL_DOWN_MASK));
+		
+		viewMenu.add(zoomInItem);
+		
+		JMenuItem zoomOutItem = new JMenuItem(editorController.getZoomOutAction());
+		zoomOutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, KeyEvent.CTRL_DOWN_MASK));
+		viewMenu.add(zoomOutItem);
+
+		
+		
+		this.setJMenuBar(menuBar);
+		
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o == editorController) {
-			content.repaint();
+			this.repaint();
 		}
 	}
 
-	@Override
-	public void enter(Frame applicationFrame) {
-	}
-
-	@Override
-	public Component getContent() {
-		return content;
-	}
-
-	@Override
-	public MenuBar getMenuBar() {
-		return this.menuBar;
-	}
-
-	@Override
-	public List<ActionMapping> getActionMappings() {
-		List<ActionMapping> actionMappings = new ArrayList<ActionMapping>(4);
-		actionMappings.add(new ActionMapping(KeyStroke
-				.decode(KeyStroke.COMMAND_ABBREVIATION + "-Y"),
-				editorController.getRedoAction()));
-		actionMappings.add(new ActionMapping(KeyStroke
-				.decode(KeyStroke.COMMAND_ABBREVIATION + "-Z"),
-				editorController.getUndoAction()));
-		actionMappings.add(new ActionMapping(KeyStroke
-				.decode(KeyStroke.COMMAND_ABBREVIATION + "-EQUALS"),
-				editorController.getZoomInAction()));
-		actionMappings.add(new ActionMapping(KeyStroke
-				.decode(KeyStroke.COMMAND_ABBREVIATION + "-MINUS"),
-				editorController.getZoomOutAction()));
-
-		return actionMappings;
-	}
-
-	@Override
-	public void exit(Frame applicationFrame) {
-	}
+	/*
+	 * @Override public List<ActionMapping> getActionMappings() {
+	 * List<ActionMapping> actionMappings = new ArrayList<ActionMapping>(4);
+	 * actionMappings.add(new ActionMapping(KeyStroke
+	 * .decode(KeyStroke.COMMAND_ABBREVIATION + "-Y"),
+	 * editorController.getRedoAction())); actionMappings.add(new
+	 * ActionMapping(KeyStroke .decode(KeyStroke.COMMAND_ABBREVIATION + "-Z"),
+	 * editorController.getUndoAction())); actionMappings.add(new
+	 * ActionMapping(KeyStroke .decode(KeyStroke.COMMAND_ABBREVIATION +
+	 * "-EQUALS"), editorController.getZoomInAction())); actionMappings.add(new
+	 * ActionMapping(KeyStroke .decode(KeyStroke.COMMAND_ABBREVIATION +
+	 * "-MINUS"), editorController.getZoomOutAction()));
+	 * 
+	 * return actionMappings; }
+	 */
 
 }

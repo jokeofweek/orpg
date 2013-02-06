@@ -1,14 +1,10 @@
 package orpg.client;
 
-import java.io.EOFException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.Socket;
 import java.util.Queue;
 
-import orpg.client.data.ClientReceivedPacket;
 import orpg.client.data.ClientSentPacket;
-import orpg.shared.net.ServerPacketType;
 
 /**
  * This thread is responsible for writing data from the output queue

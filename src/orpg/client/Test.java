@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import orpg.shared.Priority;
-
 public class Test {
 
 	public static void main(String... args) throws UnknownHostException, IOException {

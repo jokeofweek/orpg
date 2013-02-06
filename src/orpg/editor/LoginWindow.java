@@ -1,43 +1,40 @@
 package orpg.editor;
 
-import org.apache.pivot.wtk.Button;
-import org.apache.pivot.wtk.ButtonPressListener;
-import org.apache.pivot.wtk.Component;
-import org.apache.pivot.wtk.FillPane;
-import org.apache.pivot.wtk.Frame;
-import org.apache.pivot.wtk.PushButton;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class LoginWindow extends BasicWindow {
+import javax.swing.JButton;
+import javax.swing.JFrame;
 
-	public LoginWindow(WindowManager windowManager) {
-		super(windowManager);
+public class LoginWindow extends JFrame {
+
+	private static final long serialVersionUID = 8720835145332237954L;
+
+	public LoginWindow() {
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setTitle("Login");
+		setupComponents();
+		pack();
+		setLocationRelativeTo(null);
+		setVisible(true);
+
 	}
 
-	@Override
-	public void enter(Frame applicationFrame) {
+	private void setupComponents() {
+		JButton button = new JButton("Login");
 
-	}
+		final JFrame window = this;
 
-	@Override
-	public Component getContent() {
-		FillPane content = new FillPane();
-
-		PushButton button = new PushButton("Login");
-		button.getButtonPressListeners().add(new ButtonPressListener() {
+		button.addActionListener(new ActionListener() {
 
 			@Override
-			public void buttonPressed(Button button) {
-				getWindowManager().switchWindow(
-						new MapEditorWindow(getWindowManager()));
+			public void actionPerformed(ActionEvent e) {
+				new MapEditorWindow();
+				window.setVisible(false);
 			}
 		});
-		content.add(button);
 
-		return content;
-	}
-
-	@Override
-	public void exit(Frame applicationFrame) {
+		add(button);
 	}
 
 }
