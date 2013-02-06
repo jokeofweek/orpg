@@ -140,7 +140,7 @@ public class MapView extends JComponent implements Observer, MouseListener,
 		// Render grid above everything if necessary
 		if (editorController.isGridEnabled()) {
 			graphics.setComposite(AlphaComposite.getInstance(
-					AlphaComposite.SRC_OVER, 0.45f));
+					AlphaComposite.SRC_OVER, Constants.MAP_EDITOR_GRID_TRANSPARENCY));
 			graphics.setColor(Color.gray);
 			for (int y = 0; y < h; y++) {
 				for (int x = 0; x < w; x++) {

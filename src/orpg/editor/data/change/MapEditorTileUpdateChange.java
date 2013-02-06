@@ -74,11 +74,6 @@ public class MapEditorTileUpdateChange implements EditorChange {
 	}
 
 	@Override
-	public boolean canApply() {
-		return true;
-	}
-
-	@Override
 	public void undo() {
 		// Modify all the tiles in batch
 		int startX = this.range.getStartX();
@@ -103,9 +98,5 @@ public class MapEditorTileUpdateChange implements EditorChange {
 		mapController.triggerTileUpdate();
 	}
 
-	@Override
-	public boolean canUndo() {
-		return true;
-	}
 
 }

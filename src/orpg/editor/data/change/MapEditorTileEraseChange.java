@@ -30,18 +30,8 @@ public class MapEditorTileEraseChange implements EditorChange {
 	}
 
 	@Override
-	public boolean canApply() {
-		return true;
-	}
-
-	@Override
 	public void undo() {
 		mapController.updateTile(this.x, this.y, this.layer, this.oldTile);
-	}
-
-	@Override
-	public boolean canUndo() {
-		return true;
 	}
 
 }

@@ -88,5 +88,15 @@ public class EditorChangeManager extends Observable {
 	public boolean canUndo() {
 		return this.nextChange != 0;
 	}
+	
+	/**
+	 * This resets the change manager, erasing all changes currently in the system.
+	 */
+	public void reset() {
+		this.editorChanges = new ArrayList<EditorChange>();
+		this.nextChange = 0;
+		this.setChanged();
+		this.notifyObservers();
+	}
 
 }
