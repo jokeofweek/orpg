@@ -3,5 +3,7 @@ package orpg.shared.net;
 public enum ServerPacketType {
 	PONG,
 	HELLO,
-	GOODBYE
+	GOODBYE,
+	CONNECTED,
+	LOGIN_EDITOR_OK
 }

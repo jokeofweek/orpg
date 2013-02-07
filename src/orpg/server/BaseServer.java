@@ -32,8 +32,8 @@ public class BaseServer {
 		this.serverSessionManager = new ServerSessionManager(this);
 		this.serverGameThread = new ServerGameThread(this);
 		try {
-			this.serverSocketThread = new ServerSocketThread(
-					config.getServerPort(), this);
+			this.serverSocketThread = new ServerSocketThread(this,
+					config.getServerPort());
 		} catch (IOException e) {
 			console.out().println(
 					"Could not setup server socket thread. Error: "

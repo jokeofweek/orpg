@@ -29,6 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
+import orpg.client.net.BaseClient;
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
 import orpg.editor.ui.MapView;
@@ -46,11 +47,14 @@ public class MapEditorWindow extends JFrame implements Observer {
 	private JCheckBoxMenuItem gridToggleMenuItem;
 	private JCheckBoxMenuItem hoverPreviewToggleMenuItem;
 
-	public MapEditorWindow() {
+	private BaseClient baseClient;
+	
+	public MapEditorWindow(BaseClient baseClient) {
 		Map map = new Map(100, 100);
 
 		this.editorController = new MapEditorController();
 		this.mapController = new MapController(map);
+		this.baseClient = baseClient;
 
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setTitle(Strings.ENGINE_NAME);

@@ -32,16 +32,38 @@ public class ServerGameThread implements Runnable {
 		while (true) {
 			if (!inputQueue.isEmpty()) {
 				p = inputQueue.remove();
-
-				InputByteBuffer buffer = p.getByteBuffer();
-				OutputByteBuffer outBuffer = new OutputByteBuffer();
-				outBuffer.putString("Repeat " + buffer.getString());
-
-				outputQueue.add(ServerSentPacket.getGlobalPacket(
-						ServerPacketType.PONG, Priority.MEDIUM,
-						outBuffer.getBytes()));
+				if (p.getSession().getSessionType() == SessionType.GAME) {
+					handleGamePacket(p);
+				} else if (p.getSession().getSessionType() == SessionType.EDITOR) {
+					handleEditorPacket(p);
+				}
 			}
 		}
+	}
+
+	public void handleGamePacket(ServerReceivedPacket packet) {
+		ServerSession sender = packet.getSession();
+
+		switch (packet.getType()) {
+		case LOGIN_EDITOR:
+			sender.setSessionType(SessionType.EDITOR);
+			outputQueue.add(ServerSentPacket.getSessionPacket(
+					ServerPacketType.LOGIN_EDITOR_OK, Priority.URGENT,
+					sender));
+			break;
+		default:
+			InputByteBuffer buffer = packet.getByteBuffer();
+			OutputByteBuffer outBuffer = new OutputByteBuffer();
+			outBuffer.putString("Repeat " + buffer.getString());
+
+			outputQueue.add(ServerSentPacket.getGlobalPacket(
+					ServerPacketType.PONG, Priority.MEDIUM,
+					outBuffer.getBytes()));
+		}
+	}
+
+	public void handleEditorPacket(ServerReceivedPacket packet) {
+		System.out.println(":D");
 	}
 
 }

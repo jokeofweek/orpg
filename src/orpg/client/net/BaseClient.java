@@ -21,16 +21,20 @@ public class BaseClient {
 	private Queue<ClientReceivedPacket> inputQueue;
 	private Queue<ClientSentPacket> outputQueue;
 
-	public BaseClient(Socket socket, Class clientProcessThreadClass)
-			throws InstantiationException, IllegalAccessException {
+	public BaseClient(Socket socket, Class clientProcessThreadClass) {
 		// Setup the input and output queues
 		this.inputQueue = new LinkedList<ClientReceivedPacket>();
 		this.outputQueue = new LinkedList<ClientSentPacket>();
 		this.socket = socket;
 
 		// Setup our process thread
-		this.gameThread = (ClientProcessThread) clientProcessThreadClass
-				.newInstance();
+		try {
+			this.gameThread = (ClientProcessThread) clientProcessThreadClass
+					.newInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException("Could not set up game thread.", e);
+		}
 		this.gameThread.setBaseClient(this);
 
 		// Setup the necessary read/write threads

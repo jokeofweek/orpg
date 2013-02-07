@@ -17,10 +17,20 @@ public abstract class ClientProcessThread implements Runnable {
 
 	private Queue<ClientReceivedPacket> inputQueue;
 	private Queue<ClientSentPacket> outputQueue;
+	private BaseClient baseClient;
 
+	public BaseClient getBaseClient() {
+		return baseClient;
+	}
+	
 	public void setBaseClient(BaseClient baseClient) {
 		this.inputQueue = baseClient.getInputQueue();
 		this.outputQueue = baseClient.getOutputQueue();
+		this.baseClient = baseClient;
+	}
+	
+	public Queue<ClientSentPacket> getOutputQueue() {
+		return outputQueue;
 	}
 	
 	@Override
