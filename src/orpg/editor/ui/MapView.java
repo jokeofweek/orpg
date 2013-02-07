@@ -16,6 +16,7 @@ import java.util.Observer;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import orpg.editor.controller.MapController;
@@ -42,11 +43,14 @@ public class MapView extends JComponent implements Observer, MouseListener,
 	private int hoverOverTileX;
 	private int hoverOverTileY;
 
+	private JScrollPane container;
+	
 	public MapView(MapController controller,
-			MapEditorController editorController) {
+			MapEditorController editorController,
+			JScrollPane container) {
 		this.mapController = controller;
 		this.editorController = editorController;
-
+		this.container = container;
 		this.mapController.addObserver(this);
 		this.editorController.addObserver(this);
 
@@ -108,11 +112,21 @@ public class MapView extends JComponent implements Observer, MouseListener,
 		AlphaComposite regular = AlphaComposite.getInstance(
 				AlphaComposite.SRC_OVER, 1.0f);
 
+		// Determine renderable area
+		int startX = Math.max(0,
+				(container.getHorizontalScrollBar().getValue() / tileWidth) - 4);
+		int startY = Math.max(0,
+				(container.getVerticalScrollBar().getValue() / tileHeight) - 4);
+		int endX = Math.min(startX + 6 + (container.getWidth() / tileWidth),
+				mapController.getMapWidth());
+		int endY = Math.min(startY + 6 + (container.getHeight() / tileHeight),
+				mapController.getMapHeight());
+
 		for (int z = 0; z < l; z++) {
-			dY = 0;
-			for (int y = 0; y < h; y++) {
-				dX = 0;
-				for (int x = 0; x < w; x++) {
+			dY = startY * tileHeight;
+			for (int y = startY; y < endY; y++) {
+				dX = startX * tileWidth;
+				for (int x = startX; x < endX; x++) {
 					if (tiles[y][x][z] == 0) {
 						if (z == 0) {
 							graphics.drawImage(image, dX, dY, dX + tileWidth,
@@ -143,8 +157,7 @@ public class MapView extends JComponent implements Observer, MouseListener,
 			}
 
 			// If we are hovering over the map, render overlay after.
-			if (inComponent
-					&& editorController.isHoverPreviewEnabled()
+			if (inComponent && editorController.isHoverPreviewEnabled()
 					&& z == editorController.getCurrentLayer().ordinal()) {
 				graphics.setComposite(AlphaComposite.getInstance(
 						AlphaComposite.SRC_OVER,
@@ -177,8 +190,8 @@ public class MapView extends JComponent implements Observer, MouseListener,
 					Constants.MAP_EDITOR_GRID_TRANSPARENCY));
 			graphics.setColor(Color.gray);
 			// Render the entire tilerange
-			for (int y = 0; y < h; y++) {
-				for (int x = 0; x < w; x++) {
+			for (int y = startY; y < endY; y++) {
+				for (int x = startX; x < endX; x++) {
 					graphics.drawRect(x * tileWidth, y * tileHeight, tileWidth,
 							tileHeight);
 				}

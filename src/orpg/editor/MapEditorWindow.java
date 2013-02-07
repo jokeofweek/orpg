@@ -68,10 +68,12 @@ public class MapEditorWindow extends JFrame implements Observer {
 		JPanel mapContainer = new JPanel(new BorderLayout());
 		contentPane.add(getTabPane(), BorderLayout.WEST);
 
-		MapView mapView = new MapView(mapController, editorController);
-		JScrollPane mapScrollPane = new JScrollPane(mapView,
+		JScrollPane mapScrollPane = new JScrollPane(
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		MapView mapView = new MapView(mapController, editorController,
+				mapScrollPane);
+		mapScrollPane.setViewportView(mapView);
 		mapScrollPane.getHorizontalScrollBar().setUnitIncrement(16);
 		mapScrollPane.getHorizontalScrollBar().setAutoscrolls(true);
 		mapScrollPane.getVerticalScrollBar().setUnitIncrement(16);
@@ -213,22 +215,21 @@ public class MapEditorWindow extends JFrame implements Observer {
 		gridToggleMenuItem.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				editorController.setGridEnabled(gridToggleMenuItem
-						.getState());
+				editorController.setGridEnabled(gridToggleMenuItem.getState());
 			}
 		});
-		
+
 		hoverPreviewToggleMenuItem = new JCheckBoxMenuItem("Mouse Preview",
 				editorController.isHoverPreviewEnabled());
 		viewMenu.add(hoverPreviewToggleMenuItem);
 		hoverPreviewToggleMenuItem.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				editorController.setHoverPreviewEnabled(hoverPreviewToggleMenuItem
-						.getState());
+				editorController
+						.setHoverPreviewEnabled(hoverPreviewToggleMenuItem
+								.getState());
 			}
 		});
-
 
 		this.setJMenuBar(menuBar);
 
@@ -241,7 +242,8 @@ public class MapEditorWindow extends JFrame implements Observer {
 
 			// Update toggle menu items.
 			gridToggleMenuItem.setState(editorController.isGridEnabled());
-			hoverPreviewToggleMenuItem.setState(editorController.isHoverPreviewEnabled());
+			hoverPreviewToggleMenuItem.setState(editorController
+					.isHoverPreviewEnabled());
 		}
 	}
 }
