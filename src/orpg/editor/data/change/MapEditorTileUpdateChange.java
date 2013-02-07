@@ -48,7 +48,7 @@ public class MapEditorTileUpdateChange implements EditorChange {
 
 		for (int dY = 0; dY < diffY; dY++) {
 			for (int dX = 0; dX < diffX; dX++) {
-				oldTiles[dY][dX] = tiles[y + dY][x + dX][layerOrd];
+				oldTiles[dY][dX] = tiles[layerOrd][y + dY][x + dX];
 			}
 		}
 	}

@@ -48,9 +48,9 @@ public class MapEditorWindow extends JFrame implements Observer {
 	private JCheckBoxMenuItem hoverPreviewToggleMenuItem;
 
 	private BaseClient baseClient;
-	
+
 	public MapEditorWindow(BaseClient baseClient) {
-		Map map = new Map(100, 100);
+		Map map = new Map(1, 1);
 
 		this.editorController = new MapEditorController();
 		this.mapController = new MapController(map);
@@ -84,7 +84,8 @@ public class MapEditorWindow extends JFrame implements Observer {
 		mapScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 		mapScrollPane.setBackground(Color.black);
 		mapContainer.add(mapScrollPane);
-		mapContainer.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		mapContainer
+				.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
 		contentPane.add(mapContainer);
 		this.add(contentPane);
@@ -118,8 +119,9 @@ public class MapEditorWindow extends JFrame implements Observer {
 		// Build the tiles view
 		TilesView tilesView = null;
 		try {
-			tilesView = new TilesView(editorController, ImageIO.read(new File(Constants.CLIENT_DATA_PATH + 
-					"gfx/tiles.png").toURI().toURL()));
+			tilesView = new TilesView(editorController,
+					ImageIO.read(new File(Constants.CLIENT_DATA_PATH
+							+ "gfx/tiles.png").toURI().toURL()));
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -148,8 +150,9 @@ public class MapEditorWindow extends JFrame implements Observer {
 			public void itemStateChanged(ItemEvent e) {
 				JRadioButton button = (JRadioButton) e.getSource();
 				if (button.isSelected()) {
-					editorController.setCurrentLayer(MapLayer.values()[Integer
-							.parseInt(button.getActionCommand())]);
+					editorController
+							.setCurrentLayer(MapLayer.values()[Integer
+									.parseInt(button.getActionCommand())]);
 				}
 			}
 		};
@@ -187,12 +190,14 @@ public class MapEditorWindow extends JFrame implements Observer {
 		editMenu.setMnemonic(KeyEvent.VK_E);
 		menuBar.add(editMenu);
 
-		JMenuItem undoItem = new JMenuItem(editorController.getUndoAction());
+		JMenuItem undoItem = new JMenuItem(
+				editorController.getUndoAction());
 		undoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,
 				KeyEvent.CTRL_DOWN_MASK));
 		editMenu.add(undoItem);
 
-		JMenuItem redoItem = new JMenuItem(editorController.getRedoAction());
+		JMenuItem redoItem = new JMenuItem(
+				editorController.getRedoAction());
 		redoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y,
 				KeyEvent.CTRL_DOWN_MASK));
 		editMenu.add(redoItem);
@@ -202,16 +207,17 @@ public class MapEditorWindow extends JFrame implements Observer {
 		viewMenu.setMnemonic(KeyEvent.VK_V);
 		menuBar.add(viewMenu);
 
-		JMenuItem zoomInItem = new JMenuItem(editorController.getZoomInAction());
-		zoomInItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS,
-				KeyEvent.CTRL_DOWN_MASK));
+		JMenuItem zoomInItem = new JMenuItem(
+				editorController.getZoomInAction());
+		zoomInItem.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_EQUALS, KeyEvent.CTRL_DOWN_MASK));
 
 		viewMenu.add(zoomInItem);
 
 		JMenuItem zoomOutItem = new JMenuItem(
 				editorController.getZoomOutAction());
-		zoomOutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS,
-				KeyEvent.CTRL_DOWN_MASK));
+		zoomOutItem.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_MINUS, KeyEvent.CTRL_DOWN_MASK));
 		viewMenu.add(zoomOutItem);
 
 		gridToggleMenuItem = new JCheckBoxMenuItem("Grid",
@@ -220,12 +226,13 @@ public class MapEditorWindow extends JFrame implements Observer {
 		gridToggleMenuItem.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				editorController.setGridEnabled(gridToggleMenuItem.getState());
+				editorController.setGridEnabled(gridToggleMenuItem
+						.getState());
 			}
 		});
 
-		hoverPreviewToggleMenuItem = new JCheckBoxMenuItem("Mouse Preview",
-				editorController.isHoverPreviewEnabled());
+		hoverPreviewToggleMenuItem = new JCheckBoxMenuItem(
+				"Mouse Preview", editorController.isHoverPreviewEnabled());
 		viewMenu.add(hoverPreviewToggleMenuItem);
 		hoverPreviewToggleMenuItem.addItemListener(new ItemListener() {
 			@Override

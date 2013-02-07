@@ -18,6 +18,10 @@ public final class Constants {
 	public static final String CLIENT_DATA_PATH = "data/client/";
 	public static final String SERVER_DATA_PATH = "data/server/";
 	
+	// Map options
+	public static final int MAP_SEGMENT_WIDTH = 60;
+	public static final int MAP_SEGMENT_HEIGHT = 60;
+	
 	private Constants() {};
 	
 }

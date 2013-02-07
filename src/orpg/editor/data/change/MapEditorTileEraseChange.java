@@ -21,7 +21,7 @@ public class MapEditorTileEraseChange implements EditorChange {
 		this.x = x;
 		this.y = y;
 
-		this.oldTile = mapController.getMapTiles()[y][x][layer.ordinal()];
+		this.oldTile = mapController.getMapTiles()[layer.ordinal()][y][x];
 	}
 
 	@Override

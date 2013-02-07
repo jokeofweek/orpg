@@ -58,7 +58,7 @@ public class MapController extends Observable {
 	 *            the new tile value.
 	 */
 	public void batchUpdateTile(int x, int y, MapLayer layer, short tile) {
-		this.map.getTiles()[y][x][layer.ordinal()] = tile;
+		this.map.getTiles()[layer.ordinal()][y][x] = tile;
 
 	}
 
