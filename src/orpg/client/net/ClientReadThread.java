@@ -1,4 +1,4 @@
-package orpg.client;
+package orpg.client.net;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -88,7 +88,8 @@ public class ClientReadThread implements Runnable {
 				inputQueue.add(new ClientReceivedPacket(type, bytes));
 			}
 		} catch (IOException io) {
-			this.baseClient.disconnect();
+			this.baseClient.disconnect("End of stream.");
 		}
 	}
+	
 }

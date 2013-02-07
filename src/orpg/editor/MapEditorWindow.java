@@ -29,10 +29,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
+import orpg.client.net.BaseClient;
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
 import orpg.editor.ui.MapView;
 import orpg.editor.ui.TilesView;
+import orpg.shared.Constants;
 import orpg.shared.Strings;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
@@ -45,11 +47,14 @@ public class MapEditorWindow extends JFrame implements Observer {
 	private JCheckBoxMenuItem gridToggleMenuItem;
 	private JCheckBoxMenuItem hoverPreviewToggleMenuItem;
 
-	public MapEditorWindow() {
+	private BaseClient baseClient;
+	
+	public MapEditorWindow(BaseClient baseClient) {
 		Map map = new Map(100, 100);
 
 		this.editorController = new MapEditorController();
 		this.mapController = new MapController(map);
+		this.baseClient = baseClient;
 
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setTitle(Strings.ENGINE_NAME);
@@ -113,7 +118,7 @@ public class MapEditorWindow extends JFrame implements Observer {
 		// Build the tiles view
 		TilesView tilesView = null;
 		try {
-			tilesView = new TilesView(editorController, ImageIO.read(new File(
+			tilesView = new TilesView(editorController, ImageIO.read(new File(Constants.CLIENT_DATA_PATH + 
 					"gfx/tiles.png").toURI().toURL()));
 		} catch (MalformedURLException e) {
 			e.printStackTrace();

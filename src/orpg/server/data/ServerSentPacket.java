@@ -16,7 +16,7 @@ public class ServerSentPacket implements Comparable<ServerSentPacket> {
 
 	private ServerSentPacket(ServerPacketType type,
 			DestinationType destinationType, Object destinationObject,
-			Priority priority, byte[] data) {
+			Priority priority, byte... data) {
 		super();
 
 		this.destinationType = destinationType;
@@ -32,19 +32,19 @@ public class ServerSentPacket implements Comparable<ServerSentPacket> {
 	}
 
 	public static ServerSentPacket getGlobalPacket(ServerPacketType type,
-			Priority priority, byte[] bytes) {
+			Priority priority, byte... bytes) {
 		return new ServerSentPacket(type, DestinationType.GLOBAL, null,
 				priority, bytes);
 	}
 
 	public static ServerSentPacket getGlobalExceptForPacket(ServerPacketType type,
-			Priority priority, ServerSentPacket session, byte[] bytes) {
+			Priority priority, ServerSentPacket session, byte... bytes) {
 		return new ServerSentPacket(type, DestinationType.GLOBAL_EXCEPT_FOR, session,
 				priority, bytes);
 	}
 
 	public static ServerSentPacket getSessionPacket(ServerPacketType type,
-			Priority priority, ServerSession session, byte[] bytes) {
+			Priority priority, ServerSession session, byte... bytes) {
 		return new ServerSentPacket(type, DestinationType.SINGLE_SESSION,
 				session, priority, bytes);
 	}

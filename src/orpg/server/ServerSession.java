@@ -18,12 +18,13 @@ public class ServerSession implements Runnable {
 	private BaseServer baseServer;
 	private PriorityQueue<ServerReceivedPacket> inputQueue;
 	private PriorityQueue<ServerSentPacket> outputQueue;
+	private SessionType sessionType;
 	private volatile boolean connected;
 	
 	private static final int READ_TICKS = 25;
 	private static final int WRITE_TICKS = 25;
 
-	public ServerSession(Socket socket, BaseServer baseServer)
+	public ServerSession(BaseServer baseServer, Socket socket)
 			throws SocketException {
 		this.socket = socket;
 		this.socket.setSoTimeout(READ_TICKS);
@@ -31,6 +32,7 @@ public class ServerSession implements Runnable {
 		this.inputQueue = baseServer.getInputQueue();
 		this.outputQueue = new PriorityQueue<ServerSentPacket>();
 		this.connected = true;
+		this.setSessionType(SessionType.GAME);
 	}
 
 	@Override
@@ -88,7 +90,7 @@ public class ServerSession implements Runnable {
 						remaining &= 0x0ffff;
 						data = new byte[remaining];
 						sizeBytes--;
-					} else if (remaining == 0) {
+					} else if (remaining == 0 && type == null) {
 						// New packet
 						tmpRead = this.socket.getInputStream().read();
 						// Bit-twiddling must be done here to convert it back to an integer [0-255]
@@ -117,8 +119,10 @@ public class ServerSession implements Runnable {
 						// If we have 0 remaining, then we have a complete
 						// packet.
 						if (remaining == 0) {
+							// Test the packet to make sure it is valid.
 							inputQueue.add(new ServerReceivedPacket(this, type, data, Priority.MEDIUM));
 							currentPosition = 0;
+							type = null;
 						}
 					}
 				} catch (SocketTimeoutException e) {
@@ -175,4 +179,11 @@ public class ServerSession implements Runnable {
 		return outputQueue;
 	}
 
+	public void setSessionType(SessionType sessionType) {
+		this.sessionType = sessionType;
+	}
+	
+	public SessionType getSessionType() {
+		return sessionType;
+	}
 }

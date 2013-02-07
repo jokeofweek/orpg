@@ -9,7 +9,7 @@ public class ClientSentPacket {
 
 	private byte[] bytes;
 
-	public ClientSentPacket(ClientPacketType type, byte[] data) {
+	public ClientSentPacket(ClientPacketType type, byte... data) {
 
 		// Create the bytes to send right away
 		this.bytes = new byte[data.length + 3];

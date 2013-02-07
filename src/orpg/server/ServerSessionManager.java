@@ -28,9 +28,15 @@ public class ServerSessionManager implements Runnable {
 	}
 
 	public void addSession(ServerSession session) {
+		// Send connected packet
+		outputQueue.add(ServerSentPacket.getSessionPacket(
+				ServerPacketType.CONNECTED, Priority.URGENT, session));
+
 		OutputByteBuffer buffer = new OutputByteBuffer("Welcome!");
-		outputQueue.add(ServerSentPacket.getGlobalPacket(
-				ServerPacketType.HELLO, Priority.MEDIUM, buffer.getBytes()));
+		outputQueue
+				.add(ServerSentPacket.getGlobalPacket(
+						ServerPacketType.HELLO, Priority.MEDIUM,
+						buffer.getBytes()));
 		sessions.add(session);
 	}
 
@@ -38,7 +44,8 @@ public class ServerSessionManager implements Runnable {
 		sessions.remove(session);
 		OutputByteBuffer buffer = new OutputByteBuffer("Goodbye!");
 		outputQueue.add(ServerSentPacket.getGlobalPacket(
-				ServerPacketType.GOODBYE, Priority.MEDIUM, buffer.getBytes()));
+				ServerPacketType.GOODBYE, Priority.MEDIUM,
+				buffer.getBytes()));
 	}
 
 	@Override
@@ -74,7 +81,7 @@ public class ServerSessionManager implements Runnable {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 			}
 		}
 

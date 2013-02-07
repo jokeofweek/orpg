@@ -1,4 +1,4 @@
-package orpg.client;
+package orpg.client.net;
 
 import java.io.IOException;
 import java.net.Socket;

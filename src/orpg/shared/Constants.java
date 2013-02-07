@@ -10,8 +10,13 @@ public final class Constants {
 	
 	public static final Charset CHARSET = Charset.forName("UTF-8");
 
+	// Map editor options
 	public static final float MAP_EDITOR_GRID_TRANSPARENCY = 0.60f;
 	public static final float MAP_EDITOR_TILE_OVERLAY_TRANSPARENCY = 0.60f;
+	
+	// Data path options
+	public static final String CLIENT_DATA_PATH = "data/client/";
+	public static final String SERVER_DATA_PATH = "data/server/";
 	
 	private Constants() {};
 	

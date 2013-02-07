@@ -13,31 +13,31 @@ import java.net.Socket;
  */
 public class ServerSocketThread implements Runnable {
 
-	private ServerSocket socket;
+	private ServerSocket serverSocket;
 	private BaseServer server;
 
-	public ServerSocketThread(int port, BaseServer server)
+	public ServerSocketThread(BaseServer server, int port)
 			throws IOException {
-		this.socket = new ServerSocket(port);
+		this.serverSocket = new ServerSocket(port);
 		this.server = server;
 	}
 
 	@Override
 	public void run() {
-		Socket s = null;
+		Socket socket = null;
 		ServerSession session = null;
 		while (true) {
 			try {
-				s = socket.accept();
+				socket = serverSocket.accept();
 				server.getConsole()
 						.out()
 						.println(
 								"Connection accepted from "
-										+ s.getInetAddress());
+										+ socket.getInetAddress());
 
 				// Establish the session, add it to the session manager and then
 				// run it.
-				session = new ServerSession(s, server);
+				session = new ServerSession(server, socket);
 				server.getServerSessionManager().addSession(session);
 				new Thread(session).start();
 			} catch (IOException e) {

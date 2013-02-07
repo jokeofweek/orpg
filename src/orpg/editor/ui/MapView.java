@@ -55,7 +55,7 @@ public class MapView extends JComponent implements Observer, MouseListener,
 		this.editorController.addObserver(this);
 
 		try {
-			this.image = ImageIO.read(new File("gfx/tiles.png"));
+			this.image = ImageIO.read(new File(Constants.CLIENT_DATA_PATH + "gfx/tiles.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
