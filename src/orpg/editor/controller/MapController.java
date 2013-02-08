@@ -4,6 +4,7 @@ import java.util.Observable;
 
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
+import orpg.shared.data.Segment;
 
 public class MapController extends Observable {
 
@@ -21,8 +22,24 @@ public class MapController extends Observable {
 		return this.map.getHeight();
 	}
 
-	public short[][][] getMapTiles() {
-		return this.map.getTiles();
+	public Segment[][] getSegments() {
+		return this.map.getSegments();
+	}
+
+	public Segment getSegment(int x, int y) {
+		return this.map.getSegment(x, y);
+	}
+
+	public int mapXToSegmentX(int x) {
+		return this.map.mapXToSegmentX(x);
+	}
+
+	public int mapYToSegmentY(int y) {
+		return this.map.mapYToSegmentY(y);
+	}
+
+	public short getTile(int z, int y, int x) {
+		return this.getSegment(x, y).getTiles()[z][mapYToSegmentY(y)][mapXToSegmentX(x)];
 	}
 
 	/**
@@ -58,8 +75,7 @@ public class MapController extends Observable {
 	 *            the new tile value.
 	 */
 	public void batchUpdateTile(int x, int y, MapLayer layer, short tile) {
-		this.map.getTiles()[layer.ordinal()][y][x] = tile;
-
+		this.map.getSegment(x, y).getTiles()[layer.ordinal()][mapYToSegmentY(y)][mapXToSegmentX(x)] = tile;
 	}
 
 	/**

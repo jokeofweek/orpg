@@ -3,7 +3,8 @@ package orpg.shared.net;
 public enum ClientPacketType {
 
 	PING,
-	
-	LOGIN_EDITOR
+	EDITOR_LOGIN,
 
+	// Editor packets
+	EDITOR_READY
 }

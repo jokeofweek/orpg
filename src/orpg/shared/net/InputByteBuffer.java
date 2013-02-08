@@ -47,6 +47,16 @@ public class InputByteBuffer {
 		pos += 2;
 		return v;
 	}
+	
+	public int getUnsignedShort() {
+		hasEnoughCapacity(2);
+		int v = bytes[this.pos];
+		v <<= 8;
+		v |= (bytes[this.pos + 1] & 0xff);
+		v &= 0x0ffff;
+		pos += 2;
+		return v;
+	}
 
 	public int getInteger() {
 		hasEnoughCapacity(4);

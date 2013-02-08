@@ -98,6 +98,11 @@ public class OutputByteBuffer {
 		bytes[pos + 1] = (byte) (data & 0xff);
 		pos += 2;
 	}
+	
+	public void putUnsignedShort(int data) {
+		testForExtraCapacity(2);
+		putShort((short)data);
+	}
 
 	public void putInteger(int data) {
 		testForExtraCapacity(4);

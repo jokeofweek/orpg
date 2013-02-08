@@ -25,6 +25,7 @@ import orpg.editor.data.change.MapEditorTileEraseChange;
 import orpg.editor.data.change.MapEditorTileUpdateChange;
 import orpg.shared.Constants;
 import orpg.shared.data.MapLayer;
+import orpg.shared.data.Segment;
 
 public class MapView extends JComponent implements Observer,
 		MouseListener, MouseMotionListener {
@@ -96,7 +97,6 @@ public class MapView extends JComponent implements Observer,
 		int h = mapController.getMapHeight();
 		int w = mapController.getMapWidth();
 		int l = MapLayer.values().length;
-		short[][][] tiles = mapController.getMapTiles();
 
 		graphics.setBackground(Color.black);
 		graphics.setColor(Color.black);
@@ -123,13 +123,15 @@ public class MapView extends JComponent implements Observer,
 		int endY = Math.min(startY + 6
 				+ (container.getHeight() / tileHeight),
 				mapController.getMapHeight());
+		short tile;
 
 		for (int z = 0; z < l; z++) {
 			dY = startY * tileHeight;
 			for (int y = startY; y < endY; y++) {
 				dX = startX * tileWidth;
 				for (int x = startX; x < endX; x++) {
-					if (tiles[z][y][x] == 0) {
+					tile = mapController.getTile(z, y, x);
+					if (tile == 0) {
 						if (z == 0) {
 							graphics.drawImage(image, dX, dY, dX
 									+ tileWidth, dY + tileHeight, 0, 0,
@@ -137,19 +139,15 @@ public class MapView extends JComponent implements Observer,
 									Constants.TILE_HEIGHT, null);
 						}
 					} else {
-						graphics.drawImage(
-								image,
-								dX,
-								dY,
-								dX + tileWidth,
+						graphics.drawImage(image, dX, dY, dX + tileWidth,
 								dY + tileHeight,
-								(tiles[z][y][x] % Constants.TILESET_WIDTH)
+								(tile % Constants.TILESET_WIDTH)
 										* Constants.TILE_WIDTH,
-								(tiles[z][y][x] / Constants.TILESET_WIDTH)
+								(tile / Constants.TILESET_WIDTH)
 										* Constants.TILE_HEIGHT,
-								(1 + (tiles[z][y][x] % Constants.TILESET_WIDTH))
+								(1 + (tile % Constants.TILESET_WIDTH))
 										* Constants.TILE_WIDTH,
-								(1 + (tiles[z][y][x] / Constants.TILESET_WIDTH))
+								(1 + (tile / Constants.TILESET_WIDTH))
 										* Constants.TILE_HEIGHT, null);
 					}
 
@@ -272,7 +270,6 @@ public class MapView extends JComponent implements Observer,
 				int currentTile = startX
 						+ (startY * Constants.TILESET_WIDTH);
 
-				short[][][] tiles = mapController.getMapTiles();
 				int layer = editorController.getCurrentLayer().ordinal();
 
 				boolean changed = false;
@@ -286,7 +283,7 @@ public class MapView extends JComponent implements Observer,
 						&& !changed; cY++) {
 					for (int cX = pX; cX < Math.min(
 							mapController.getMapWidth(), pX + diffX); cX++) {
-						if (tiles[layer][cY][cX] != currentTile
+						if (mapController.getTile(layer, cY, cX) != currentTile
 								+ (cX - pX)) {
 							changed = true;
 							break;
@@ -313,9 +310,9 @@ public class MapView extends JComponent implements Observer,
 				}
 
 				// If a right-click, then erase the tile if not already empty.
-				if (mapController.getMapTiles()[editorController
-						.getCurrentLayer().ordinal()][y / tileHeight][x
-						/ tileWidth] != 0) {
+				if (mapController.getTile(editorController
+						.getCurrentLayer().ordinal(), y / tileHeight, x
+						/ tileWidth) != 0) {
 
 					editorController.getChangeManager().addChange(
 							new MapEditorTileEraseChange(editorController,
