@@ -17,7 +17,6 @@ public class EditorProcessThread extends ClientProcessThread {
 					new ClientSentPacket(ClientPacketType.EDITOR_LOGIN));
 			break;
 		case EDITOR_LOGIN_OK:
-			new MapEditorWindow(getBaseClient());
 			getOutputQueue().add(
 					new ClientSentPacket(ClientPacketType.EDITOR_READY));
 			break;

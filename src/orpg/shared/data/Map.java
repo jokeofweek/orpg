@@ -15,7 +15,7 @@ public class Map {
 				segmentsWide, segmentsHigh);
 	}
 
-	public Map(int segmentWidth, int segmentHeight, int segmentsWide,
+	public Map(short segmentWidth, short segmentHeight, int segmentsWide,
 			int segmentsHigh) {
 		this.segmentHeight = segmentHeight;
 		this.segmentWidth = segmentWidth;
@@ -24,7 +24,7 @@ public class Map {
 		this.segments = new Segment[segmentsHigh][segmentsWide];
 		for (int y = 0; y < segmentsHigh; y++) {
 			for (int x = 0; x < segmentsWide; x++) {
-				this.segments[y][x] = new Segment(segmentWidth,
+				this.segments[y][x] = new Segment(x, y, segmentWidth,
 						segmentHeight);
 			}
 		}

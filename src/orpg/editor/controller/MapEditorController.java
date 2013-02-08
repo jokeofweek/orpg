@@ -7,20 +7,28 @@ import java.util.Observer;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
+import orpg.client.data.ClientSentPacket;
+import orpg.client.net.BaseClient;
 import orpg.editor.data.TileRange;
 import orpg.editor.data.change.EditorChangeManager;
 import orpg.shared.data.MapLayer;
+import orpg.shared.data.MapSaveData;
+import orpg.shared.net.ClientPacketType;
+import orpg.shared.net.OutputByteBuffer;
 
 public class MapEditorController extends Observable implements Observer {
 
 	private MapLayer currentLayer;
 	private TileRange tileRange;
 	private EditorChangeManager changeManager;
+	private BaseClient baseClient;
+	private MapController mapController;
 
 	private Action undoAction;
 	private Action redoAction;
 	private Action zoomInAction;
 	private Action zoomOutAction;
+	private Action saveAction;
 
 	private boolean gridEnabled;
 	private boolean hoverPreviewEnabled;
@@ -28,11 +36,14 @@ public class MapEditorController extends Observable implements Observer {
 	private static final int SCALE_FACTORS[] = new int[] { 1, 2, 4, 8 };
 	private int scaleFactorPosition;
 
-	public MapEditorController() {
+	public MapEditorController(BaseClient baseClient,
+			MapController mapController) {
 		this.currentLayer = MapLayer.GROUND;
 		this.tileRange = new TileRange();
 		this.changeManager = new EditorChangeManager();
 		this.changeManager.addObserver(this);
+		this.baseClient = baseClient;
+		this.mapController = mapController;
 
 		this.gridEnabled = false;
 		this.hoverPreviewEnabled = true;
@@ -105,6 +116,14 @@ public class MapEditorController extends Observable implements Observer {
 			}
 		};
 		this.zoomOutAction.setEnabled(canZoomOut());
+		
+		this.saveAction = new AbstractAction("Save") {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				save();
+			}
+		};
 	}
 
 	public Action getUndoAction() {
@@ -123,6 +142,10 @@ public class MapEditorController extends Observable implements Observer {
 		return zoomOutAction;
 	}
 
+	public Action getSaveAction() {
+		return saveAction;
+	}
+	
 	@Override
 	public void update(Observable o, Object arg) {
 		// If the observable is the change manager, notify all our observers.
@@ -190,5 +213,13 @@ public class MapEditorController extends Observable implements Observer {
 		}
 		this.hoverPreviewEnabled = hoverPreviewEnabled;
 		this.notifyObservers();
+	}
+
+	public void save() {
+		OutputByteBuffer out = new OutputByteBuffer();
+		out.putMapSaveData(new MapSaveData(mapController.getSegments()[0]));
+		this.baseClient.getOutputQueue().add(
+				new ClientSentPacket(ClientPacketType.EDITOR_MAP_SAVE, out
+						.getBytes()));
 	}
 }

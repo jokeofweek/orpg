@@ -33,7 +33,7 @@ public class ClientReadThread implements Runnable {
 		int tmpVal;
 		int remaining = 0;
 		ServerPacketType type;
-		short length;
+		int length;
 
 		byte bytes[];
 
@@ -52,7 +52,8 @@ public class ClientReadThread implements Runnable {
 					break;
 				}
 
-				// Must do some bit twiddling to convert the range of value from [-128,127] to [0, 255]
+				// Must do some bit twiddling to convert the range of value from
+				// [-128,127] to [0, 255]
 				tmpVal &= 0x00ff;
 				type = ServerPacketType.values()[tmpVal];
 
@@ -61,17 +62,26 @@ public class ClientReadThread implements Runnable {
 				if (tmpVal == -1) {
 					throw new EOFException("End of stream.");
 				}
-				length = (short) (tmpVal << 8);
-			
+				length = tmpVal;
 				tmpVal = in.read();
 				if (tmpVal == -1) {
 					throw new EOFException("End of stream.");
 				}
-				length |= (tmpVal & 0xff);
-				
+				length = (length << 8) | (tmpVal & 0x0ff);
+				tmpVal = in.read();
+				if (tmpVal == -1) {
+					throw new EOFException("End of stream.");
+				}
+				length = (length << 8) | (tmpVal & 0x0ff);
+				tmpVal = in.read();
+				if (tmpVal == -1) {
+					throw new EOFException("End of stream.");
+				}
+				length = (length << 8) | (tmpVal & 0x0ff);
+
 				// bitmask the remaining in order to treat the value as unsigned
 				length &= 0x0ffff;
-				
+
 				bytes = new byte[length];
 
 				// Read in packet data
@@ -85,11 +95,14 @@ public class ClientReadThread implements Runnable {
 				}
 
 				// Add the packet to the input queue
+
+				System.out.println("<- " + type + "(" + (bytes.length + 5)
+						+ ")");
 				inputQueue.add(new ClientReceivedPacket(type, bytes));
 			}
 		} catch (IOException io) {
 			this.baseClient.disconnect("End of stream.");
 		}
 	}
-	
+
 }

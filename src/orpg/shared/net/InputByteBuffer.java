@@ -3,6 +3,9 @@ package orpg.shared.net;
 import java.util.Arrays;
 
 import orpg.shared.Constants;
+import orpg.shared.data.MapLayer;
+import orpg.shared.data.MapSaveData;
+import orpg.shared.data.Segment;
 
 public class InputByteBuffer {
 
@@ -47,7 +50,7 @@ public class InputByteBuffer {
 		pos += 2;
 		return v;
 	}
-	
+
 	public int getUnsignedShort() {
 		hasEnoughCapacity(2);
 		int v = bytes[this.pos];
@@ -98,11 +101,46 @@ public class InputByteBuffer {
 		return bytes[pos - 1] == 1;
 	}
 
+	public Segment getSegment() {
+		// Test for dimensions first
+		short width = getShort();
+		short height = getShort();
+
+		// Get positions
+		int segmentX = getInteger();
+		int segmentY = getInteger();
+
+		// Ensure enough capacity for tiles
+		hasEnoughCapacity(width * height * MapLayer.values().length * 2);
+		short[][][] tiles = new short[MapLayer.values().length][height][width];
+		int x, y, z;
+		for (z = 0; z < MapLayer.values().length; z++) {
+			for (y = 0; y < height; y++) {
+				for (x = 0; x < width; x++) {
+					tiles[z][y][x] = getShort();
+				}
+			}
+		}
+
+		return new Segment(segmentX, segmentY, width, height, tiles);
+	}
+
+	public MapSaveData getMapSaveData() {
+		int count = getInteger();
+
+		Segment[] segments = new Segment[count];
+		for (int i = 0; i < count; i++) {
+			segments[i] = getSegment();
+		}
+
+		return new MapSaveData(segments);
+	}
+
 	public String getString() {
 		short length = getShort();
 		hasEnoughCapacity(length);
-		String v = new String(Arrays.copyOfRange(bytes, this.pos,
-				this.pos + length), Constants.CHARSET);
+		String v = new String(Arrays.copyOfRange(bytes, this.pos, this.pos
+				+ length), Constants.CHARSET);
 		pos += length;
 		return v;
 	}

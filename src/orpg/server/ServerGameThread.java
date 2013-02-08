@@ -1,12 +1,21 @@
 package orpg.server;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.PriorityQueue;
+import java.util.Queue;
+
+import org.omg.CORBA_2_3.portable.OutputStream;
 
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.ServerSentPacket;
 import orpg.shared.Constants;
 import orpg.shared.Priority;
+import orpg.shared.data.MapSaveData;
+import orpg.shared.data.Segment;
 import orpg.shared.net.InputByteBuffer;
 import orpg.shared.net.OutputByteBuffer;
 import orpg.shared.net.ServerPacketType;
@@ -20,7 +29,7 @@ import orpg.shared.net.ServerPacketType;
  */
 public class ServerGameThread implements Runnable {
 
-	private PriorityQueue<ServerReceivedPacket> inputQueue;
+	private Queue<ServerReceivedPacket> inputQueue;
 	private PriorityQueue<ServerSentPacket> outputQueue;
 
 	public ServerGameThread(BaseServer server) {
@@ -65,24 +74,44 @@ public class ServerGameThread implements Runnable {
 	}
 
 	public void handleEditorPacket(ServerReceivedPacket packet) {
+		OutputByteBuffer out;
+
 		switch (packet.getType()) {
 		case EDITOR_READY:
 			File mapDirectory = new File(Constants.SERVER_MAPS_PATH);
 			File[] mapFiles = mapDirectory.listFiles();
-			OutputByteBuffer out = new OutputByteBuffer(
-					(mapFiles.length * 10) + 2);
+			out = new OutputByteBuffer((mapFiles.length * 10) + 2);
 			out.putUnsignedShort(mapFiles.length);
 			for (File file : mapFiles) {
 				out.putString(file.getName());
 			}
-			
+
 			outputQueue.add(ServerSentPacket.getSessionPacket(
 					ServerPacketType.EDITOR_MAP_LIST, Priority.MEDIUM,
 					packet.getSession(), out.getBytes()));
+			break;
+		case EDITOR_MAP_SAVE:
+			// Save maps
+			MapSaveData saveData = packet.getByteBuffer().getMapSaveData();
+
+			for (Segment s : saveData.getSegments()) {
+				out = new OutputByteBuffer(s);
+				try {
+					BufferedOutputStream writer = new BufferedOutputStream(
+							new FileOutputStream(
+									Constants.SERVER_MAPS_PATH + "map_"
+											+ s.getX() + "_" + s.getY()
+											+ ".map"));
+					writer.write(out.getBytes());
+					writer.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			break;
 		default:
 			packet.getSession().disconnect("Invalid packet.");
 		}
 	}
-
 }

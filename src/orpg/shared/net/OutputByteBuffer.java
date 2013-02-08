@@ -3,6 +3,9 @@ package orpg.shared.net;
 import java.util.Arrays;
 
 import orpg.shared.Constants;
+import orpg.shared.data.MapLayer;
+import orpg.shared.data.MapSaveData;
+import orpg.shared.data.Segment;
 
 public class OutputByteBuffer {
 
@@ -52,6 +55,10 @@ public class OutputByteBuffer {
 				putBoolean((Boolean) o);
 			} else if (o instanceof String) {
 				putString((String) o);
+			} else if (o instanceof MapSaveData) {
+				putMapSaveData((MapSaveData)o);
+			} else if (o instanceof Segment) {
+				putSegment((Segment)o);
 			} else {
 				throw new IllegalArgumentException(
 						"Cannot serialize object of type '" + o.getClass()
@@ -98,10 +105,10 @@ public class OutputByteBuffer {
 		bytes[pos + 1] = (byte) (data & 0xff);
 		pos += 2;
 	}
-	
+
 	public void putUnsignedShort(int data) {
 		testForExtraCapacity(2);
-		putShort((short)data);
+		putShort((short) data);
 	}
 
 	public void putInteger(int data) {
@@ -140,6 +147,39 @@ public class OutputByteBuffer {
 			bytes[pos + i] = stringBytes[i];
 		}
 		pos += stringBytes.length;
+	}
+
+	public void putSegment(Segment segment) {
+		short height = segment.getHeight();
+		short width = segment.getWidth();
+
+		putShort(width);
+		putShort(height);
+
+		putInteger(segment.getX());
+		putInteger(segment.getY());
+
+		// test for extra capacity right away to pre-allocate
+		short[][][] tiles = segment.getTiles();
+		testForExtraCapacity(MapLayer.values().length
+				* segment.getHeight() * segment.getWidth() * 2);
+
+		int z, y, x;
+		for (z = 0; z < MapLayer.values().length; z++) {
+			for (y = 0; y < height; y++) {
+				for (x = 0; x < width; x++) {
+					putShort(tiles[z][y][x]);
+				}
+			}
+		}
+	}
+	
+	public void putMapSaveData(MapSaveData mapSaveData) {
+		putInteger(mapSaveData.getSegments().length);
+		
+		for (Segment segment : mapSaveData.getSegments()) {
+			putSegment(segment);
+		}
 	}
 
 }

@@ -6,5 +6,7 @@ public enum ClientPacketType {
 	EDITOR_LOGIN,
 
 	// Editor packets
-	EDITOR_READY
+	EDITOR_READY,
+	EDITOR_MAP_SAVE
+	
 }

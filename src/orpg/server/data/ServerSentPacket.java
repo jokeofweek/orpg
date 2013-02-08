@@ -13,6 +13,7 @@ public class ServerSentPacket implements Comparable<ServerSentPacket> {
 	private Object destinationObject;
 	private byte[] bytes;
 	private Priority priority;
+	private ServerPacketType type;
 
 	private ServerSentPacket(ServerPacketType type,
 			DestinationType destinationType, Object destinationObject,
@@ -22,13 +23,16 @@ public class ServerSentPacket implements Comparable<ServerSentPacket> {
 		this.destinationType = destinationType;
 		this.destinationObject = destinationObject;
 		this.priority = priority;
+		this.type = type;
 		
 		// Create the bytes to send right away
-		this.bytes = new byte[data.length + 3];
+		this.bytes = new byte[data.length + 5];
 		this.bytes[0] = (byte)type.ordinal();
-		this.bytes[1] = (byte)((data.length >> 8) & 0xff);
-		this.bytes[2] = (byte)(data.length & 0xff);
-		System.arraycopy(data, 0, bytes, 3, data.length);
+		this.bytes[1] = (byte)((data.length >> 24) & 0xff);
+		this.bytes[2] = (byte)((data.length >> 16) & 0xff);
+		this.bytes[3] = (byte)((data.length >> 8) & 0xff);
+		this.bytes[4] = (byte)(data.length & 0xff);
+		System.arraycopy(data, 0, bytes, 5, data.length);
 	}
 
 	public static ServerSentPacket getGlobalPacket(ServerPacketType type,
@@ -74,6 +78,7 @@ public class ServerSentPacket implements Comparable<ServerSentPacket> {
 	}
 
 	public void write(Socket s) throws IOException {
+		System.out.println("-> " + this.type + "(" + bytes.length + ")");
 		s.getOutputStream().write(bytes);
 	}
 

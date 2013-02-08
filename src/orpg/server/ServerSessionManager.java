@@ -31,21 +31,11 @@ public class ServerSessionManager implements Runnable {
 		// Send connected packet
 		outputQueue.add(ServerSentPacket.getSessionPacket(
 				ServerPacketType.CONNECTED, Priority.URGENT, session));
-
-		OutputByteBuffer buffer = new OutputByteBuffer("Welcome!");
-		outputQueue
-				.add(ServerSentPacket.getGlobalPacket(
-						ServerPacketType.HELLO, Priority.MEDIUM,
-						buffer.getBytes()));
 		sessions.add(session);
 	}
 
 	public void removeSession(ServerSession session) {
 		sessions.remove(session);
-		OutputByteBuffer buffer = new OutputByteBuffer("Goodbye!");
-		outputQueue.add(ServerSentPacket.getGlobalPacket(
-				ServerPacketType.GOODBYE, Priority.MEDIUM,
-				buffer.getBytes()));
 	}
 
 	@Override

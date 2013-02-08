@@ -52,8 +52,8 @@ public class MapEditorWindow extends JFrame implements Observer {
 	public MapEditorWindow(BaseClient baseClient) {
 		Map map = new Map(3, 3);
 
-		this.editorController = new MapEditorController();
 		this.mapController = new MapController(map);
+		this.editorController = new MapEditorController(baseClient, this.mapController);
 		this.baseClient = baseClient;
 
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -184,6 +184,12 @@ public class MapEditorWindow extends JFrame implements Observer {
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		menuBar.add(fileMenu);
+		
+		JMenuItem saveItem = new JMenuItem(
+				editorController.getSaveAction());
+		saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+				KeyEvent.CTRL_DOWN_MASK));
+		fileMenu.add(saveItem);
 
 		// Edit menu
 		JMenu editMenu = new JMenu("Edit");

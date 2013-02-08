@@ -1,7 +1,9 @@
 package orpg.server;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
+import java.util.Queue;
 
 import orpg.server.config.ConfigurationManager;
 import orpg.server.console.ServerConsole;
@@ -15,7 +17,7 @@ public class BaseServer {
 	private ServerGameThread serverGameThread;
 	private ServerSocketThread serverSocketThread;
 	private ServerConsole console;
-	private PriorityQueue<ServerReceivedPacket> inputQueue;
+	private Queue<ServerReceivedPacket> inputQueue;
 	private PriorityQueue<ServerSentPacket> outputQueue;
 
 	public BaseServer(ConfigurationManager config, ServerConsole console) {
@@ -25,7 +27,7 @@ public class BaseServer {
 		boolean encounteredSetupProblems = false;
 
 		// Set up our queues
-		this.inputQueue = new PriorityQueue<ServerReceivedPacket>(1000);
+		this.inputQueue = new LinkedList<ServerReceivedPacket>();
 		this.outputQueue = new PriorityQueue<ServerSentPacket>(1000);
 
 		// Set up the various threads
@@ -65,7 +67,7 @@ public class BaseServer {
 		return console;
 	}
 
-	public PriorityQueue<ServerReceivedPacket> getInputQueue() {
+	public Queue<ServerReceivedPacket> getInputQueue() {
 		return inputQueue;
 	}
 

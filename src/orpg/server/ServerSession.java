@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.PriorityQueue;
+import java.util.Queue;
 
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.ServerSentPacket;
@@ -16,11 +17,11 @@ public class ServerSession implements Runnable {
 
 	private Socket socket;
 	private BaseServer baseServer;
-	private PriorityQueue<ServerReceivedPacket> inputQueue;
+	private Queue<ServerReceivedPacket> inputQueue;
 	private PriorityQueue<ServerSentPacket> outputQueue;
 	private SessionType sessionType;
 	private volatile boolean connected;
-	
+
 	private static final int READ_TICKS = 25;
 	private static final int WRITE_TICKS = 25;
 
@@ -55,45 +56,24 @@ public class ServerSession implements Runnable {
 			ticks = System.currentTimeMillis() + READ_TICKS;
 			do {
 				try {
-					// If we are currently reading in a packet, finish that one
-					// off else read a new one
-					if (sizeBytes == 1) {
-						// Read timed out while reading the size bytes. This
-						// should always be consistent with the lines below. I
-						// know, I know.. DRY..
+					// If we are awaiting size bytes, then read them in one at a time
+					if (sizeBytes > 0) {
 						tmpRead = socket.getInputStream().read();
+				
 						if (tmpRead == -1) {
 							throw new EOFException("End of stream");
 						}
-						remaining |= (tmpRead & 0xff);
-						// bitmask the remaining in order to treat the value as unsigned
-						remaining &= 0x0ffff;
-						data = new byte[remaining];
+						remaining <<= 8;
+						remaining |= (tmpRead & 0x0ff);
 						sizeBytes--;
-						
-					} else if (sizeBytes == 2) {
-						// Awaiting size bytes
-						tmpRead = socket.getInputStream().read();
-						sizeBytes--;
-						if (tmpRead == -1) {
-							throw new EOFException("End of stream");
+						if (sizeBytes == 0) {
+							data = new byte[remaining];
 						}
-						remaining = (tmpRead << 8);
-
-						// Read last size byte and create data
-						tmpRead = socket.getInputStream().read();
-						if (tmpRead == -1) {
-							throw new EOFException("End of stream");
-						}
-						remaining |= (tmpRead & 0xff);
-						// bitmask the remaining in order to treat the value as unsigned
-						remaining &= 0x0ffff;
-						data = new byte[remaining];
-						sizeBytes--;
 					} else if (remaining == 0 && type == null) {
 						// New packet
 						tmpRead = this.socket.getInputStream().read();
-						// Bit-twiddling must be done here to convert it back to an integer [0-255]
+						// Bit-twiddling must be done here to convert it back to
+						// an integer [0-255]
 						tmpRead &= 0x00ff;
 						if (tmpRead >= ClientPacketType.values().length) {
 							// Invalid packet type...
@@ -102,7 +82,8 @@ public class ServerSession implements Runnable {
 							throw new EOFException("End of stream");
 						} else {
 							type = ClientPacketType.values()[tmpRead];
-							sizeBytes = 2;
+							remaining = 0;
+							sizeBytes = 4;
 						}
 					} else {
 						// Read in as many bytes as we can
@@ -120,7 +101,9 @@ public class ServerSession implements Runnable {
 						// packet.
 						if (remaining == 0) {
 							// Test the packet to make sure it is valid.
-							inputQueue.add(new ServerReceivedPacket(this, type, data, Priority.MEDIUM));
+							System.out.println("<- " + type + "(" + (data.length + 5) + ")");
+							inputQueue.add(new ServerReceivedPacket(this,
+									type, data, Priority.MEDIUM));
 							currentPosition = 0;
 							type = null;
 						}
@@ -169,9 +152,10 @@ public class ServerSession implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		baseServer.getServerSessionManager().removeSession(this);
-		baseServer.getConsole().out().println("Socket disconnected. Reason: " + reason);
+		baseServer.getConsole().out()
+				.println("Socket disconnected. Reason: " + reason);
 		this.connected = false;
 	}
 
@@ -182,7 +166,7 @@ public class ServerSession implements Runnable {
 	public void setSessionType(SessionType sessionType) {
 		this.sessionType = sessionType;
 	}
-	
+
 	public SessionType getSessionType() {
 		return sessionType;
 	}
