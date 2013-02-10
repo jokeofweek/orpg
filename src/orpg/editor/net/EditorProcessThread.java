@@ -1,38 +1,48 @@
 package orpg.editor.net;
 
+import java.util.HashMap;
+
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.data.ClientSentPacket;
 import orpg.client.net.ClientProcessThread;
 import orpg.editor.BaseEditor;
+import orpg.editor.net.handlers.ConnectedPacketHandler;
+import orpg.editor.net.handlers.EditorPacketHandler;
+import orpg.editor.net.handlers.EditorLoginOkPacketHandler;
+import orpg.editor.net.handlers.EditorMapDataPacketHandler;
+import orpg.editor.net.handlers.EditorMapListPacketHandler;
 import orpg.shared.net.ClientPacketType;
 import orpg.shared.net.InputByteBuffer;
+import orpg.shared.net.ServerPacketType;
 
 public class EditorProcessThread extends ClientProcessThread {
 
-	@Override
-	public void handlePacket(ClientReceivedPacket p) {
-		switch (p.getType()) {
-		case CONNECTED:
-			getOutputQueue().add(
-					new ClientSentPacket(ClientPacketType.EDITOR_LOGIN));
-			break;
-		case EDITOR_LOGIN_OK:
-			getOutputQueue().add(
-					new ClientSentPacket(ClientPacketType.EDITOR_READY));
-			break;
-		case EDITOR_MAP_LIST:
-			InputByteBuffer in = p.getByteBuffer();
-			int totalMaps = in.getInt();
-			((BaseEditor) getBaseClient()).showMapSelectWindow(totalMaps);
-			break;
-		case EDITOR_MAP_DATA:
-			handleEditorMapData(p);
-		}
+	private HashMap<ServerPacketType, EditorPacketHandler> handlers;
 
+	public EditorProcessThread() {
+		setupHandlers();
 	}
 
-	private void handleEditorMapData(ClientReceivedPacket p) {
-		((BaseEditor) getBaseClient()).editMap(p.getByteBuffer().getMap());
+	private void setupHandlers() {
+		this.handlers = new HashMap<ServerPacketType, EditorPacketHandler>();
+		handlers.put(ServerPacketType.CONNECTED, new ConnectedPacketHandler());
+		handlers.put(ServerPacketType.EDITOR_LOGIN_OK,
+				new EditorLoginOkPacketHandler());
+		handlers.put(ServerPacketType.EDITOR_MAP_LIST,
+				new EditorMapListPacketHandler());
+		handlers.put(ServerPacketType.EDITOR_MAP_DATA,
+				new EditorMapDataPacketHandler());
+	}
+
+	@Override
+	public void handlePacket(ClientReceivedPacket packet) {
+		EditorPacketHandler handler = handlers.get(packet.getType());
+		if (handler != null) {
+			handler.handle(packet, (BaseEditor) getBaseClient());
+		} else {
+			System.err.println("[EDITOR] No handler setup for packet "
+					+ packet.getType());
+		}
 	}
 
 }

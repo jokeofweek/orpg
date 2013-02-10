@@ -63,22 +63,25 @@ public class ServerGameThread implements Runnable {
 
 	@Override
 	public void run() {
-		ServerReceivedPacket p = null;
+		ServerReceivedPacket packet = null;
 		ServerPacketHandler handler = null;
 		while (true) {
 			if (!inputQueue.isEmpty()) {
-				p = inputQueue.remove();
+				packet = inputQueue.remove();
 
-				if (p.getSession().getSessionType() == SessionType.GAME) {
-					handler = clientHandlers.get(p.getType());
-				} else if (p.getSession().getSessionType() == SessionType.EDITOR) {
-					handler = editorHandlers.get(p.getType());
+				// Determine the right handler for the packet based on session
+				// type.
+				if (packet.getSession().getSessionType() == SessionType.GAME) {
+					handler = clientHandlers.get(packet.getType());
+				} else if (packet.getSession().getSessionType() == SessionType.EDITOR) {
+					handler = editorHandlers.get(packet.getType());
 				}
 
+				// Execute handler or disconnect.
 				if (handler == null) {
-					p.getSession().disconnect("Invalid packet.");
+					packet.getSession().disconnect("Invalid packet.");
 				} else {
-					handler.handle(p, baseServer);
+					handler.handle(packet, baseServer);
 				}
 			}
 		}
