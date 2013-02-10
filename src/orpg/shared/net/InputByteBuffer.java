@@ -5,7 +5,6 @@ import java.util.Arrays;
 import orpg.shared.Constants;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
-import orpg.shared.data.MapSaveData;
 import orpg.shared.data.Segment;
 
 public class InputByteBuffer {
@@ -62,7 +61,7 @@ public class InputByteBuffer {
 		return v;
 	}
 
-	public int getInteger() {
+	public int getInt() {
 		hasEnoughCapacity(4);
 		int v = bytes[this.pos];
 		v <<= 8;
@@ -108,8 +107,8 @@ public class InputByteBuffer {
 		short height = getShort();
 
 		// Get positions
-		int segmentX = getInteger();
-		int segmentY = getInteger();
+		int segmentX = getInt();
+		int segmentY = getInt();
 
 		// Ensure enough capacity for tiles
 		hasEnoughCapacity(width * height * MapLayer.values().length * 2);
@@ -126,18 +125,8 @@ public class InputByteBuffer {
 		return new Segment(segmentX, segmentY, width, height, tiles);
 	}
 
-	public MapSaveData getMapSaveData() {
-		int count = getInteger();
-
-		Segment[] segments = new Segment[count];
-		for (int i = 0; i < count; i++) {
-			segments[i] = getSegment();
-		}
-
-		return new MapSaveData(segments);
-	}
-
 	public Map getMap() {
+		int id = getInt();
 		short segmentWidth = getShort();
 		short segmentHeight = getShort();
 		short segmentsWide = getShort();
@@ -148,7 +137,9 @@ public class InputByteBuffer {
 				segments[y][x] = getSegment();
 			}
 		}
-		return new Map(segmentWidth, segmentHeight, segments);
+		Map map = new Map(segmentWidth, segmentHeight, segments);
+		map.setId(id);
+		return map;
 	}
 
 	public String getString() {

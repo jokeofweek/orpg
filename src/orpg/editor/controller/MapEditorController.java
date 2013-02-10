@@ -7,15 +7,10 @@ import java.util.Observer;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
-import orpg.client.data.ClientSentPacket;
-import orpg.client.net.BaseClient;
 import orpg.editor.BaseEditor;
 import orpg.editor.data.TileRange;
 import orpg.editor.data.change.EditorChangeManager;
 import orpg.shared.data.MapLayer;
-import orpg.shared.data.MapSaveData;
-import orpg.shared.net.ClientPacketType;
-import orpg.shared.net.OutputByteBuffer;
 
 public class MapEditorController extends Observable implements Observer {
 

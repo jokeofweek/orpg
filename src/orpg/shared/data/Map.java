@@ -4,6 +4,7 @@ import orpg.shared.Constants;
 
 public class Map {
 
+	private int id;
 	private int width;
 	private int height;
 	private short segmentWidth;
@@ -33,9 +34,17 @@ public class Map {
 	public Map(short segmentWidth, short segmentHeight, Segment[][] segments) {
 		this.segmentWidth = segmentWidth;
 		this.segmentHeight = segmentHeight;
-		this.width = this.segmentWidth * segments[0].length;
-		this.height = this.segmentHeight * segments.length;
+		this.width = this.segmentWidth * segments.length;
+		this.height = this.segmentHeight * segments[0].length;
 		this.segments = segments;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public int getWidth() {
@@ -55,11 +64,11 @@ public class Map {
 	}
 
 	public short getSegmentsWide() {
-		return (short) this.segments[0].length;
+		return (short) this.segments.length;
 	}
 
 	public short getSegmentsHigh() {
-		return (short) this.segments.length;
+		return (short) this.segments[0].length;
 	}
 
 	public Segment[][] getSegments() {
@@ -67,8 +76,17 @@ public class Map {
 	}
 
 	public Segment getSegment(int x, int y) {
-		if (x < 0 || y < 0 || x >= segmentWidth * segments[0].length
-				|| y >= segmentHeight * segments.length) {
+
+		if (x < 0 || y < 0 || x >= segments.length || y >= segments[0].length) {
+			throw new IllegalArgumentException("Invalid segment position.");
+		}
+
+		return this.segments[x][y];
+	}
+
+	public Segment getPositionSegment(int x, int y) {
+		if (x < 0 || y < 0 || x >= segmentWidth * segments.length
+				|| y >= segmentHeight * segments[0].length) {
 			throw new IllegalArgumentException("Invalid segment position.");
 		}
 

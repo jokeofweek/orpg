@@ -5,7 +5,6 @@ import java.util.Arrays;
 import orpg.shared.Constants;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
-import orpg.shared.data.MapSaveData;
 import orpg.shared.data.Segment;
 
 public class OutputByteBuffer {
@@ -34,6 +33,14 @@ public class OutputByteBuffer {
 			this.bytes = Arrays.copyOfRange(bytes, 0, pos);
 		}
 		return bytes;
+	}
+
+	/**
+	 * This clears the contents of the output byte buffer and sets the position
+	 * back to 0.
+	 */
+	public void reset() {
+		this.pos = 0;
 	}
 
 	/**
@@ -74,7 +81,7 @@ public class OutputByteBuffer {
 		putShort((short) data);
 	}
 
-	public void putInteger(int data) {
+	public void putInt(int data) {
 		testForExtraCapacity(4);
 		bytes[pos] = (byte) ((data >> 24) & 0xff);
 		bytes[pos + 1] = (byte) ((data >> 16) & 0xff);
@@ -119,8 +126,8 @@ public class OutputByteBuffer {
 		putShort(width);
 		putShort(height);
 
-		putInteger(segment.getX());
-		putInteger(segment.getY());
+		putInt(segment.getX());
+		putInt(segment.getY());
 
 		// test for extra capacity right away to pre-allocate
 		short[][][] tiles = segment.getTiles();
@@ -138,6 +145,7 @@ public class OutputByteBuffer {
 	}
 
 	public void putMap(Map map) {
+		putInt(map.getId());
 		putShort(map.getSegmentWidth());
 		putShort(map.getSegmentHeight());
 		putShort(map.getSegmentsWide());
@@ -147,7 +155,7 @@ public class OutputByteBuffer {
 
 		for (int x = 0; x < map.getSegmentsWide(); x++) {
 			for (int y = 0; y < map.getSegmentsHigh(); y++) {
-				putSegment(map.getSegments()[x][y]);
+				putSegment(map.getSegment(x, y));
 			}
 		}
 	}

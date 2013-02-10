@@ -1,22 +1,16 @@
 package orpg.server;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-import org.omg.CORBA_2_3.portable.OutputStream;
-
+import orpg.server.data.FileSystem;
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.ServerSentPacket;
 import orpg.shared.Constants;
 import orpg.shared.Priority;
 import orpg.shared.data.Map;
-import orpg.shared.data.MapSaveData;
-import orpg.shared.data.Segment;
 import orpg.shared.net.InputByteBuffer;
 import orpg.shared.net.OutputByteBuffer;
 import orpg.shared.net.ServerPacketType;
@@ -93,22 +87,11 @@ public class ServerGameThread implements Runnable {
 		case EDITOR_MAP_SAVE:
 			// Save maps
 			Map map = packet.getByteBuffer().getMap();
-
-			for (int x = 0; x < map.getSegmentsWide(); x++) {
-				for (int y = 0; y < map.getSegmentsHigh(); y++) {
-					out = new OutputByteBuffer();
-					out.putSegment(map.getSegments()[x][y]);
-					try {
-						BufferedOutputStream writer = new BufferedOutputStream(
-								new FileOutputStream(Constants.SERVER_MAPS_PATH
-										+ "map_" + x + "_" + y + ".map"));
-						writer.write(out.getBytes());
-						writer.close();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
+			try {
+				FileSystem.save(map);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			break;
 		default:

@@ -4,7 +4,6 @@ import orpg.client.data.ClientSentPacket;
 import orpg.client.net.BaseClient;
 import orpg.editor.BaseEditor;
 import orpg.shared.data.Map;
-import orpg.shared.data.MapSaveData;
 import orpg.shared.data.Segment;
 import orpg.shared.net.ClientPacketType;
 import orpg.shared.net.OutputByteBuffer;

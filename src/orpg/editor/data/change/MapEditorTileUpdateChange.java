@@ -47,7 +47,7 @@ public class MapEditorTileUpdateChange implements EditorChange {
 
 		for (int dX = 0; dX < diffX; dX++) {
 			for (int dY = 0; dY < diffY; dY++) {
-				oldTiles[dX][dY] = mapController.getSegment(x + dX, y + dY)
+				oldTiles[dX][dY] = mapController.getPositionSegment(x + dX, y + dY)
 						.getTiles()[layerOrd][mapController.mapXToSegmentX(x
 						+ dX)][mapController.mapYToSegmentY(y + dY)];
 			}
