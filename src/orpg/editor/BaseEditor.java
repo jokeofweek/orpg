@@ -44,7 +44,7 @@ public class BaseEditor extends BaseClient {
 		OutputByteBuffer out = new OutputByteBuffer();
 		out.putMap(map);
 		getOutputQueue().add(
-				new ClientSentPacket(ClientPacketType.EDITOR_MAP_SAVE, out
+				new ClientSentPacket(ClientPacketType.EDITOR_SAVE_MAP, out
 						.getBytes()));
 	}
 }

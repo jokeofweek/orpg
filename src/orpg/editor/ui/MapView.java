@@ -304,8 +304,8 @@ public class MapView extends JComponent implements Observer, MouseListener,
 				}
 
 				// If a right-click, then erase the tile if not already empty.
-				if (mapController.getTile(editorController.getCurrentLayer()
-						.ordinal(), y / tileHeight, x / tileWidth) != 0) {
+				if (mapController.getTile(x / tileWidth, y / tileHeight,
+						editorController.getCurrentLayer().ordinal()) != 0) {
 
 					editorController.getChangeManager().addChange(
 							new MapEditorTileEraseChange(editorController,

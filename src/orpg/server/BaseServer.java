@@ -12,7 +12,10 @@ import orpg.server.data.FileSystem;
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.ServerSentPacket;
 import orpg.shared.Constants;
+import orpg.shared.Priority;
 import orpg.shared.data.Map;
+import orpg.shared.net.OutputByteBuffer;
+import orpg.shared.net.ServerPacketType;
 
 public class BaseServer {
 
@@ -94,7 +97,7 @@ public class BaseServer {
 	 */
 	private boolean loadData() {
 		// Load the maps, creating them if necessary
-		Map emptyMap = new Map(0, (short) 1, (short) 1, true);
+		Map emptyMap = new Map(0, (short) 3, (short) 2, true);
 		for (int i = 1; i <= config.getTotalMaps(); i++) {
 			if (!new File(Constants.SERVER_MAPS_PATH + "map_" + i + ".map")
 					.exists()) {
@@ -111,6 +114,14 @@ public class BaseServer {
 		}
 
 		return true;
+	}
+
+	public void sendEditorMapData(ServerSession session, Map map) {
+		OutputByteBuffer out = new OutputByteBuffer();
+		out.putMap(map);
+		outputQueue.add(ServerSentPacket.getSessionPacket(
+				ServerPacketType.EDITOR_MAP_DATA, Priority.MEDIUM, session,
+				out.getBytes()));
 	}
 
 }
