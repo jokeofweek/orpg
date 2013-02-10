@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.logging.Level;
 
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.ServerSentPacket;
@@ -17,12 +18,15 @@ public class ServerSession {
 	private volatile boolean connected;
 	private String disconnectReason;
 	private ServerSessionThread serverSessionThread;
+	private String id;
 
 	public ServerSession(BaseServer baseServer, Socket socket)
 			throws SocketException {
 		this.baseServer = baseServer;
 		this.outputQueue = new PriorityQueue<ServerSentPacket>();
 		this.setSessionType(SessionType.GAME);
+
+		this.id = socket.getInetAddress().toString();
 
 		// Start the session thread
 		this.serverSessionThread = new ServerSessionThread(baseServer, socket,
@@ -32,7 +36,18 @@ public class ServerSession {
 		this.connected = true;
 	}
 
+	public String getId() {
+		return id;
+	}
+
 	public void setSessionType(SessionType sessionType) {
+		baseServer
+				.getConfigurationManager()
+				.getSessionLogger()
+				.log(Level.FINE,
+						String.format(
+								"Session %s changed session type from %s to %s",
+								id, this.sessionType, sessionType));
 		this.sessionType = sessionType;
 	}
 
@@ -53,11 +68,17 @@ public class ServerSession {
 	}
 
 	public void disconnect(String reason) {
+		baseServer
+				.getConfigurationManager()
+				.getSessionLogger()
+				.log(Level.INFO,
+						String.format("Session %s disconnected for reason %s.",
+								getId(), reason));
 		baseServer.getServerSessionManager().removeSession(this);
-		baseServer.getConsole().out()
-				.println("Socket disconnected. Reason: " + reason);
+
 		this.connected = false;
 		this.disconnectReason = reason;
+
 	}
 
 	public String getDisconnectReason() {

@@ -2,6 +2,7 @@ package orpg.server;
 
 import java.util.HashSet;
 import java.util.PriorityQueue;
+import java.util.logging.Level;
 
 import orpg.server.data.ServerSentPacket;
 import orpg.shared.Priority;
@@ -28,6 +29,8 @@ public class ServerSessionManager implements Runnable {
 	}
 
 	public void addSession(ServerSession session) {
+		server.getConfigurationManager().getSessionLogger()
+				.log(Level.INFO, "Session created - " + session.getId());
 		// Send connected packet
 		outputQueue.add(ServerSentPacket.getSessionPacket(
 				ServerPacketType.CONNECTED, Priority.URGENT, session));
@@ -36,6 +39,8 @@ public class ServerSessionManager implements Runnable {
 
 	public void removeSession(ServerSession session) {
 		sessions.remove(session);
+		server.getConfigurationManager().getSessionLogger()
+				.log(Level.INFO, "Session removed - " + session.getId());
 	}
 
 	@Override
