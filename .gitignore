@@ -9,3 +9,4 @@
 # data files
 data/server/maps/*
 data/server/logs/*
+*.log
