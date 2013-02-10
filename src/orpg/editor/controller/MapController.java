@@ -14,6 +14,10 @@ public class MapController extends Observable {
 		this.map = map;
 	}
 
+	public Map getMap() {
+		return map;
+	}
+	
 	public int getMapHeight() {
 		return this.map.getHeight();
 	}

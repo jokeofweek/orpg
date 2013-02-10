@@ -3,6 +3,7 @@ package orpg.shared.net;
 import java.util.Arrays;
 
 import orpg.shared.Constants;
+import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
 import orpg.shared.data.MapSaveData;
 import orpg.shared.data.Segment;
@@ -134,6 +135,20 @@ public class InputByteBuffer {
 		}
 
 		return new MapSaveData(segments);
+	}
+
+	public Map getMap() {
+		short segmentWidth = getShort();
+		short segmentHeight = getShort();
+		short segmentsWide = getShort();
+		short segmentsHigh = getShort();
+		Segment[][] segments = new Segment[segmentsHigh][segmentsWide];
+		for (int y = 0; y < segmentsHigh; y++) {
+			for (int x = 0; x < segmentsWide; x++) {
+				segments[y][x] = getSegment();
+			}
+		}
+		return new Map(segmentWidth, segmentHeight, segments);
 	}
 
 	public String getString() {

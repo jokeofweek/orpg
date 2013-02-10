@@ -3,6 +3,7 @@ package orpg.shared.net;
 import java.util.Arrays;
 
 import orpg.shared.Constants;
+import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
 import orpg.shared.data.MapSaveData;
 import orpg.shared.data.Segment;
@@ -26,48 +27,6 @@ public class OutputByteBuffer {
 		this.bytes = new byte[capacity];
 	}
 
-	/**
-	 * This creates an output byte buffer with an estimate number of bytes based
-	 * on the objects passed. It pre-loads it with the objects passed.
-	 * 
-	 * @param objects
-	 *            the objects to store in the buffer.
-	 */
-	public OutputByteBuffer(Object... objects) {
-		this(objects.length * 4); // rough guess
-		// TODO: Estimate the size of the array more thoroughly.
-		for (Object o : objects) {
-			if (o instanceof Number) {
-				if (o instanceof Byte) {
-					putByte((Byte) o);
-				} else if (o instanceof Short) {
-					putShort((Short) o);
-				} else if (o instanceof Integer) {
-					putInteger((Integer) o);
-				} else if (o instanceof Long) {
-					putLong((Long) o);
-				} else {
-					throw new IllegalArgumentException(
-							"Cannot serialize object of type '"
-									+ o.getClass() + "'.");
-				}
-			} else if (o instanceof Boolean) {
-				putBoolean((Boolean) o);
-			} else if (o instanceof String) {
-				putString((String) o);
-			} else if (o instanceof MapSaveData) {
-				putMapSaveData((MapSaveData)o);
-			} else if (o instanceof Segment) {
-				putSegment((Segment)o);
-			} else {
-				throw new IllegalArgumentException(
-						"Cannot serialize object of type '" + o.getClass()
-								+ "'.");
-			}
-		}
-
-	}
-
 	public byte[] getBytes() {
 		// If our byte buffer is perfectly full, just return that, else
 		// trim it.
@@ -88,9 +47,13 @@ public class OutputByteBuffer {
 		if (this.bytes.length < pos + extraCapacity) {
 			// If necessary, expand the byte array. Note we also shift new
 			// capacity by 1 to have extra space for later.
-			this.bytes = Arrays.copyOfRange(this.bytes, 0,
-					this.bytes.length + (extraCapacity << 1));
+			this.bytes = Arrays.copyOfRange(this.bytes, 0, this.bytes.length
+					+ (extraCapacity << 1));
 		}
+	}
+
+	public void reserveExtraSpace(int extraSpace) {
+		this.testForExtraCapacity(extraSpace);
 	}
 
 	public void putByte(byte data) {
@@ -161,8 +124,8 @@ public class OutputByteBuffer {
 
 		// test for extra capacity right away to pre-allocate
 		short[][][] tiles = segment.getTiles();
-		testForExtraCapacity(MapLayer.values().length
-				* segment.getHeight() * segment.getWidth() * 2);
+		testForExtraCapacity(MapLayer.values().length * segment.getHeight()
+				* segment.getWidth() * 2);
 
 		int z, y, x;
 		for (z = 0; z < MapLayer.values().length; z++) {
@@ -173,12 +136,19 @@ public class OutputByteBuffer {
 			}
 		}
 	}
-	
-	public void putMapSaveData(MapSaveData mapSaveData) {
-		putInteger(mapSaveData.getSegments().length);
+
+	public void putMap(Map map) {
+		putShort(map.getSegmentWidth());
+		putShort(map.getSegmentHeight());
+		putShort(map.getSegmentsWide());
+		putShort(map.getSegmentsHigh());
+		reserveExtraSpace(map.getSegmentsWide() * map.getSegmentsHigh()
+				* map.getSegmentHeight() * map.getSegmentWidth() * 2);
 		
-		for (Segment segment : mapSaveData.getSegments()) {
-			putSegment(segment);
+		for (int y = 0; y < map.getSegmentsHigh(); y++) {
+			for (int x = 0; x < map.getSegmentsWide(); x++) {
+				putSegment(map.getSegments()[y][x]);
+			}
 		}
 	}
 

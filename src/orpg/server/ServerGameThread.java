@@ -14,6 +14,7 @@ import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.ServerSentPacket;
 import orpg.shared.Constants;
 import orpg.shared.Priority;
+import orpg.shared.data.Map;
 import orpg.shared.data.MapSaveData;
 import orpg.shared.data.Segment;
 import orpg.shared.net.InputByteBuffer;
@@ -59,8 +60,7 @@ public class ServerGameThread implements Runnable {
 		case EDITOR_LOGIN:
 			sender.setSessionType(SessionType.EDITOR);
 			outputQueue.add(ServerSentPacket.getSessionPacket(
-					ServerPacketType.EDITOR_LOGIN_OK, Priority.URGENT,
-					sender));
+					ServerPacketType.EDITOR_LOGIN_OK, Priority.URGENT, sender));
 			break;
 		default:
 			InputByteBuffer buffer = packet.getByteBuffer();
@@ -92,21 +92,22 @@ public class ServerGameThread implements Runnable {
 			break;
 		case EDITOR_MAP_SAVE:
 			// Save maps
-			MapSaveData saveData = packet.getByteBuffer().getMapSaveData();
+			Map map = packet.getByteBuffer().getMap();
 
-			for (Segment s : saveData.getSegments()) {
-				out = new OutputByteBuffer(s);
-				try {
-					BufferedOutputStream writer = new BufferedOutputStream(
-							new FileOutputStream(
-									Constants.SERVER_MAPS_PATH + "map_"
-											+ s.getX() + "_" + s.getY()
-											+ ".map"));
-					writer.write(out.getBytes());
-					writer.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			for (int y = 0; y < map.getSegmentsHigh(); y++) {
+				for (int x = 0; x < map.getSegmentsWide(); x++) {
+					out = new OutputByteBuffer();
+					out.putSegment(map.getSegments()[y][x]);
+					try {
+						BufferedOutputStream writer = new BufferedOutputStream(
+								new FileOutputStream(Constants.SERVER_MAPS_PATH
+										+ "map_" + x + "_" + y + ".map"));
+						writer.write(out.getBytes());
+						writer.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
 			break;

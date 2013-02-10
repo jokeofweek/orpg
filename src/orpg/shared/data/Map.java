@@ -6,17 +6,17 @@ public class Map {
 
 	private int width;
 	private int height;
-	private int segmentWidth;
-	private int segmentHeight;
+	private short segmentWidth;
+	private short segmentHeight;
 	private Segment[][] segments;
 
-	public Map(int segmentsWide, int segmentsHigh) {
+	public Map(short segmentsWide, short segmentsHigh) {
 		this(Constants.MAP_SEGMENT_WIDTH, Constants.MAP_SEGMENT_HEIGHT,
 				segmentsWide, segmentsHigh);
 	}
 
-	public Map(short segmentWidth, short segmentHeight, int segmentsWide,
-			int segmentsHigh) {
+	public Map(short segmentWidth, short segmentHeight, short segmentsWide,
+			short segmentsHigh) {
 		this.segmentHeight = segmentHeight;
 		this.segmentWidth = segmentWidth;
 		this.width = segmentWidth * segmentsWide;
@@ -29,6 +29,14 @@ public class Map {
 			}
 		}
 	}
+	
+	public Map(short segmentWidth, short segmentHeight, Segment[][] segments) {
+		this.segmentWidth = segmentWidth;
+		this.segmentHeight = this.segmentHeight;
+		this.width = this.segmentWidth * segments[0].length;
+		this.height = this.segmentHeight * segments.length;
+		this.segments = segments;
+	}
 
 	public int getWidth() {
 		return width;
@@ -38,20 +46,20 @@ public class Map {
 		return height;
 	}
 
-	public int getSegmentWidth() {
+	public short getSegmentWidth() {
 		return this.segmentWidth;
 	}
 
-	public int getSegmentHeight() {
+	public short getSegmentHeight() {
 		return segmentHeight;
 	}
 
-	public int getSegmentsWide() {
-		return this.width / this.segmentWidth;
+	public short getSegmentsWide() {
+		return (short) this.segments[0].length;
 	}
 
-	public int getSegmentsHigh() {
-		return this.height / this.segmentHeight;
+	public short getSegmentsHigh() {
+		return (short) this.segments.length;
 	}
 
 	public Segment[][] getSegments() {

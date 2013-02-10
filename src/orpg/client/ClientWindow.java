@@ -52,8 +52,8 @@ public class ClientWindow extends JFrame {
 					return;
 				}
 
-				OutputByteBuffer buffer = new OutputByteBuffer(
-						enterTextField.getText());
+				OutputByteBuffer buffer = new OutputByteBuffer();
+				buffer.putString(enterTextField.getText());
 
 				baseClient.getOutputQueue().add(
 						new ClientSentPacket(ClientPacketType.PING, buffer
