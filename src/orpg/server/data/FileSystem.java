@@ -12,14 +12,12 @@ import orpg.shared.net.OutputByteBuffer;
 public class FileSystem {
 
 	public static void save(Map map) throws IOException {
-		MapDescriptor descriptor = new MapDescriptor(map);
-
 		OutputByteBuffer buffer = new OutputByteBuffer();
-		buffer.putInt(descriptor.getId());
-		buffer.putShort(descriptor.getSegmentWidth());
-		buffer.putShort(descriptor.getSegmentHeight());
-		buffer.putShort(descriptor.getSegmentsWide());
-		buffer.putShort(descriptor.getSegmentsHigh());
+		buffer.putInt(map.getId());
+		buffer.putShort(map.getSegmentWidth());
+		buffer.putShort(map.getSegmentHeight());
+		buffer.putShort(map.getSegmentsWide());
+		buffer.putShort(map.getSegmentsHigh());
 
 		BufferedOutputStream out = null;
 
@@ -29,8 +27,8 @@ public class FileSystem {
 			out.write(buffer.getBytes());
 			out.close();
 
-			for (int x = 0; x < descriptor.getSegmentsWide(); x++) {
-				for (int y = 0; y < descriptor.getSegmentsHigh(); y++) {
+			for (int x = 0; x < map.getSegmentsWide(); x++) {
+				for (int y = 0; y < map.getSegmentsHigh(); y++) {
 					buffer.reset();
 					buffer.putSegment(map.getSegment(x, y));
 					out = new BufferedOutputStream(new FileOutputStream(

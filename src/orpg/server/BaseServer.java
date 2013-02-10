@@ -51,6 +51,9 @@ public class BaseServer {
 			System.exit(1);
 		}
 
+		// Load all necessary data
+		console.out().println("Loading data...");
+
 		// Now that everything is setup, we are ready to go.
 		console.out().println("Starting threads...");
 		new Thread(serverSessionManager).start();
@@ -77,6 +80,10 @@ public class BaseServer {
 
 	public ServerSessionManager getServerSessionManager() {
 		return serverSessionManager;
+	}
+
+	private void loadData() {
+
 	}
 
 }

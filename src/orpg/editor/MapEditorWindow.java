@@ -50,7 +50,7 @@ public class MapEditorWindow extends JFrame implements Observer {
 	private BaseEditor baseEditor;
 
 	public MapEditorWindow(BaseEditor baseEditor) {
-		Map map = new Map((short) 3, (short) 3);
+		Map map = new Map(1, (short) 3, (short) 3);
 
 		this.mapController = new MapController(map);
 		this.editorController = new MapEditorController(baseEditor,

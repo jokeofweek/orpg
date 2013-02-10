@@ -3,23 +3,27 @@ package orpg.shared.data;
 import orpg.shared.Constants;
 
 public class Map {
-
 	private int id;
-	private int width;
-	private int height;
+	private short segmentsWide;
+	private short segmentsHigh;
 	private short segmentWidth;
 	private short segmentHeight;
+	private int width;
+	private int height;
 	private Segment[][] segments;
 
-	public Map(short segmentsWide, short segmentsHigh) {
-		this(Constants.MAP_SEGMENT_WIDTH, Constants.MAP_SEGMENT_HEIGHT,
+	public Map(int id, short segmentsWide, short segmentsHigh) {
+		this(id, Constants.MAP_SEGMENT_WIDTH, Constants.MAP_SEGMENT_HEIGHT,
 				segmentsWide, segmentsHigh);
 	}
 
-	public Map(short segmentWidth, short segmentHeight, short segmentsWide,
-			short segmentsHigh) {
-		this.segmentHeight = segmentHeight;
+	public Map(int id, short segmentWidth, short segmentHeight,
+			short segmentsWide, short segmentsHigh) {
+		this.id = id;
+		this.segmentsWide = segmentsWide;
+		this.segmentsHigh = segmentsHigh;
 		this.segmentWidth = segmentWidth;
+		this.segmentHeight = segmentHeight;
 		this.width = segmentWidth * segmentsWide;
 		this.height = segmentHeight * segmentsHigh;
 		this.segments = new Segment[segmentsWide][segmentsHigh];
@@ -31,11 +35,15 @@ public class Map {
 		}
 	}
 
-	public Map(short segmentWidth, short segmentHeight, Segment[][] segments) {
+	public Map(int id, short segmentWidth, short segmentHeight,
+			Segment[][] segments) {
+		this.id = id;
+		this.segmentsWide = (short) segments.length;
+		this.segmentsHigh = (short) segments[0].length;
 		this.segmentWidth = segmentWidth;
 		this.segmentHeight = segmentHeight;
-		this.width = this.segmentWidth * segments.length;
-		this.height = this.segmentHeight * segments[0].length;
+		this.width = segmentWidth * segments.length;
+		this.height = segmentHeight * segments[0].length;
 		this.segments = segments;
 	}
 
@@ -47,28 +55,44 @@ public class Map {
 		this.id = id;
 	}
 
-	public int getWidth() {
-		return width;
+	public short getSegmentsWide() {
+		return segmentsWide;
 	}
 
-	public int getHeight() {
-		return height;
+	public void setSegmentsWide(short segmentsWide) {
+		this.segmentsWide = segmentsWide;
+	}
+
+	public short getSegmentsHigh() {
+		return segmentsHigh;
+	}
+
+	public void setSegmentsHigh(short segmentsHigh) {
+		this.segmentsHigh = segmentsHigh;
 	}
 
 	public short getSegmentWidth() {
-		return this.segmentWidth;
+		return segmentWidth;
+	}
+
+	public void setSegmentWidth(short segmentWidth) {
+		this.segmentWidth = segmentWidth;
 	}
 
 	public short getSegmentHeight() {
 		return segmentHeight;
 	}
 
-	public short getSegmentsWide() {
-		return (short) this.segments.length;
+	public void setSegmentHeight(short segmentHeight) {
+		this.segmentHeight = segmentHeight;
 	}
 
-	public short getSegmentsHigh() {
-		return (short) this.segments[0].length;
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
 	}
 
 	public Segment[][] getSegments() {
@@ -85,20 +109,22 @@ public class Map {
 	}
 
 	public Segment getPositionSegment(int x, int y) {
-		if (x < 0 || y < 0 || x >= segmentWidth * segments.length
-				|| y >= segmentHeight * segments[0].length) {
+		if (x < 0 || y < 0
+				|| x >= this.segmentWidth * this.segments.length
+				|| y >= this.segmentHeight * this.segments[0].length) {
 			throw new IllegalArgumentException("Invalid segment position.");
 		}
 
-		return this.segments[x / this.segmentWidth][y / this.segmentHeight];
+		return this.segments[x / this.segmentWidth][y
+				/ this.segmentHeight];
 	}
 
 	public int mapXToSegmentX(int x) {
-		return x % segmentWidth;
+		return x % this.segmentWidth;
 	}
 
 	public int mapYToSegmentY(int y) {
-		return y % segmentHeight;
+		return y % this.segmentHeight;
 	}
 
 }

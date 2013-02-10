@@ -18,8 +18,8 @@ public class ConfigurationManager {
 	private Properties properties;
 	private Logger sessionLogger;
 
-	// Constant property names
-	private static final String SERVER_PORT = "Server.Port";
+	private int serverPort;
+	private int totalMaps;
 
 	public ConfigurationManager(String[] configurationFiles,
 			ServerConsole console) {
@@ -62,10 +62,43 @@ public class ConfigurationManager {
 					"Error creationg session log file. Error message: "
 							+ e.getMessage());
 		}
+
+		// Load the properties
+		loadProperties();
+	}
+
+	private void loadProperties() {
+		this.serverPort = getIntProperty("Server.Port", 8000);
+		this.totalMaps = getIntProperty("Data.Maps", 100);
+	}
+
+	private String getStringProperty(String key, String defaultValue) {
+		String property = properties.getProperty(key);
+		if (property == null) {
+			return defaultValue;
+		} else {
+			return property;
+		}
+	}
+
+	private int getIntProperty(String key, int defaultValue) {
+		String property = properties.getProperty(key);
+		if (property == null) {
+			return defaultValue;
+		}
+		try {
+			return Integer.parseInt(property);
+		} catch (NumberFormatException e) {
+			return defaultValue;
+		}
 	}
 
 	public int getServerPort() {
-		return Integer.parseInt(properties.getProperty(SERVER_PORT));
+		return serverPort;
+	}
+
+	public int getTotalMaps() {
+		return totalMaps;
 	}
 
 	public Logger getSessionLogger() {

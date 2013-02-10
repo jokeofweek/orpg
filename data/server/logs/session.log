@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="windows-1252" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2013-02-10T12:49:59</date>
+  <millis>1360518599052</millis>
+  <sequence>0</sequence>
+  <logger>session</logger>
+  <level>INFO</level>
+  <class>orpg.server.ServerSessionManager</class>
+  <method>addSession</method>
+  <thread>11</thread>
+  <message>Session created - /127.0.0.1</message>
+</record>
+<record>
+  <date>2013-02-10T12:50:19</date>
+  <millis>1360518619644</millis>
+  <sequence>1</sequence>
+  <logger>session</logger>
+  <level>INFO</level>
+  <class>orpg.server.ServerSession</class>
+  <method>disconnect</method>
+  <thread>12</thread>
+  <message>Session /127.0.0.1 disconnected for reason Client disconnect..</message>
+</record>
+<record>
+  <date>2013-02-10T12:50:19</date>
+  <millis>1360518619647</millis>
+  <sequence>2</sequence>
+  <logger>session</logger>
+  <level>INFO</level>
+  <class>orpg.server.ServerSessionManager</class>
+  <method>removeSession</method>
+  <thread>12</thread>
+  <message>Session removed - /127.0.0.1</message>
+</record>

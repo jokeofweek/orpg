@@ -137,8 +137,7 @@ public class InputByteBuffer {
 				segments[y][x] = getSegment();
 			}
 		}
-		Map map = new Map(segmentWidth, segmentHeight, segments);
-		map.setId(id);
+		Map map = new Map(id, segmentWidth, segmentHeight, segments);
 		return map;
 	}
 
