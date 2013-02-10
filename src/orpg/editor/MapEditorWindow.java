@@ -3,6 +3,7 @@ package orpg.editor;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -27,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
 import orpg.editor.controller.MapController;
@@ -45,6 +47,8 @@ public class MapEditorWindow extends JFrame implements Observer {
 
 	private JCheckBoxMenuItem gridToggleMenuItem;
 	private JCheckBoxMenuItem hoverPreviewToggleMenuItem;
+
+	private JTextField mapNameTextField;
 
 	private BaseEditor baseEditor;
 
@@ -92,6 +96,14 @@ public class MapEditorWindow extends JFrame implements Observer {
 
 		JTabbedPane tabPane = new JTabbedPane();
 
+		tabPane.addTab("Tiles", getTilesTabPane());
+		tabPane.addTab("Properties", getPropertiesTabPane());
+		tabPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 0));
+
+		return tabPane;
+	}
+
+	public JComponent getTilesTabPane() {
 		// Set up the tile tab panel
 		JPanel tilesTabPanel = new JPanel(new BorderLayout());
 
@@ -132,10 +144,17 @@ public class MapEditorWindow extends JFrame implements Observer {
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 		tilesTabPanel.add(tilesScrollPane);
-		tabPane.addTab("Tiles", tilesTabPanel);
-		tabPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 0));
+		tilesTabPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		return tilesTabPanel;
+	}
 
-		return tabPane;
+	public JComponent getPropertiesTabPane() {
+		JPanel panel = new JPanel(new GridLayout(0, 2));
+		panel.add(new JLabel("Name:"));
+		mapNameTextField = new JTextField();
+		panel.add(mapNameTextField);
+		return panel;
+
 	}
 
 	public JComponent getLayersPane() {
@@ -242,6 +261,10 @@ public class MapEditorWindow extends JFrame implements Observer {
 
 		this.setJMenuBar(menuBar);
 
+	}
+
+	public void loadData() {
+		mapNameTextField.setText(mapController.getMapName());
 	}
 
 	@Override

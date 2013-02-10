@@ -110,6 +110,11 @@ public class OutputByteBuffer {
 	}
 
 	public void putString(String data) {
+		if (data == null) {
+			putShort((short) 0);
+			return;
+		}
+
 		byte[] stringBytes = data.getBytes(Constants.CHARSET);
 		putShort((short) stringBytes.length);
 		testForExtraCapacity(stringBytes.length);
@@ -150,6 +155,7 @@ public class OutputByteBuffer {
 		putShort(map.getSegmentHeight());
 		putShort(map.getSegmentsWide());
 		putShort(map.getSegmentsHigh());
+		putString(map.getName());
 	}
 
 	public void putMap(Map map) {

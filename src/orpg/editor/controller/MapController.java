@@ -18,6 +18,10 @@ public class MapController extends Observable {
 		return map;
 	}
 
+	public String getMapName() {
+		return map.getName();
+	}
+
 	public int getMapHeight() {
 		return this.map.getHeight();
 	}

@@ -170,8 +170,11 @@ public class InputByteBuffer {
 		short segmentHeight = getShort();
 		short segmentsWide = getShort();
 		short segmentsHigh = getShort();
-		return new Map(id, segmentWidth, segmentHeight, segmentsWide,
+		Map map = new Map(id, segmentWidth, segmentHeight, segmentsWide,
 				segmentsHigh, false);
+		
+		map.setName(getString());
+		return map;
 	}
 
 	public Map getMap() {

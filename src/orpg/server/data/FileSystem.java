@@ -15,12 +15,7 @@ public class FileSystem {
 
 	public static void save(Map map) throws IOException {
 		OutputByteBuffer buffer = new OutputByteBuffer();
-		buffer.putInt(map.getId());
-		buffer.putShort(map.getSegmentWidth());
-		buffer.putShort(map.getSegmentHeight());
-		buffer.putShort(map.getSegmentsWide());
-		buffer.putShort(map.getSegmentsHigh());
-
+		buffer.putMapDescriptor(map);
 		BufferedOutputStream out = null;
 
 		try {

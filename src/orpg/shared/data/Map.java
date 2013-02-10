@@ -10,6 +10,8 @@ public class Map {
 	private short segmentHeight;
 	private int width;
 	private int height;
+	private String name;
+
 	private Segment[][] segments;
 
 	public Map(int id, short segmentsWide, short segmentsHigh,
@@ -28,6 +30,7 @@ public class Map {
 		this.width = segmentWidth * segmentsWide;
 		this.height = segmentHeight * segmentsHigh;
 		this.segments = new Segment[segmentsWide][segmentsHigh];
+		this.name = "";
 		if (createSegments) {
 			for (int x = 0; x < segmentsWide; x++) {
 				for (int y = 0; y < segmentsHigh; y++) {
@@ -48,6 +51,7 @@ public class Map {
 		this.width = segmentWidth * segments.length;
 		this.height = segmentHeight * segments[0].length;
 		this.segments = segments;
+		this.name = "";
 	}
 
 	public int getId() {
@@ -136,6 +140,14 @@ public class Map {
 
 	public int mapYToSegmentY(int y) {
 		return y % this.segmentHeight;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }
