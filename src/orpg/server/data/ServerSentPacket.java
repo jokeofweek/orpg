@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.Socket;
 
 import orpg.server.ServerSession;
-import orpg.server.ServerSessionThread;
 import orpg.shared.Priority;
 import orpg.shared.net.ServerPacketType;
 

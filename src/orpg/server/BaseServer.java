@@ -1,5 +1,6 @@
 package orpg.server;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
@@ -7,8 +8,11 @@ import java.util.Queue;
 
 import orpg.server.config.ConfigurationManager;
 import orpg.server.console.ServerConsole;
+import orpg.server.data.FileSystem;
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.ServerSentPacket;
+import orpg.shared.Constants;
+import orpg.shared.data.Map;
 
 public class BaseServer {
 
@@ -44,15 +48,18 @@ public class BaseServer {
 			encounteredSetupProblems = true;
 		}
 
+		// Load all necessary data
+		console.out().println("Loading data...");
+		if (!encounteredSetupProblems) {
+			encounteredSetupProblems = !loadData();
+		}
+
 		// Close if any setup problems
 		if (encounteredSetupProblems) {
 			console.out().println(
 					"Encountered setup problems. Shutting down...");
 			System.exit(1);
 		}
-
-		// Load all necessary data
-		console.out().println("Loading data...");
 
 		// Now that everything is setup, we are ready to go.
 		console.out().println("Starting threads...");
@@ -62,7 +69,7 @@ public class BaseServer {
 		console.out().println("Ready to go!");
 	}
 
-	public ConfigurationManager getConfigurationManager() {
+	public ConfigurationManager getConfigManager() {
 		return config;
 	}
 
@@ -82,8 +89,28 @@ public class BaseServer {
 		return serverSessionManager;
 	}
 
-	private void loadData() {
+	/**
+	 * @return true is the loading was succesful, else false
+	 */
+	private boolean loadData() {
+		// Load the maps, creating them if necessary
+		Map emptyMap = new Map(0, (short) 1, (short) 1, true);
+		for (int i = 1; i <= config.getTotalMaps(); i++) {
+			if (!new File(Constants.SERVER_MAPS_PATH + "map_" + i + ".map")
+					.exists()) {
+				emptyMap.setId(i);
+				try {
+					FileSystem.save(emptyMap);
+				} catch (IOException e) {
+					console.out().println(
+							"Could not create empty map " + i + ". Reason: "
+									+ e.getMessage());
+					return false;
+				}
+			}
+		}
 
+		return true;
 	}
 
 }

@@ -1,5 +1,10 @@
 package orpg.shared.net;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOError;
+import java.io.IOException;
 import java.util.Arrays;
 
 import orpg.shared.Constants;
@@ -15,6 +20,40 @@ public class InputByteBuffer {
 	public InputByteBuffer(byte[] bytes) {
 		this.bytes = bytes;
 		this.reset();
+	}
+
+	/**
+	 * This reads a file to completion and then wraps it in an input byte
+	 * buffer.
+	 * 
+	 * @throws IOException
+	 * 
+	 * @pram file the file to read.
+	 */
+	public InputByteBuffer(File file) throws IOException {
+		this.bytes = new byte[(int) file.length()];
+		int offset = 0;
+		int read = 0;
+
+		FileInputStream in = null;
+		try {
+			in = new FileInputStream(file);
+			while (offset < this.bytes.length) {
+				read = in.read(this.bytes, offset, this.bytes.length - offset);
+				if (read == -1) {
+					throw new IOException(
+							"Could could not read any bytes. End of stream.");
+				}
+				offset += read;
+			}
+		} finally {
+			if (in != null) {
+				in.close();
+			}
+		}
+
+		this.pos = 0;
+
 	}
 
 	/**
@@ -115,9 +154,9 @@ public class InputByteBuffer {
 		short[][][] tiles = new short[MapLayer.values().length][height][width];
 		int x, y, z;
 		for (z = 0; z < MapLayer.values().length; z++) {
-			for (y = 0; y < height; y++) {
-				for (x = 0; x < width; x++) {
-					tiles[z][y][x] = getShort();
+			for (x = 0; x < width; x++) {
+				for (y = 0; y < height; y++) {
+					tiles[z][x][y] = getShort();
 				}
 			}
 		}
@@ -125,19 +164,23 @@ public class InputByteBuffer {
 		return new Segment(segmentX, segmentY, width, height, tiles);
 	}
 
-	public Map getMap() {
+	public Map getMapDescriptor() {
 		int id = getInt();
 		short segmentWidth = getShort();
 		short segmentHeight = getShort();
 		short segmentsWide = getShort();
 		short segmentsHigh = getShort();
-		Segment[][] segments = new Segment[segmentsHigh][segmentsWide];
-		for (int y = 0; y < segmentsHigh; y++) {
-			for (int x = 0; x < segmentsWide; x++) {
-				segments[y][x] = getSegment();
+		return new Map(id, segmentWidth, segmentHeight, segmentsWide,
+				segmentsHigh, false);
+	}
+
+	public Map getMap() {
+		Map map = getMapDescriptor();
+		for (int x = 0; x < map.getSegmentsWide(); x++) {
+			for (int y = 0; y < map.getSegmentsHigh(); y++) {
+				map.updateSegment(getSegment());
 			}
 		}
-		Map map = new Map(id, segmentWidth, segmentHeight, segments);
 		return map;
 	}
 

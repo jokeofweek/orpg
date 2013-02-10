@@ -2,7 +2,6 @@ package orpg.client.net;
 
 import java.util.Queue;
 
-import orpg.client.ClientWindow;
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.data.ClientSentPacket;
 

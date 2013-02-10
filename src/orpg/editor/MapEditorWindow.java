@@ -29,7 +29,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
-import orpg.client.net.BaseClient;
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
 import orpg.editor.ui.MapView;
@@ -49,9 +48,7 @@ public class MapEditorWindow extends JFrame implements Observer {
 
 	private BaseEditor baseEditor;
 
-	public MapEditorWindow(BaseEditor baseEditor) {
-		Map map = new Map(1, (short) 3, (short) 3);
-
+	public MapEditorWindow(BaseEditor baseEditor, Map map) {
 		this.mapController = new MapController(map);
 		this.editorController = new MapEditorController(baseEditor,
 				this.mapController);

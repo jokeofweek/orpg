@@ -6,7 +6,6 @@ import java.util.logging.Level;
 
 import orpg.server.data.ServerSentPacket;
 import orpg.shared.Priority;
-import orpg.shared.net.OutputByteBuffer;
 import orpg.shared.net.ServerPacketType;
 
 /**
@@ -29,7 +28,7 @@ public class ServerSessionManager implements Runnable {
 	}
 
 	public void addSession(ServerSession session) {
-		server.getConfigurationManager().getSessionLogger()
+		server.getConfigManager().getSessionLogger()
 				.log(Level.INFO, "Session created - " + session.getId());
 		// Send connected packet
 		outputQueue.add(ServerSentPacket.getSessionPacket(
@@ -39,7 +38,7 @@ public class ServerSessionManager implements Runnable {
 
 	public void removeSession(ServerSession session) {
 		sessions.remove(session);
-		server.getConfigurationManager().getSessionLogger()
+		server.getConfigManager().getSessionLogger()
 				.log(Level.INFO, "Session removed - " + session.getId());
 	}
 

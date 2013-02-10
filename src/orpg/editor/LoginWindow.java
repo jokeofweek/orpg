@@ -9,9 +9,6 @@ import java.net.UnknownHostException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
-import orpg.client.net.BaseClient;
-import orpg.editor.net.EditorProcessThread;
-
 public class LoginWindow extends JFrame {
 
 	private static final long serialVersionUID = 8720835145332237954L;

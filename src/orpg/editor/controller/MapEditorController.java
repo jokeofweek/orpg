@@ -212,6 +212,6 @@ public class MapEditorController extends Observable implements Observer {
 	}
 
 	public void save() {
-		this.baseEditor.getEditorController().saveMap(mapController.getMap());
+		this.baseEditor.saveMap(mapController.getMap());
 	}
 }

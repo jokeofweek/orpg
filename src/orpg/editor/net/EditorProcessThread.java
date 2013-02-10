@@ -4,7 +4,6 @@ import orpg.client.data.ClientReceivedPacket;
 import orpg.client.data.ClientSentPacket;
 import orpg.client.net.ClientProcessThread;
 import orpg.editor.BaseEditor;
-import orpg.editor.MapEditorWindow;
 import orpg.shared.net.ClientPacketType;
 import orpg.shared.net.InputByteBuffer;
 
@@ -23,15 +22,17 @@ public class EditorProcessThread extends ClientProcessThread {
 			break;
 		case EDITOR_MAP_LIST:
 			InputByteBuffer in = p.getByteBuffer();
-			int files = in.getUnsignedShort();
-			System.out.println("Files received: " + files);
-			for (int i = 0; i < files; i++) {
-				System.out.println(in.getString());
-			}
-			new MapEditorWindow((BaseEditor) getBaseClient());
+			int totalMaps = in.getInt();
+			((BaseEditor) getBaseClient()).showMapSelectWindow(totalMaps);
 			break;
+		case EDITOR_MAP_DATA:
+			handleEditorMapData(p);
 		}
 
+	}
+
+	private void handleEditorMapData(ClientReceivedPacket p) {
+		((BaseEditor) getBaseClient()).editMap(p.getByteBuffer().getMap());
 	}
 
 }

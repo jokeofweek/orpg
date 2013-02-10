@@ -5,8 +5,6 @@ import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import javax.swing.SwingUtilities;
-
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.data.ClientSentPacket;
 

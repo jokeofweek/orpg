@@ -25,7 +25,6 @@ import orpg.editor.data.change.MapEditorTileEraseChange;
 import orpg.editor.data.change.MapEditorTileUpdateChange;
 import orpg.shared.Constants;
 import orpg.shared.data.MapLayer;
-import orpg.shared.data.Segment;
 
 public class MapView extends JComponent implements Observer, MouseListener,
 		MouseMotionListener {

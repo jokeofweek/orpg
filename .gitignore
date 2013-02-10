@@ -5,3 +5,7 @@
 .classpath
 .project
 .metadata
+
+# data files
+data/server/maps/*
+data/server/logs/*

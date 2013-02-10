@@ -136,20 +136,24 @@ public class OutputByteBuffer {
 
 		int z, y, x;
 		for (z = 0; z < MapLayer.values().length; z++) {
-			for (y = 0; y < height; y++) {
-				for (x = 0; x < width; x++) {
-					putShort(tiles[z][y][x]);
+			for (x = 0; x < width; x++) {
+				for (y = 0; y < height; y++) {
+					putShort(tiles[z][x][y]);
 				}
 			}
 		}
 	}
 
-	public void putMap(Map map) {
+	public void putMapDescriptor(Map map) {
 		putInt(map.getId());
 		putShort(map.getSegmentWidth());
 		putShort(map.getSegmentHeight());
 		putShort(map.getSegmentsWide());
 		putShort(map.getSegmentsHigh());
+	}
+
+	public void putMap(Map map) {
+		putMapDescriptor(map);
 		reserveExtraSpace(map.getSegmentsWide() * map.getSegmentsHigh()
 				* map.getSegmentHeight() * map.getSegmentWidth() * 2);
 

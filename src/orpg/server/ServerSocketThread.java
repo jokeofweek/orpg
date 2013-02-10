@@ -34,7 +34,7 @@ public class ServerSocketThread implements Runnable {
 				session = new ServerSession(server, socket);
 				server.getServerSessionManager().addSession(session);
 			} catch (IOException e) {
-				server.getConfigurationManager()
+				server.getConfigManager()
 						.getSessionLogger()
 						.log(Level.SEVERE,
 								String.format(

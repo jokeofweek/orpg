@@ -5,10 +5,7 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-
-import com.badlogic.gdx.files.FileHandle;
 
 import orpg.server.console.ServerConsole;
 import orpg.shared.Constants;
@@ -17,6 +14,7 @@ public class ConfigurationManager {
 
 	private Properties properties;
 	private Logger sessionLogger;
+	private Logger errorLogger;
 
 	private int serverPort;
 	private int totalMaps;
@@ -63,8 +61,33 @@ public class ConfigurationManager {
 							+ e.getMessage());
 		}
 
+		this.errorLogger = Logger.getLogger("error");
+		this.errorLogger.setUseParentHandlers(false);
+		try {
+			errorLogger.addHandler(new FileHandler(Constants.SERVER_LOGS_PATH
+					+ "error.log"));
+
+			// Add the console handler if it exists
+			Handler consoleHandler = console.getHandler();
+			if (consoleHandler != null) {
+				errorLogger.addHandler(consoleHandler);
+			}
+		} catch (IOException e) {
+			console.out().println(
+					"Error creationg error log file. Error message: "
+							+ e.getMessage());
+		}
+
 		// Load the properties
 		loadProperties();
+	}
+
+	public Logger getSessionLogger() {
+		return sessionLogger;
+	}
+
+	public Logger getErrorLogger() {
+		return errorLogger;
 	}
 
 	private void loadProperties() {
@@ -101,7 +124,4 @@ public class ConfigurationManager {
 		return totalMaps;
 	}
 
-	public Logger getSessionLogger() {
-		return sessionLogger;
-	}
 }

@@ -12,13 +12,14 @@ public class Map {
 	private int height;
 	private Segment[][] segments;
 
-	public Map(int id, short segmentsWide, short segmentsHigh) {
+	public Map(int id, short segmentsWide, short segmentsHigh,
+			boolean createSegments) {
 		this(id, Constants.MAP_SEGMENT_WIDTH, Constants.MAP_SEGMENT_HEIGHT,
-				segmentsWide, segmentsHigh);
+				segmentsWide, segmentsHigh, createSegments);
 	}
 
 	public Map(int id, short segmentWidth, short segmentHeight,
-			short segmentsWide, short segmentsHigh) {
+			short segmentsWide, short segmentsHigh, boolean createSegments) {
 		this.id = id;
 		this.segmentsWide = segmentsWide;
 		this.segmentsHigh = segmentsHigh;
@@ -27,10 +28,12 @@ public class Map {
 		this.width = segmentWidth * segmentsWide;
 		this.height = segmentHeight * segmentsHigh;
 		this.segments = new Segment[segmentsWide][segmentsHigh];
-		for (int x = 0; x < segmentsWide; x++) {
-			for (int y = 0; y < segmentsHigh; y++) {
-				this.segments[x][y] = new Segment(x, y, segmentWidth,
-						segmentHeight);
+		if (createSegments) {
+			for (int x = 0; x < segmentsWide; x++) {
+				for (int y = 0; y < segmentsHigh; y++) {
+					this.segments[x][y] = new Segment(x, y, segmentWidth,
+							segmentHeight);
+				}
 			}
 		}
 	}
@@ -108,15 +111,23 @@ public class Map {
 		return this.segments[x][y];
 	}
 
+	public void updateSegment(Segment segment) {
+
+		if (segment.getX() < 0 || segment.getY() < 0
+				|| segment.getX() >= segments.length
+				|| segment.getY() >= segments[0].length) {
+			throw new IllegalArgumentException("Invalid segment position.");
+		}
+		this.segments[segment.getX()][segment.getY()] = segment;
+	}
+
 	public Segment getPositionSegment(int x, int y) {
-		if (x < 0 || y < 0
-				|| x >= this.segmentWidth * this.segments.length
+		if (x < 0 || y < 0 || x >= this.segmentWidth * this.segments.length
 				|| y >= this.segmentHeight * this.segments[0].length) {
 			throw new IllegalArgumentException("Invalid segment position.");
 		}
 
-		return this.segments[x / this.segmentWidth][y
-				/ this.segmentHeight];
+		return this.segments[x / this.segmentWidth][y / this.segmentHeight];
 	}
 
 	public int mapXToSegmentX(int x) {

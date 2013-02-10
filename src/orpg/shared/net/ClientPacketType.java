@@ -7,6 +7,7 @@ public enum ClientPacketType {
 
 	// Editor packets
 	EDITOR_READY,
+	EDITOR_EDIT_MAP,
 	EDITOR_MAP_SAVE,
 	EDITOR_MAP_LOAD
 	

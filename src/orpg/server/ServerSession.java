@@ -1,13 +1,10 @@
 package orpg.server;
 
-import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.logging.Level;
 
-import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.ServerSentPacket;
 
 public class ServerSession {
@@ -17,7 +14,7 @@ public class ServerSession {
 	private SessionType sessionType;
 	private volatile boolean connected;
 	private String disconnectReason;
-	private ServerSessionThread serverSessionThread;
+	private ServerSessionThread thread;
 	private String id;
 
 	public ServerSession(BaseServer baseServer, Socket socket)
@@ -29,9 +26,9 @@ public class ServerSession {
 		this.id = socket.getInetAddress().toString();
 
 		// Start the session thread
-		this.serverSessionThread = new ServerSessionThread(baseServer, socket,
+		this.thread = new ServerSessionThread(baseServer, socket,
 				this);
-		this.serverSessionThread.start();
+		this.thread.start();
 
 		this.connected = true;
 	}
@@ -42,7 +39,7 @@ public class ServerSession {
 
 	public void setSessionType(SessionType sessionType) {
 		baseServer
-				.getConfigurationManager()
+				.getConfigManager()
 				.getSessionLogger()
 				.log(Level.FINE,
 						String.format(
@@ -69,7 +66,7 @@ public class ServerSession {
 
 	public void disconnect(String reason) {
 		baseServer
-				.getConfigurationManager()
+				.getConfigManager()
 				.getSessionLogger()
 				.log(Level.INFO,
 						String.format("Session %s disconnected for reason %s.",
