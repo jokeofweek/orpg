@@ -38,7 +38,7 @@ public class LoginWindow extends JFrame {
 				// Set up the client
 				try {
 					Socket s = new Socket("localhost", 8000);
-					BaseClient baseClient = new BaseClient(s, EditorProcessThread.class);
+					BaseEditor baseEditor = new BaseEditor(s);
 					window.setVisible(false);
 				} catch (UnknownHostException e1) {
 					// TODO Auto-generated catch block

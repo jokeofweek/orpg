@@ -47,14 +47,15 @@ public class MapEditorWindow extends JFrame implements Observer {
 	private JCheckBoxMenuItem gridToggleMenuItem;
 	private JCheckBoxMenuItem hoverPreviewToggleMenuItem;
 
-	private BaseClient baseClient;
+	private BaseEditor baseEditor;
 
-	public MapEditorWindow(BaseClient baseClient) {
+	public MapEditorWindow(BaseEditor baseEditor) {
 		Map map = new Map(3, 3);
 
 		this.mapController = new MapController(map);
-		this.editorController = new MapEditorController(baseClient, this.mapController);
-		this.baseClient = baseClient;
+		this.editorController = new MapEditorController(baseEditor,
+				this.mapController);
+		this.baseEditor = baseEditor;
 
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setTitle(Strings.ENGINE_NAME);
@@ -184,7 +185,7 @@ public class MapEditorWindow extends JFrame implements Observer {
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		menuBar.add(fileMenu);
-		
+
 		JMenuItem saveItem = new JMenuItem(
 				editorController.getSaveAction());
 		saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
