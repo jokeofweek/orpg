@@ -144,10 +144,10 @@ public class OutputByteBuffer {
 		putShort(map.getSegmentsHigh());
 		reserveExtraSpace(map.getSegmentsWide() * map.getSegmentsHigh()
 				* map.getSegmentHeight() * map.getSegmentWidth() * 2);
-		
-		for (int y = 0; y < map.getSegmentsHigh(); y++) {
-			for (int x = 0; x < map.getSegmentsWide(); x++) {
-				putSegment(map.getSegments()[y][x]);
+
+		for (int x = 0; x < map.getSegmentsWide(); x++) {
+			for (int y = 0; y < map.getSegmentsHigh(); y++) {
+				putSegment(map.getSegments()[x][y]);
 			}
 		}
 	}

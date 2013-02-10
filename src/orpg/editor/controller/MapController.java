@@ -17,7 +17,7 @@ public class MapController extends Observable {
 	public Map getMap() {
 		return map;
 	}
-	
+
 	public int getMapHeight() {
 		return this.map.getHeight();
 	}
@@ -42,8 +42,8 @@ public class MapController extends Observable {
 		return this.map.mapYToSegmentY(y);
 	}
 
-	public short getTile(int z, int y, int x) {
-		return this.getSegment(x, y).getTiles()[z][mapYToSegmentY(y)][mapXToSegmentX(x)];
+	public short getTile(int x, int y, int z) {
+		return this.getSegment(x, y).getTiles()[z][mapXToSegmentX(x)][mapYToSegmentY(y)];
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class MapController extends Observable {
 	 *            the new tile value.
 	 */
 	public void batchUpdateTile(int x, int y, MapLayer layer, short tile) {
-		this.map.getSegment(x, y).getTiles()[layer.ordinal()][mapYToSegmentY(y)][mapXToSegmentX(x)] = tile;
+		this.map.getSegment(x, y).getTiles()[layer.ordinal()][mapXToSegmentX(x)][mapYToSegmentY(y)] = tile;
 	}
 
 	/**

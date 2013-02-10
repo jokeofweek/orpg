@@ -43,14 +43,13 @@ public class MapEditorTileUpdateChange implements EditorChange {
 		// Save our old tiles
 		int diffX = range.getEndX() - range.getStartX() + 1;
 		int diffY = range.getEndY() - range.getStartY() + 1;
-		oldTiles = new short[diffY][diffX];
+		oldTiles = new short[diffX][diffY];
 
-		for (int dY = 0; dY < diffY; dY++) {
-			for (int dX = 0; dX < diffX; dX++) {
-				oldTiles[dY][dX] = mapController
-						.getSegment(y + dY, x + dX).getTiles()[layerOrd][mapController
-						.mapYToSegmentY(y + dY)][mapController
-						.mapXToSegmentX(x + dX)];
+		for (int dX = 0; dX < diffX; dX++) {
+			for (int dY = 0; dY < diffY; dY++) {
+				oldTiles[dX][dY] = mapController.getSegment(x + dX, y + dY)
+						.getTiles()[layerOrd][mapController.mapXToSegmentX(x
+						+ dX)][mapController.mapYToSegmentY(y + dY)];
 			}
 		}
 	}
@@ -65,8 +64,8 @@ public class MapEditorTileUpdateChange implements EditorChange {
 
 		for (int dY = 0; dY < diffY; dY++) {
 			for (int dX = 0; dX < diffX; dX++) {
-				mapController.batchUpdateTile(this.x + dX, this.y + dY,
-						layer, (short) (tile + dX));
+				mapController.batchUpdateTile(this.x + dX, this.y + dY, layer,
+						(short) (tile + dX));
 			}
 			tile += Constants.TILESET_WIDTH;
 		}
@@ -83,17 +82,17 @@ public class MapEditorTileUpdateChange implements EditorChange {
 
 		// Here we determine how much of the tiles in our range we can actually
 		// place.
-		int endX = Math.min(mapController.getMapWidth(), startX
-				+ (this.range.getEndX() - this.range.getStartX() + 1));
-		int endY = Math.min(mapController.getMapHeight(), startY
-				+ (this.range.getEndY() - this.range.getStartY() + 1));
+		int endX = Math.min(mapController.getMapWidth(),
+				startX + (this.range.getEndX() - this.range.getStartX() + 1));
+		int endY = Math.min(mapController.getMapHeight(),
+				startY + (this.range.getEndY() - this.range.getStartY() + 1));
 
 		// Update the tiles, only we use the tiles from the tiles array
 		for (int dY = startY; dY < endY; dY++) {
 			for (int dX = startX; dX < endX; dX++) {
-				mapController.batchUpdateTile(this.x + (dX - startX),
-						this.y + (dY - startY), layer, this.oldTiles[dY
-								- startY][dX - startX]);
+				mapController.batchUpdateTile(this.x + (dX - startX), this.y
+						+ (dY - startY), layer, this.oldTiles[dX - startX][dY
+						- startY]);
 			}
 		}
 

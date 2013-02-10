@@ -88,7 +88,7 @@ public class TilesView extends JPanel implements MouseMotionListener,
 			} else if (SwingUtilities.isRightMouseButton(e)) {
 				rightDown = true;
 			}
-			mouseMoved(e);
+			mouseDragged(e);
 		}
 	}
 

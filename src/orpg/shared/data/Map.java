@@ -21,18 +21,18 @@ public class Map {
 		this.segmentWidth = segmentWidth;
 		this.width = segmentWidth * segmentsWide;
 		this.height = segmentHeight * segmentsHigh;
-		this.segments = new Segment[segmentsHigh][segmentsWide];
-		for (int y = 0; y < segmentsHigh; y++) {
-			for (int x = 0; x < segmentsWide; x++) {
-				this.segments[y][x] = new Segment(x, y, segmentWidth,
+		this.segments = new Segment[segmentsWide][segmentsHigh];
+		for (int x = 0; x < segmentsWide; x++) {
+			for (int y = 0; y < segmentsHigh; y++) {
+				this.segments[x][y] = new Segment(x, y, segmentWidth,
 						segmentHeight);
 			}
 		}
 	}
-	
+
 	public Map(short segmentWidth, short segmentHeight, Segment[][] segments) {
 		this.segmentWidth = segmentWidth;
-		this.segmentHeight = this.segmentHeight;
+		this.segmentHeight = segmentHeight;
 		this.width = this.segmentWidth * segments[0].length;
 		this.height = this.segmentHeight * segments.length;
 		this.segments = segments;
@@ -72,7 +72,7 @@ public class Map {
 			throw new IllegalArgumentException("Invalid segment position.");
 		}
 
-		return segments[y / this.segmentHeight][x / this.segmentWidth];
+		return this.segments[x / this.segmentWidth][y / this.segmentHeight];
 	}
 
 	public int mapXToSegmentX(int x) {

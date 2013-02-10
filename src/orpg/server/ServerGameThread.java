@@ -94,10 +94,10 @@ public class ServerGameThread implements Runnable {
 			// Save maps
 			Map map = packet.getByteBuffer().getMap();
 
-			for (int y = 0; y < map.getSegmentsHigh(); y++) {
-				for (int x = 0; x < map.getSegmentsWide(); x++) {
+			for (int x = 0; x < map.getSegmentsWide(); x++) {
+				for (int y = 0; y < map.getSegmentsHigh(); y++) {
 					out = new OutputByteBuffer();
-					out.putSegment(map.getSegments()[y][x]);
+					out.putSegment(map.getSegments()[x][y]);
 					try {
 						BufferedOutputStream writer = new BufferedOutputStream(
 								new FileOutputStream(Constants.SERVER_MAPS_PATH

@@ -27,8 +27,8 @@ import orpg.shared.Constants;
 import orpg.shared.data.MapLayer;
 import orpg.shared.data.Segment;
 
-public class MapView extends JComponent implements Observer,
-		MouseListener, MouseMotionListener {
+public class MapView extends JComponent implements Observer, MouseListener,
+		MouseMotionListener {
 
 	private MapController mapController;
 	private MapEditorController editorController;
@@ -113,15 +113,14 @@ public class MapView extends JComponent implements Observer,
 				AlphaComposite.SRC_OVER, 1.0f);
 
 		// Determine renderable area
-		int startX = Math.max(0, (container.getHorizontalScrollBar()
-				.getValue() / tileWidth) - 4);
-		int startY = Math.max(0, (container.getVerticalScrollBar()
-				.getValue() / tileHeight) - 4);
-		int endX = Math.min(startX + 6
-				+ (container.getWidth() / tileWidth),
+		int startX = Math
+				.max(0,
+						(container.getHorizontalScrollBar().getValue() / tileWidth) - 4);
+		int startY = Math.max(0,
+				(container.getVerticalScrollBar().getValue() / tileHeight) - 4);
+		int endX = Math.min(startX + 6 + (container.getWidth() / tileWidth),
 				mapController.getMapWidth());
-		int endY = Math.min(startY + 6
-				+ (container.getHeight() / tileHeight),
+		int endY = Math.min(startY + 6 + (container.getHeight() / tileHeight),
 				mapController.getMapHeight());
 		short tile;
 
@@ -130,19 +129,18 @@ public class MapView extends JComponent implements Observer,
 			for (int y = startY; y < endY; y++) {
 				dX = startX * tileWidth;
 				for (int x = startX; x < endX; x++) {
-					tile = mapController.getTile(z, y, x);
+					tile = mapController.getTile(x, y, z);
 					if (tile == 0) {
 						if (z == 0) {
-							graphics.drawImage(image, dX, dY, dX
-									+ tileWidth, dY + tileHeight, 0, 0,
+							graphics.drawImage(image, dX, dY, dX + tileWidth,
+									dY + tileHeight, 0, 0,
 									Constants.TILE_WIDTH,
 									Constants.TILE_HEIGHT, null);
 						}
 					} else {
-						graphics.drawImage(image, dX, dY, dX + tileWidth,
-								dY + tileHeight,
-								(tile % Constants.TILESET_WIDTH)
-										* Constants.TILE_WIDTH,
+						graphics.drawImage(image, dX, dY, dX + tileWidth, dY
+								+ tileHeight, (tile % Constants.TILESET_WIDTH)
+								* Constants.TILE_WIDTH,
 								(tile / Constants.TILESET_WIDTH)
 										* Constants.TILE_HEIGHT,
 								(1 + (tile % Constants.TILESET_WIDTH))
@@ -169,12 +167,11 @@ public class MapView extends JComponent implements Observer,
 				int yWide = editorController.getTileRange().getEndY()
 						- editorController.getTileRange().getStartY() + 1;
 				graphics.drawImage(image, hoverOverTileX * tileWidth,
-						hoverOverTileY * tileHeight,
-						(hoverOverTileX + xWide) * tileWidth,
-						(hoverOverTileY + yWide) * tileHeight,
-						editorController.getTileRange().getStartX()
-								* Constants.TILE_WIDTH, editorController
-								.getTileRange().getStartY()
+						hoverOverTileY * tileHeight, (hoverOverTileX + xWide)
+								* tileWidth, (hoverOverTileY + yWide)
+								* tileHeight, editorController.getTileRange()
+								.getStartX() * Constants.TILE_WIDTH,
+						editorController.getTileRange().getStartY()
 								* Constants.TILE_HEIGHT, (editorController
 								.getTileRange().getEndX() + 1)
 								* Constants.TILE_WIDTH, (editorController
@@ -193,8 +190,8 @@ public class MapView extends JComponent implements Observer,
 			// Render the entire tilerange
 			for (int y = startY; y < endY; y++) {
 				for (int x = startX; x < endX; x++) {
-					graphics.drawRect(x * tileWidth, y * tileHeight,
-							tileWidth, tileHeight);
+					graphics.drawRect(x * tileWidth, y * tileHeight, tileWidth,
+							tileHeight);
 				}
 			}
 			graphics.setComposite(regular);
@@ -263,12 +260,11 @@ public class MapView extends JComponent implements Observer,
 				// Make sure there is a change:
 				int startX = editorController.getTileRange().getStartX();
 				int startY = editorController.getTileRange().getStartY();
-				int diffX = editorController.getTileRange().getEndX()
-						- startX + 1;
-				int diffY = editorController.getTileRange().getEndY()
-						- startY + 1;
-				int currentTile = startX
-						+ (startY * Constants.TILESET_WIDTH);
+				int diffX = editorController.getTileRange().getEndX() - startX
+						+ 1;
+				int diffY = editorController.getTileRange().getEndY() - startY
+						+ 1;
+				int currentTile = startX + (startY * Constants.TILESET_WIDTH);
 
 				int layer = editorController.getCurrentLayer().ordinal();
 
@@ -278,12 +274,11 @@ public class MapView extends JComponent implements Observer,
 				int pY = y / tileHeight;
 
 				// Check each x/y value
-				for (int cY = pY; cY < Math.min(
-						mapController.getMapHeight(), pY + diffY)
-						&& !changed; cY++) {
+				for (int cY = pY; cY < Math.min(mapController.getMapHeight(),
+						pY + diffY) && !changed; cY++) {
 					for (int cX = pX; cX < Math.min(
 							mapController.getMapWidth(), pX + diffX); cX++) {
-						if (mapController.getTile(layer, cY, cX) != currentTile
+						if (mapController.getTile(cX, cY, layer) != currentTile
 								+ (cX - pX)) {
 							changed = true;
 							break;
@@ -296,9 +291,9 @@ public class MapView extends JComponent implements Observer,
 				if (changed) {
 
 					editorController.getChangeManager().addChange(
-							new MapEditorTileUpdateChange(
-									editorController, mapController, x
-											/ tileWidth, y / tileHeight));
+							new MapEditorTileUpdateChange(editorController,
+									mapController, x / tileWidth, y
+											/ tileHeight));
 				}
 
 			} else if (rightDown) {
@@ -310,9 +305,8 @@ public class MapView extends JComponent implements Observer,
 				}
 
 				// If a right-click, then erase the tile if not already empty.
-				if (mapController.getTile(editorController
-						.getCurrentLayer().ordinal(), y / tileHeight, x
-						/ tileWidth) != 0) {
+				if (mapController.getTile(editorController.getCurrentLayer()
+						.ordinal(), y / tileHeight, x / tileWidth) != 0) {
 
 					editorController.getChangeManager().addChange(
 							new MapEditorTileEraseChange(editorController,
