@@ -79,9 +79,6 @@ public class ClientReadThread implements Runnable {
 				}
 				length = (length << 8) | (tmpVal & 0x0ff);
 
-				// bitmask the remaining in order to treat the value as unsigned
-				length &= 0x0ffff;
-
 				bytes = new byte[length];
 
 				// Read in packet data
