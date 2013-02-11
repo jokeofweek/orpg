@@ -53,6 +53,8 @@ public class ServerSessionManager implements Runnable {
 			if (!outputQueue.isEmpty()) {
 				packet = outputQueue.remove();
 				rawBytes = packet.getRawBytes();
+				System.out.println("-> " + packet.getPacketType() + "("
+						+ rawBytes.length + ")");
 				switch (packet.getDestinationType()) {
 				case SINGLE_SESSION:
 					((ServerSession) packet.getDestinationObject())
@@ -83,5 +85,4 @@ public class ServerSessionManager implements Runnable {
 		}
 
 	}
-
 }

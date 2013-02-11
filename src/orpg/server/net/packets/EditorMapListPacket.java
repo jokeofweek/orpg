@@ -13,6 +13,10 @@ public class EditorMapListPacket extends SessionPacket {
 		super(session);
 		OutputByteBuffer out = new OutputByteBuffer();
 		out.putInt(maps.length); // number of maps
+		// Output the name of the map
+		for (Map map : maps) {
+			out.putString(map.getName());
+		}
 		this.bytes = out.getBytes();
 	}
 

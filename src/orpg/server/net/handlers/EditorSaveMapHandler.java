@@ -19,6 +19,7 @@ public class EditorSaveMapHandler implements ServerPacketHandler {
 		Map map = packet.getByteBuffer().getMap();
 		try {
 			FileSystem.save(map);
+			baseServer.getMapManager().updateMap(map);
 		} catch (IOException e) {
 			baseServer
 					.getConfigManager()

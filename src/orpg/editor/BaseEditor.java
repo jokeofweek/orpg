@@ -5,7 +5,10 @@ import java.net.Socket;
 import orpg.client.data.ClientSentPacket;
 import orpg.client.net.BaseClient;
 import orpg.editor.net.EditorProcessThread;
+import orpg.editor.net.packets.EditorEditMapPacket;
+import orpg.editor.net.packets.EditorSaveMapPacket;
 import orpg.shared.data.Map;
+import orpg.shared.data.Pair;
 import orpg.shared.net.ClientPacketType;
 import orpg.shared.net.OutputByteBuffer;
 
@@ -17,9 +20,9 @@ public class BaseEditor extends BaseClient {
 		super(socket, EditorProcessThread.class);
 	}
 
-	public void showMapSelectWindow(int totalMaps) {
+	public void showMapSelectWindow(Pair<Integer, String>[] mapNames) {
 		if (this.mapSelectWindow == null) {
-			this.mapSelectWindow = new MapSelectWindow(this, totalMaps);
+			this.mapSelectWindow = new MapSelectWindow(this, mapNames);
 		}
 		this.mapSelectWindow.setVisible(true);
 	}
@@ -29,11 +32,7 @@ public class BaseEditor extends BaseClient {
 	}
 
 	public void requestEditMap(int selectedMap) {
-		OutputByteBuffer out = new OutputByteBuffer();
-		out.putInt(selectedMap);
-		getOutputQueue().add(
-				new ClientSentPacket(ClientPacketType.EDITOR_EDIT_MAP, out
-						.getBytes()));
+		getOutputQueue().add(new EditorEditMapPacket(selectedMap));
 	}
 
 	public void editMap(Map map) {
@@ -41,10 +40,6 @@ public class BaseEditor extends BaseClient {
 	}
 
 	public void saveMap(Map map) {
-		OutputByteBuffer out = new OutputByteBuffer();
-		out.putMap(map);
-		getOutputQueue().add(
-				new ClientSentPacket(ClientPacketType.EDITOR_SAVE_MAP, out
-						.getBytes()));
+		getOutputQueue().add(new EditorSaveMapPacket(map));
 	}
 }

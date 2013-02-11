@@ -55,9 +55,9 @@ public class ClientWindow extends JFrame {
 				OutputByteBuffer buffer = new OutputByteBuffer();
 				buffer.putString(enterTextField.getText());
 
-				baseClient.getOutputQueue().add(
-						new ClientSentPacket(ClientPacketType.PING, buffer
-								.getBytes()));
+				//baseClient.getOutputQueue().add(
+				//		new ClientSentPacket(ClientPacketType.PING, buffer
+				//				.getBytes()));
 				enterTextField.setText("");
 
 			}

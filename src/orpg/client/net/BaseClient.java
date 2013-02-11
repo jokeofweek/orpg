@@ -7,6 +7,7 @@ import java.util.Queue;
 
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.data.ClientSentPacket;
+import orpg.client.net.packets.ClientPacket;
 
 public class BaseClient {
 
@@ -17,12 +18,12 @@ public class BaseClient {
 	private ClientProcessThread gameThread;
 
 	private Queue<ClientReceivedPacket> inputQueue;
-	private Queue<ClientSentPacket> outputQueue;
+	private Queue<ClientPacket> outputQueue;
 
 	public BaseClient(Socket socket, Class clientProcessThreadClass) {
 		// Setup the input and output queues
 		this.inputQueue = new LinkedList<ClientReceivedPacket>();
-		this.outputQueue = new LinkedList<ClientSentPacket>();
+		this.outputQueue = new LinkedList<ClientPacket>();
 		this.socket = socket;
 
 		// Setup our process thread
@@ -49,7 +50,7 @@ public class BaseClient {
 		return inputQueue;
 	}
 
-	public Queue<ClientSentPacket> getOutputQueue() {
+	public Queue<ClientPacket> getOutputQueue() {
 		return outputQueue;
 	}
 

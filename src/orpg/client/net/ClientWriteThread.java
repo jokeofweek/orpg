@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.util.Queue;
 
 import orpg.client.data.ClientSentPacket;
+import orpg.client.net.packets.ClientPacket;
 
 /**
  * This thread is responsible for writing data from the output queue
@@ -16,7 +17,7 @@ public class ClientWriteThread implements Runnable {
 
 	private Socket socket;
 	private BaseClient baseClient;
-	private Queue<ClientSentPacket> outputQueue;
+	private Queue<ClientPacket> outputQueue;
 
 	public ClientWriteThread(Socket socket, BaseClient baseClient) {
 		this.socket = socket;
@@ -26,13 +27,13 @@ public class ClientWriteThread implements Runnable {
 
 	@Override
 	public void run() {
-		ClientSentPacket p;
+		ClientPacket p;
 		try {
 			// Repeatedly remove from the output queue and write.
 			while (true) {
 				if (!outputQueue.isEmpty()) {
 					p = outputQueue.remove();
-					p.write(socket);
+					socket.getOutputStream().write(p.getRawBytes());
 				} else {
 					try {
 						Thread.sleep(5);

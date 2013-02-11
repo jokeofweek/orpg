@@ -2,6 +2,7 @@ package orpg.editor;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -11,18 +12,21 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ListCellRenderer;
 
 import orpg.shared.Strings;
+import orpg.shared.data.Pair;
 
 public class MapSelectWindow extends JFrame {
 
 	private BaseEditor baseEditor;
 
-	public MapSelectWindow(BaseEditor baseEditor, int totalMaps) {
+	public MapSelectWindow(BaseEditor baseEditor,
+			Pair<Integer, String>[] mapNames) {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setTitle(Strings.ENGINE_NAME);
-		this.setupContent(totalMaps);
-		
+		this.setupContent(mapNames);
+
 		this.setSize(800, 600);
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
@@ -31,14 +35,10 @@ public class MapSelectWindow extends JFrame {
 		this.requestFocusInWindow();
 	}
 
-	private void setupContent(int totalMaps) {
+	private void setupContent(Pair<Integer, String>[] mapNames) {
 		JPanel contentPanel = new JPanel(new BorderLayout());
 
-		Integer[] maps = new Integer[totalMaps];
-		for (int i = 0; i < totalMaps; i++) {
-			maps[i] = (i + 1);
-		}
-		final JList mapList = new JList(maps);
+		final JList mapList = new JList(mapNames);
 		JScrollPane mapListScrollPane = new JScrollPane(mapList,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -46,19 +46,31 @@ public class MapSelectWindow extends JFrame {
 				BorderFactory.createEmptyBorder(5, 5, 5, 5),
 				BorderFactory.createLineBorder(Color.black, 1)));
 		contentPanel.add(mapListScrollPane);
-	
+
 		JButton editButton = new JButton(Strings.EDIT_COMMAND);
 		editButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				baseEditor.requestEditMap((Integer) mapList.getSelectedValue());
+				baseEditor.requestEditMap(((Pair<Integer, String>) mapList
+						.getSelectedValue()).getFirst());
 			}
 		});
-		
+
 		contentPanel.add(editButton, BorderLayout.SOUTH);
-		
+
 		add(contentPanel);
+	}
+
+	private static class JListMapNameRenderer implements ListCellRenderer {
+
+		@Override
+		public Component getListCellRendererComponent(JList list, Object value,
+				int index, boolean isSelected, boolean cellHasFocus) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
 	}
 
 }

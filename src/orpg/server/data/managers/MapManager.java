@@ -28,14 +28,14 @@ public class MapManager implements Manager<Map> {
 		this.maps = new Map[baseServer.getConfigManager().getTotalMaps()];
 
 		// Load the maps, creating them if necessary
-		Map emptyMapTemplate = new Map(0, (short) 1, (short) 1, true);
+		Map emptyMapTemplate;
 		File file;
 		InputByteBuffer fileBuffer;
 		for (int i = 0; i < maps.length; i++) {
-			file = new File(Constants.SERVER_MAPS_PATH + "map_" + i + ".map");
+			file = new File(Constants.SERVER_MAPS_PATH + "map_" + (i + 1) + ".map");
 			if (!file.exists()) {
 				// Save the map based on the empty template
-				emptyMapTemplate.setId(i + 1);
+				emptyMapTemplate = new Map(i + 1, (short) 1, (short) 1, true);
 				try {
 					FileSystem.save(emptyMapTemplate);
 				} catch (IOException e) {
@@ -47,14 +47,13 @@ public class MapManager implements Manager<Map> {
 											+ ". Reason: " + e.getMessage());
 					return false;
 				}
+				this.maps[i] = emptyMapTemplate;
 
-				// Only store the descriptor
-				this.maps[i] = new Map(i + 1, (short) 1, (short) 1, false);
 			} else {
-				// The file exists, so load the descriptor
+				// The file exists, so load the map
 				try {
 					fileBuffer = new InputByteBuffer(file);
-					this.maps[i] = fileBuffer.getMapDescriptor();
+					this.maps[i] = FileSystem.loadMap(i + 1);
 				} catch (IOException e) {
 					baseServer
 							.getConsole()
@@ -80,5 +79,15 @@ public class MapManager implements Manager<Map> {
 
 	public Map[] getMaps() {
 		return this.maps;
+	}
+
+	public void updateMap(Map map) {
+		if (map.getId() <= 0
+				|| map.getId() > baseServer.getConfigManager().getTotalMaps()) {
+			throw new IllegalArgumentException(
+					"Tried to update map with non-existant number "
+							+ map.getId());
+		}
+		this.maps[map.getId() - 1] = map;
 	}
 }

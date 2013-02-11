@@ -4,6 +4,7 @@ import java.util.Queue;
 
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.data.ClientSentPacket;
+import orpg.client.net.packets.ClientPacket;
 
 /**
  * This thread is responsible for processing packets in the client's input
@@ -15,7 +16,7 @@ import orpg.client.data.ClientSentPacket;
 public abstract class ClientProcessThread implements Runnable {
 
 	private Queue<ClientReceivedPacket> inputQueue;
-	private Queue<ClientSentPacket> outputQueue;
+	private Queue<ClientPacket> outputQueue;
 	private BaseClient baseClient;
 
 	public BaseClient getBaseClient() {
@@ -28,7 +29,7 @@ public abstract class ClientProcessThread implements Runnable {
 		this.baseClient = baseClient;
 	}
 	
-	public Queue<ClientSentPacket> getOutputQueue() {
+	public Queue<ClientPacket> getOutputQueue() {
 		return outputQueue;
 	}
 	
