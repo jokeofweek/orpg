@@ -22,6 +22,10 @@ public class MapController extends Observable {
 		return map.getName();
 	}
 
+	public void setMapName(String name) {
+		this.map.setName(name);
+	}
+
 	public int getMapHeight() {
 		return this.map.getHeight();
 	}

@@ -8,23 +8,24 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import orpg.editor.BaseEditor;
+import orpg.editor.EditorWindow;
 import orpg.editor.data.TileRange;
 import orpg.editor.data.change.EditorChangeManager;
+import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
 
-public class MapEditorController extends Observable implements Observer {
+public class MapEditorController extends EditorController<Map> implements
+		Observer {
 
 	private MapLayer currentLayer;
 	private TileRange tileRange;
 	private EditorChangeManager changeManager;
-	private BaseEditor baseEditor;
 	private MapController mapController;
 
 	private Action undoAction;
 	private Action redoAction;
 	private Action zoomInAction;
 	private Action zoomOutAction;
-	private Action saveAction;
 
 	private boolean gridEnabled;
 	private boolean hoverPreviewEnabled;
@@ -33,12 +34,12 @@ public class MapEditorController extends Observable implements Observer {
 	private int scaleFactorPosition;
 
 	public MapEditorController(BaseEditor baseEditor,
-			MapController mapController) {
+			EditorWindow<Map> editorWindow, MapController mapController) {
+		super(baseEditor, editorWindow);
 		this.currentLayer = MapLayer.GROUND;
 		this.tileRange = new TileRange();
 		this.changeManager = new EditorChangeManager();
 		this.changeManager.addObserver(this);
-		this.baseEditor = baseEditor;
 		this.mapController = mapController;
 
 		this.gridEnabled = false;
@@ -112,14 +113,6 @@ public class MapEditorController extends Observable implements Observer {
 			}
 		};
 		this.zoomOutAction.setEnabled(canZoomOut());
-
-		this.saveAction = new AbstractAction("Save") {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				save();
-			}
-		};
 	}
 
 	public Action getUndoAction() {
@@ -136,10 +129,6 @@ public class MapEditorController extends Observable implements Observer {
 
 	public Action getZoomOutAction() {
 		return zoomOutAction;
-	}
-
-	public Action getSaveAction() {
-		return saveAction;
 	}
 
 	@Override
@@ -212,6 +201,6 @@ public class MapEditorController extends Observable implements Observer {
 	}
 
 	public void save() {
-		this.baseEditor.saveMap(mapController.getMap());
+		this.getBaseEditor().saveMap(mapController.getMap());
 	}
 }
