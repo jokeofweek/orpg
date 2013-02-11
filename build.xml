@@ -1,0 +1,68 @@
+<project basedir="." name="orpg" default="build">
+
+    <property name="src.dir"     value="src"/>
+    <property name="build.dir"   value="build"/>
+    <property name="data.dir"    value="data"/>
+    <property name="client_build.dir"   value="build/client"/>
+    <property name="server_build.dir"   value="build/server"/>
+    <property name="editor_build.dir"   value="build/editor"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+    
+    <target name="compile" depends="clean">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}" includeAntRuntime="no"
+               classpath="lib/*.jar"
+               destdir="${classes.dir}"/>
+    </target>
+    
+    <target name="build_client" depends="compile">
+        <jar destfile="${client_build.dir}/client.jar"
+             basedir="${classes.dir}"
+             excludes="orpg/server/**,orpg/editor/**">
+            <manifest>
+                <attribute name="Main-Class" value="orpg.client.ClientApplication"/>
+            </manifest>
+        </jar>
+        <copy todir="${client_build.dir}/data/client">
+            <fileset dir="${data.dir}/client"/>
+        </copy>
+    </target>
+    
+    <target name="build_editor" depends="compile">
+        <jar destfile="${editor_build.dir}/editor.jar"
+             basedir="${classes.dir}"
+             excludes="orpg/server/**">
+            <manifest>
+                <attribute name="Main-Class" value="orpg.editor.EditorApplication"/>
+            </manifest>
+        </jar>
+        <copy todir="${editor_build.dir}/data/client">
+            <fileset dir="${data.dir}/client"/>
+        </copy>
+    </target>
+
+    <target name="build_server" depends="compile">
+        <jar destfile="${server_build.dir}/server.jar"
+             basedir="${classes.dir}"
+             excludes="orpg/client/**,orpg/editor/**">
+            <manifest>
+                <attribute name="Main-Class" value="orpg.server.ServerApplication"/>
+            </manifest>
+        </jar>
+        <copy todir="${server_build.dir}/data/server">
+            <fileset dir="${data.dir}/server"/>
+        </copy>
+    </target>
+    
+    <target name="post_clean">
+        <delete dir="${classes.dir}"/>
+    </target>
+    
+    <target name="build" depends="build_client, build_editor, build_server, post_clean"/>
+    
+    
+</project>

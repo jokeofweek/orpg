@@ -2,12 +2,13 @@ package orpg.shared.net;
 
 import java.util.Random;
 
-import net.jpountz.lz4.LZ4Compressor;
-import net.jpountz.lz4.LZ4Factory;
+//import net.jpountz.lz4.LZ4Compressor;
+//import net.jpountz.lz4.LZ4Factory;
 
 public class CompressionTest {
 
 	public static void main(String[] args) {
+		/*
 		LZ4Compressor compressor = LZ4Factory.fastestJavaInstance().fastCompressor();
 		byte[] bytes = new byte[50*50*9*2];
 		Random r = new Random();
@@ -32,7 +33,7 @@ public class CompressionTest {
 		System.out.println("Total millis: " + diff);
 		System.out.println("Ms/iteration: " + diff / 1000);
 		System.out.println(b);
-		
+		*/
 		
 	}
 	

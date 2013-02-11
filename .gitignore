@@ -10,3 +10,6 @@
 data/server/maps/*
 data/server/logs/*
 *.log
+
+# built files
+build/*
