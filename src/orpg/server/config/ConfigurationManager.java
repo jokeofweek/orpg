@@ -6,6 +6,7 @@ import java.util.Properties;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import orpg.server.console.ServerConsole;
 import orpg.shared.Constants;
@@ -43,12 +44,17 @@ public class ConfigurationManager {
 		}
 
 		this.properties = properties;
+		
 
+		FileHandler fileHandler; 
 		this.sessionLogger = Logger.getLogger("session");
 		this.sessionLogger.setUseParentHandlers(false);
 		try {
-			sessionLogger.addHandler(new FileHandler(Constants.SERVER_LOGS_PATH
-					+ "session.log"));
+
+			fileHandler = new FileHandler(Constants.SERVER_LOGS_PATH
+					+ "session.log");
+			fileHandler.setFormatter(new SimpleFormatter());
+			sessionLogger.addHandler(fileHandler);
 
 			// Add the console handler if it exists
 			Handler consoleHandler = console.getHandler();
@@ -64,8 +70,10 @@ public class ConfigurationManager {
 		this.errorLogger = Logger.getLogger("error");
 		this.errorLogger.setUseParentHandlers(false);
 		try {
-			errorLogger.addHandler(new FileHandler(Constants.SERVER_LOGS_PATH
-					+ "error.log"));
+			fileHandler = new FileHandler(Constants.SERVER_LOGS_PATH
+					+ "error.log");
+			fileHandler.setFormatter(new SimpleFormatter());
+			errorLogger.addHandler(fileHandler);
 
 			// Add the console handler if it exists
 			Handler consoleHandler = console.getHandler();
