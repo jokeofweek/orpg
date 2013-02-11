@@ -32,8 +32,7 @@ public class MapManager implements Manager<Map> {
 		File file;
 		InputByteBuffer fileBuffer;
 		for (int i = 0; i < maps.length; i++) {
-			file = new File(Constants.SERVER_MAPS_PATH + "map_" + i
-					+ ".map");
+			file = new File(Constants.SERVER_MAPS_PATH + "map_" + i + ".map");
 			if (!file.exists()) {
 				// Save the map based on the empty template
 				emptyMapTemplate.setId(i + 1);
@@ -44,9 +43,8 @@ public class MapManager implements Manager<Map> {
 							.getConsole()
 							.out()
 							.println(
-									"Could not create empty map "
-											+ (i + 1) + ". Reason: "
-											+ e.getMessage());
+									"Could not create empty map " + (i + 1)
+											+ ". Reason: " + e.getMessage());
 					return false;
 				}
 
@@ -63,8 +61,7 @@ public class MapManager implements Manager<Map> {
 							.out()
 							.println(
 									"Could not load map " + (i + 1)
-											+ ". Reason: "
-											+ e.getMessage());
+											+ ". Reason: " + e.getMessage());
 					return false;
 				}
 			}
@@ -79,5 +76,9 @@ public class MapManager implements Manager<Map> {
 		}
 
 		return maps[id - 1];
+	}
+
+	public Map[] getMaps() {
+		return this.maps;
 	}
 }

@@ -4,7 +4,8 @@ import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.logging.Level;
 
-import orpg.server.data.ServerSentPacket;
+import orpg.server.net.packets.ConnectedPacket;
+import orpg.server.net.packets.ServerPacket;
 import orpg.shared.Priority;
 import orpg.shared.net.ServerPacketType;
 
@@ -19,7 +20,7 @@ public class ServerSessionManager implements Runnable {
 
 	private HashSet<ServerSession> sessions;
 	private BaseServer server;
-	private PriorityQueue<ServerSentPacket> outputQueue;
+	private PriorityQueue<ServerPacket> outputQueue;
 
 	public ServerSessionManager(BaseServer server) {
 		this.server = server;
@@ -31,8 +32,7 @@ public class ServerSessionManager implements Runnable {
 		server.getConfigManager().getSessionLogger()
 				.log(Level.INFO, "Session created - " + session.getId());
 		// Send connected packet
-		outputQueue.add(ServerSentPacket.getSessionPacket(
-				ServerPacketType.CONNECTED, Priority.URGENT, session));
+		outputQueue.add(new ConnectedPacket(session));
 		sessions.add(session);
 	}
 
@@ -44,26 +44,29 @@ public class ServerSessionManager implements Runnable {
 
 	@Override
 	public void run() {
-		ServerSentPacket packet;
+		ServerPacket packet;
+		byte[] rawBytes;
+
 		// Repeatedly pop a packet from the output queue
 		// dispatching it based on the destination type.
 		while (true) {
 			if (!outputQueue.isEmpty()) {
 				packet = outputQueue.remove();
+				rawBytes = packet.getRawBytes();
 				switch (packet.getDestinationType()) {
 				case SINGLE_SESSION:
 					((ServerSession) packet.getDestinationObject())
-							.getOutputQueue().add(packet);
+							.getOutputQueue().add(rawBytes);
 					break;
 				case GLOBAL:
 					for (ServerSession session : sessions) {
-						session.getOutputQueue().add(packet);
+						session.getOutputQueue().add(rawBytes);
 					}
 					break;
 				case GLOBAL_EXCEPT_FOR:
 					for (ServerSession session : sessions) {
 						if (session != packet.getDestinationObject()) {
-							session.getOutputQueue().add(packet);
+							session.getOutputQueue().add(rawBytes);
 						}
 					}
 					break;

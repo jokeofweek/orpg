@@ -2,15 +2,15 @@ package orpg.server;
 
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.logging.Level;
-
-import orpg.server.data.ServerSentPacket;
 
 public class ServerSession {
 
 	private BaseServer baseServer;
-	private PriorityQueue<ServerSentPacket> outputQueue;
+	private Queue<byte[]> outputQueue;
 	private SessionType sessionType;
 	private volatile boolean connected;
 	private String disconnectReason;
@@ -20,7 +20,7 @@ public class ServerSession {
 	public ServerSession(BaseServer baseServer, Socket socket)
 			throws SocketException {
 		this.baseServer = baseServer;
-		this.outputQueue = new PriorityQueue<ServerSentPacket>();
+		this.outputQueue = new LinkedList<byte[]>();
 		this.setSessionType(SessionType.GAME);
 
 		this.id = socket.getInetAddress().toString();
@@ -52,7 +52,7 @@ public class ServerSession {
 		return sessionType;
 	}
 
-	public PriorityQueue<ServerSentPacket> getOutputQueue() {
+	public Queue<byte[]> getOutputQueue() {
 		return outputQueue;
 	}
 

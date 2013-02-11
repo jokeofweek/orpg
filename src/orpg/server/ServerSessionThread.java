@@ -9,7 +9,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 
 import orpg.server.data.ServerReceivedPacket;
-import orpg.server.data.ServerSentPacket;
+import orpg.server.net.packets.DisconnectPacket;
 import orpg.shared.Priority;
 import orpg.shared.net.ClientPacketType;
 import orpg.shared.net.OutputByteBuffer;
@@ -20,7 +20,7 @@ public class ServerSessionThread extends Thread {
 	private Socket socket;
 	private BaseServer baseServer;
 	private Queue<ServerReceivedPacket> inputQueue;
-	private PriorityQueue<ServerSentPacket> outputQueue;
+	private Queue<byte[]> outputQueue;
 	private ServerSession session;
 
 	private static final int READ_TICKS = 25;
@@ -47,7 +47,7 @@ public class ServerSessionThread extends Thread {
 		int readBytes;
 		int sizeBytes = 0;
 
-		ServerSentPacket outgoingPacket;
+		byte[] outgoingPacket;
 
 		long ticks;
 
@@ -104,8 +104,8 @@ public class ServerSessionThread extends Thread {
 							// Test the packet to make sure it is valid.
 							System.out.println("<- " + type + "("
 									+ (data.length + 5) + ")");
-							inputQueue.add(new ServerReceivedPacket(this.session, type,
-									data, Priority.MEDIUM));
+							inputQueue.add(new ServerReceivedPacket(
+									this.session, type, data, Priority.MEDIUM));
 							currentPosition = 0;
 							type = null;
 						}
@@ -126,7 +126,7 @@ public class ServerSessionThread extends Thread {
 				if (!outputQueue.isEmpty()) {
 					outgoingPacket = outputQueue.remove();
 					try {
-						outgoingPacket.write(this.socket);
+						this.socket.getOutputStream().write(outgoingPacket);
 					} catch (IOException e) {
 						session.disconnect();
 					}
@@ -143,13 +143,10 @@ public class ServerSessionThread extends Thread {
 
 		// Close the socket here, and write out a disconnect message
 		if (socket.isConnected()) {
-			OutputByteBuffer out = new OutputByteBuffer();
-			out.putString(session.getDisconnectReason());
-			ServerSentPacket packet = ServerSentPacket.getSessionPacket(
-					ServerPacketType.DISCONNECT, Priority.URGENT, session,
-					out.getBytes());
 			try {
-				packet.write(socket);
+				socket.getOutputStream().write(
+						new DisconnectPacket(session, session
+								.getDisconnectReason()).getRawBytes());
 			} catch (IOException e) {
 			}
 
@@ -160,9 +157,5 @@ public class ServerSessionThread extends Thread {
 
 		}
 
-	}
-
-	public PriorityQueue<ServerSentPacket> getOutputQueue() {
-		return outputQueue;
 	}
 }

@@ -1,6 +1,5 @@
 package orpg.server;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
@@ -8,11 +7,10 @@ import java.util.Queue;
 
 import orpg.server.config.ConfigurationManager;
 import orpg.server.console.ServerConsole;
-import orpg.server.data.FileSystem;
 import orpg.server.data.ServerReceivedPacket;
-import orpg.server.data.ServerSentPacket;
 import orpg.server.data.managers.MapManager;
-import orpg.shared.Constants;
+import orpg.server.net.packets.EditorMapDataPacket;
+import orpg.server.net.packets.ServerPacket;
 import orpg.shared.Priority;
 import orpg.shared.data.Map;
 import orpg.shared.net.OutputByteBuffer;
@@ -26,7 +24,7 @@ public class BaseServer {
 	private ServerSocketThread serverSocketThread;
 	private ServerConsole console;
 	private Queue<ServerReceivedPacket> inputQueue;
-	private PriorityQueue<ServerSentPacket> outputQueue;
+	private PriorityQueue<ServerPacket> outputQueue;
 	private MapManager mapManager;
 
 	public BaseServer(ConfigurationManager config, ServerConsole console) {
@@ -37,7 +35,7 @@ public class BaseServer {
 
 		// Set up our queues
 		this.inputQueue = new LinkedList<ServerReceivedPacket>();
-		this.outputQueue = new PriorityQueue<ServerSentPacket>(1000);
+		this.outputQueue = new PriorityQueue<ServerPacket>(100);
 
 		// Set up the various threads
 		this.serverSessionManager = new ServerSessionManager(this);
@@ -85,7 +83,7 @@ public class BaseServer {
 		return inputQueue;
 	}
 
-	public PriorityQueue<ServerSentPacket> getOutputQueue() {
+	public PriorityQueue<ServerPacket> getOutputQueue() {
 		return outputQueue;
 	}
 
@@ -106,12 +104,5 @@ public class BaseServer {
 		return this.mapManager.load();
 	}
 
-	public void sendEditorMapData(ServerSession session, Map map) {
-		OutputByteBuffer out = new OutputByteBuffer();
-		out.putMap(map);
-		outputQueue.add(ServerSentPacket.getSessionPacket(
-				ServerPacketType.EDITOR_MAP_DATA, Priority.MEDIUM,
-				session, out.getBytes()));
-	}
 
 }

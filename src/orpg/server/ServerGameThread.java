@@ -8,12 +8,12 @@ import java.util.logging.Level;
 
 import orpg.server.data.FileSystem;
 import orpg.server.data.ServerReceivedPacket;
-import orpg.server.data.ServerSentPacket;
 import orpg.server.net.handlers.EditorEditMapHandler;
 import orpg.server.net.handlers.EditorLoginHandler;
 import orpg.server.net.handlers.EditorReadyHandler;
 import orpg.server.net.handlers.EditorSaveMapHandler;
 import orpg.server.net.handlers.ServerPacketHandler;
+import orpg.server.net.packets.ServerPacket;
 import orpg.shared.Priority;
 import orpg.shared.data.Map;
 import orpg.shared.net.ClientPacketType;
@@ -31,7 +31,7 @@ import orpg.shared.net.ServerPacketType;
 public class ServerGameThread implements Runnable {
 
 	private Queue<ServerReceivedPacket> inputQueue;
-	private PriorityQueue<ServerSentPacket> outputQueue;
+	private PriorityQueue<ServerPacket> outputQueue;
 	private BaseServer baseServer;
 	private HashMap<ClientPacketType, ServerPacketHandler> clientHandlers;
 	private HashMap<ClientPacketType, ServerPacketHandler> editorHandlers;

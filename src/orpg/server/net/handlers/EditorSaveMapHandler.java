@@ -6,7 +6,7 @@ import java.util.logging.Level;
 import orpg.server.BaseServer;
 import orpg.server.data.FileSystem;
 import orpg.server.data.ServerReceivedPacket;
-import orpg.server.data.ServerSentPacket;
+import orpg.server.net.packets.ErrorPacket;
 import orpg.shared.Priority;
 import orpg.shared.data.Map;
 import orpg.shared.net.OutputByteBuffer;
@@ -27,12 +27,10 @@ public class EditorSaveMapHandler implements ServerPacketHandler {
 							"Session " + packet.getSession()
 									+ " could not save map " + map.getId()
 									+ " in editor. Reason: " + e.getMessage());
-			OutputByteBuffer out = new OutputByteBuffer();
-			out.putString("An error occured while saving the map. Please try again later.");
-			baseServer.getOutputQueue().add(
-					ServerSentPacket.getSessionPacket(ServerPacketType.ERROR,
-							Priority.URGENT, packet.getSession(),
-							out.getBytes()));
+			baseServer
+					.getOutputQueue()
+					.add(new ErrorPacket(packet.getSession(),
+							"An error occured while saving the map. Please try again later."));
 		}
 	}
 }
