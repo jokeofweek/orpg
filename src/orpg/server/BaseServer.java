@@ -11,6 +11,7 @@ import orpg.server.console.ServerConsole;
 import orpg.server.data.FileSystem;
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.ServerSentPacket;
+import orpg.server.data.managers.MapManager;
 import orpg.shared.Constants;
 import orpg.shared.Priority;
 import orpg.shared.data.Map;
@@ -26,6 +27,7 @@ public class BaseServer {
 	private ServerConsole console;
 	private Queue<ServerReceivedPacket> inputQueue;
 	private PriorityQueue<ServerSentPacket> outputQueue;
+	private MapManager mapManager;
 
 	public BaseServer(ConfigurationManager config, ServerConsole console) {
 		this.config = config;
@@ -52,7 +54,6 @@ public class BaseServer {
 		}
 
 		// Load all necessary data
-		console.out().println("Loading data...");
 		if (!encounteredSetupProblems) {
 			encounteredSetupProblems = !loadData();
 		}
@@ -92,36 +93,25 @@ public class BaseServer {
 		return serverSessionManager;
 	}
 
+	public MapManager getMapManager() {
+		return mapManager;
+	}
+
 	/**
-	 * @return true is the loading was succesful, else false
+	 * @return true is the loading was successful, else false
 	 */
 	private boolean loadData() {
-		// Load the maps, creating them if necessary
-		Map emptyMap = new Map(0, (short) 3, (short) 2, true);
-		for (int i = 1; i <= config.getTotalMaps(); i++) {
-			if (!new File(Constants.SERVER_MAPS_PATH + "map_" + i + ".map")
-					.exists()) {
-				emptyMap.setId(i);
-				try {
-					FileSystem.save(emptyMap);
-				} catch (IOException e) {
-					console.out().println(
-							"Could not create empty map " + i + ". Reason: "
-									+ e.getMessage());
-					return false;
-				}
-			}
-		}
-
-		return true;
+		console.out().println("Loading maps...");
+		this.mapManager = new MapManager(this);
+		return this.mapManager.load();
 	}
 
 	public void sendEditorMapData(ServerSession session, Map map) {
 		OutputByteBuffer out = new OutputByteBuffer();
 		out.putMap(map);
 		outputQueue.add(ServerSentPacket.getSessionPacket(
-				ServerPacketType.EDITOR_MAP_DATA, Priority.MEDIUM, session,
-				out.getBytes()));
+				ServerPacketType.EDITOR_MAP_DATA, Priority.MEDIUM,
+				session, out.getBytes()));
 	}
 
 }
