@@ -9,6 +9,8 @@ import orpg.server.config.ConfigurationManager;
 import orpg.server.console.ServerConsole;
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.managers.MapManager;
+import orpg.server.data.store.DataStore;
+import orpg.server.data.store.FileDataStore;
 import orpg.server.net.packets.EditorMapDataPacket;
 import orpg.server.net.packets.ServerPacket;
 import orpg.shared.Priority;
@@ -26,6 +28,7 @@ public class BaseServer {
 	private Queue<ServerReceivedPacket> inputQueue;
 	private PriorityQueue<ServerPacket> outputQueue;
 	private MapManager mapManager;
+	private DataStore dataStore;
 
 	public BaseServer(ConfigurationManager config, ServerConsole console) {
 		this.config = config;
@@ -52,6 +55,7 @@ public class BaseServer {
 		}
 
 		// Load all necessary data
+		this.dataStore = new FileDataStore(this);
 		if (!encounteredSetupProblems) {
 			encounteredSetupProblems = !loadData();
 		}
@@ -91,6 +95,10 @@ public class BaseServer {
 		return serverSessionManager;
 	}
 
+	public DataStore getDataStore() {
+		return dataStore;
+	}
+
 	public MapManager getMapManager() {
 		return mapManager;
 	}
@@ -103,6 +111,5 @@ public class BaseServer {
 		this.mapManager = new MapManager(this);
 		return this.mapManager.load();
 	}
-
 
 }

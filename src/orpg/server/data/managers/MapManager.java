@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import orpg.server.BaseServer;
 import orpg.server.config.ConfigurationManager;
-import orpg.server.data.FileSystem;
+import orpg.server.data.store.DataStoreException;
 import orpg.shared.Constants;
 import orpg.shared.data.Map;
 import orpg.shared.net.InputByteBuffer;
@@ -32,19 +32,22 @@ public class MapManager implements Manager<Map> {
 		File file;
 		InputByteBuffer fileBuffer;
 		for (int i = 0; i < maps.length; i++) {
-			file = new File(Constants.SERVER_MAPS_PATH + "map_" + (i + 1) + ".map");
+			file = new File(Constants.SERVER_MAPS_PATH + "map_" + (i + 1)
+					+ ".map");
 			if (!file.exists()) {
 				// Save the map based on the empty template
-				emptyMapTemplate = new Map(i + 1, (short) 1, (short) 1, true);
+				emptyMapTemplate = new Map(i + 1, (short) 1, (short) 1,
+						true);
 				try {
-					FileSystem.save(emptyMapTemplate);
-				} catch (IOException e) {
+					baseServer.getDataStore().saveMap(emptyMapTemplate);
+				} catch (DataStoreException e) {
 					baseServer
 							.getConsole()
 							.out()
 							.println(
-									"Could not create empty map " + (i + 1)
-											+ ". Reason: " + e.getMessage());
+									"Could not create empty map "
+											+ (i + 1) + ". Reason: "
+											+ e.getMessage());
 					return false;
 				}
 				this.maps[i] = emptyMapTemplate;
@@ -52,15 +55,16 @@ public class MapManager implements Manager<Map> {
 			} else {
 				// The file exists, so load the map
 				try {
-					fileBuffer = new InputByteBuffer(file);
-					this.maps[i] = FileSystem.loadMap(i + 1);
-				} catch (IOException e) {
+					this.maps[i] = baseServer.getDataStore()
+							.loadMap(i + 1);
+				} catch (DataStoreException e) {
 					baseServer
 							.getConsole()
 							.out()
 							.println(
 									"Could not load map " + (i + 1)
-											+ ". Reason: " + e.getMessage());
+											+ ". Reason: "
+											+ e.getMessage());
 					return false;
 				}
 			}
@@ -83,7 +87,8 @@ public class MapManager implements Manager<Map> {
 
 	public void updateMap(Map map) {
 		if (map.getId() <= 0
-				|| map.getId() > baseServer.getConfigManager().getTotalMaps()) {
+				|| map.getId() > baseServer.getConfigManager()
+						.getTotalMaps()) {
 			throw new IllegalArgumentException(
 					"Tried to update map with non-existant number "
 							+ map.getId());
