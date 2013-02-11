@@ -38,7 +38,7 @@ public class MapSelectWindow extends JFrame {
 		for (int i = 0; i < totalMaps; i++) {
 			maps[i] = (i + 1);
 		}
-		final JList<Integer> mapList = new JList<Integer>(maps);
+		final JList mapList = new JList(maps);
 		JScrollPane mapListScrollPane = new JScrollPane(mapList,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -52,7 +52,7 @@ public class MapSelectWindow extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				baseEditor.requestEditMap(mapList.getSelectedValue());
+				baseEditor.requestEditMap((Integer) mapList.getSelectedValue());
 			}
 		});
 		
