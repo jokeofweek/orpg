@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import orpg.server.BaseServer;
+import orpg.server.data.Account;
 import orpg.shared.Constants;
 import orpg.shared.data.Map;
 import orpg.shared.net.InputByteBuffer;
