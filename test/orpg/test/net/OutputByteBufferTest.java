@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import orpg.shared.Constants;
+import orpg.shared.net.InputByteBuffer;
 import orpg.shared.net.OutputByteBuffer;
 
 public class OutputByteBufferTest {
@@ -26,6 +27,18 @@ public class OutputByteBufferTest {
 		}
 
 		assertArrayEquals(bytes, out.getBytes());
+	}
+	
+	@Test
+	public void testResetClearsBuffer() {
+		OutputByteBuffer out = new OutputByteBuffer();
+		byte[] empty = new byte[0];
+		out.reset();
+		assertArrayEquals(out.getBytes(), empty);
+		out.putBoolean(true);
+		out.putString("ABCTEST");
+		out.reset();
+		assertArrayEquals(out.getBytes(), empty);
 	}
 
 	@Test
@@ -85,15 +98,17 @@ public class OutputByteBufferTest {
 		byte[] tmp;
 		int i = 0;
 		int totalLength = 0;
-		
+
 		for (String s : strings) {
 			out.putString(s);
 			tmp = s.getBytes(Constants.CHARSET);
-			stringBytes[i] = new byte[2 + tmp.length];
-			totalLength += 2 + tmp.length;
-			stringBytes[i][0] = (byte) ((tmp.length >> 8) & 0xff);
-			stringBytes[i][1] = (byte) (tmp.length & 0xff);
-			System.arraycopy(tmp, 0, stringBytes[i], 2, tmp.length);
+			stringBytes[i] = new byte[4 + tmp.length];
+			totalLength += 4 + tmp.length;
+			stringBytes[i][0] = (byte) ((tmp.length >> 24) & 0xff);
+			stringBytes[i][1] = (byte) ((tmp.length >> 16) & 0xff);
+			stringBytes[i][2] = (byte) ((tmp.length >> 8) & 0xff);
+			stringBytes[i][3] = (byte) (tmp.length & 0xff);
+			System.arraycopy(tmp, 0, stringBytes[i], 4, tmp.length);
 			i++;
 		}
 
@@ -106,6 +121,21 @@ public class OutputByteBufferTest {
 
 		assertArrayEquals(testBytes, out.getBytes());
 
+	}
+
+	@Test
+	public void testPutCharArray() {
+		OutputByteBuffer out = new OutputByteBuffer();
+		out.putCharArray(new char[0]);
+		assertArrayEquals(new byte[4], out.getBytes());
+
+		out.reset();
+		out.putCharArray(new char[] { 'A', 'B', 'C' });
+		System.out.println(new String(new InputByteBuffer(out.getBytes()).getCharArray()));
+		assertArrayEquals(new byte[] { (byte) 0, (byte) 0, (byte) 0,
+				(byte) 3, (byte) 0, (byte) 65, (byte) 0, (byte) 66,
+				(byte) 0, (byte) 67 }, out.getBytes());
+		
 	}
 
 }

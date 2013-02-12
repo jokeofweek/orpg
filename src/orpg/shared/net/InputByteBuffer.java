@@ -39,7 +39,8 @@ public class InputByteBuffer {
 		try {
 			in = new FileInputStream(file);
 			while (offset < this.bytes.length) {
-				read = in.read(this.bytes, offset, this.bytes.length - offset);
+				read = in.read(this.bytes, offset, this.bytes.length
+						- offset);
 				if (read == -1) {
 					throw new IOException(
 							"Could could not read any bytes. End of stream.");
@@ -172,7 +173,7 @@ public class InputByteBuffer {
 		short segmentsHigh = getShort();
 		Map map = new Map(id, segmentWidth, segmentHeight, segmentsWide,
 				segmentsHigh, false);
-		
+
 		map.setName(getString());
 		return map;
 	}
@@ -188,12 +189,24 @@ public class InputByteBuffer {
 	}
 
 	public String getString() {
-		short length = getShort();
+		int length = getInt();
 		hasEnoughCapacity(length);
 		String v = new String(Arrays.copyOfRange(bytes, this.pos, this.pos
 				+ length), Constants.CHARSET);
 		pos += length;
 		return v;
+	}
+
+	public char[] getCharArray() {
+		int length = getInt();
+		hasEnoughCapacity(length);
+		char[] chars = new char[length];
+		for (int i = 0; i < length; i++) {
+			chars[i] = (char) (((bytes[pos] & 0xff) << 8) | (bytes[pos + 1] & 0xff));
+			pos += 2;
+		}
+		
+		return chars;
 	}
 
 	public class ByteBufferOutOfBoundsException extends RuntimeException {

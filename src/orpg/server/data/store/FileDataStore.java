@@ -97,4 +97,15 @@ public class FileDataStore implements DataStore {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see orpg.server.data.store.DataStore#accountExists(java.lang.String)
+	 */
+	@Override
+	public boolean accountExists(String name) {
+		return new File(Constants.SERVER_ACCOUNTS_PATH + name + ".ini")
+				.exists();
+	}
+
 }

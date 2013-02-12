@@ -54,8 +54,8 @@ public class OutputByteBuffer {
 		if (this.bytes.length < pos + extraCapacity) {
 			// If necessary, expand the byte array. Note we also shift new
 			// capacity by 1 to have extra space for later.
-			this.bytes = Arrays.copyOfRange(this.bytes, 0, this.bytes.length
-					+ (extraCapacity << 1));
+			this.bytes = Arrays.copyOfRange(this.bytes, 0,
+					this.bytes.length + (extraCapacity << 1));
 		}
 	}
 
@@ -116,12 +116,22 @@ public class OutputByteBuffer {
 		}
 
 		byte[] stringBytes = data.getBytes(Constants.CHARSET);
-		putShort((short) stringBytes.length);
+		putInt(stringBytes.length);
 		testForExtraCapacity(stringBytes.length);
 		for (int i = 0; i < stringBytes.length; i++) {
 			bytes[pos + i] = stringBytes[i];
 		}
 		pos += stringBytes.length;
+	}
+
+	public void putCharArray(char[] data) {
+		putInt(data.length);
+		testForExtraCapacity(data.length * 2);
+		for (int i = 0; i < data.length; i++) {
+			bytes[pos] = (byte) ((data[i] >> 8) & 0xff);
+			bytes[pos + 1] = (byte) (data[i] & 0xff);
+			pos += 2;
+		}
 	}
 
 	public void putSegment(Segment segment) {
@@ -136,8 +146,8 @@ public class OutputByteBuffer {
 
 		// test for extra capacity right away to pre-allocate
 		short[][][] tiles = segment.getTiles();
-		testForExtraCapacity(MapLayer.values().length * segment.getHeight()
-				* segment.getWidth() * 2);
+		testForExtraCapacity(MapLayer.values().length
+				* segment.getHeight() * segment.getWidth() * 2);
 
 		int z, y, x;
 		for (z = 0; z < MapLayer.values().length; z++) {

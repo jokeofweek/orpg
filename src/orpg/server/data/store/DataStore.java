@@ -1,5 +1,6 @@
 package orpg.server.data.store;
 
+import orpg.server.data.Account;
 import orpg.shared.data.Map;
 
 public interface DataStore {
@@ -27,5 +28,17 @@ public interface DataStore {
 	 */
 	public Map loadMap(int id) throws IllegalArgumentException,
 			DataStoreException;
+
+	/**
+	 * Determines whether an account exists with a given user name.
+	 * 
+	 * @param name
+	 *            the name of the account
+	 * @return true if there is an account in the data store with that name,
+	 *         else false.
+	 */
+	public boolean accountExists(String name);
+
+	public void createAccount(Account account);
 
 }
