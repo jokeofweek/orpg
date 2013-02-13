@@ -1,55 +1,38 @@
 package orpg.client.net;
 
-import java.util.Queue;
+import java.util.HashMap;
 
+import orpg.client.ClientWindow;
 import orpg.client.data.ClientReceivedPacket;
-import orpg.client.data.ClientSentPacket;
-import orpg.client.net.packets.ClientPacket;
+import orpg.client.net.handlers.ClientPacketHandler;
+import orpg.client.net.handlers.ErrorPacketHandler;
+import orpg.editor.BaseEditor;
+import orpg.editor.net.handlers.EditorPacketHandler;
+import orpg.shared.net.PacketProcessThread;
+import orpg.shared.net.ServerPacketType;
 
-/**
- * This thread is responsible for processing packets in the client's input
- * queue.
- * 
- * @author Dominic Charley-Roy
- * 
- */
-public abstract class ClientProcessThread implements Runnable {
+public class ClientProcessThread extends PacketProcessThread {
 
-	private Queue<ClientReceivedPacket> inputQueue;
-	private Queue<ClientPacket> outputQueue;
-	private BaseClient baseClient;
+	private HashMap<ServerPacketType, ClientPacketHandler> handlers;
 
-	public BaseClient getBaseClient() {
-		return baseClient;
+	public ClientProcessThread() {
+		this.setupHandlers();
 	}
-	
-	public void setBaseClient(BaseClient baseClient) {
-		this.inputQueue = baseClient.getInputQueue();
-		this.outputQueue = baseClient.getOutputQueue();
-		this.baseClient = baseClient;
+
+	private void setupHandlers() {
+		this.handlers = new HashMap<ServerPacketType, ClientPacketHandler>();
+		this.handlers.put(ServerPacketType.ERROR, new ErrorPacketHandler());
 	}
-	
-	public Queue<ClientPacket> getOutputQueue() {
-		return outputQueue;
-	}
-	
+
 	@Override
-	public void run() {
-		ClientReceivedPacket p;
-		while (true) {
-			if (!inputQueue.isEmpty()) {
-				handlePacket(inputQueue.remove());
-			} else {
-				try {
-					Thread.sleep(5);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+	public void handlePacket(ClientReceivedPacket packet) {
+		ClientPacketHandler handler = handlers.get(packet.getType());
+		if (handler != null) {
+			handler.handle(packet, getBaseClient());
+		} else {
+			System.err.println("[CLIENT] No handler setup for packet "
+					+ packet.getType());
 		}
 	}
-	
-	public abstract void handlePacket(ClientReceivedPacket p);
 
 }

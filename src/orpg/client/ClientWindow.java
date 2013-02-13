@@ -1,25 +1,27 @@
 package orpg.client;
 
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import orpg.client.data.ClientSentPacket;
 import orpg.client.net.BaseClient;
+import orpg.client.net.packets.CreateAccountPacket;
 import orpg.shared.net.ClientPacketType;
 import orpg.shared.net.OutputByteBuffer;
 
 public class ClientWindow extends JFrame {
 
 	private BaseClient baseClient;
-	public static JTextArea textArea;
-	private JTextField enterTextField;
 
 	public ClientWindow(BaseClient baseClient) {
 		super("Chat Client");
@@ -34,37 +36,36 @@ public class ClientWindow extends JFrame {
 
 	public void setupUI() {
 		JPanel basePanel = new JPanel(new BorderLayout());
+		JPanel registrationForm = new JPanel(new GridLayout(3, 2));
 
-		textArea = new JTextArea();
-		basePanel.add(textArea);
+		registrationForm.add(new JLabel("Account Name:"));
+		final JTextField accountNameField = new JTextField();
+		registrationForm.add(accountNameField);
 
-		JPanel entryPanel = new JPanel(new BorderLayout());
-		this.enterTextField = new JTextField();
-		entryPanel.add(enterTextField);
+		registrationForm.add(new JLabel("Email:"));
+		final JTextField emailField = new JTextField();
+		registrationForm.add(emailField);
 
-		JButton sendButton = new JButton("Send");
-		entryPanel.add(sendButton, BorderLayout.EAST);
-		sendButton.addActionListener(new ActionListener() {
+		registrationForm.add(new JLabel("Password:"));
+		final JPasswordField passwordField = new JPasswordField();
+		registrationForm.add(passwordField);
+
+		basePanel.add(registrationForm);
+
+		JButton createButton = new JButton("Create Account");
+		createButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (enterTextField.getText().length() == 0) {
-					return;
-				}
-
-				OutputByteBuffer buffer = new OutputByteBuffer();
-				buffer.putString(enterTextField.getText());
-
-				//baseClient.getOutputQueue().add(
-				//		new ClientSentPacket(ClientPacketType.PING, buffer
-				//				.getBytes()));
-				enterTextField.setText("");
-
+				baseClient.getOutputQueue().add(
+						new CreateAccountPacket(accountNameField.getText(),
+								emailField.getText(), passwordField
+										.getPassword()));
 			}
 		});
 
-		basePanel.add(entryPanel, BorderLayout.SOUTH);
-
+		basePanel.add(createButton, BorderLayout.SOUTH);
+		
 		this.add(basePanel);
 
 	}

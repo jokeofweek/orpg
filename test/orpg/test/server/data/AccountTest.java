@@ -33,20 +33,40 @@ public class AccountTest {
 	}
 
 	@Test
-	public void testUpdatePasswordClearsArray()
-			throws NoSuchAlgorithmException {
+	public void testUpdatePasswordChangesSalt() throws NoSuchAlgorithmException {
+		account.updatePassword("test".toCharArray());
+		String salt = account.getSalt();
+		account.updatePassword("test".toCharArray());
+		assertFalse("Salt does not change when same password.",
+				salt.equals(account.getSalt()));
+		salt = account.getSalt();
+		account.updatePassword("test23".toCharArray());
+		assertFalse("Salt does not change when different password.",
+				salt.equals(account.getSalt()));
+	}
+
+	@Test
+	public void testUpdatePasswordWithSamePasswordHasDifferentHash() throws NoSuchAlgorithmException {
+		account.updatePassword("tester123".toCharArray());
+		String hash = account.getPasswordHash();
+		account.updatePassword("tester123".toCharArray());
+		assertFalse("Updating password with same password does not change hash.", hash.equals(account.getPasswordHash()));
+
+	}
+
+	@Test
+	public void testUpdatePasswordClearsArray() throws NoSuchAlgorithmException {
 		char[] pass = new char[] { 'a', 'b', 'c' };
 		account.updatePassword(pass);
 		assertArrayEquals(new char[] { '\0', '\0', '\0' }, pass);
 		pass = new char[] { 'a', 'b', 'c', 'd', 'e', '.' };
 		account.updatePassword(pass);
-		assertArrayEquals(
-				new char[] { '\0', '\0', '\0', '\0', '\0', '\0' }, pass);
+		assertArrayEquals(new char[] { '\0', '\0', '\0', '\0', '\0', '\0' },
+				pass);
 	}
 
 	@Test
-	public void testMatchPasswordClearsArray()
-			throws NoSuchAlgorithmException {
+	public void testMatchPasswordClearsArray() throws NoSuchAlgorithmException {
 		account.updatePassword("abc".toCharArray());
 
 		char[] pass = new char[] { 'a', 'b', 'c' };
@@ -54,8 +74,8 @@ public class AccountTest {
 		assertArrayEquals(new char[] { '\0', '\0', '\0' }, pass);
 		pass = new char[] { 'a', 'b', 'c', 'd', 'e', '.' };
 		account.updatePassword(pass);
-		assertArrayEquals(
-				new char[] { '\0', '\0', '\0', '\0', '\0', '\0' }, pass);
+		assertArrayEquals(new char[] { '\0', '\0', '\0', '\0', '\0', '\0' },
+				pass);
 	}
 
 }

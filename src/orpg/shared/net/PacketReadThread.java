@@ -1,4 +1,4 @@
-package orpg.client.net;
+package orpg.shared.net;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.util.Queue;
 
 import orpg.client.data.ClientReceivedPacket;
-import orpg.shared.net.ServerPacketType;
+import orpg.client.net.BaseClient;
 
 /**
  * This thread is responsible for reading data from the client's socket and
@@ -16,13 +16,13 @@ import orpg.shared.net.ServerPacketType;
  * @author Dominic Charley-Roy
  * 
  */
-public class ClientReadThread implements Runnable {
+public class PacketReadThread implements Runnable {
 
 	private Socket socket;
 	private BaseClient baseClient;
 	private Queue<ClientReceivedPacket> inputQueue;
 
-	public ClientReadThread(Socket socket, BaseClient baseClient) {
+	public PacketReadThread(Socket socket, BaseClient baseClient) {
 		this.socket = socket;
 		this.baseClient = baseClient;
 		this.inputQueue = baseClient.getInputQueue();

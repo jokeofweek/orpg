@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import orpg.server.BaseServer;
 import orpg.server.data.Account;
 import orpg.server.data.ServerReceivedPacket;
+import orpg.server.data.store.DataStoreException;
 import orpg.server.net.packets.EmptySessionPacket;
 import orpg.server.net.packets.ErrorPacket;
 import orpg.shared.ErrorMessage;
@@ -33,25 +34,22 @@ public class CreateAccountHandler implements ServerPacketHandler {
 			} else {
 				synchronized (this) {
 					if (baseServer.getDataStore().accountExists(name)) {
-						baseServer
-								.getOutputQueue()
-								.add(new ErrorPacket(
-										packet.getSession(),
+						baseServer.getOutputQueue().add(
+								new ErrorPacket(packet.getSession(),
 										ErrorMessage.ACCOUNT_ALREADY_EXISTS));
 					} else {
 						try {
+							// Create the account, filling in the details
 							Account account = new Account();
 							account.setName(name);
 							account.setEmail(email);
 							account.updatePassword(password);
-							baseServer.getDataStore().createAccount(
-									account);
+							baseServer.getDataStore().createAccount(account);
 							baseServer
 									.getConfigManager()
 									.getSessionLogger()
 									.log(Level.INFO,
-											"Account " + name + "("
-													+ email
+											"Account " + name + "(" + email
 													+ ") was created.");
 						} catch (NoSuchAlgorithmException e) {
 							baseServer
@@ -64,9 +62,22 @@ public class CreateAccountHandler implements ServerPacketHandler {
 													+ e.getMessage());
 							baseServer
 									.getOutputQueue()
-									.add(new ErrorPacket(packet
-											.getSession(),
-											"An error occured while creating the account. Please try again later."));
+									.add(new ErrorPacket(
+											packet.getSession(),
+											ErrorMessage.GENERIC_ACCOUNT_CREATION_ERROR));
+						} catch (DataStoreException e) {
+							baseServer
+									.getConfigManager()
+									.getErrorLogger()
+									.log(Level.SEVERE,
+											"Could not create account " + name
+													+ ". Error when creating: "
+													+ e.getMessage());
+							baseServer
+									.getOutputQueue()
+									.add(new ErrorPacket(
+											packet.getSession(),
+											ErrorMessage.GENERIC_ACCOUNT_CREATION_ERROR));
 						}
 
 					}

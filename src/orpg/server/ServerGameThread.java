@@ -7,6 +7,7 @@ import java.util.Queue;
 import java.util.logging.Level;
 
 import orpg.server.data.ServerReceivedPacket;
+import orpg.server.net.handlers.CreateAccountHandler;
 import orpg.server.net.handlers.EditorEditMapHandler;
 import orpg.server.net.handlers.EditorLoginHandler;
 import orpg.server.net.handlers.EditorReadyHandler;
@@ -48,6 +49,8 @@ public class ServerGameThread implements Runnable {
 		this.clientHandlers = new HashMap<ClientPacketType, ServerPacketHandler>();
 		clientHandlers.put(ClientPacketType.EDITOR_LOGIN,
 				new EditorLoginHandler());
+		clientHandlers.put(ClientPacketType.CREATE_ACCOUNT,
+				new CreateAccountHandler());
 	}
 
 	private void setupEditorHandlers() {

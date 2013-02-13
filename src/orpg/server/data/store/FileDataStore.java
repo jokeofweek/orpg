@@ -5,6 +5,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import orpg.shared.data.Validator;
+
+import org.ini4j.Ini;
+import org.ini4j.InvalidFileFormatException;
+import org.ini4j.Wini;
+
 import orpg.server.BaseServer;
 import orpg.server.data.Account;
 import orpg.shared.Constants;
@@ -33,8 +39,7 @@ public class FileDataStore implements DataStore {
 
 		try {
 			out = new BufferedOutputStream(new FileOutputStream(
-					Constants.SERVER_MAPS_PATH + "map_" + map.getId()
-							+ ".map"));
+					Constants.SERVER_MAPS_PATH + "map_" + map.getId() + ".map"));
 			out.write(buffer.getBytes());
 			out.close();
 
@@ -44,8 +49,7 @@ public class FileDataStore implements DataStore {
 					buffer.putSegment(map.getSegment(x, y));
 					out = new BufferedOutputStream(new FileOutputStream(
 							String.format(Constants.SERVER_MAPS_PATH
-									+ "map_%d_%d_%d.map", map.getId(), x,
-									y)));
+									+ "map_%d_%d_%d.map", map.getId(), x, y)));
 					out.write(buffer.getBytes());
 					out.close();
 				}
@@ -74,8 +78,8 @@ public class FileDataStore implements DataStore {
 				+ ".map");
 		if (id < 1 || id > baseServer.getConfigManager().getTotalMaps()
 				|| !mapFile.exists()) {
-			throw new IllegalArgumentException(
-					"No map exists with the number " + id + ".");
+			throw new IllegalArgumentException("No map exists with the number "
+					+ id + ".");
 		}
 
 		try {
@@ -87,8 +91,8 @@ public class FileDataStore implements DataStore {
 			for (int x = 0; x < map.getSegmentsWide(); x++) {
 				for (int y = 0; y < map.getSegmentsHigh(); y++) {
 					map.updateSegment(new InputByteBuffer(new File(
-							Constants.SERVER_MAPS_PATH + "map_" + id + "_"
-									+ x + "_" + y + ".map")).getSegment());
+							Constants.SERVER_MAPS_PATH + "map_" + id + "_" + x
+									+ "_" + y + ".map")).getSegment());
 				}
 			}
 			return map;
@@ -105,8 +109,45 @@ public class FileDataStore implements DataStore {
 	 */
 	@Override
 	public boolean accountExists(String name) {
-		return new File(Constants.SERVER_ACCOUNTS_PATH + name + ".ini")
-				.exists();
+		return getAccountFile(name).exists();
+	}
+
+	private File getAccountFile(String accountName) {
+		return new File(Constants.SERVER_ACCOUNTS_PATH + accountName + ".ini");
+	}
+
+	@Override
+	public void createAccount(Account account) throws DataStoreException {
+		// Just a last condition check to prevent messing up the file system.
+		if (!Validator.isAccountNameValid(account.getName())) {
+			throw new DataStoreException("Invalid account name.");
+		}
+
+		File accountFile = getAccountFile(account.getName());
+		try {
+			accountFile.createNewFile();
+		} catch (IOException e) {
+			throw new DataStoreException(e);
+		}
+
+		this.saveAccount(account);
+	}
+
+	@Override
+	public void saveAccount(Account account) throws DataStoreException {
+		try {
+			Wini ini = new Wini(getAccountFile(account.getName()));
+			
+			// Store account details
+			ini.put("account", "name", account.getName());
+			ini.put("account", "email", account.getEmail());
+			ini.put("account", "salt", account.getSalt());
+			ini.put("account", "hash", account.getPasswordHash());
+			
+			ini.store();
+		} catch (IOException e) {
+			throw new DataStoreException(e);
+		}
 	}
 
 }

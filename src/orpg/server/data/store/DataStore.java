@@ -39,6 +39,8 @@ public interface DataStore {
 	 */
 	public boolean accountExists(String name);
 
-	public void createAccount(Account account);
+	public void createAccount(Account account) throws DataStoreException;
+	
+	public void saveAccount(Account account) throws DataStoreException;
 
 }

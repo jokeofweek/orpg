@@ -38,6 +38,14 @@ public class Account {
 		this.email = email;
 	}
 
+	public String getSalt() {
+		return salt;
+	}
+
+	public String getPasswordHash() {
+		return passwordHash;
+	}
+
 	private String hashPassword(char[] password, String salt)
 			throws NoSuchAlgorithmException {
 		MessageDigest digest = MessageDigest.getInstance("SHA-512");
@@ -71,21 +79,25 @@ public class Account {
 	}
 
 	private String generateSalt() {
-		char[] characters = new char[] { 'A', 'B', 'C', 'D', 'E', 'F',
-				'G', 'H', 'I', 'J', 'K', 'L', 'O', 'M', 'N', 'O', 'P',
-				'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a',
-				'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
-				'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
-				'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
-				'8', '9', '.', '_', '?', '#', '%', ';' };
+		char[] characters = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G',
+				'H', 'I', 'J', 'K', 'L', 'O', 'M', 'N', 'O', 'P', 'Q', 'R',
+				'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd',
+				'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+				'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1',
+				'2', '3', '4', '5', '6', '7', '8', '9', '.', '_', '?', '#',
+				'%', ';' };
 		Random random = new Random(System.currentTimeMillis());
-		int length = random.nextInt(10) + 10;
-		StringBuilder saltBuilder = new StringBuilder(length);
-		for (int i = 0; i < length; i++) {
-			saltBuilder.append(characters[random
-					.nextInt(characters.length)]);
-		}
-		return saltBuilder.toString();
+		String generated = null;
+		do {
+			int length = random.nextInt(10) + 10;
+			StringBuilder saltBuilder = new StringBuilder(length);
+			for (int i = 0; i < length; i++) {
+				saltBuilder
+						.append(characters[random.nextInt(characters.length)]);
+			}
+			generated = saltBuilder.toString();
+		} while (generated.equals(this.salt));
+		return generated;
 
 	}
 
@@ -97,8 +109,7 @@ public class Account {
 	 *            the new password.
 	 * @throws NoSuchAlgorithmException
 	 */
-	public void updatePassword(char[] password)
-			throws NoSuchAlgorithmException {
+	public void updatePassword(char[] password) throws NoSuchAlgorithmException {
 		// Setup the salt
 		this.salt = generateSalt();
 		this.passwordHash = hashPassword(password, salt);
@@ -120,8 +131,8 @@ public class Account {
 	 */
 	public boolean passwordMatches(char[] password)
 			throws NoSuchAlgorithmException {
-		boolean matches = hashPassword(password, salt).equals(
-				this.passwordHash);
+		boolean matches = hashPassword(password, salt)
+				.equals(this.passwordHash);
 		// Clear password array
 		for (int i = 0; i < password.length; i++) {
 			password[i] = '\0';

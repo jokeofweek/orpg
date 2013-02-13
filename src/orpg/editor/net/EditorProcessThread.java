@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.data.ClientSentPacket;
-import orpg.client.net.ClientProcessThread;
 import orpg.editor.BaseEditor;
 import orpg.editor.net.handlers.ConnectedPacketHandler;
 import orpg.editor.net.handlers.EditorPacketHandler;
@@ -13,9 +12,10 @@ import orpg.editor.net.handlers.EditorMapDataPacketHandler;
 import orpg.editor.net.handlers.EditorMapListPacketHandler;
 import orpg.shared.net.ClientPacketType;
 import orpg.shared.net.InputByteBuffer;
+import orpg.shared.net.PacketProcessThread;
 import orpg.shared.net.ServerPacketType;
 
-public class EditorProcessThread extends ClientProcessThread {
+public class EditorProcessThread extends PacketProcessThread {
 
 	private HashMap<ServerPacketType, EditorPacketHandler> handlers;
 

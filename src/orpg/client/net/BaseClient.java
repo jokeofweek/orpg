@@ -8,14 +8,17 @@ import java.util.Queue;
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.data.ClientSentPacket;
 import orpg.client.net.packets.ClientPacket;
+import orpg.shared.net.PacketProcessThread;
+import orpg.shared.net.PacketReadThread;
+import orpg.shared.net.PacketWriteThread;
 
 public class BaseClient {
 
 	private Socket socket;
 
-	private ClientReadThread readThread;
-	private ClientWriteThread writeThread;
-	private ClientProcessThread gameThread;
+	private PacketReadThread readThread;
+	private PacketWriteThread writeThread;
+	private PacketProcessThread gameThread;
 
 	private Queue<ClientReceivedPacket> inputQueue;
 	private Queue<ClientPacket> outputQueue;
@@ -28,7 +31,7 @@ public class BaseClient {
 
 		// Setup our process thread
 		try {
-			this.gameThread = (ClientProcessThread) clientProcessThreadClass
+			this.gameThread = (PacketProcessThread) clientProcessThreadClass
 					.newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -37,8 +40,8 @@ public class BaseClient {
 		this.gameThread.setBaseClient(this);
 
 		// Setup the necessary read/write threads
-		this.readThread = new ClientReadThread(socket, this);
-		this.writeThread = new ClientWriteThread(socket, this);
+		this.readThread = new PacketReadThread(socket, this);
+		this.writeThread = new PacketWriteThread(socket, this);
 
 		// Run the threads
 		new Thread(gameThread).start();

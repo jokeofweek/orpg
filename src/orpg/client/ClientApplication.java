@@ -7,7 +7,7 @@ import java.net.UnknownHostException;
 import javax.swing.SwingUtilities;
 
 import orpg.client.net.BaseClient;
-import orpg.client.net.ClientGameThread;
+import orpg.client.net.ClientProcessThread;
 
 public class ClientApplication {
 
@@ -17,7 +17,7 @@ public class ClientApplication {
 		Socket s = new Socket("localhost", 8000);
 		
 		final BaseClient baseClient = new BaseClient(s,
-				ClientGameThread.class);
+				ClientProcessThread.class);
 		SwingUtilities.invokeLater(new Runnable() {
 
 			@Override

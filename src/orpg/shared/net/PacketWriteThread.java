@@ -1,10 +1,11 @@
-package orpg.client.net;
+package orpg.shared.net;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Queue;
 
 import orpg.client.data.ClientSentPacket;
+import orpg.client.net.BaseClient;
 import orpg.client.net.packets.ClientPacket;
 
 /**
@@ -13,13 +14,13 @@ import orpg.client.net.packets.ClientPacket;
  * @author Dominic Charley-Roy
  * 
  */
-public class ClientWriteThread implements Runnable {
+public class PacketWriteThread implements Runnable {
 
 	private Socket socket;
 	private BaseClient baseClient;
 	private Queue<ClientPacket> outputQueue;
 
-	public ClientWriteThread(Socket socket, BaseClient baseClient) {
+	public PacketWriteThread(Socket socket, BaseClient baseClient) {
 		this.socket = socket;
 		this.baseClient = baseClient;
 		this.outputQueue = baseClient.getOutputQueue();
