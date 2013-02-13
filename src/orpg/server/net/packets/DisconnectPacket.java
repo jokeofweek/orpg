@@ -13,7 +13,7 @@ public class DisconnectPacket extends SessionPacket {
 		super(session);
 		OutputByteBuffer out = new OutputByteBuffer();
 		out.putString(reason);
-		this.bytes = getBytes();
+		this.bytes = out.getBytes();
 	}
 	
 	@Override
