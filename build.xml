@@ -2,21 +2,30 @@
 
     <property name="src.dir"     value="src"/>
     <property name="build.dir"   value="build"/>
+    <property name="lib.dir"   value="lib"/>
     <property name="data.dir"    value="data"/>
     <property name="client_build.dir"   value="build/client"/>
     <property name="server_build.dir"   value="build/server"/>
     <property name="editor_build.dir"   value="build/editor"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
     
+    <path id="library-classpath">
+        <fileset dir="${lib.dir}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+    
     <target name="clean">
         <delete dir="${build.dir}"/>
     </target>
     
+    
     <target name="compile" depends="clean">
         <mkdir dir="${classes.dir}"/>
         <javac srcdir="${src.dir}" includeAntRuntime="no"
-               classpath="lib/*.jar"
-               destdir="${classes.dir}"/>
+               destdir="${classes.dir}">
+            <classpath refid="library-classpath"/>
+        </javac>
     </target>
     
     <target name="build_client" depends="compile">
