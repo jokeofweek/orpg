@@ -1,6 +1,6 @@
 package orpg.server.data.store;
 
-public class DataStoreException extends RuntimeException {
+public class DataStoreException extends Exception {
 
 	private static final long serialVersionUID = -8361746835945010443L;
 
@@ -18,7 +18,7 @@ public class DataStoreException extends RuntimeException {
 
 	@Override
 	public String getMessage() {
-		if (getMessage() == null && getCause() != null) {
+		if (getCause() != this) {
 			return getCause().getMessage();
 		} else {
 			return super.getMessage();
