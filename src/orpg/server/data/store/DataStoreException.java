@@ -16,12 +16,4 @@ public class DataStoreException extends Exception {
 		super(message, throwable);
 	}
 
-	@Override
-	public String getMessage() {
-		if (getCause() != this) {
-			return getCause().getMessage();
-		} else {
-			return super.getMessage();
-		}
-	}
 }
