@@ -117,7 +117,8 @@ public class FileDataStore implements DataStore {
 	}
 
 	@Override
-	public void createAccount(Account account) throws DataStoreException {
+	public synchronized void createAccount(Account account)
+			throws DataStoreException {
 		// Just a last condition check to prevent messing up the file system.
 		if (!Validator.isAccountNameValid(account.getName())) {
 			throw new DataStoreException("Invalid account name.");
@@ -135,18 +136,20 @@ public class FileDataStore implements DataStore {
 
 	@Override
 	public void saveAccount(Account account) throws DataStoreException {
-		try {
-			Wini ini = new Wini(getAccountFile(account.getName()));
-			
-			// Store account details
-			ini.put("account", "name", account.getName());
-			ini.put("account", "email", account.getEmail());
-			ini.put("account", "salt", account.getSalt());
-			ini.put("account", "hash", account.getPasswordHash());
-			
-			ini.store();
-		} catch (IOException e) {
-			throw new DataStoreException(e);
+		synchronized (account) {
+			try {
+				Wini ini = new Wini(getAccountFile(account.getName()));
+
+				// Store account details
+				ini.put("account", "name", account.getName());
+				ini.put("account", "email", account.getEmail());
+				ini.put("account", "salt", account.getSalt());
+				ini.put("account", "hash", account.getPasswordHash());
+
+				ini.store();
+			} catch (IOException e) {
+				throw new DataStoreException(e);
+			}
 		}
 	}
 
