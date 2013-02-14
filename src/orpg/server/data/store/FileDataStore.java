@@ -39,7 +39,8 @@ public class FileDataStore implements DataStore {
 
 		try {
 			out = new BufferedOutputStream(new FileOutputStream(
-					Constants.SERVER_MAPS_PATH + "map_" + map.getId() + ".map"));
+					Constants.SERVER_MAPS_PATH + "map_" + map.getId()
+							+ ".map"));
 			out.write(buffer.getBytes());
 			out.close();
 
@@ -49,7 +50,8 @@ public class FileDataStore implements DataStore {
 					buffer.putSegment(map.getSegment(x, y));
 					out = new BufferedOutputStream(new FileOutputStream(
 							String.format(Constants.SERVER_MAPS_PATH
-									+ "map_%d_%d_%d.map", map.getId(), x, y)));
+									+ "map_%d_%d_%d.map", map.getId(), x,
+									y)));
 					out.write(buffer.getBytes());
 					out.close();
 				}
@@ -78,8 +80,8 @@ public class FileDataStore implements DataStore {
 				+ ".map");
 		if (id < 1 || id > baseServer.getConfigManager().getTotalMaps()
 				|| !mapFile.exists()) {
-			throw new IllegalArgumentException("No map exists with the number "
-					+ id + ".");
+			throw new IllegalArgumentException(
+					"No map exists with the number " + id + ".");
 		}
 
 		try {
@@ -91,8 +93,8 @@ public class FileDataStore implements DataStore {
 			for (int x = 0; x < map.getSegmentsWide(); x++) {
 				for (int y = 0; y < map.getSegmentsHigh(); y++) {
 					map.updateSegment(new InputByteBuffer(new File(
-							Constants.SERVER_MAPS_PATH + "map_" + id + "_" + x
-									+ "_" + y + ".map")).getSegment());
+							Constants.SERVER_MAPS_PATH + "map_" + id + "_"
+									+ x + "_" + y + ".map")).getSegment());
 				}
 			}
 			return map;
@@ -113,9 +115,13 @@ public class FileDataStore implements DataStore {
 	}
 
 	private File getAccountFile(String accountName) {
-		return new File(Constants.SERVER_ACCOUNTS_PATH + accountName + ".ini");
+		return new File(Constants.SERVER_ACCOUNTS_PATH + accountName
+				+ ".ini");
 	}
 
+	/* (non-Javadoc)
+	 * @see orpg.server.data.store.DataStore#createAccount(orpg.server.data.Account)
+	 */
 	@Override
 	public synchronized void createAccount(Account account)
 			throws DataStoreException {
@@ -134,6 +140,9 @@ public class FileDataStore implements DataStore {
 		this.saveAccount(account);
 	}
 
+	/* (non-Javadoc)
+	 * @see orpg.server.data.store.DataStore#saveAccount(orpg.server.data.Account)
+	 */
 	@Override
 	public void saveAccount(Account account) throws DataStoreException {
 		synchronized (account) {
@@ -151,6 +160,34 @@ public class FileDataStore implements DataStore {
 				throw new DataStoreException(e);
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see orpg.server.data.store.DataStore#loadAccount(java.lang.String)
+	 */
+	@Override
+	public synchronized Account loadAccount(String name)
+			throws IllegalArgumentException, DataStoreException {
+		// Test for existence
+		if (!accountExists(name)) {
+			throw new IllegalArgumentException("Account does not exist.");
+		}
+
+		try {
+			Wini ini = new Wini(getAccountFile(name));
+
+			Account account = new Account();
+			account.setName(ini.get("account", "name"));
+			account.setEmail(ini.get("account", "email"));
+			account.setSalt(ini.get("account", "salt"));
+			account.setPasswordHash(ini.get("account", "hash"));
+
+			return account;
+
+		} catch (IOException e) {
+			throw new DataStoreException(e);
+		}
+
 	}
 
 }

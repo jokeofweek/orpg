@@ -5,7 +5,6 @@ public enum ClientPacketType {
 	PING,
 	CREATE_ACCOUNT,
 	LOGIN,
-	EDITOR_LOGIN,
 
 	// Editor packets
 	EDITOR_READY,

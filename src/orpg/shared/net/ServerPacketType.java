@@ -7,6 +7,7 @@ public enum ServerPacketType {
 	CONNECTED,
 	DISCONNECT,
 	ERROR,
+	LOGIN_OK,
 	EDITOR_LOGIN_OK,
 	
 	// Editor packet types

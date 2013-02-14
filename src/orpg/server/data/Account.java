@@ -41,11 +41,19 @@ public class Account {
 	public String getSalt() {
 		return salt;
 	}
+	
+	public void setSalt(String salt) {
+		this.salt = salt;
+	}
 
 	public String getPasswordHash() {
 		return passwordHash;
 	}
 
+	public void setPasswordHash(String passwordHash) {
+		this.passwordHash = passwordHash;
+	}
+	
 	private String hashPassword(char[] password, String salt)
 			throws NoSuchAlgorithmException {
 		MessageDigest digest = MessageDigest.getInstance("SHA-512");

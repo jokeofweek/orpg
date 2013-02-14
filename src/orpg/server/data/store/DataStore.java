@@ -3,6 +3,14 @@ package orpg.server.data.store;
 import orpg.server.data.Account;
 import orpg.shared.data.Map;
 
+/**
+ * @author Dom
+ *
+ */
+/**
+ * @author Dom
+ * 
+ */
 public interface DataStore {
 
 	/**
@@ -40,7 +48,21 @@ public interface DataStore {
 	public boolean accountExists(String name);
 
 	public void createAccount(Account account) throws DataStoreException;
-	
+
 	public void saveAccount(Account account) throws DataStoreException;
+
+	/**
+	 * This attemps to load an account with a given name.
+	 * 
+	 * @param name
+	 *            the name of the account to load.
+	 * @return the {@link Account} with the given name.
+	 * @throws IllegalArgumentException
+	 *             if no account exists with that name.
+	 * @throws DataStoreException
+	 *             if there is an error loading that account from the datastore.
+	 */
+	public Account loadAccount(String name)
+			throws IllegalArgumentException, DataStoreException;
 
 }

@@ -47,10 +47,10 @@ public class ServerGameThread implements Runnable {
 
 	private void setupClientHandlers() {
 		this.clientHandlers = new HashMap<ClientPacketType, ServerPacketHandler>();
+		
+		LoginHandler loginHandler = new LoginHandler();
 		clientHandlers
-				.put(ClientPacketType.LOGIN, new LoginHandler(false));
-		clientHandlers.put(ClientPacketType.EDITOR_LOGIN,
-				new LoginHandler(true));
+				.put(ClientPacketType.LOGIN, loginHandler);
 		clientHandlers.put(ClientPacketType.CREATE_ACCOUNT,
 				new CreateAccountHandler());
 	}

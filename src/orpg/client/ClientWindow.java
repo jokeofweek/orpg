@@ -16,6 +16,7 @@ import javax.swing.JTextField;
 import orpg.client.data.ClientSentPacket;
 import orpg.client.net.BaseClient;
 import orpg.client.net.packets.CreateAccountPacket;
+import orpg.client.net.packets.LoginPacket;
 import orpg.shared.net.ClientPacketType;
 import orpg.shared.net.OutputByteBuffer;
 
@@ -58,14 +59,30 @@ public class ClientWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				baseClient.getOutputQueue().add(
-						new CreateAccountPacket(accountNameField.getText(),
-								emailField.getText(), passwordField
+						new CreateAccountPacket(
+								accountNameField.getText(), emailField
+										.getText(), passwordField
 										.getPassword()));
 			}
 		});
 
-		basePanel.add(createButton, BorderLayout.SOUTH);
+		JButton loginButton = new JButton("Login");
+		loginButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				baseClient.getOutputQueue().add(
+						new LoginPacket(accountNameField.getText(),
+								passwordField.getPassword(), false));
+			}
+		});
 		
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(createButton);
+		buttonPanel.add(loginButton);
+
+		basePanel.add(buttonPanel, BorderLayout.SOUTH);
+
 		this.add(basePanel);
 
 	}

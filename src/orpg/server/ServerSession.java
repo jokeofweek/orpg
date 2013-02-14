@@ -7,6 +7,8 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.logging.Level;
 
+import orpg.server.data.Account;
+
 public class ServerSession {
 
 	private BaseServer baseServer;
@@ -15,6 +17,9 @@ public class ServerSession {
 	private volatile boolean connected;
 	private String disconnectReason;
 	private ServerSessionThread thread;
+	private Account account;
+
+	private String originalId;
 	private String id;
 
 	public ServerSession(BaseServer baseServer, Socket socket)
@@ -23,11 +28,11 @@ public class ServerSession {
 		this.outputQueue = new LinkedList<byte[]>();
 		this.setSessionType(SessionType.GAME);
 
+		this.originalId = socket.getInetAddress().toString();
 		this.id = socket.getInetAddress().toString();
 
 		// Start the session thread
-		this.thread = new ServerSessionThread(baseServer, socket,
-				this);
+		this.thread = new ServerSessionThread(baseServer, socket, this);
 		this.thread.start();
 
 		this.connected = true;
@@ -69,7 +74,8 @@ public class ServerSession {
 				.getConfigManager()
 				.getSessionLogger()
 				.log(Level.INFO,
-						String.format("Session %s disconnected for reason %s.",
+						String.format(
+								"Session %s disconnected for reason %s.",
 								getId(), reason));
 		baseServer.getServerSessionManager().removeSession(this);
 
@@ -80,6 +86,16 @@ public class ServerSession {
 
 	public String getDisconnectReason() {
 		return disconnectReason;
+	}
+
+	public Account getAccount() {
+		return account;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
+		// Update the id to include account name
+		this.id = this.originalId + "(" + account.getName() + ")";
 	}
 
 }
