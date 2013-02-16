@@ -10,7 +10,8 @@ public class ConnectedPacketHandler implements EditorPacketHandler {
 
 	@Override
 	public void handle(ClientReceivedPacket packet, BaseEditor baseEditor) {
-		baseEditor.getOutputQueue().add(new LoginPacket());
+		baseEditor.getOutputQueue().add(
+				new LoginPacket("test", "tester".toCharArray(), true));
 	}
 
 }
