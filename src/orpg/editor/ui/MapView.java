@@ -179,17 +179,7 @@ public class MapView extends JComponent implements Observer,
 					}
 					overlayTile += Constants.TILESET_WIDTH;
 				}
-				/*
-				 * graphics.drawImage(image, hoverOverTileX * tileWidth,
-				 * hoverOverTileY * tileHeight, (hoverOverTileX + xWide) *
-				 * tileWidth, (hoverOverTileY + yWide) * tileHeight,
-				 * editorController.getTileRange().getStartX()
-				 * Constants.TILE_WIDTH, editorController
-				 * .getTileRange().getStartY() Constants.TILE_HEIGHT,
-				 * (editorController .getTileRange().getEndX() + 1)
-				 * Constants.TILE_WIDTH, (editorController
-				 * .getTileRange().getEndY() + 1) Constants.TILE_HEIGHT, null);
-				 */
+
 				graphics.setComposite(regular);
 			}
 		}
