@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.nio.Buffer;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -20,7 +21,7 @@ import orpg.shared.Constants;
 public class TilesView extends JPanel implements MouseMotionListener,
 		MouseListener, Observer {
 
-	private BufferedImage image;
+	private BufferedImage[] images;
 
 	private boolean leftDown;
 	private boolean rightDown;
@@ -29,10 +30,11 @@ public class TilesView extends JPanel implements MouseMotionListener,
 	private int multiSelectY;
 	private MapEditorController editorController;
 
-	public TilesView(MapEditorController editorController, BufferedImage image) {
+	public TilesView(MapEditorController editorController,
+			BufferedImage[] images) {
 		this.editorController = editorController;
 		this.editorController.addObserver(this);
-		this.image = image;
+		this.images = images;
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 	}
@@ -41,7 +43,14 @@ public class TilesView extends JPanel implements MouseMotionListener,
 	public void paint(Graphics g) {
 		super.paint(g);
 		Graphics2D graphics = (Graphics2D) g;
-		graphics.drawImage(image, 0, 0, null);
+		int tilesetHeight = Constants.TILE_HEIGHT * Constants.TILESET_HEIGHT;
+		int currentHeight = 0;
+		
+		for (BufferedImage image : images){
+			graphics.drawImage(image, 0, currentHeight, null);
+			currentHeight += tilesetHeight;
+		}
+		
 		graphics.setColor(Color.red);
 
 		graphics.drawRect(editorController.getTileRange().getStartX()
@@ -49,9 +58,10 @@ public class TilesView extends JPanel implements MouseMotionListener,
 				.getStartY() * Constants.TILE_HEIGHT, (editorController
 				.getTileRange().getEndX()
 				- editorController.getTileRange().getStartX() + 1)
-				* Constants.TILE_WIDTH, (editorController.getTileRange()
-				.getEndY() - editorController.getTileRange().getStartY() + 1)
-				* Constants.TILE_HEIGHT);
+				* Constants.TILE_WIDTH,
+				(editorController.getTileRange().getEndY()
+						- editorController.getTileRange().getStartY() + 1)
+						* Constants.TILE_HEIGHT);
 	}
 
 	@Override
@@ -63,12 +73,13 @@ public class TilesView extends JPanel implements MouseMotionListener,
 
 	@Override
 	public int getWidth() {
-		return image.getWidth();
+		return Constants.TILE_WIDTH * Constants.TILESET_WIDTH;
 	}
 
 	@Override
 	public int getHeight() {
-		return image.getHeight();
+		return Constants.TILE_HEIGHT * Constants.TILESET_HEIGHT
+				* Constants.TILESETS;
 	}
 
 	@Override
@@ -120,9 +131,10 @@ public class TilesView extends JPanel implements MouseMotionListener,
 		if (e.getComponent() == this) {
 			if (leftDown) {
 				// Detect if our selected change, and if so update it.
-				editorController.updateTileRange(x / Constants.TILE_WIDTH, y
-						/ Constants.TILE_HEIGHT, x / Constants.TILE_WIDTH, y
-						/ Constants.TILE_HEIGHT);
+				editorController.updateTileRange(x / Constants.TILE_WIDTH,
+						y / Constants.TILE_HEIGHT, x
+								/ Constants.TILE_WIDTH, y
+								/ Constants.TILE_HEIGHT);
 				repaint();
 			} else if (rightDown) {
 				if (inMultiSelect) {
@@ -131,12 +143,12 @@ public class TilesView extends JPanel implements MouseMotionListener,
 							.max(0,
 									Math.min(
 											x / Constants.TILE_WIDTH,
-											(this.image.getWidth() / Constants.TILE_WIDTH) - 1));
+											(getWidth() / Constants.TILE_WIDTH) - 1));
 					int newY = Math
 							.max(0,
 									Math.min(
 											y / Constants.TILE_HEIGHT,
-											(this.image.getHeight() / Constants.TILE_HEIGHT) - 1));
+											(getHeight() / Constants.TILE_HEIGHT) - 1));
 
 					if (newX < multiSelectX) {
 						if (newY < multiSelectY) {
@@ -160,11 +172,11 @@ public class TilesView extends JPanel implements MouseMotionListener,
 					// If it is the first rightclick, then just update the
 					// starting
 					// position and mark that we are in multi-select mode.
-					editorController
-							.updateTileRange(x / Constants.TILE_WIDTH, y
-									/ Constants.TILE_HEIGHT, x
-									/ Constants.TILE_WIDTH, y
-									/ Constants.TILE_HEIGHT);
+					editorController.updateTileRange(x
+							/ Constants.TILE_WIDTH, y
+							/ Constants.TILE_HEIGHT, x
+							/ Constants.TILE_WIDTH, y
+							/ Constants.TILE_HEIGHT);
 					inMultiSelect = true;
 					multiSelectX = x / Constants.TILE_WIDTH;
 					multiSelectY = y / Constants.TILE_HEIGHT;

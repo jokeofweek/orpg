@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -24,6 +25,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -129,19 +131,25 @@ public class MapEditorWindow extends JFrame implements Observer,
 
 		tilesTabPanel.add(layerOptionsPane, BorderLayout.NORTH);
 
-		// Build the tiles view
-		TilesView tilesView = null;
+		// Load tilesets
+		BufferedImage[] tilesets = new BufferedImage[Constants.TILESETS];
+		int i = 0;
 		try {
-			tilesView = new TilesView(editorController,
-					ImageIO.read(new File(Constants.CLIENT_DATA_PATH
-							+ "gfx/tiles.png").toURI().toURL()));
-		} catch (MalformedURLException e) {
+			for (i = 0; i < Constants.TILESETS; i++) {
+				tilesets[i] = ImageIO.read(new File(
+						Constants.CLIENT_DATA_PATH + "gfx/tiles_" + i
+								+ ".png").toURI().toURL());
+			}
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "Could not load tiles_"
+					+ i + ".png. Shutting down.");
 			e.printStackTrace();
 			System.exit(1);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+		
+		// Build the tiles view
+		TilesView tilesView = null;
+		tilesView = new TilesView(editorController, tilesets);
 
 		JScrollPane tilesScrollPane = new JScrollPane(tilesView,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
