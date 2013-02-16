@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -21,7 +22,7 @@ import orpg.shared.Constants;
 public class TilesView extends JPanel implements MouseMotionListener,
 		MouseListener, Observer {
 
-	private BufferedImage[] images;
+	private Image[] images;
 
 	private boolean leftDown;
 	private boolean rightDown;
@@ -31,7 +32,7 @@ public class TilesView extends JPanel implements MouseMotionListener,
 	private MapEditorController editorController;
 
 	public TilesView(MapEditorController editorController,
-			BufferedImage[] images) {
+			Image[] images) {
 		this.editorController = editorController;
 		this.editorController.addObserver(this);
 		this.images = images;
@@ -46,7 +47,7 @@ public class TilesView extends JPanel implements MouseMotionListener,
 		int tilesetHeight = Constants.TILE_HEIGHT * Constants.TILESET_HEIGHT;
 		int currentHeight = 0;
 		
-		for (BufferedImage image : images){
+		for (Image image : images){
 			graphics.drawImage(image, 0, currentHeight, null);
 			currentHeight += tilesetHeight;
 		}

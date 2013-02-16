@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -75,16 +76,32 @@ public class MapEditorWindow extends JFrame implements Observer,
 	}
 
 	private void setupContent() {
+		// Load tilesets
+		BufferedImage[] tilesets = new BufferedImage[Constants.TILESETS];
+		int i = 0;
+		try {
+			for (i = 0; i < Constants.TILESETS; i++) {
+				tilesets[i] = ImageIO.read(new File(
+						Constants.CLIENT_DATA_PATH + "gfx/tiles_" + i
+								+ ".png").toURI().toURL());
+			}
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "Could not load tiles_"
+					+ i + ".png. Shutting down.");
+			e.printStackTrace();
+			System.exit(1);
+		}
+		
 		JPanel contentPane = new JPanel(new BorderLayout());
 
 		JPanel mapContainer = new JPanel(new BorderLayout());
-		contentPane.add(getTabPane(), BorderLayout.WEST);
+		contentPane.add(getTabPane(tilesets), BorderLayout.WEST);
 
 		JScrollPane mapScrollPane = new JScrollPane(
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		MapView mapView = new MapView(mapController, editorController,
-				mapScrollPane);
+				mapScrollPane, tilesets);
 		mapScrollPane.setViewportView(mapView);
 		mapScrollPane.getHorizontalScrollBar().setUnitIncrement(16);
 		mapScrollPane.getHorizontalScrollBar().setAutoscrolls(true);
@@ -98,18 +115,18 @@ public class MapEditorWindow extends JFrame implements Observer,
 		this.add(contentPane);
 	}
 
-	private JComponent getTabPane() {
+	private JComponent getTabPane(Image[] tilesets) {
 
 		JTabbedPane tabPane = new JTabbedPane();
 
-		tabPane.addTab("Tiles", getTilesTabPane());
+		tabPane.addTab("Tiles", getTilesTabPane(tilesets));
 		tabPane.addTab("Properties", getPropertiesTabPane());
 		tabPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 0));
 
 		return tabPane;
 	}
 
-	public JComponent getTilesTabPane() {
+	public JComponent getTilesTabPane(Image[] tilesets) {
 		// Set up the tile tab panel
 		JPanel tilesTabPanel = new JPanel(new BorderLayout());
 
@@ -131,21 +148,6 @@ public class MapEditorWindow extends JFrame implements Observer,
 
 		tilesTabPanel.add(layerOptionsPane, BorderLayout.NORTH);
 
-		// Load tilesets
-		BufferedImage[] tilesets = new BufferedImage[Constants.TILESETS];
-		int i = 0;
-		try {
-			for (i = 0; i < Constants.TILESETS; i++) {
-				tilesets[i] = ImageIO.read(new File(
-						Constants.CLIENT_DATA_PATH + "gfx/tiles_" + i
-								+ ".png").toURI().toURL());
-			}
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "Could not load tiles_"
-					+ i + ".png. Shutting down.");
-			e.printStackTrace();
-			System.exit(1);
-		}
 		
 		// Build the tiles view
 		TilesView tilesView = null;

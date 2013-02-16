@@ -9,6 +9,7 @@ import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
@@ -26,12 +27,12 @@ import orpg.editor.data.change.MapEditorTileUpdateChange;
 import orpg.shared.Constants;
 import orpg.shared.data.MapLayer;
 
-public class MapView extends JComponent implements Observer, MouseListener,
-		MouseMotionListener {
+public class MapView extends JComponent implements Observer,
+		MouseListener, MouseMotionListener {
 
 	private MapController mapController;
 	private MapEditorController editorController;
-	private Image image;
+	private Image[] images;
 
 	private boolean leftDown;
 	private boolean rightDown;
@@ -45,21 +46,17 @@ public class MapView extends JComponent implements Observer, MouseListener,
 
 	private JScrollPane container;
 
+	private int currentTileSet;
+
 	public MapView(MapController controller,
-			MapEditorController editorController, JScrollPane container) {
+			MapEditorController editorController, JScrollPane container,
+			Image[] images) {
 		this.mapController = controller;
 		this.editorController = editorController;
 		this.container = container;
 		this.mapController.addObserver(this);
 		this.editorController.addObserver(this);
-
-		try {
-			this.image = ImageIO.read(new File(Constants.CLIENT_DATA_PATH
-					+ "gfx/tiles.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
+		this.images = images;
 
 		this.tileWidth = Constants.TILE_WIDTH
 				/ editorController.getScaleFactor();
@@ -89,6 +86,18 @@ public class MapView extends JComponent implements Observer, MouseListener,
 		return new Dimension(getWidth(), getHeight());
 	}
 
+	private void renderTile(Graphics2D g, int x, int y, int tile) {
+		int srcX = (tile % Constants.TILESET_WIDTH) * Constants.TILE_WIDTH;
+		int srcY = ((tile / Constants.TILESET_HEIGHT) % Constants.TILESET_HEIGHT)
+				* Constants.TILE_HEIGHT;
+
+		g.drawImage(this.images[(tile / Constants.TILESET_WIDTH)
+				/ Constants.TILESET_HEIGHT], x, y, x + tileWidth, y
+				+ tileHeight, srcX, srcY, srcX + Constants.TILE_WIDTH,
+				srcY + Constants.TILE_HEIGHT, null);
+
+	}
+
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
@@ -112,14 +121,15 @@ public class MapView extends JComponent implements Observer, MouseListener,
 				AlphaComposite.SRC_OVER, 1.0f);
 
 		// Determine renderable area
-		int startX = Math
-				.max(0,
-						(container.getHorizontalScrollBar().getValue() / tileWidth) - 4);
-		int startY = Math.max(0,
-				(container.getVerticalScrollBar().getValue() / tileHeight) - 4);
-		int endX = Math.min(startX + 6 + (container.getWidth() / tileWidth),
+		int startX = Math.max(0, (container.getHorizontalScrollBar()
+				.getValue() / tileWidth) - 4);
+		int startY = Math.max(0, (container.getVerticalScrollBar()
+				.getValue() / tileHeight) - 4);
+		int endX = Math.min(startX + 6
+				+ (container.getWidth() / tileWidth),
 				mapController.getMapWidth());
-		int endY = Math.min(startY + 6 + (container.getHeight() / tileHeight),
+		int endY = Math.min(startY + 6
+				+ (container.getHeight() / tileHeight),
 				mapController.getMapHeight());
 		short tile;
 
@@ -131,21 +141,13 @@ public class MapView extends JComponent implements Observer, MouseListener,
 					tile = mapController.getTile(x, y, z);
 					if (tile == 0) {
 						if (z == 0) {
-							graphics.drawImage(image, dX, dY, dX + tileWidth,
-									dY + tileHeight, 0, 0,
+							graphics.drawImage(this.images[0], dX, dY, dX
+									+ tileWidth, dY + tileHeight, 0, 0,
 									Constants.TILE_WIDTH,
 									Constants.TILE_HEIGHT, null);
 						}
 					} else {
-						graphics.drawImage(image, dX, dY, dX + tileWidth, dY
-								+ tileHeight, (tile % Constants.TILESET_WIDTH)
-								* Constants.TILE_WIDTH,
-								(tile / Constants.TILESET_WIDTH)
-										* Constants.TILE_HEIGHT,
-								(1 + (tile % Constants.TILESET_WIDTH))
-										* Constants.TILE_WIDTH,
-								(1 + (tile / Constants.TILESET_WIDTH))
-										* Constants.TILE_HEIGHT, null);
+						renderTile(graphics, dX, dY, tile);
 					}
 
 					dX += tileWidth;
@@ -165,17 +167,29 @@ public class MapView extends JComponent implements Observer, MouseListener,
 						- editorController.getTileRange().getStartX() + 1;
 				int yWide = editorController.getTileRange().getEndY()
 						- editorController.getTileRange().getStartY() + 1;
-				graphics.drawImage(image, hoverOverTileX * tileWidth,
-						hoverOverTileY * tileHeight, (hoverOverTileX + xWide)
-								* tileWidth, (hoverOverTileY + yWide)
-								* tileHeight, editorController.getTileRange()
-								.getStartX() * Constants.TILE_WIDTH,
-						editorController.getTileRange().getStartY()
-								* Constants.TILE_HEIGHT, (editorController
-								.getTileRange().getEndX() + 1)
-								* Constants.TILE_WIDTH, (editorController
-								.getTileRange().getEndY() + 1)
-								* Constants.TILE_HEIGHT, null);
+
+				int overlayTile = (editorController.getTileRange()
+						.getStartY() * Constants.TILESET_WIDTH)
+						+ editorController.getTileRange().getStartX();
+				for (int y = 0; y < yWide; y++) {
+					for (int x = 0; x < xWide; x++) {
+						renderTile(graphics, (hoverOverTileX + x) * tileWidth,
+								(hoverOverTileY + y) * tileHeight, overlayTile
+										+ x);
+					}
+					overlayTile += Constants.TILESET_WIDTH;
+				}
+				/*
+				 * graphics.drawImage(image, hoverOverTileX * tileWidth,
+				 * hoverOverTileY * tileHeight, (hoverOverTileX + xWide) *
+				 * tileWidth, (hoverOverTileY + yWide) * tileHeight,
+				 * editorController.getTileRange().getStartX()
+				 * Constants.TILE_WIDTH, editorController
+				 * .getTileRange().getStartY() Constants.TILE_HEIGHT,
+				 * (editorController .getTileRange().getEndX() + 1)
+				 * Constants.TILE_WIDTH, (editorController
+				 * .getTileRange().getEndY() + 1) Constants.TILE_HEIGHT, null);
+				 */
 				graphics.setComposite(regular);
 			}
 		}
@@ -189,8 +203,8 @@ public class MapView extends JComponent implements Observer, MouseListener,
 			// Render the entire tilerange
 			for (int y = startY; y < endY; y++) {
 				for (int x = startX; x < endX; x++) {
-					graphics.drawRect(x * tileWidth, y * tileHeight, tileWidth,
-							tileHeight);
+					graphics.drawRect(x * tileWidth, y * tileHeight,
+							tileWidth, tileHeight);
 				}
 			}
 			graphics.setComposite(regular);
@@ -259,11 +273,12 @@ public class MapView extends JComponent implements Observer, MouseListener,
 				// Make sure there is a change:
 				int startX = editorController.getTileRange().getStartX();
 				int startY = editorController.getTileRange().getStartY();
-				int diffX = editorController.getTileRange().getEndX() - startX
-						+ 1;
-				int diffY = editorController.getTileRange().getEndY() - startY
-						+ 1;
-				int currentTile = startX + (startY * Constants.TILESET_WIDTH);
+				int diffX = editorController.getTileRange().getEndX()
+						- startX + 1;
+				int diffY = editorController.getTileRange().getEndY()
+						- startY + 1;
+				int currentTile = startX
+						+ (startY * Constants.TILESET_WIDTH);
 
 				int layer = editorController.getCurrentLayer().ordinal();
 
@@ -273,8 +288,9 @@ public class MapView extends JComponent implements Observer, MouseListener,
 				int pY = y / tileHeight;
 
 				// Check each x/y value
-				for (int cY = pY; cY < Math.min(mapController.getMapHeight(),
-						pY + diffY) && !changed; cY++) {
+				for (int cY = pY; cY < Math.min(
+						mapController.getMapHeight(), pY + diffY)
+						&& !changed; cY++) {
 					for (int cX = pX; cX < Math.min(
 							mapController.getMapWidth(), pX + diffX); cX++) {
 						if (mapController.getTile(cX, cY, layer) != currentTile
@@ -290,9 +306,9 @@ public class MapView extends JComponent implements Observer, MouseListener,
 				if (changed) {
 
 					editorController.getChangeManager().addChange(
-							new MapEditorTileUpdateChange(editorController,
-									mapController, x / tileWidth, y
-											/ tileHeight));
+							new MapEditorTileUpdateChange(
+									editorController, mapController, x
+											/ tileWidth, y / tileHeight));
 				}
 
 			} else if (rightDown) {
