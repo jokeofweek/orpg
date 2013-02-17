@@ -8,6 +8,7 @@ import java.util.Queue;
 import java.util.logging.Level;
 
 import orpg.server.data.Account;
+import orpg.server.data.SessionType;
 
 public class ServerSession {
 
@@ -26,7 +27,7 @@ public class ServerSession {
 			throws SocketException {
 		this.baseServer = baseServer;
 		this.outputQueue = new LinkedList<byte[]>();
-		this.setSessionType(SessionType.GAME);
+		this.setSessionType(SessionType.ANONYMOUS);
 
 		this.originalId = socket.getInetAddress().toString();
 		this.id = socket.getInetAddress().toString();
@@ -39,17 +40,17 @@ public class ServerSession {
 	}
 
 	public String getId() {
-		return id;
+		return id + "/" + sessionType;
 	}
 
 	public void setSessionType(SessionType sessionType) {
 		baseServer
 				.getConfigManager()
 				.getSessionLogger()
-				.log(Level.FINE,
+				.log(Level.INFO,
 						String.format(
 								"Session %s changed session type from %s to %s",
-								id, this.sessionType, sessionType));
+								getId(), this.sessionType, sessionType));
 		this.sessionType = sessionType;
 	}
 

@@ -7,6 +7,7 @@ import java.util.Queue;
 import java.util.logging.Level;
 
 import orpg.server.data.ServerReceivedPacket;
+import orpg.server.data.SessionType;
 import orpg.server.net.handlers.CreateAccountHandler;
 import orpg.server.net.handlers.EditorEditMapHandler;
 import orpg.server.net.handlers.LoginHandler;
@@ -33,6 +34,7 @@ public class ServerGameThread implements Runnable {
 	private Queue<ServerReceivedPacket> inputQueue;
 	private PriorityQueue<ServerPacket> outputQueue;
 	private BaseServer baseServer;
+	private HashMap<ClientPacketType, ServerPacketHandler> anonymousHandlers;
 	private HashMap<ClientPacketType, ServerPacketHandler> clientHandlers;
 	private HashMap<ClientPacketType, ServerPacketHandler> editorHandlers;
 
@@ -41,18 +43,21 @@ public class ServerGameThread implements Runnable {
 		this.inputQueue = baseServer.getInputQueue();
 		this.outputQueue = baseServer.getOutputQueue();
 
+		setupAnonymousHandlers();
 		setupClientHandlers();
 		setupEditorHandlers();
 	}
 
+	private void setupAnonymousHandlers() {
+		this.anonymousHandlers = new HashMap<ClientPacketType, ServerPacketHandler>();
+
+		anonymousHandlers.put(ClientPacketType.LOGIN, new LoginHandler());
+		anonymousHandlers.put(ClientPacketType.CREATE_ACCOUNT,
+				new CreateAccountHandler());
+	}
+
 	private void setupClientHandlers() {
 		this.clientHandlers = new HashMap<ClientPacketType, ServerPacketHandler>();
-		
-		LoginHandler loginHandler = new LoginHandler();
-		clientHandlers
-				.put(ClientPacketType.LOGIN, loginHandler);
-		clientHandlers.put(ClientPacketType.CREATE_ACCOUNT,
-				new CreateAccountHandler());
 	}
 
 	private void setupEditorHandlers() {
@@ -75,10 +80,16 @@ public class ServerGameThread implements Runnable {
 
 				// Determine the right handler for the packet based on session
 				// type.
-				if (packet.getSession().getSessionType() == SessionType.GAME) {
+				switch (packet.getSession().getSessionType()) {
+				case GAME:
 					handler = clientHandlers.get(packet.getType());
-				} else if (packet.getSession().getSessionType() == SessionType.EDITOR) {
+					break;
+				case ANONYMOUS:
+					handler = anonymousHandlers.get(packet.getType());
+					break;
+				case EDITOR:
 					handler = editorHandlers.get(packet.getType());
+					break;
 				}
 
 				// Execute handler or disconnect.

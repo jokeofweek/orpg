@@ -4,9 +4,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 
 import orpg.server.BaseServer;
-import orpg.server.SessionType;
 import orpg.server.data.Account;
 import orpg.server.data.ServerReceivedPacket;
+import orpg.server.data.SessionType;
 import orpg.server.data.store.DataStoreException;
 import orpg.server.net.packets.EditorLoginOkPacket;
 import orpg.server.net.packets.ErrorPacket;
@@ -51,6 +51,12 @@ public class LoginHandler implements ServerPacketHandler {
 
 			// At this point, our login was successful, so update the session.
 			packet.getSession().setAccount(account);
+			baseServer
+					.getConfigManager()
+					.getSessionLogger()
+					.log(Level.INFO,
+							String.format("Session %s sucesfully logged in.",
+									packet.getSession().getId()));
 
 			// Update depending on editor and then send ok packet.
 			if (isEditorHandler) {
@@ -58,6 +64,7 @@ public class LoginHandler implements ServerPacketHandler {
 				baseServer.getOutputQueue().add(
 						new EditorLoginOkPacket(packet.getSession()));
 			} else {
+				packet.getSession().setSessionType(SessionType.GAME);
 				baseServer.getOutputQueue().add(
 						new LoginOkPacket(packet.getSession()));
 			}
@@ -72,8 +79,8 @@ public class LoginHandler implements ServerPacketHandler {
 					.getConfigManager()
 					.getErrorLogger()
 					.log(Level.SEVERE,
-							"Could not load account " + name
-									+ ". Reason: " + e.getMessage());
+							"Could not load account " + name + ". Reason: "
+									+ e.getMessage());
 			baseServer.getOutputQueue().add(
 					new ErrorPacket(packet.getSession(),
 							ErrorMessage.GENERIC_LOGIN_ERROR));
