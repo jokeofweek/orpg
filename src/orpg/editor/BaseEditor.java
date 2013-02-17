@@ -17,7 +17,7 @@ public class BaseEditor extends BaseClient {
 	private MapSelectWindow mapSelectWindow;
 
 	public BaseEditor(Socket socket) {
-		super(socket, EditorProcessThread.class);
+		super(socket, new EditorProcessThread());
 	}
 
 	public void showMapSelectWindow(Pair<Integer, String>[] mapNames) {

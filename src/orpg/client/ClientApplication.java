@@ -16,8 +16,7 @@ public class ClientApplication {
 			IllegalAccessException {
 		Socket s = new Socket("localhost", 8000);
 		
-		final BaseClient baseClient = new BaseClient(s,
-				ClientProcessThread.class);
+		final BaseClient baseClient = new BaseClient(s, new ClientProcessThread());
 		SwingUtilities.invokeLater(new Runnable() {
 
 			@Override

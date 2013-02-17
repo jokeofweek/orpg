@@ -13,6 +13,7 @@ public final class Constants {
 	
 	// Data path options
 	public static final String CLIENT_DATA_PATH = "data/client/";
+	public static final String CLIENT_ASSETS_PATH = CLIENT_DATA_PATH + "gfx/";
 	public static final String SERVER_DATA_PATH = "data/server/";
 	public static final String SERVER_MAPS_PATH = SERVER_DATA_PATH + "maps/";
 	public static final String SERVER_ACCOUNTS_PATH = SERVER_DATA_PATH + "accounts/";

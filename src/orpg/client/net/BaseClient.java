@@ -23,20 +23,14 @@ public class BaseClient {
 	private Queue<ClientReceivedPacket> inputQueue;
 	private Queue<ClientPacket> outputQueue;
 
-	public BaseClient(Socket socket, Class clientProcessThreadClass) {
+	public BaseClient(Socket socket, PacketProcessThread gameThread) {
 		// Setup the input and output queues
 		this.inputQueue = new LinkedList<ClientReceivedPacket>();
 		this.outputQueue = new LinkedList<ClientPacket>();
 		this.socket = socket;
 
 		// Setup our process thread
-		try {
-			this.gameThread = (PacketProcessThread) clientProcessThreadClass
-					.newInstance();
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException("Could not set up game thread.", e);
-		}
+		this.gameThread = gameThread;
 		this.gameThread.setBaseClient(this);
 
 		// Setup the necessary read/write threads
