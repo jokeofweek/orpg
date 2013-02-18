@@ -18,8 +18,8 @@ public class EditorEditMapHandler implements ServerPacketHandler {
 
 		try {
 			Map map = baseServer.getDataStore().loadMap(number);
-			baseServer.getOutputQueue().add(
-					new EditorMapDataPacket(packet.getSession(), map));
+			baseServer.sendPacket(new EditorMapDataPacket(packet
+					.getSession(), map));
 		} catch (IllegalArgumentException e) {
 			baseServer
 					.getConfigManager()
@@ -28,9 +28,8 @@ public class EditorEditMapHandler implements ServerPacketHandler {
 							"Session " + packet.getSession()
 									+ " tried to edit invalid map number "
 									+ number + ".");
-			baseServer.getOutputQueue().add(
-					new ErrorPacket(packet.getSession(),
-							"Invalid map number."));
+			baseServer.sendPacket(new ErrorPacket(packet.getSession(),
+					"Invalid map number."));
 		} catch (DataStoreException e) {
 			baseServer
 					.getConfigManager()
@@ -41,8 +40,7 @@ public class EditorEditMapHandler implements ServerPacketHandler {
 									+ " for editing. Reason: "
 									+ e.getMessage());
 			baseServer
-					.getOutputQueue()
-					.add(new ErrorPacket(
+					.sendPacket(new ErrorPacket(
 							packet.getSession(),
 							"An error occured while fetching the map information. Please try again later."));
 		}

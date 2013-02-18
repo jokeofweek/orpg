@@ -26,9 +26,8 @@ public class LoginHandler implements ServerPacketHandler {
 		try {
 			// First check that username is valid
 			if (!Validator.isAccountNameValid(name)) {
-				baseServer.getOutputQueue().add(
-						new ErrorPacket(packet.getSession(),
-								ErrorMessage.LOGIN_INVALID_CREDENTIALS));
+				baseServer.sendPacket(new ErrorPacket(packet.getSession(),
+						ErrorMessage.LOGIN_INVALID_CREDENTIALS));
 				return;
 			}
 
@@ -39,9 +38,8 @@ public class LoginHandler implements ServerPacketHandler {
 
 			// If we've finally loaded the account, test credentials.
 			if (!account.passwordMatches(password)) {
-				baseServer.getOutputQueue().add(
-						new ErrorPacket(packet.getSession(),
-								ErrorMessage.LOGIN_INVALID_CREDENTIALS));
+				baseServer.sendPacket(new ErrorPacket(packet.getSession(),
+						ErrorMessage.LOGIN_INVALID_CREDENTIALS));
 				return;
 			}
 
@@ -55,35 +53,34 @@ public class LoginHandler implements ServerPacketHandler {
 					.getConfigManager()
 					.getSessionLogger()
 					.log(Level.INFO,
-							String.format("Session %s sucesfully logged in.",
+							String.format(
+									"Session %s sucesfully logged in.",
 									packet.getSession().getId()));
 
 			// Update depending on editor and then send ok packet.
 			if (isEditorHandler) {
 				packet.getSession().setSessionType(SessionType.EDITOR);
-				baseServer.getOutputQueue().add(
-						new EditorLoginOkPacket(packet.getSession()));
+				baseServer.sendPacket(new EditorLoginOkPacket(packet
+						.getSession()));
 			} else {
 				packet.getSession().setSessionType(SessionType.GAME);
-				baseServer.getOutputQueue().add(
-						new LoginOkPacket(packet.getSession()));
+				baseServer.sendPacket(new LoginOkPacket(packet
+						.getSession()));
 			}
 		} catch (IllegalArgumentException e) {
 			// Thrown when the account does not exist
-			baseServer.getOutputQueue().add(
-					new ErrorPacket(packet.getSession(),
-							ErrorMessage.LOGIN_INVALID_CREDENTIALS));
+			baseServer.sendPacket(new ErrorPacket(packet.getSession(),
+					ErrorMessage.LOGIN_INVALID_CREDENTIALS));
 		} catch (DataStoreException e) {
 			// Thrown when error loading account
 			baseServer
 					.getConfigManager()
 					.getErrorLogger()
 					.log(Level.SEVERE,
-							"Could not load account " + name + ". Reason: "
-									+ e.getMessage());
-			baseServer.getOutputQueue().add(
-					new ErrorPacket(packet.getSession(),
-							ErrorMessage.GENERIC_LOGIN_ERROR));
+							"Could not load account " + name
+									+ ". Reason: " + e.getMessage());
+			baseServer.sendPacket(new ErrorPacket(packet.getSession(),
+					ErrorMessage.GENERIC_LOGIN_ERROR));
 
 		} catch (NoSuchAlgorithmException e) {
 			// Could be thrown when testing password.
@@ -93,9 +90,8 @@ public class LoginHandler implements ServerPacketHandler {
 					.log(Level.SEVERE,
 							"Could not test password match. Reason: "
 									+ e.getMessage());
-			baseServer.getOutputQueue().add(
-					new ErrorPacket(packet.getSession(),
-							ErrorMessage.GENERIC_LOGIN_ERROR));
+			baseServer.sendPacket(new ErrorPacket(packet.getSession(),
+					ErrorMessage.GENERIC_LOGIN_ERROR));
 		} finally {
 			// Clear out the password for safety
 			for (int i = 0; i < password.length; i++) {

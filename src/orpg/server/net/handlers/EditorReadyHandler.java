@@ -18,9 +18,8 @@ public class EditorReadyHandler implements ServerPacketHandler {
 		for (int i = 0; i < baseServer.getConfigManager().getTotalMaps(); i++) {
 			// put map name here.
 		}
-		baseServer.getOutputQueue().add(
-				new EditorMapListPacket(packet.getSession(), baseServer
-						.getMapManager().getMaps()));
+		baseServer.sendPacket(new EditorMapListPacket(packet.getSession(),
+				baseServer.getMapManager().getMaps()));
 
 	}
 }

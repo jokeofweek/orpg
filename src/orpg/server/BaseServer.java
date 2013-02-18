@@ -41,8 +41,10 @@ public class BaseServer {
 		this.outputQueue = new PriorityQueue<ServerPacket>(100);
 
 		// Set up the various threads
-		this.serverSessionManager = new ServerSessionManager(this);
-		this.serverGameThread = new ServerGameThread(this);
+		this.serverSessionManager = new ServerSessionManager(this,
+				outputQueue);
+		this.serverGameThread = new ServerGameThread(this, inputQueue,
+				outputQueue);
 		try {
 			this.serverSocketThread = new ServerSocketThread(this,
 					config.getServerPort());
@@ -87,8 +89,8 @@ public class BaseServer {
 		return inputQueue;
 	}
 
-	public PriorityQueue<ServerPacket> getOutputQueue() {
-		return outputQueue;
+	public void sendPacket(ServerPacket packet) {
+		outputQueue.add(packet);
 	}
 
 	public ServerSessionManager getServerSessionManager() {

@@ -2,6 +2,7 @@ package orpg.server;
 
 import java.util.HashSet;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.logging.Level;
 
 import orpg.server.net.packets.ConnectedPacket;
@@ -20,12 +21,12 @@ public class ServerSessionManager implements Runnable {
 
 	private HashSet<ServerSession> sessions;
 	private BaseServer server;
-	private PriorityQueue<ServerPacket> outputQueue;
+	private Queue<ServerPacket> outputQueue;
 
-	public ServerSessionManager(BaseServer server) {
+	public ServerSessionManager(BaseServer server, Queue<ServerPacket> outputQueue) {
 		this.server = server;
 		this.sessions = new HashSet<ServerSession>();
-		this.outputQueue = server.getOutputQueue();
+		this.outputQueue = outputQueue;
 	}
 
 	public void addSession(ServerSession session) {

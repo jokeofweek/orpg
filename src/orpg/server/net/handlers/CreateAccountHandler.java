@@ -27,15 +27,15 @@ public class CreateAccountHandler implements ServerPacketHandler {
 		try {
 			if (!Validator.isAccountNameValid(name)) {
 				baseServer
-						.getOutputQueue()
-						.add(new ErrorPacket(
+						.sendPacket(new ErrorPacket(
 								packet.getSession(),
 								ErrorMessage.ACCOUNT_NAME_HAS_INVALID_CHARACTERS));
 			} else {
 				synchronized (this) {
 					if (baseServer.getDataStore().accountExists(name)) {
-						baseServer.getOutputQueue().add(
-								new ErrorPacket(packet.getSession(),
+						baseServer
+								.sendPacket(new ErrorPacket(
+										packet.getSession(),
 										ErrorMessage.ACCOUNT_ALREADY_EXISTS));
 					} else {
 						try {
@@ -44,12 +44,14 @@ public class CreateAccountHandler implements ServerPacketHandler {
 							account.setName(name);
 							account.setEmail(email);
 							account.updatePassword(password);
-							baseServer.getDataStore().createAccount(account);
+							baseServer.getDataStore().createAccount(
+									account);
 							baseServer
 									.getConfigManager()
 									.getSessionLogger()
 									.log(Level.INFO,
-											"Account " + name + "(" + email
+											"Account " + name + "("
+													+ email
 													+ ") was created.");
 						} catch (NoSuchAlgorithmException e) {
 							baseServer
@@ -61,8 +63,7 @@ public class CreateAccountHandler implements ServerPacketHandler {
 													+ ". Error when hashing password: "
 													+ e.getMessage());
 							baseServer
-									.getOutputQueue()
-									.add(new ErrorPacket(
+									.sendPacket(new ErrorPacket(
 											packet.getSession(),
 											ErrorMessage.GENERIC_ACCOUNT_CREATION_ERROR));
 						} catch (DataStoreException e) {
@@ -70,12 +71,12 @@ public class CreateAccountHandler implements ServerPacketHandler {
 									.getConfigManager()
 									.getErrorLogger()
 									.log(Level.SEVERE,
-											"Could not create account " + name
+											"Could not create account "
+													+ name
 													+ ". Error when creating: "
 													+ e.getMessage());
 							baseServer
-									.getOutputQueue()
-									.add(new ErrorPacket(
+									.sendPacket(new ErrorPacket(
 											packet.getSession(),
 											ErrorMessage.GENERIC_ACCOUNT_CREATION_ERROR));
 						}

@@ -26,8 +26,7 @@ public class EditorSaveMapHandler implements ServerPacketHandler {
 									+ " in editor. Reason: "
 									+ e.getMessage());
 			baseServer
-					.getOutputQueue()
-					.add(new ErrorPacket(packet.getSession(),
+					.sendPacket(new ErrorPacket(packet.getSession(),
 							"An error occured while saving the map. Please try again later."));
 		}
 	}

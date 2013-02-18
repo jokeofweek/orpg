@@ -32,16 +32,16 @@ import orpg.shared.net.ServerPacketType;
 public class ServerGameThread implements Runnable {
 
 	private Queue<ServerReceivedPacket> inputQueue;
-	private PriorityQueue<ServerPacket> outputQueue;
+	private Queue<ServerPacket> outputQueue;
 	private BaseServer baseServer;
 	private HashMap<ClientPacketType, ServerPacketHandler> anonymousHandlers;
 	private HashMap<ClientPacketType, ServerPacketHandler> clientHandlers;
 	private HashMap<ClientPacketType, ServerPacketHandler> editorHandlers;
 
-	public ServerGameThread(BaseServer baseServer) {
+	public ServerGameThread(BaseServer baseServer, Queue<ServerReceivedPacket> inputQueue, Queue<ServerPacket> outputQueue) {
 		this.baseServer = baseServer;
-		this.inputQueue = baseServer.getInputQueue();
-		this.outputQueue = baseServer.getOutputQueue();
+		this.inputQueue = inputQueue;
+		this.outputQueue = outputQueue;
 
 		setupAnonymousHandlers();
 		setupClientHandlers();
