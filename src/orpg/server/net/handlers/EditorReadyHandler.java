@@ -2,11 +2,8 @@ package orpg.server.net.handlers;
 
 import orpg.server.BaseServer;
 import orpg.server.data.ServerReceivedPacket;
-import orpg.server.data.managers.MapManager;
 import orpg.server.net.packets.EditorMapListPacket;
-import orpg.shared.Priority;
 import orpg.shared.net.OutputByteBuffer;
-import orpg.shared.net.ServerPacketType;
 
 public class EditorReadyHandler implements ServerPacketHandler {
 

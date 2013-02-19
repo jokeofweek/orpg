@@ -2,10 +2,8 @@ package orpg.shared.net;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 
-import orpg.client.data.ClientSentPacket;
 import orpg.client.net.BaseClient;
 import orpg.client.net.packets.ClientPacket;
 

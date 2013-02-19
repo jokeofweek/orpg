@@ -1,27 +1,17 @@
 package orpg.server;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
-import java.util.logging.Level;
 
 import orpg.server.data.ServerReceivedPacket;
-import orpg.server.data.SessionType;
 import orpg.server.net.handlers.CreateAccountHandler;
 import orpg.server.net.handlers.EditorEditMapHandler;
-import orpg.server.net.handlers.LoginHandler;
 import orpg.server.net.handlers.EditorReadyHandler;
 import orpg.server.net.handlers.EditorSaveMapHandler;
+import orpg.server.net.handlers.LoginHandler;
 import orpg.server.net.handlers.ServerPacketHandler;
 import orpg.server.net.packets.ServerPacket;
-import orpg.shared.Priority;
-import orpg.shared.data.Map;
 import orpg.shared.net.ClientPacketType;
-import orpg.shared.net.InputByteBuffer;
-import orpg.shared.net.OutputByteBuffer;
-import orpg.shared.net.ServerPacketType;
 
 /**
  * This thread is responsible for handling all packets in the input queue as

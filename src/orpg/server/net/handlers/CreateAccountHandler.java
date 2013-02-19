@@ -7,12 +7,10 @@ import orpg.server.BaseServer;
 import orpg.server.data.Account;
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.store.DataStoreException;
-import orpg.server.net.packets.EmptySessionPacket;
 import orpg.server.net.packets.ErrorPacket;
 import orpg.shared.ErrorMessage;
 import orpg.shared.data.Validator;
 import orpg.shared.net.InputByteBuffer;
-import orpg.shared.net.ServerPacketType;
 
 public class CreateAccountHandler implements ServerPacketHandler {
 

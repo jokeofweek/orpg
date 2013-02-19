@@ -1,10 +1,8 @@
 package orpg.server.data.managers;
 
 import java.io.File;
-import java.io.IOException;
 
 import orpg.server.BaseServer;
-import orpg.server.config.ConfigurationManager;
 import orpg.server.data.store.DataStoreException;
 import orpg.shared.Constants;
 import orpg.shared.data.Map;
@@ -30,7 +28,7 @@ public class MapManager implements Manager<Map> {
 		// Load the maps, creating them if necessary
 		Map emptyMapTemplate;
 		File file;
-		InputByteBuffer fileBuffer;
+
 		for (int i = 0; i < maps.length; i++) {
 			file = new File(Constants.SERVER_MAPS_PATH + "map_" + (i + 1)
 					+ ".map");

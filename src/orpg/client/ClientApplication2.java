@@ -1,6 +1,5 @@
 package orpg.client;
 
-import com.badlogic.gdx.backends.lwjgl.LwjglApplet;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 
 public class ClientApplication2 {

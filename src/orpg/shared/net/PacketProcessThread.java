@@ -1,14 +1,10 @@
 package orpg.shared.net;
 
-import java.util.HashMap;
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 
 import orpg.client.data.ClientReceivedPacket;
-import orpg.client.data.ClientSentPacket;
 import orpg.client.net.BaseClient;
 import orpg.client.net.packets.ClientPacket;
-import orpg.editor.net.handlers.EditorPacketHandler;
 
 /**
  * This thread is responsible for processing packets in the client's input

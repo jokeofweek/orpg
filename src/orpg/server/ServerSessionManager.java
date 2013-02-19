@@ -1,15 +1,11 @@
 package orpg.server;
 
 import java.util.HashSet;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Level;
 
 import orpg.server.net.packets.ConnectedPacket;
 import orpg.server.net.packets.ServerPacket;
-import orpg.shared.Priority;
-import orpg.shared.net.ServerPacketType;
 
 /**
  * The server sessions manager is responsible for keeping track of the current

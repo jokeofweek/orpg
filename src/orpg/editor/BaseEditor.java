@@ -2,15 +2,12 @@ package orpg.editor;
 
 import java.net.Socket;
 
-import orpg.client.data.ClientSentPacket;
 import orpg.client.net.BaseClient;
 import orpg.editor.net.EditorProcessThread;
 import orpg.editor.net.packets.EditorEditMapPacket;
 import orpg.editor.net.packets.EditorSaveMapPacket;
 import orpg.shared.data.Map;
 import orpg.shared.data.Pair;
-import orpg.shared.net.ClientPacketType;
-import orpg.shared.net.OutputByteBuffer;
 
 public class BaseEditor extends BaseClient {
 

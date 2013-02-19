@@ -1,6 +1,5 @@
 package orpg.shared.net;
 
-import java.util.Random;
 
 //import net.jpountz.lz4.LZ4Compressor;
 //import net.jpountz.lz4.LZ4Factory;

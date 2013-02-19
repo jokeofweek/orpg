@@ -10,15 +10,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import orpg.client.data.ClientSentPacket;
 import orpg.client.net.BaseClient;
 import orpg.client.net.packets.CreateAccountPacket;
 import orpg.client.net.packets.LoginPacket;
-import orpg.shared.net.ClientPacketType;
-import orpg.shared.net.OutputByteBuffer;
 
 public class ClientWindow extends JFrame {
 

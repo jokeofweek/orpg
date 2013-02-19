@@ -5,15 +5,12 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.util.PriorityQueue;
 import java.util.Queue;
 
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.net.packets.DisconnectPacket;
 import orpg.shared.Priority;
 import orpg.shared.net.ClientPacketType;
-import orpg.shared.net.OutputByteBuffer;
-import orpg.shared.net.ServerPacketType;
 
 public class ServerSessionThread extends Thread {
 
