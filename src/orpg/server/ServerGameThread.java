@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.logging.Level;
 
 import orpg.server.data.ServerReceivedPacket;
@@ -31,14 +32,16 @@ import orpg.shared.net.ServerPacketType;
  */
 public class ServerGameThread implements Runnable {
 
-	private Queue<ServerReceivedPacket> inputQueue;
-	private Queue<ServerPacket> outputQueue;
+	private BlockingQueue<ServerReceivedPacket> inputQueue;
+	private BlockingQueue<ServerPacket> outputQueue;
 	private BaseServer baseServer;
 	private HashMap<ClientPacketType, ServerPacketHandler> anonymousHandlers;
 	private HashMap<ClientPacketType, ServerPacketHandler> clientHandlers;
 	private HashMap<ClientPacketType, ServerPacketHandler> editorHandlers;
 
-	public ServerGameThread(BaseServer baseServer, Queue<ServerReceivedPacket> inputQueue, Queue<ServerPacket> outputQueue) {
+	public ServerGameThread(BaseServer baseServer,
+			BlockingQueue<ServerReceivedPacket> inputQueue,
+			BlockingQueue<ServerPacket> outputQueue) {
 		this.baseServer = baseServer;
 		this.inputQueue = inputQueue;
 		this.outputQueue = outputQueue;
@@ -74,12 +77,11 @@ public class ServerGameThread implements Runnable {
 	public void run() {
 		ServerReceivedPacket packet = null;
 		ServerPacketHandler handler = null;
-		while (true) {
-			if (!inputQueue.isEmpty()) {
-				packet = inputQueue.remove();
-
-				// Determine the right handler for the packet based on session
-				// type.
+		try {
+			while (true) {
+				packet = inputQueue.take();
+				// Determine the right handler for the packet based on
+				// session type.
 				switch (packet.getSession().getSessionType()) {
 				case GAME:
 					handler = clientHandlers.get(packet.getType());
@@ -97,8 +99,11 @@ public class ServerGameThread implements Runnable {
 					packet.getSession().disconnect("Invalid packet.");
 				} else {
 					handler.handle(packet, baseServer);
+
 				}
 			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 

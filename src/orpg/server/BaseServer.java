@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 
 import orpg.server.config.ConfigurationManager;
 import orpg.server.console.ServerConsole;
@@ -25,8 +29,8 @@ public class BaseServer {
 	private ServerGameThread serverGameThread;
 	private ServerSocketThread serverSocketThread;
 	private ServerConsole console;
-	private Queue<ServerReceivedPacket> inputQueue;
-	private PriorityQueue<ServerPacket> outputQueue;
+	private BlockingQueue<ServerReceivedPacket> inputQueue;
+	private BlockingQueue<ServerPacket> outputQueue;
 	private MapManager mapManager;
 	private DataStore dataStore;
 
@@ -35,11 +39,11 @@ public class BaseServer {
 		this.console = console;
 
 		boolean encounteredSetupProblems = false;
-
+		
 		// Set up our queues
-		this.inputQueue = new LinkedList<ServerReceivedPacket>();
-		this.outputQueue = new PriorityQueue<ServerPacket>(100);
-
+		this.inputQueue = new LinkedBlockingQueue<ServerReceivedPacket>();
+		this.outputQueue = new PriorityBlockingQueue<ServerPacket>(100);
+		
 		// Set up the various threads
 		this.serverSessionManager = new ServerSessionManager(this,
 				outputQueue);
@@ -85,14 +89,14 @@ public class BaseServer {
 		return console;
 	}
 
-	public Queue<ServerReceivedPacket> getInputQueue() {
-		return inputQueue;
-	}
-
 	public void sendPacket(ServerPacket packet) {
 		outputQueue.add(packet);
 	}
 
+	public void receivePacket(ServerReceivedPacket packet) {
+		inputQueue.add(packet);
+	}
+	
 	public ServerSessionManager getServerSessionManager() {
 		return serverSessionManager;
 	}

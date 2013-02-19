@@ -3,6 +3,7 @@ package orpg.server;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.logging.Level;
 
 import orpg.server.net.packets.ConnectedPacket;
@@ -21,9 +22,10 @@ public class ServerSessionManager implements Runnable {
 
 	private HashSet<ServerSession> sessions;
 	private BaseServer server;
-	private Queue<ServerPacket> outputQueue;
+	private BlockingQueue<ServerPacket> outputQueue;
 
-	public ServerSessionManager(BaseServer server, Queue<ServerPacket> outputQueue) {
+	public ServerSessionManager(BaseServer server,
+			BlockingQueue<ServerPacket> outputQueue) {
 		this.server = server;
 		this.sessions = new HashSet<ServerSession>();
 		this.outputQueue = outputQueue;
@@ -50,9 +52,10 @@ public class ServerSessionManager implements Runnable {
 
 		// Repeatedly pop a packet from the output queue
 		// dispatching it based on the destination type.
-		while (true) {
-			if (!outputQueue.isEmpty()) {
-				packet = outputQueue.remove();
+		try {
+			while (true) {
+
+				packet = outputQueue.take();
 				rawBytes = packet.getRawBytes();
 				System.out.println("-> " + packet.getPacketType() + "("
 						+ rawBytes.length + ")");
@@ -73,16 +76,11 @@ public class ServerSessionManager implements Runnable {
 						}
 					}
 					break;
-				}
-			} else {
-				try {
-					Thread.sleep(10);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 
+				}
 			}
+		} catch (InterruptedException e) {
+
 		}
 
 	}

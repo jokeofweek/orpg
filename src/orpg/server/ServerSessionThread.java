@@ -19,7 +19,6 @@ public class ServerSessionThread extends Thread {
 
 	private Socket socket;
 	private BaseServer baseServer;
-	private Queue<ServerReceivedPacket> inputQueue;
 	private Queue<byte[]> outputQueue;
 	private ServerSession session;
 
@@ -31,7 +30,6 @@ public class ServerSessionThread extends Thread {
 		this.socket = socket;
 		this.socket.setSoTimeout(READ_TICKS);
 		this.baseServer = baseServer;
-		this.inputQueue = baseServer.getInputQueue();
 		this.outputQueue = session.getOutputQueue();
 		this.session = session;
 	}
@@ -88,8 +86,8 @@ public class ServerSessionThread extends Thread {
 						}
 					} else {
 						// Read in as many bytes as we can
-						readBytes = this.socket.getInputStream().read(data,
-								currentPosition, remaining);
+						readBytes = this.socket.getInputStream().read(
+								data, currentPosition, remaining);
 
 						if (readBytes == -1) {
 							throw new EOFException("End of stream.");
@@ -104,8 +102,10 @@ public class ServerSessionThread extends Thread {
 							// Test the packet to make sure it is valid.
 							System.out.println("<- " + type + "("
 									+ (data.length + 5) + ")");
-							inputQueue.add(new ServerReceivedPacket(
-									this.session, type, data, Priority.MEDIUM));
+							baseServer
+									.receivePacket(new ServerReceivedPacket(
+											this.session, type, data,
+											Priority.MEDIUM));
 							currentPosition = 0;
 							type = null;
 						}
@@ -126,7 +126,8 @@ public class ServerSessionThread extends Thread {
 				if (!outputQueue.isEmpty()) {
 					outgoingPacket = outputQueue.remove();
 					try {
-						this.socket.getOutputStream().write(outgoingPacket);
+						this.socket.getOutputStream()
+								.write(outgoingPacket);
 					} catch (IOException e) {
 						session.disconnect();
 					}
