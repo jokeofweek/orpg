@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.net.BaseClient;
@@ -22,10 +23,10 @@ public class PacketReadThread implements Runnable {
 	private BaseClient baseClient;
 	private Queue<ClientReceivedPacket> inputQueue;
 
-	public PacketReadThread(Socket socket, BaseClient baseClient) {
+	public PacketReadThread(Socket socket, BaseClient baseClient,
+			BlockingQueue<ClientReceivedPacket> inputQueue) {
 		this.socket = socket;
-		this.baseClient = baseClient;
-		this.inputQueue = baseClient.getInputQueue();
+		this.inputQueue = inputQueue;
 	}
 
 	@Override
@@ -92,7 +93,6 @@ public class PacketReadThread implements Runnable {
 				}
 
 				// Add the packet to the input queue
-
 				System.out.println("<- " + type + "(" + (bytes.length + 5)
 						+ ")");
 				inputQueue.add(new ClientReceivedPacket(type, bytes));

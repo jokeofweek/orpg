@@ -33,12 +33,13 @@ public class MainMenuScreen implements Screen {
 	public MainMenuScreen(Game game, final BaseClient baseClient) {
 		this.stage = new Stage();
 		this.game = game;
-		this.backgroundTexture = new Texture(Paths.asset("menu_background.png"));
+		this.backgroundTexture = new Texture(
+				Paths.asset("menu_background.png"));
 		this.baseClient = baseClient;
 
 		// Set the background
-		this.stage.addActor(new BackgroundTextureActor(backgroundTexture, 800,
-				600));
+		this.stage.addActor(new BackgroundTextureActor(backgroundTexture,
+				800, 600));
 
 		// Build the root table
 		Skin skin = new Skin(Paths.asset("uiskin.json"));
@@ -68,9 +69,8 @@ public class MainMenuScreen implements Screen {
 		loginButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				baseClient.getOutputQueue().add(
-						new LoginPacket(nameText.getText(), passwordText
-								.getText().toCharArray(), false));
+				baseClient.sendPacket(new LoginPacket(nameText.getText(),
+						passwordText.getText().toCharArray(), false));
 			}
 		});
 

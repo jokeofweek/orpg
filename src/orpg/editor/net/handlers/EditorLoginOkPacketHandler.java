@@ -8,7 +8,7 @@ public class EditorLoginOkPacketHandler implements EditorPacketHandler {
 
 	public void handle(orpg.client.data.ClientReceivedPacket packet,
 			orpg.editor.BaseEditor baseEditor) {
-		baseEditor.getOutputQueue().add(new EditorReadyPacket());
+		baseEditor.sendPacket(new EditorReadyPacket());
 	}
 
 }

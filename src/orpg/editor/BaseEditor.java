@@ -32,7 +32,7 @@ public class BaseEditor extends BaseClient {
 	}
 
 	public void requestEditMap(int selectedMap) {
-		getOutputQueue().add(new EditorEditMapPacket(selectedMap));
+		sendPacket(new EditorEditMapPacket(selectedMap));
 	}
 
 	public void editMap(Map map) {
@@ -40,6 +40,6 @@ public class BaseEditor extends BaseClient {
 	}
 
 	public void saveMap(Map map) {
-		getOutputQueue().add(new EditorSaveMapPacket(map));
+		sendPacket(new EditorSaveMapPacket(map));
 	}
 }

@@ -2,6 +2,7 @@ package orpg.shared.net;
 
 import java.util.HashMap;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.data.ClientSentPacket;
@@ -18,42 +19,46 @@ import orpg.editor.net.handlers.EditorPacketHandler;
  */
 public abstract class PacketProcessThread implements Runnable {
 
-	private Queue<ClientReceivedPacket> inputQueue;
-	private Queue<ClientPacket> outputQueue;
+	private BlockingQueue<ClientReceivedPacket> inputQueue;
+	private BlockingQueue<ClientPacket> outputQueue;
 	private BaseClient baseClient;
 
-	
 	public BaseClient getBaseClient() {
 		return baseClient;
 	}
-	
-	public void setBaseClient(BaseClient baseClient) {
-		this.inputQueue = baseClient.getInputQueue();
-		this.outputQueue = baseClient.getOutputQueue();
+
+	public final void setBaseClient(BaseClient baseClient) {
 		this.baseClient = baseClient;
 	}
-	
+
+	public final void setInputQueue(
+			BlockingQueue<ClientReceivedPacket> inputQueue) {
+		this.inputQueue = inputQueue;
+	}
+
+	public final void setOutputQueue(
+			BlockingQueue<ClientPacket> outputQueue) {
+		this.outputQueue = outputQueue;
+	}
+
 	public Queue<ClientPacket> getOutputQueue() {
 		return outputQueue;
 	}
-	
+
 	@Override
 	public void run() {
 		ClientReceivedPacket p;
-		while (true) {
-			if (!inputQueue.isEmpty()) {
-				handlePacket(inputQueue.remove());
-			} else {
-				try {
-					Thread.sleep(5);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		try {
+			while (true) {
+				p = inputQueue.take();
+				handlePacket(p);
 			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			baseClient.disconnect();
 		}
 	}
-	
+
 	public abstract void handlePacket(ClientReceivedPacket p);
 
 }

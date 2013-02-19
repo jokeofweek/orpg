@@ -58,7 +58,7 @@ public class ClientWindow extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				baseClient.getOutputQueue().add(
+				baseClient.sendPacket(
 						new CreateAccountPacket(
 								accountNameField.getText(), emailField
 										.getText(), passwordField
@@ -71,7 +71,7 @@ public class ClientWindow extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				baseClient.getOutputQueue().add(
+				baseClient.sendPacket(
 						new LoginPacket(accountNameField.getText(),
 								passwordField.getPassword(), false));
 			}
