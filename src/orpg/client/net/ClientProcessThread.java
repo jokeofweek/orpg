@@ -2,12 +2,9 @@ package orpg.client.net;
 
 import java.util.HashMap;
 
-import orpg.client.ClientWindow;
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.net.handlers.ClientPacketHandler;
 import orpg.client.net.handlers.ErrorPacketHandler;
-import orpg.editor.BaseEditor;
-import orpg.editor.net.handlers.EditorPacketHandler;
 import orpg.shared.net.PacketProcessThread;
 import orpg.shared.net.ServerPacketType;
 

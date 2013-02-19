@@ -41,10 +41,6 @@ public abstract class PacketProcessThread implements Runnable {
 		this.outputQueue = outputQueue;
 	}
 
-	public Queue<ClientPacket> getOutputQueue() {
-		return outputQueue;
-	}
-
 	@Override
 	public void run() {
 		ClientReceivedPacket p;
