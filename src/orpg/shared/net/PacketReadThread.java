@@ -8,7 +8,6 @@ import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 
 import orpg.client.data.ClientReceivedPacket;
-import orpg.client.net.BaseClient;
 
 /**
  * This thread is responsible for reading data from the client's socket and
@@ -20,10 +19,10 @@ import orpg.client.net.BaseClient;
 public class PacketReadThread implements Runnable {
 
 	private Socket socket;
-	private BaseClient baseClient;
+	private AbstractClient baseClient;
 	private Queue<ClientReceivedPacket> inputQueue;
 
-	public PacketReadThread(Socket socket, BaseClient baseClient,
+	public PacketReadThread(Socket socket, AbstractClient baseClient,
 			BlockingQueue<ClientReceivedPacket> inputQueue) {
 		this.socket = socket;
 		this.inputQueue = inputQueue;

@@ -1,4 +1,4 @@
-package orpg.client.net;
+package orpg.shared.net;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -7,11 +7,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.net.packets.ClientPacket;
-import orpg.shared.net.PacketProcessThread;
-import orpg.shared.net.PacketReadThread;
-import orpg.shared.net.PacketWriteThread;
+import orpg.shared.state.StateManager;
 
-public class BaseClient {
+public class AbstractClient {
 
 	private Socket socket;
 
@@ -22,11 +20,17 @@ public class BaseClient {
 	private BlockingQueue<ClientReceivedPacket> inputQueue;
 	private BlockingQueue<ClientPacket> outputQueue;
 
-	public BaseClient(Socket socket, PacketProcessThread gameThread) {
+	private StateManager stateManager;
+
+	public AbstractClient(Socket socket, PacketProcessThread gameThread,
+			StateManager stateManager) {
 		// Setup the input and output queues
 		this.inputQueue = new LinkedBlockingQueue<ClientReceivedPacket>();
 		this.outputQueue = new LinkedBlockingQueue<ClientPacket>();
 		this.socket = socket;
+
+		// Setup the state manager
+		this.stateManager = stateManager;
 
 		// Setup our process thread
 		this.gameThread = gameThread;
@@ -35,15 +39,17 @@ public class BaseClient {
 		this.gameThread.setOutputQueue(this.outputQueue);
 
 		// Setup the necessary read/write threads
-		this.readThread = new PacketReadThread(socket, this,
-				this.inputQueue);
-		this.writeThread = new PacketWriteThread(socket, this,
-				this.outputQueue);
+		this.readThread = new PacketReadThread(socket, this, this.inputQueue);
+		this.writeThread = new PacketWriteThread(socket, this, this.outputQueue);
 
 		// Run the threads
 		new Thread(gameThread).start();
 		new Thread(readThread).start();
 		new Thread(writeThread).start();
+	}
+
+	public StateManager getStateManager() {
+		return stateManager;
 	}
 
 	public void sendPacket(ClientPacket packet) {

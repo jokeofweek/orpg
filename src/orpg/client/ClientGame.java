@@ -2,13 +2,17 @@ package orpg.client;
 
 import java.net.Socket;
 
-import orpg.client.net.BaseClient;
 import orpg.client.net.ClientProcessThread;
-import orpg.client.screen.MainMenuScreen;
+import orpg.client.state.ClientStateManager;
+import orpg.client.state.MainMenuState;
+import orpg.shared.net.AbstractClient;
+import orpg.shared.state.StateManager;
 
 import com.badlogic.gdx.Game;
 
 public class ClientGame extends Game {
+
+	private AbstractClient baseClient;
 
 	@Override
 	public void create() {
@@ -20,9 +24,13 @@ public class ClientGame extends Game {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		BaseClient baseClient = new BaseClient(s, new ClientProcessThread());
-		MainMenuScreen mainMenu = new MainMenuScreen(this, baseClient);
-		setScreen(mainMenu);
+
+		// Set up the queue of actions to perfor
+		StateManager stateManager = new ClientStateManager(this);
+		this.baseClient = new AbstractClient(s, new ClientProcessThread(),
+				stateManager);
+		stateManager.pushState(new MainMenuState(this, baseClient));
+
 	}
 
 }

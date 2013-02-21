@@ -12,15 +12,15 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import orpg.client.net.BaseClient;
 import orpg.client.net.packets.CreateAccountPacket;
 import orpg.client.net.packets.LoginPacket;
+import orpg.shared.net.AbstractClient;
 
 public class ClientWindow extends JFrame {
 
-	private BaseClient baseClient;
+	private AbstractClient baseClient;
 
-	public ClientWindow(BaseClient baseClient) {
+	public ClientWindow(AbstractClient baseClient) {
 		super("Chat Client");
 
 		this.baseClient = baseClient;

@@ -3,7 +3,6 @@ package orpg.shared.net;
 import java.util.concurrent.BlockingQueue;
 
 import orpg.client.data.ClientReceivedPacket;
-import orpg.client.net.BaseClient;
 import orpg.client.net.packets.ClientPacket;
 
 /**
@@ -17,13 +16,13 @@ public abstract class PacketProcessThread implements Runnable {
 
 	private BlockingQueue<ClientReceivedPacket> inputQueue;
 	private BlockingQueue<ClientPacket> outputQueue;
-	private BaseClient baseClient;
+	private AbstractClient baseClient;
 
-	public BaseClient getBaseClient() {
+	public AbstractClient getClient() {
 		return baseClient;
 	}
 
-	public final void setBaseClient(BaseClient baseClient) {
+	public final void setBaseClient(AbstractClient baseClient) {
 		this.baseClient = baseClient;
 	}
 

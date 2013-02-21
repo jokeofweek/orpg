@@ -1,13 +1,14 @@
-package orpg.client.screen;
+package orpg.client.state;
+
+import javax.swing.JOptionPane;
 
 import orpg.client.Paths;
-import orpg.client.net.BaseClient;
 import orpg.client.net.packets.LoginPacket;
 import orpg.client.ui.BackgroundTextureActor;
+import orpg.shared.net.AbstractClient;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -20,14 +21,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-public class MainMenuScreen implements Screen {
+public class MainMenuState extends ClientState {
 
 	private Stage stage;
 	private Game game;
 	private Texture backgroundTexture;
-	private BaseClient baseClient;
+	private AbstractClient baseClient;
 
-	public MainMenuScreen(Game game, final BaseClient baseClient) {
+	public MainMenuState(Game game, final AbstractClient baseClient) {
 		this.stage = new Stage();
 		this.game = game;
 		this.backgroundTexture = new Texture(
@@ -114,6 +115,22 @@ public class MainMenuScreen implements Screen {
 	public void dispose() {
 		stage.dispose();
 		backgroundTexture.dispose();
+	}
+
+	@Override
+	public void enter() {
+
+		
+	}
+
+	@Override
+	public void exit() {
+
+	}
+
+	@Override
+	public void displayError(String errorMessage) {
+		JOptionPane.showMessageDialog(null, errorMessage);
 	}
 
 }

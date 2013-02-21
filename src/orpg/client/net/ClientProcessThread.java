@@ -5,6 +5,8 @@ import java.util.HashMap;
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.net.handlers.ClientPacketHandler;
 import orpg.client.net.handlers.ErrorPacketHandler;
+import orpg.client.net.handlers.LoginOkHandler;
+import orpg.shared.net.AbstractClient;
 import orpg.shared.net.PacketProcessThread;
 import orpg.shared.net.ServerPacketType;
 
@@ -19,13 +21,14 @@ public class ClientProcessThread extends PacketProcessThread {
 	private void setupHandlers() {
 		this.handlers = new HashMap<ServerPacketType, ClientPacketHandler>();
 		this.handlers.put(ServerPacketType.ERROR, new ErrorPacketHandler());
+		this.handlers.put(ServerPacketType.LOGIN_OK, new LoginOkHandler());
 	}
 
 	@Override
 	public void handlePacket(ClientReceivedPacket packet) {
 		ClientPacketHandler handler = handlers.get(packet.getType());
 		if (handler != null) {
-			handler.handle(packet, getBaseClient());
+			handler.handle(packet, getClient());
 		} else {
 			System.err.println("[CLIENT] No handler setup for packet "
 					+ packet.getType());

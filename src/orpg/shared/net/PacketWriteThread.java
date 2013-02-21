@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 
-import orpg.client.net.BaseClient;
 import orpg.client.net.packets.ClientPacket;
 
 /**
@@ -17,10 +16,10 @@ import orpg.client.net.packets.ClientPacket;
 public class PacketWriteThread implements Runnable {
 
 	private Socket socket;
-	private BaseClient baseClient;
+	private AbstractClient baseClient;
 	private BlockingQueue<ClientPacket> outputQueue;
 
-	public PacketWriteThread(Socket socket, BaseClient baseClient,
+	public PacketWriteThread(Socket socket, AbstractClient baseClient,
 			BlockingQueue<ClientPacket> outputQueue) {
 		this.socket = socket;
 		this.baseClient = baseClient;

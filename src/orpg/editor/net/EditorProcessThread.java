@@ -35,7 +35,7 @@ public class EditorProcessThread extends PacketProcessThread {
 	public void handlePacket(ClientReceivedPacket packet) {
 		EditorPacketHandler handler = handlers.get(packet.getType());
 		if (handler != null) {
-			handler.handle(packet, (BaseEditor) getBaseClient());
+			handler.handle(packet, (BaseEditor) getClient());
 		} else {
 			System.err.println("[EDITOR] No handler setup for packet "
 					+ packet.getType());
