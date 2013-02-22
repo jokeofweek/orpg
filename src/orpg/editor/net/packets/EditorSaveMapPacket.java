@@ -9,10 +9,17 @@ public class EditorSaveMapPacket extends ClientPacket {
 
 	private byte[] bytes;
 
-	public EditorSaveMapPacket(Map map) {
+	public EditorSaveMapPacket(Map map, boolean[][] segmentsChanged) {
 		OutputByteBuffer out = new OutputByteBuffer();
 		out.putMap(map);
 		this.bytes = out.getBytes();
+
+		for (int y = 0; y < segmentsChanged[0].length; y++) {
+			for (int x = 0; x < segmentsChanged.length; x++) {
+				System.out.print(segmentsChanged[x][y] ? "1" : "0");
+			}
+			System.out.println();
+		}
 	}
 
 	@Override

@@ -34,7 +34,7 @@ public class MapManager implements Manager<Map> {
 					+ ".map");
 			if (!file.exists()) {
 				// Save the map based on the empty template
-				emptyMapTemplate = new Map(i + 1, (short) 1, (short) 1,
+				emptyMapTemplate = new Map(i + 1, (short) 3, (short) 3,
 						true);
 				try {
 					baseServer.getDataStore().saveMap(emptyMapTemplate);

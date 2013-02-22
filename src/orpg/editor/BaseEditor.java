@@ -36,7 +36,7 @@ public class BaseEditor extends AbstractClient {
 		MapEditorWindow window = new MapEditorWindow(this, map);
 	}
 
-	public void saveMap(Map map) {
-		sendPacket(new EditorSaveMapPacket(map));
+	public void saveMap(Map map, boolean[][] segmentsChanged) {
+		sendPacket(new EditorSaveMapPacket(map, segmentsChanged));
 	}
 }

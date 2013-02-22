@@ -1,10 +1,15 @@
 package orpg.editor.data.change;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
 import orpg.editor.data.TileRange;
 import orpg.shared.Constants;
 import orpg.shared.data.MapLayer;
+import orpg.shared.data.Segment;
 
 public class MapEditorTileUpdateChange implements EditorChange {
 
@@ -15,6 +20,8 @@ public class MapEditorTileUpdateChange implements EditorChange {
 	private short[][] oldTiles;
 	private int x;
 	private int y;
+
+	private Set<Segment> wasChanged;
 
 	public MapEditorTileUpdateChange(MapEditorController editorController,
 			MapController mapController, int x, int y) {
@@ -44,12 +51,30 @@ public class MapEditorTileUpdateChange implements EditorChange {
 		int diffX = range.getEndX() - range.getStartX() + 1;
 		int diffY = range.getEndY() - range.getStartY() + 1;
 		oldTiles = new short[diffX][diffY];
-
 		for (int dX = 0; dX < diffX; dX++) {
 			for (int dY = 0; dY < diffY; dY++) {
-				oldTiles[dX][dY] = mapController.getPositionSegment(x + dX, y + dY)
-						.getTiles()[layerOrd][mapController.mapXToSegmentX(x
-						+ dX)][mapController.mapYToSegmentY(y + dY)];
+				oldTiles[dX][dY] = mapController.getPositionSegment(
+						x + dX, y + dY).getTiles()[layerOrd][mapController
+						.mapXToSegmentX(x + dX)][mapController
+						.mapYToSegmentY(y + dY)];
+			}
+		}
+
+		// Find segments which were previously unchanged
+		this.wasChanged = new HashSet<Segment>();
+		Segment startSegment = mapController.getMap().getPositionSegment(
+				x, y);
+		Segment endSegment = mapController.getMap().getPositionSegment(
+				x + diffX, y + diffY);
+		for (int dY = 0; dY <= endSegment.getY() - startSegment.getY(); dY++) {
+			for (int dX = 0; dX <= endSegment.getX() - startSegment.getX(); dX++) {
+				if (!editorController.hasSegmentChanged(x
+						+ (dX * Constants.MAP_SEGMENT_WIDTH), y
+						+ (dY * Constants.MAP_SEGMENT_HEIGHT))) {
+					wasChanged.add(mapController.getPositionSegment(x
+							+ (dX * Constants.MAP_SEGMENT_WIDTH), y
+							+ (dY * Constants.MAP_SEGMENT_HEIGHT)));
+				}
 			}
 		}
 	}
@@ -64,10 +89,15 @@ public class MapEditorTileUpdateChange implements EditorChange {
 
 		for (int dY = 0; dY < diffY; dY++) {
 			for (int dX = 0; dX < diffX; dX++) {
-				mapController.batchUpdateTile(this.x + dX, this.y + dY, layer,
-						(short) (tile + dX));
+				mapController.batchUpdateTile(this.x + dX, this.y + dY,
+						layer, (short) (tile + dX));
 			}
 			tile += Constants.TILESET_WIDTH;
+		}
+
+		// Update the editor change tracker
+		for (Segment segment : wasChanged) {
+			editorController.setSegmentChanged(segment, true);
 		}
 
 		mapController.triggerTileUpdate();
@@ -82,21 +112,25 @@ public class MapEditorTileUpdateChange implements EditorChange {
 
 		// Here we determine how much of the tiles in our range we can actually
 		// place.
-		int endX = Math.min(mapController.getMapWidth(),
-				startX + (this.range.getEndX() - this.range.getStartX() + 1));
-		int endY = Math.min(mapController.getMapHeight(),
-				startY + (this.range.getEndY() - this.range.getStartY() + 1));
+		int endX = Math.min(mapController.getMapWidth(), startX
+				+ (this.range.getEndX() - this.range.getStartX() + 1));
+		int endY = Math.min(mapController.getMapHeight(), startY
+				+ (this.range.getEndY() - this.range.getStartY() + 1));
 
 		// Update the tiles, only we use the tiles from the tiles array
 		for (int dY = startY; dY < endY; dY++) {
 			for (int dX = startX; dX < endX; dX++) {
-				mapController.batchUpdateTile(this.x + (dX - startX), this.y
-						+ (dY - startY), layer, this.oldTiles[dX - startX][dY
-						- startY]);
+				mapController.batchUpdateTile(this.x + (dX - startX),
+						this.y + (dY - startY), layer, this.oldTiles[dX
+								- startX][dY - startY]);
 			}
+		}
+
+		// Undo the changed segments
+		for (Segment segment : wasChanged) {
+			editorController.setSegmentChanged(segment, false);
 		}
 
 		mapController.triggerTileUpdate();
 	}
-
 }

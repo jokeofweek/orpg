@@ -13,6 +13,7 @@ import orpg.editor.data.TileRange;
 import orpg.editor.data.change.EditorChangeManager;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
+import orpg.shared.data.Segment;
 
 public class MapEditorController extends EditorController<Map> implements
 		Observer {
@@ -29,6 +30,7 @@ public class MapEditorController extends EditorController<Map> implements
 
 	private boolean gridEnabled;
 	private boolean hoverPreviewEnabled;
+	private boolean[][] segmentChanged;
 
 	private static final int SCALE_FACTORS[] = new int[] { 1, 2, 4, 8 };
 	private int scaleFactorPosition;
@@ -44,6 +46,9 @@ public class MapEditorController extends EditorController<Map> implements
 
 		this.gridEnabled = false;
 		this.hoverPreviewEnabled = true;
+		this.segmentChanged = new boolean[mapController.getMap()
+				.getSegmentsWide()][mapController.getMap()
+				.getSegmentsHigh()];
 
 		setupActions();
 	}
@@ -188,6 +193,35 @@ public class MapEditorController extends EditorController<Map> implements
 		this.notifyObservers();
 	}
 
+	public boolean hasSegmentChanged(int x, int y) {
+		if (x < 0 || y < 0 || x >= mapController.getMapWidth()
+				|| y >= mapController.getMapHeight()) {
+			throw new IllegalArgumentException(
+					"Segment position out of bounds.");
+		}
+
+		return hasSegmentChanged(mapController.getPositionSegment(x, y));
+	}
+
+	public boolean hasSegmentChanged(Segment segment) {
+		return segmentChanged[segment.getX()][segment.getY()];
+	}
+
+	public void setSegmentChanged(int x, int y, boolean hasChanged) {
+		if (x < 0 || y < 0 || x >= mapController.getMapWidth()
+				|| y >= mapController.getMapHeight()) {
+			throw new IllegalArgumentException(
+					"Segment position out of bounds.");
+		}
+
+		setSegmentChanged(mapController.getPositionSegment(x, y),
+				hasChanged);
+	}
+
+	public void setSegmentChanged(Segment segment, boolean hasChanged) {
+		segmentChanged[segment.getX()][segment.getY()] = hasChanged;
+	}
+
 	public boolean isHoverPreviewEnabled() {
 		return hoverPreviewEnabled;
 	}
@@ -201,6 +235,7 @@ public class MapEditorController extends EditorController<Map> implements
 	}
 
 	public void save() {
-		this.getBaseEditor().saveMap(mapController.getMap());
+		this.getBaseEditor().saveMap(mapController.getMap(),
+				segmentChanged);
 	}
 }
