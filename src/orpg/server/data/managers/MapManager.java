@@ -1,11 +1,14 @@
 package orpg.server.data.managers;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import orpg.server.BaseServer;
 import orpg.server.data.store.DataStoreException;
 import orpg.shared.Constants;
 import orpg.shared.data.Map;
+import orpg.shared.data.Pair;
 import orpg.shared.net.InputByteBuffer;
 
 public class MapManager implements Manager<Map> {
@@ -22,7 +25,7 @@ public class MapManager implements Manager<Map> {
 	 * 
 	 * @see orpg.server.data.managers.Manager#load()
 	 */
-	public boolean load() {
+	public boolean setup() {
 		this.maps = new Map[baseServer.getConfigManager().getTotalMaps()];
 
 		// Load the maps, creating them if necessary
@@ -71,7 +74,12 @@ public class MapManager implements Manager<Map> {
 		return true;
 	}
 
-	public Map getMap(int id) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see orpg.server.data.managers.Manager#get(int)
+	 */
+	public Map get(int id) {
 		if (id <= 0 || id > baseServer.getConfigManager().getTotalMaps()) {
 			throw new IllegalArgumentException("No map with number " + id);
 		}
@@ -79,11 +87,19 @@ public class MapManager implements Manager<Map> {
 		return maps[id - 1];
 	}
 
-	public Map[] getMaps() {
-		return this.maps;
+	/**
+	 * @return a list of the map names, ordered by ID.
+	 */
+	public List<String> getNameList() {
+		List<String> names = new ArrayList<String>(this.maps.length);
+		for (Map map : this.maps) {
+			names.add(map.getName());
+		}
+		return names;
+
 	}
 
-	public void updateMap(Map map) {
+	public void update(Map map) {
 		if (map.getId() <= 0
 				|| map.getId() > baseServer.getConfigManager()
 						.getTotalMaps()) {

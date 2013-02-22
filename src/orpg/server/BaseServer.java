@@ -106,7 +106,7 @@ public class BaseServer {
 	private boolean loadData() {
 		console.out().println("Loading maps...");
 		this.mapManager = new MapManager(this);
-		return this.mapManager.load();
+		return this.mapManager.setup();
 	}
 
 }

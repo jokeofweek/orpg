@@ -18,7 +18,7 @@ public class EditorSaveMapHandler implements ServerPacketHandler {
 
 		// Fetch the old segments from the map manager
 		Segment[][] oldSegments = baseServer.getMapManager()
-				.getMap(map.getId()).getSegments();
+				.get(map.getId()).getSegments();
 
 		// Update all segments
 		for (int x = 0; x < oldSegments.length; x++) {
@@ -35,7 +35,7 @@ public class EditorSaveMapHandler implements ServerPacketHandler {
 
 		try {
 			baseServer.getDataStore().saveMap(map);
-			baseServer.getMapManager().updateMap(map);
+			baseServer.getMapManager().update(map);
 		} catch (DataStoreException e) {
 			baseServer
 					.getConfigManager()

@@ -1,7 +1,11 @@
 package orpg.server.net.packets;
 
+import java.util.List;
+
 import orpg.server.ServerSession;
+import orpg.server.data.managers.MapManager;
 import orpg.shared.data.Map;
+import orpg.shared.data.Pair;
 import orpg.shared.net.OutputByteBuffer;
 import orpg.shared.net.ServerPacketType;
 
@@ -9,13 +13,13 @@ public class EditorMapListPacket extends SessionPacket {
 
 	private byte[] bytes;
 
-	public EditorMapListPacket(ServerSession session, Map[] maps) {
+	public EditorMapListPacket(ServerSession session, List<String> names) {
 		super(session);
 		OutputByteBuffer out = new OutputByteBuffer();
-		out.putInt(maps.length); // number of maps
+		out.putInt(names.size()); // number of maps
 		// Output the name of the map
-		for (Map map : maps) {
-			out.putString(map.getName());
+		for (String name : names) {
+			out.putString(name);
 		}
 		this.bytes = out.getBytes();
 	}
