@@ -2,6 +2,9 @@ package orpg.shared.net;
 
 import java.util.Arrays;
 
+import net.jpountz.lz4.LZ4Compressor;
+import net.jpountz.lz4.LZ4Factory;
+
 import orpg.shared.Constants;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
@@ -11,6 +14,7 @@ public class OutputByteBuffer {
 
 	private byte[] bytes;
 	private int pos;
+	private int compressionMarker;
 
 	public OutputByteBuffer() {
 		this(24);
@@ -24,6 +28,7 @@ public class OutputByteBuffer {
 	 */
 	public OutputByteBuffer(int capacity) {
 		this.bytes = new byte[capacity];
+		this.reset();
 	}
 
 	public byte[] getBytes() {
@@ -37,10 +42,11 @@ public class OutputByteBuffer {
 
 	/**
 	 * This clears the contents of the output byte buffer and sets the position
-	 * back to 0.
+	 * back to 0. It also resets the compression marker.
 	 */
 	public void reset() {
 		this.pos = 0;
+		this.compressionMarker = 0;
 	}
 
 	/**
@@ -178,6 +184,45 @@ public class OutputByteBuffer {
 				putSegment(map.getSegment(x, y));
 			}
 		}
+	}
+
+	/**
+	 * This notifies the output byte buffer to set the compression marker to the
+	 * current state of the output byte buffer. A subsequent call to
+	 * {@link #compress()} will compress all data added from this point on.
+	 */
+	public void setCompressionMarker() {
+		this.compressionMarker = this.pos;
+	}
+
+	/**
+	 * This compresses the data in the current stream.
+	 */
+	public void compress() {
+		// Always put the length of the decompressed input as an int
+		// followed by the compressed bytes
+		LZ4Factory factory = LZ4Factory.fastestInstance();
+		LZ4Compressor compressor = factory.fastCompressor();
+
+		int decompressedLength = this.pos - this.compressionMarker;
+		int maxRequiredLength = compressor.maxCompressedLength(decompressedLength);
+		byte[] originalBytes = this.bytes;
+		
+		// Copy all bytes over into our new bytes
+		this.bytes = new byte[this.pos - decompressedLength + maxRequiredLength + 8];
+		System.arraycopy(originalBytes, 0, this.bytes, 0, this.compressionMarker);
+		this.pos = this.compressionMarker;
+		
+		// Put the data.
+		this.putInt(decompressedLength);
+		int compressedLength = compressor.compress(originalBytes,
+				this.compressionMarker, decompressedLength, this.bytes,
+				this.pos + 4);
+		this.putInt(compressedLength);
+		this.pos += compressedLength;
+
+		// Set the compression marker to after our current pos
+		this.compressionMarker = this.pos;
 	}
 
 }

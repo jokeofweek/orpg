@@ -5,6 +5,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import net.jpountz.lz4.LZ4Compressor;
+import net.jpountz.lz4.LZ4Decompressor;
+import net.jpountz.lz4.LZ4Factory;
+
 import orpg.shared.Constants;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
@@ -203,8 +207,39 @@ public class InputByteBuffer {
 			chars[i] = (char) (((bytes[pos] & 0xff) << 8) | (bytes[pos + 1] & 0xff));
 			pos += 2;
 		}
-		
+
 		return chars;
+	}
+
+	/**
+	 * This decompresses the data in the current stream.
+	 */
+	public void decompress() {
+		// Get uncompressed and compressed length
+		int decompressedLength = getInt();
+		int compressedLength = getInt();
+
+		// Decompress the data
+		LZ4Factory factory = LZ4Factory.fastestInstance();
+		LZ4Decompressor decompressor = factory.decompressor();
+
+		// Create the new byte array
+		byte[] newBytes = new byte[this.bytes.length - compressedLength
+				+ decompressedLength];
+
+		// Copy all bytes before and after the compressed data to this new
+		// array. This permits us to have only partially compressed data in a
+		// buffer.
+		System.arraycopy(this.bytes, 0, newBytes, 0, this.pos);
+		System.arraycopy(this.bytes, this.pos + compressedLength,
+				newBytes, this.pos + decompressedLength, this.bytes.length
+						- (this.pos + compressedLength));
+
+		// Now inject the decompressed bytes
+		decompressor.decompress(this.bytes, this.pos, newBytes, this.pos,
+				decompressedLength);
+		this.bytes = newBytes;
+
 	}
 
 	public class ByteBufferOutOfBoundsException extends RuntimeException {
