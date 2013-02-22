@@ -196,7 +196,8 @@ public class OutputByteBuffer {
 	}
 
 	/**
-	 * This compresses the data in the current stream.
+	 * This compresses the data in the current stream, starting at the
+	 * compression marker up to the last object inserted.
 	 */
 	public void compress() {
 		// Always put the length of the decompressed input as an int
@@ -205,14 +206,17 @@ public class OutputByteBuffer {
 		LZ4Compressor compressor = factory.fastCompressor();
 
 		int decompressedLength = this.pos - this.compressionMarker;
-		int maxRequiredLength = compressor.maxCompressedLength(decompressedLength);
+		int maxRequiredLength = compressor
+				.maxCompressedLength(decompressedLength);
 		byte[] originalBytes = this.bytes;
-		
+
 		// Copy all bytes over into our new bytes
-		this.bytes = new byte[this.pos - decompressedLength + maxRequiredLength + 8];
-		System.arraycopy(originalBytes, 0, this.bytes, 0, this.compressionMarker);
+		this.bytes = new byte[this.pos - decompressedLength
+				+ maxRequiredLength + 8];
+		System.arraycopy(originalBytes, 0, this.bytes, 0,
+				this.compressionMarker);
 		this.pos = this.compressionMarker;
-		
+
 		// Put the data.
 		this.putInt(decompressedLength);
 		int compressedLength = compressor.compress(originalBytes,

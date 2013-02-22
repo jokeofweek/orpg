@@ -212,7 +212,7 @@ public class InputByteBuffer {
 	}
 
 	/**
-	 * This decompresses the data in the current stream.
+	 * This decompresses a data block in the current stream.
 	 */
 	public void decompress() {
 		// Get uncompressed and compressed length
