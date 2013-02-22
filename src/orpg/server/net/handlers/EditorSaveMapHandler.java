@@ -13,7 +13,7 @@ public class EditorSaveMapHandler implements ServerPacketHandler {
 
 	@Override
 	public void handle(ServerReceivedPacket packet, BaseServer baseServer) {
-
+		packet.getByteBuffer().decompress();
 		Map map = packet.getByteBuffer().getMapDescriptor();
 
 		// Fetch the old segments from the map manager

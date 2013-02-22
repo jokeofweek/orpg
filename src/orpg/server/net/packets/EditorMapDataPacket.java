@@ -13,6 +13,7 @@ public class EditorMapDataPacket extends SessionPacket {
 		super(session);
 		OutputByteBuffer out = new OutputByteBuffer();
 		out.putMap(map);
+		out.compress();
 		this.bytes = out.getBytes();
 	}
 

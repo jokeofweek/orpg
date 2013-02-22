@@ -32,6 +32,8 @@ public class EditorSaveMapPacket extends ClientPacket {
 			out.putSegment(segment);
 		}
 
+		out.compress();
+		
 		this.bytes = out.getBytes();
 	}
 
