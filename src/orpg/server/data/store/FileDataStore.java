@@ -11,6 +11,7 @@ import orpg.server.BaseServer;
 import orpg.server.data.Account;
 import orpg.shared.Constants;
 import orpg.shared.data.Map;
+import orpg.shared.data.Segment;
 import orpg.shared.data.Validator;
 import orpg.shared.net.InputByteBuffer;
 import orpg.shared.net.OutputByteBuffer;
@@ -21,6 +22,20 @@ public class FileDataStore implements DataStore {
 
 	public FileDataStore(BaseServer baseSever) {
 		this.baseServer = baseSever;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see orpg.server.data.store.DataStore#mapExists(int)
+	 */
+	@Override
+	public boolean mapExists(int id) {
+		File mapFile = new File(Constants.SERVER_MAPS_PATH + "map_" + id
+				+ ".map");
+		return (id >= 1
+				&& id <= baseServer.getConfigManager().getTotalMaps() && mapFile
+					.exists());
 	}
 
 	/*
@@ -43,14 +58,17 @@ public class FileDataStore implements DataStore {
 
 			for (int x = 0; x < map.getSegmentsWide(); x++) {
 				for (int y = 0; y < map.getSegmentsHigh(); y++) {
-					buffer.reset();
-					buffer.putSegment(map.getSegment(x, y));
-					out = new BufferedOutputStream(new FileOutputStream(
-							String.format(Constants.SERVER_MAPS_PATH
-									+ "map_%d_%d_%d.map", map.getId(), x,
-									y)));
-					out.write(buffer.getBytes());
-					out.close();
+					if (map.getSegment(x, y) != null) {
+						buffer.reset();
+						buffer.putSegment(map.getSegment(x, y));
+						out = new BufferedOutputStream(
+								new FileOutputStream(String.format(
+										Constants.SERVER_MAPS_PATH
+												+ "map_%d_%d_%d.map",
+										map.getId(), x, y)));
+						out.write(buffer.getBytes());
+						out.close();
+					}
 				}
 			}
 		} catch (IOException e) {
@@ -75,8 +93,7 @@ public class FileDataStore implements DataStore {
 			DataStoreException {
 		File mapFile = new File(Constants.SERVER_MAPS_PATH + "map_" + id
 				+ ".map");
-		if (id < 1 || id > baseServer.getConfigManager().getTotalMaps()
-				|| !mapFile.exists()) {
+		if (!mapExists(id)) {
 			throw new IllegalArgumentException(
 					"No map exists with the number " + id + ".");
 		}
@@ -101,6 +118,46 @@ public class FileDataStore implements DataStore {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see orpg.server.data.store.DataStore#segmentExists(int, int, int)
+	 */
+	@Override
+	public boolean segmentExists(int id, int x, int y) {
+		return (new File(Constants.SERVER_MAPS_PATH + "map_" + id + "_"
+				+ x + "_" + y + " +.map").exists());
+
+	}
+
+	/* (non-Javadoc)
+	 * @see orpg.server.data.store.DataStore#loadSegment(int, int, int)
+	 */
+	@Override
+	public Segment loadSegment(int id, int x, int y)
+			throws IllegalArgumentException, IndexOutOfBoundsException,
+			DataStoreException {
+		// First make sure the map exists
+		if (!mapExists(id)) {
+			throw new IllegalArgumentException(
+					"No map exists with the number " + id + ".");
+		}
+
+		// Next make sure the segment exists
+		if (!segmentExists(id, x, y)) {
+			throw new IndexOutOfBoundsException("No segment for map " + id
+					+ " at segment position (" + x + "," + y + ")");
+		}
+
+		// Try to load the segment
+		try {
+			Segment segment = new InputByteBuffer(new File(
+					Constants.SERVER_MAPS_PATH + "map_" + id + "_" + x
+							+ "_" + y + ".map")).getSegment();
+			return segment;
+		} catch (IOException e) {
+			throw new DataStoreException(e);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -116,8 +173,11 @@ public class FileDataStore implements DataStore {
 				+ ".ini");
 	}
 
-	/* (non-Javadoc)
-	 * @see orpg.server.data.store.DataStore#createAccount(orpg.server.data.Account)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * orpg.server.data.store.DataStore#createAccount(orpg.server.data.Account)
 	 */
 	@Override
 	public synchronized void createAccount(Account account)
@@ -137,8 +197,11 @@ public class FileDataStore implements DataStore {
 		this.saveAccount(account);
 	}
 
-	/* (non-Javadoc)
-	 * @see orpg.server.data.store.DataStore#saveAccount(orpg.server.data.Account)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * orpg.server.data.store.DataStore#saveAccount(orpg.server.data.Account)
 	 */
 	@Override
 	public void saveAccount(Account account) throws DataStoreException {
@@ -159,7 +222,9 @@ public class FileDataStore implements DataStore {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see orpg.server.data.store.DataStore#loadAccount(java.lang.String)
 	 */
 	@Override
