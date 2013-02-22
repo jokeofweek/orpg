@@ -39,7 +39,7 @@ public class MapController extends Observable {
 	}
 
 	public Segment getPositionSegment(int x, int y) {
-		return this.map.getPositionSegment(x, y);
+		return this.map.mapPositionToSegment(x, y);
 	}
 
 	public int mapXToSegmentX(int x) {
@@ -87,7 +87,7 @@ public class MapController extends Observable {
 	 *            the new tile value.
 	 */
 	public void batchUpdateTile(int x, int y, MapLayer layer, short tile) {
-		this.map.getPositionSegment(x, y).getTiles()[layer.ordinal()][mapXToSegmentX(x)][mapYToSegmentY(y)] = tile;
+		this.map.mapPositionToSegment(x, y).getTiles()[layer.ordinal()][mapXToSegmentX(x)][mapYToSegmentY(y)] = tile;
 	}
 
 	/**

@@ -12,7 +12,7 @@ public class MapEditorTileEraseChange implements EditorChange {
 	private int x;
 	private int y;
 	private short oldTile;
-	private boolean wasChanged;
+	private boolean segmentWasChanged;
 
 	public MapEditorTileEraseChange(MapEditorController editorController,
 			MapController mapController, int x, int y) {
@@ -25,7 +25,7 @@ public class MapEditorTileEraseChange implements EditorChange {
 		this.oldTile = mapController.getPositionSegment(x, y).getTiles()[layer
 				.ordinal()][mapController.mapXToSegmentX(x)][mapController
 				.mapYToSegmentY(y)];
-		this.wasChanged = editorController.hasSegmentChanged(x, y);
+		this.segmentWasChanged = editorController.hasSegmentChanged(x, y);
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class MapEditorTileEraseChange implements EditorChange {
 	@Override
 	public void undo() {
 		mapController.updateTile(this.x, this.y, this.layer, this.oldTile);
-		editorController.setSegmentChanged(this.x, this.y, wasChanged);
+		editorController.setSegmentChanged(this.x, this.y, segmentWasChanged);
 	}
 
 }

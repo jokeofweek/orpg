@@ -125,7 +125,7 @@ public class Map {
 		this.segments[segment.getX()][segment.getY()] = segment;
 	}
 
-	public Segment getPositionSegment(int x, int y) {
+	public Segment mapPositionToSegment(int x, int y) {
 		if (x < 0 || y < 0 || x >= this.segmentWidth * this.segments.length
 				|| y >= this.segmentHeight * this.segments[0].length) {
 			throw new IllegalArgumentException("Invalid segment position.");

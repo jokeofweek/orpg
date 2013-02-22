@@ -33,6 +33,8 @@ public class PacketWriteThread implements Runnable {
 			// Repeatedly remove from the output queue and write.
 			while (true) {
 				p = outputQueue.take();
+				System.out.println("-> " + p.getPacketType() + "("
+						+ (p.getBytes().length + 5) + ")");
 				socket.getOutputStream().write(p.getRawBytes());
 			}
 		} catch (IOException io) {

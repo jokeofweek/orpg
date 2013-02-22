@@ -1,7 +1,10 @@
 package orpg.editor.net.packets;
 
+import java.util.LinkedList;
+
 import orpg.client.net.packets.ClientPacket;
 import orpg.shared.data.Map;
+import orpg.shared.data.Segment;
 import orpg.shared.net.ClientPacketType;
 import orpg.shared.net.OutputByteBuffer;
 
@@ -11,15 +14,25 @@ public class EditorSaveMapPacket extends ClientPacket {
 
 	public EditorSaveMapPacket(Map map, boolean[][] segmentsChanged) {
 		OutputByteBuffer out = new OutputByteBuffer();
-		out.putMap(map);
-		this.bytes = out.getBytes();
+		out.putMapDescriptor(map);
 
-		for (int y = 0; y < segmentsChanged[0].length; y++) {
-			for (int x = 0; x < segmentsChanged.length; x++) {
-				System.out.print(segmentsChanged[x][y] ? "1" : "0");
+		// Fetch the segments that've changed
+		LinkedList<Segment> segments = new LinkedList<Segment>();
+		for (int x = 0; x < segmentsChanged.length; x++) {
+			for (int y = 0; y < segmentsChanged[0].length; y++) {
+				if (segmentsChanged[x][y]) {
+					segments.add(map.getSegment(x, y));
+				}
 			}
-			System.out.println();
 		}
+
+		// Put number of segments and then the individual segments.
+		out.putShort((short) segments.size());
+		for (Segment segment : segments) {
+			out.putSegment(segment);
+		}
+
+		this.bytes = out.getBytes();
 	}
 
 	@Override
