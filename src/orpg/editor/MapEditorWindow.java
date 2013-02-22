@@ -66,9 +66,9 @@ public class MapEditorWindow extends JFrame implements Observer,
 		this.setupContent();
 		this.setupMenuBar();
 		this.pack();
-		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		this.setSize(800, 600);
+		this.setLocationRelativeTo(null);
 		this.requestFocusInWindow();
 
 		this.load(baseEditor);
