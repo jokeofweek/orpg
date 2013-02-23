@@ -12,14 +12,17 @@ import javax.swing.JFrame;
 public class LoginWindow extends JFrame {
 
 	private static final long serialVersionUID = 8720835145332237954L;
+	private EditorConfigurationManager config;
 
-	public LoginWindow() {
+	public LoginWindow(EditorConfigurationManager config) {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setTitle("Login");
 		setupComponents();
 		pack();
 		setLocationRelativeTo(null);
 		setVisible(true);
+
+		this.config = config;
 
 	}
 
@@ -34,8 +37,9 @@ public class LoginWindow extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// Set up the client
 				try {
-					Socket s = new Socket("localhost", 8000);
-					BaseEditor baseEditor = new BaseEditor(s);
+					Socket s = new Socket(config.getServerAddress(), config
+							.getServerPort());
+					BaseEditor baseEditor = new BaseEditor(s, config);
 					window.setVisible(false);
 				} catch (UnknownHostException e1) {
 					// TODO Auto-generated catch block

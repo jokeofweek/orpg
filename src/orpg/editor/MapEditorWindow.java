@@ -80,12 +80,24 @@ public class MapEditorWindow extends JFrame implements Observer,
 		int i = 0;
 		try {
 			for (i = 0; i < Constants.TILESETS; i++) {
-				tilesets[i] = ImageIO.read(new File(Constants.CLIENT_DATA_PATH
-						+ "gfx/tiles_" + i + ".png").toURI().toURL());
+				tilesets[i] = ImageIO.read(new File(
+						Constants.CLIENT_ASSETS_PATH + "tiles_" + i + ".png")
+						.toURI().toURL());
 			}
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, "Could not load tiles_" + i
 					+ ".png. Shutting down.");
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+		BufferedImage loadingTile = null;
+		try {
+			loadingTile = ImageIO.read(new File(Constants.CLIENT_ASSETS_PATH
+					+ "loading_tile.png").toURI().toURL());
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null,
+					"Could not load loading_tile.png. Shutting down.");
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -99,7 +111,7 @@ public class MapEditorWindow extends JFrame implements Observer,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		MapView mapView = new MapView(mapController, editorController,
-				mapScrollPane, tilesets);
+				mapScrollPane, tilesets, loadingTile);
 		mapScrollPane.setViewportView(mapView);
 		mapScrollPane.getHorizontalScrollBar().setUnitIncrement(16);
 		mapScrollPane.getHorizontalScrollBar().setAutoscrolls(true);

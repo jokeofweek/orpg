@@ -5,7 +5,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
-import orpg.server.config.ConfigurationManager;
+import orpg.server.config.ServerConfigurationManager;
 import orpg.server.console.ServerConsole;
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.managers.MapManager;
@@ -15,7 +15,7 @@ import orpg.server.net.packets.ServerPacket;
 
 public class BaseServer {
 
-	private ConfigurationManager config;
+	private ServerConfigurationManager config;
 	private ServerSessionManager serverSessionManager;
 	private ServerGameThread serverGameThread;
 	private ServerSocketThread serverSocketThread;
@@ -25,7 +25,7 @@ public class BaseServer {
 	private MapManager mapManager;
 	private DataStore dataStore;
 
-	public BaseServer(ConfigurationManager config, ServerConsole console) {
+	public BaseServer(ServerConfigurationManager config, ServerConsole console) {
 		this.config = config;
 		this.console = console;
 
@@ -72,7 +72,7 @@ public class BaseServer {
 		console.out().println("Ready to go!");
 	}
 
-	public ConfigurationManager getConfigManager() {
+	public ServerConfigurationManager getConfigManager() {
 		return config;
 	}
 

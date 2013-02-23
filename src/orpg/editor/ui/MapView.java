@@ -30,6 +30,7 @@ public class MapView extends JComponent implements Observer, MouseListener,
 	private MapController mapController;
 	private MapEditorController editorController;
 	private Image[] images;
+	private Image loadingTile;
 
 	private boolean leftDown;
 	private boolean rightDown;
@@ -45,13 +46,14 @@ public class MapView extends JComponent implements Observer, MouseListener,
 
 	public MapView(final MapController controller,
 			MapEditorController editorController, JScrollPane scrollPane,
-			Image[] images) {
+			Image[] images, Image loadingTile) {
 		this.mapController = controller;
 		this.editorController = editorController;
 		this.scrollPane = scrollPane;
 		this.mapController.addObserver(this);
 		this.editorController.addObserver(this);
 		this.images = images;
+		this.loadingTile = loadingTile;
 
 		this.tileWidth = Constants.TILE_WIDTH
 				/ editorController.getScaleFactor();
@@ -142,6 +144,13 @@ public class MapView extends JComponent implements Observer, MouseListener,
 					if (tile == 0) {
 						if (z == 0) {
 							graphics.drawImage(this.images[0], dX, dY, dX
+									+ tileWidth, dY + tileHeight, 0, 0,
+									Constants.TILE_WIDTH,
+									Constants.TILE_HEIGHT, null);
+						}
+					} else if (tile == -1) {
+						if (z == 0) {
+							graphics.drawImage(this.loadingTile, dX, dY, dX
 									+ tileWidth, dY + tileHeight, 0, 0,
 									Constants.TILE_WIDTH,
 									Constants.TILE_HEIGHT, null);
@@ -282,8 +291,10 @@ public class MapView extends JComponent implements Observer, MouseListener,
 							mapController.getMapWidth(), pX + diffX); cX++) {
 						if (mapController.getTile(cX, cY, layer) != currentTile
 								+ (cX - pX)) {
-							changed = true;
-							break;
+							if (mapController.getTile(cX, cY, layer) != MapController.LOADING_TILE) {
+								changed = true;
+								break;
+							}
 						}
 					}
 					currentTile += Constants.TILESET_WIDTH;
@@ -291,7 +302,6 @@ public class MapView extends JComponent implements Observer, MouseListener,
 
 				// If there was a change, add it
 				if (changed) {
-
 					editorController.getChangeManager().addChange(
 							new MapEditorTileUpdateChange(editorController,
 									mapController, x / tileWidth, y
@@ -308,7 +318,9 @@ public class MapView extends JComponent implements Observer, MouseListener,
 
 				// If a right-click, then erase the tile if not already empty.
 				if (mapController.getTile(x / tileWidth, y / tileHeight,
-						editorController.getCurrentLayer().ordinal()) != 0) {
+						editorController.getCurrentLayer().ordinal()) != 0
+						&& mapController.getTile(x / tileWidth, y / tileHeight,
+								editorController.getCurrentLayer().ordinal()) != MapController.LOADING_TILE) {
 
 					editorController.getChangeManager().addChange(
 							new MapEditorTileEraseChange(editorController,

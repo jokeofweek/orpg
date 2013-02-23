@@ -1,6 +1,8 @@
 package orpg.server;
 
-import orpg.server.config.ConfigurationManager;
+import java.io.IOException;
+
+import orpg.server.config.ServerConfigurationManager;
 import orpg.server.console.BaseServerConsole;
 import orpg.shared.Constants;
 
@@ -14,9 +16,16 @@ public class ServerApplication {
 		// Set up the configuration
 		String[] propertiesFiles = new String[] { Constants.SERVER_DATA_PATH
 				+ "server.properties" };
-		ConfigurationManager config = new ConfigurationManager(
-				propertiesFiles, console);
-		console.out().println("Configuration manager setup...");
+		
+		ServerConfigurationManager config = null;
+		console.out().println("Loading configuration...");
+		try {
+			config = new ServerConfigurationManager(propertiesFiles, console);
+		} catch (IOException e) {
+			console.out().println(e.getMessage());
+			console.out().println("Shutting down...");
+			System.exit(1);
+		}
 
 		new BaseServer(config, console);
 		while (true) {

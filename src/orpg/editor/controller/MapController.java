@@ -10,6 +10,8 @@ import orpg.shared.data.Segment;
 
 public class MapController extends Observable implements Observer {
 
+	public static final short LOADING_TILE = -1;
+
 	private Map map;
 	private EditorSegmentRequestManager requestManager;
 
@@ -123,7 +125,7 @@ public class MapController extends Observable implements Observer {
 	public short getTile(int x, int y, int z) {
 		Segment segment = this.getPositionSegment(x, y);
 		if (segment == null) {
-			return 2;
+			return LOADING_TILE;
 		} else {
 			return segment.getTiles()[z][getXRelativeToSegment(x)][getYRelativeToSegment(y)];
 		}

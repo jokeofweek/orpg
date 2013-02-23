@@ -52,6 +52,9 @@
         <copy todir="${editor_build.dir}/data/client">
             <fileset dir="${data.dir}/client"/>
         </copy>
+        <copy todir="${editor_build.dir}/data/editor">
+            <fileset dir="${data.dir}/editor"/>
+        </copy>
     </target>
 
     <target name="build_server" depends="compile">
