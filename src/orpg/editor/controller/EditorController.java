@@ -29,7 +29,7 @@ public abstract class EditorController<K> extends Observable {
 				// First we validate to check.
 				String[] errors = editorWindow.validate(baseEditor);
 				if (errors != null && errors.length > 0) {
-					// Errors occured!
+					// Errors occurred!
 					String errorMessages = "";
 					for (String error : errors) {
 						errorMessages += error + "\n";

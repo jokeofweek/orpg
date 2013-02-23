@@ -1,17 +1,27 @@
 package orpg.editor.controller;
 
 import java.util.Observable;
+import java.util.Observer;
 
+import orpg.editor.BaseEditor;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
 import orpg.shared.data.Segment;
 
-public class MapController extends Observable {
+public class MapController extends Observable implements Observer {
 
 	private Map map;
+	private EditorSegmentRequestManager requestManager;
 
-	public MapController(Map map) {
+	public MapController(BaseEditor baseEditor, Map map) {
 		this.map = map;
+		this.requestManager = new EditorSegmentRequestManager(baseEditor, map);
+		this.requestManager.addObserver(this);
+
+		// Make requests for outer segments
+		this.requestManager.requestSegment(1, 0);
+		this.requestManager.requestSegment(0, 1);
+		this.requestManager.requestSegment(1, 1);
 	}
 
 	public Map getMap() {
@@ -34,6 +44,10 @@ public class MapController extends Observable {
 		return this.map.getHeight();
 	}
 
+	public EditorSegmentRequestManager getRequestManager() {
+		return requestManager;
+	}
+
 	public Segment[][] getSegments() {
 		return this.map.getSegments();
 	}
@@ -51,7 +65,12 @@ public class MapController extends Observable {
 	}
 
 	public short getTile(int x, int y, int z) {
-		return this.getPositionSegment(x, y).getTiles()[z][mapXToSegmentX(x)][mapYToSegmentY(y)];
+		Segment segment = this.getPositionSegment(x, y);
+		if (segment == null) {
+			return 2;
+		} else {
+			return segment.getTiles()[z][mapXToSegmentX(x)][mapYToSegmentY(y)];
+		}
 	}
 
 	/**
@@ -96,6 +115,18 @@ public class MapController extends Observable {
 	public void triggerTileUpdate() {
 		this.setChanged();
 		this.notifyObservers();
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if (o == requestManager) {
+			// If we received a requested segment, update the map and notify
+			// observers
+			if (arg instanceof Segment) {
+				map.updateSegment((Segment) arg);
+				triggerTileUpdate();
+			}
+		}
 	}
 
 }

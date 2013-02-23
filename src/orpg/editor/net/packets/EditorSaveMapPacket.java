@@ -27,6 +27,7 @@ public class EditorSaveMapPacket extends ClientPacket {
 		}
 
 		// Put number of segments and then the individual segments.
+		System.out.println("Saving " + segments.size());
 		out.putShort((short) segments.size());
 		for (Segment segment : segments) {
 			out.putSegment(segment);

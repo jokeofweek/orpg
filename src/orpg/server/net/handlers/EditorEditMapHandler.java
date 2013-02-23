@@ -4,10 +4,12 @@ import java.util.logging.Level;
 
 import orpg.server.BaseServer;
 import orpg.server.data.ServerReceivedPacket;
+import orpg.server.data.managers.MapManager;
 import orpg.server.data.store.DataStoreException;
 import orpg.server.net.packets.EditorMapDataPacket;
 import orpg.server.net.packets.ErrorPacket;
 import orpg.shared.data.Map;
+import orpg.shared.data.Segment;
 
 public class EditorEditMapHandler implements ServerPacketHandler {
 
@@ -17,9 +19,11 @@ public class EditorEditMapHandler implements ServerPacketHandler {
 		int number = packet.getByteBuffer().getInt();
 
 		try {
-			Map map = baseServer.getDataStore().loadMap(number);
-			baseServer.sendPacket(new EditorMapDataPacket(packet
-					.getSession(), map));
+			Map map = baseServer.getMapManager().get(number);
+			Segment segment = baseServer.getMapManager().getSegment(
+					map.getId(), 0, 0);
+			baseServer.sendPacket(new EditorMapDataPacket(packet.getSession(),
+					map, segment));
 		} catch (IllegalArgumentException e) {
 			baseServer
 					.getConfigManager()
@@ -30,19 +34,6 @@ public class EditorEditMapHandler implements ServerPacketHandler {
 									+ number + ".");
 			baseServer.sendPacket(new ErrorPacket(packet.getSession(),
 					"Invalid map number."));
-		} catch (DataStoreException e) {
-			baseServer
-					.getConfigManager()
-					.getSessionLogger()
-					.log(Level.SEVERE,
-							"Session " + packet.getSession()
-									+ " could not load map " + number
-									+ " for editing. Reason: "
-									+ e.getMessage());
-			baseServer
-					.sendPacket(new ErrorPacket(
-							packet.getSession(),
-							"An error occured while fetching the map information. Please try again later."));
 		}
 	}
 

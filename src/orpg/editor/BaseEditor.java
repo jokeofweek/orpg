@@ -1,7 +1,9 @@
 package orpg.editor;
 
 import java.net.Socket;
+import java.util.HashMap;
 
+import orpg.editor.controller.MapController;
 import orpg.editor.net.EditorProcessThread;
 import orpg.editor.net.packets.EditorEditMapPacket;
 import orpg.editor.net.packets.EditorSaveMapPacket;
@@ -12,9 +14,11 @@ import orpg.shared.net.AbstractClient;
 public class BaseEditor extends AbstractClient {
 
 	private MapSelectWindow mapSelectWindow;
+	private HashMap<Integer, MapController> mapControllers;
 
 	public BaseEditor(Socket socket) {
 		super(socket, new EditorProcessThread(), null);
+		this.mapControllers = new HashMap<Integer, MapController>();
 	}
 
 	public void showMapSelectWindow(Pair<Integer, String>[] mapNames) {
@@ -33,7 +37,17 @@ public class BaseEditor extends AbstractClient {
 	}
 
 	public void editMap(Map map) {
-		MapEditorWindow window = new MapEditorWindow(this, map);
+		if (getMapController(map.getId()) == null) {
+			MapController controller = new MapController(this, map);
+			mapControllers.put(map.getId(), controller);
+			
+		}
+		MapEditorWindow window = new MapEditorWindow(this,
+				getMapController(map.getId()));
+	}
+
+	public MapController getMapController(int id) {
+		return mapControllers.get(id);
 	}
 
 	public void saveMap(Map map, boolean[][] segmentsChanged) {

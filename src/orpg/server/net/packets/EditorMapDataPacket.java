@@ -2,17 +2,19 @@ package orpg.server.net.packets;
 
 import orpg.server.ServerSession;
 import orpg.shared.data.Map;
+import orpg.shared.data.Segment;
 import orpg.shared.net.OutputByteBuffer;
 import orpg.shared.net.ServerPacketType;
 
 public class EditorMapDataPacket extends SessionPacket {
 
 	private byte[] bytes;
-	
-	public EditorMapDataPacket(ServerSession session, Map map) {
+
+	public EditorMapDataPacket(ServerSession session, Map map, Segment segment) {
 		super(session);
 		OutputByteBuffer out = new OutputByteBuffer();
-		out.putMap(map);
+		out.putMapDescriptor(map);
+		out.putSegment(segment);
 		out.compress();
 		this.bytes = out.getBytes();
 	}

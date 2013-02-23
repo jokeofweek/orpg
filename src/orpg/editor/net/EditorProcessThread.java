@@ -8,6 +8,7 @@ import orpg.editor.net.handlers.ConnectedPacketHandler;
 import orpg.editor.net.handlers.EditorLoginOkPacketHandler;
 import orpg.editor.net.handlers.EditorMapDataPacketHandler;
 import orpg.editor.net.handlers.EditorMapListPacketHandler;
+import orpg.editor.net.handlers.EditorMapSegmentDataPacketHandler;
 import orpg.editor.net.handlers.EditorPacketHandler;
 import orpg.shared.net.PacketProcessThread;
 import orpg.shared.net.ServerPacketType;
@@ -29,6 +30,8 @@ public class EditorProcessThread extends PacketProcessThread {
 				new EditorMapListPacketHandler());
 		handlers.put(ServerPacketType.EDITOR_MAP_DATA,
 				new EditorMapDataPacketHandler());
+		handlers.put(ServerPacketType.EDITOR_MAP_SEGMENT_DATA,
+				new EditorMapSegmentDataPacketHandler());
 	}
 
 	@Override

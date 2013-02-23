@@ -107,7 +107,6 @@ public class Map {
 	}
 
 	public Segment getSegment(int x, int y) {
-
 		if (x < 0 || y < 0 || x >= segments.length || y >= segments[0].length) {
 			throw new IllegalArgumentException("Invalid segment position.");
 		}
@@ -116,13 +115,25 @@ public class Map {
 	}
 
 	public void updateSegment(Segment segment) {
-
 		if (segment.getX() < 0 || segment.getY() < 0
 				|| segment.getX() >= segments.length
 				|| segment.getY() >= segments[0].length) {
 			throw new IllegalArgumentException("Invalid segment position.");
 		}
 		this.segments[segment.getX()][segment.getY()] = segment;
+	}
+
+	public void updateDescriptor(Map map) {
+		this.name = map.getName();
+
+		// TODO: Wait until implemented resizing segments.
+		/*
+		 * this.segmentsWide = map.getSegmentsWide(); this.segmentsHigh =
+		 * map.getSegmentsHigh(); this.segmentWidth = map.getSegmentWidth();
+		 * this.segmentHeight = map.getSegmentHeight(); this.width =
+		 * segmentWidth * segments.length; this.height = segmentHeight *
+		 * segments[0].length;
+		 */
 	}
 
 	public Segment mapPositionToSegment(int x, int y) {

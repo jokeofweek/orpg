@@ -7,6 +7,7 @@ import orpg.server.data.ServerReceivedPacket;
 import orpg.server.net.handlers.CreateAccountHandler;
 import orpg.server.net.handlers.EditorEditMapHandler;
 import orpg.server.net.handlers.EditorReadyHandler;
+import orpg.server.net.handlers.EditorRequestSegmentHandler;
 import orpg.server.net.handlers.EditorSaveMapHandler;
 import orpg.server.net.handlers.LoginHandler;
 import orpg.server.net.handlers.ServerPacketHandler;
@@ -61,6 +62,8 @@ public class ServerGameThread implements Runnable {
 				new EditorEditMapHandler());
 		editorHandlers.put(ClientPacketType.EDITOR_SAVE_MAP,
 				new EditorSaveMapHandler());
+		editorHandlers.put(ClientPacketType.EDITOR_REQUEST_SEGMENT,
+				new EditorRequestSegmentHandler());
 	}
 
 	@Override

@@ -13,4 +13,5 @@ public enum ServerPacketType {
 	// Editor packet types
 	EDITOR_MAP_LIST,
 	EDITOR_MAP_DATA,
+	EDITOR_MAP_SEGMENT_DATA
 }
