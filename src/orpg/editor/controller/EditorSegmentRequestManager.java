@@ -23,12 +23,12 @@ public class EditorSegmentRequestManager extends Observable {
 	}
 
 	public void requestSegment(int x, int y) {
-		synchronized (handlingRequestLock) {
-			// If we've already requested the segment, don't do anything
-			String requestKey = dataToRequestKey(map.getId(), x, y);
-			if (!this.pendingRequests.contains(requestKey)) {
-				// Make sure we don't already have the segment
-				if (map.getSegment(x, y) == null) {
+		// If we've already requested the segment, don't do anything
+		String requestKey = dataToRequestKey(map.getId(), x, y);
+		if (!this.pendingRequests.contains(requestKey)) {
+			// Make sure we don't already have the segment
+			if (map.getSegment(x, y) == null) {
+				synchronized (handlingRequestLock) {
 					this.pendingRequests.add(requestKey);
 					this.baseEditor.sendPacket(new EditorRequestSegmentPacket(
 							map.getId(), x, y));
@@ -43,8 +43,8 @@ public class EditorSegmentRequestManager extends Observable {
 			setChanged();
 			notifyObservers(segment);
 
-			pendingRequests.remove(dataToRequestKey(map.getId(), segment.getX(),
-					segment.getY()));
+			pendingRequests.remove(dataToRequestKey(map.getId(),
+					segment.getX(), segment.getY()));
 		}
 	}
 

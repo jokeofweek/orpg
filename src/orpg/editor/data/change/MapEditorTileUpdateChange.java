@@ -55,7 +55,7 @@ public class MapEditorTileUpdateChange implements EditorChange {
 			for (int dY = 0; dY < diffY; dY++) {
 				oldTiles[dX][dY] = mapController.getPositionSegment(x + dX,
 						y + dY).getTiles()[layerOrd][mapController
-						.mapXToSegmentX(x + dX)][mapController.mapYToSegmentY(y
+						.getXRelativeToSegment(x + dX)][mapController.getYRelativeToSegment(y
 						+ dY)];
 			}
 		}
@@ -63,8 +63,8 @@ public class MapEditorTileUpdateChange implements EditorChange {
 		// Find segments which were previously unchanged
 		this.newlyChangedSegments = new HashSet<Segment>();
 		Segment startSegment = mapController.getMap()
-				.mapPositionToSegment(x, y);
-		Segment endSegment = mapController.getMap().mapPositionToSegment(
+				.getPositionSegment(x, y);
+		Segment endSegment = mapController.getMap().getPositionSegment(
 				Math.min(mapController.getMapWidth() - 1, x + diffX),
 				Math.min(mapController.getMapHeight() - 1, y + diffY));
 		for (int dY = 0; dY <= endSegment.getY() - startSegment.getY(); dY++) {

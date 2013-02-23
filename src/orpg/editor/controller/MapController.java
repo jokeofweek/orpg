@@ -52,16 +52,72 @@ public class MapController extends Observable implements Observer {
 		return this.map.getSegments();
 	}
 
-	public Segment getPositionSegment(int x, int y) {
-		return this.map.mapPositionToSegment(x, y);
+	/**
+	 * This fetches the segment in which a map-wide x/y position lies in.
+	 * 
+	 * @param x
+	 *            the map-wide x position.
+	 * @param y
+	 *            the map-wide y position.
+	 * @return the segment which contains the x/y position.
+	 * @throws IllegalArgumentException
+	 *             if the position is not in the map bounds
+	 */
+	public Segment getPositionSegment(int x, int y)
+			throws IllegalArgumentException {
+		return this.map.getPositionSegment(x, y);
 	}
 
-	public int mapXToSegmentX(int x) {
-		return this.map.mapXToSegmentX(x);
+	/**
+	 * This gets the x position of the segment based on a map-wide x position.
+	 * For example if segments are 50 tiles wide, and you pass 73, it'll return
+	 * x=1.
+	 * 
+	 * @param x
+	 *            the map-wide x position
+	 * @return the x of the segment in which this tile lies.
+	 */
+	public int getSegmentX(int x) {
+		return x / map.getSegmentWidth();
 	}
 
-	public int mapYToSegmentY(int y) {
-		return this.map.mapYToSegmentY(y);
+	/**
+	 * This gets the y position of the segment based on a map-wide y position.
+	 * For example if segments are 50 tiles high, and you pass 73, it'll return
+	 * y=1.
+	 * 
+	 * @param y
+	 *            the map-wide y position
+	 * @return the y of the segment in which this tile lies.
+	 */
+	public int getSegmentY(int y) {
+		return y / map.getSegmentHeight();
+	}
+
+	/**
+	 * This maps a map-wide x position into an x position relative to its
+	 * segment. For example if segments are 50 tiles wide, and you pass 73,
+	 * it'll return 23.
+	 * 
+	 * @param x
+	 *            the map-wide x position
+	 * @return the x of the tile relative to the segment it lies in.
+	 */
+	public int getXRelativeToSegment(int x) {
+		return this.map.getXRelativeToSegment(x);
+	}
+
+	/**
+	 * This maps a map-wide y position into an y position relative to its
+	 * segment. For example if segments are 50 tiles high, and you pass 73,
+	 * it'll return 23.
+	 * 
+	 * @param y
+	 *            the map-wide y position
+	 * @return the y of the tile relative to the segment it lies in.
+	 */
+	public int getYRelativeToSegment(int y) {
+		return this.map.getYRelativeToSegment(y);
 	}
 
 	public short getTile(int x, int y, int z) {
@@ -69,7 +125,7 @@ public class MapController extends Observable implements Observer {
 		if (segment == null) {
 			return 2;
 		} else {
-			return segment.getTiles()[z][mapXToSegmentX(x)][mapYToSegmentY(y)];
+			return segment.getTiles()[z][getXRelativeToSegment(x)][getYRelativeToSegment(y)];
 		}
 	}
 
@@ -106,7 +162,7 @@ public class MapController extends Observable implements Observer {
 	 *            the new tile value.
 	 */
 	public void batchUpdateTile(int x, int y, MapLayer layer, short tile) {
-		this.map.mapPositionToSegment(x, y).getTiles()[layer.ordinal()][mapXToSegmentX(x)][mapYToSegmentY(y)] = tile;
+		this.map.getPositionSegment(x, y).getTiles()[layer.ordinal()][getXRelativeToSegment(x)][getYRelativeToSegment(y)] = tile;
 	}
 
 	/**

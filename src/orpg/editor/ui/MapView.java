@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -23,8 +24,8 @@ import orpg.editor.data.change.MapEditorTileUpdateChange;
 import orpg.shared.Constants;
 import orpg.shared.data.MapLayer;
 
-public class MapView extends JComponent implements Observer,
-		MouseListener, MouseMotionListener {
+public class MapView extends JComponent implements Observer, MouseListener,
+		MouseMotionListener {
 
 	private MapController mapController;
 	private MapEditorController editorController;
@@ -40,16 +41,14 @@ public class MapView extends JComponent implements Observer,
 	private int hoverOverTileX;
 	private int hoverOverTileY;
 
-	private JScrollPane container;
+	private JScrollPane scrollPane;
 
-	private int currentTileSet;
-
-	public MapView(MapController controller,
-			MapEditorController editorController, JScrollPane container,
+	public MapView(final MapController controller,
+			MapEditorController editorController, JScrollPane scrollPane,
 			Image[] images) {
 		this.mapController = controller;
 		this.editorController = editorController;
-		this.container = container;
+		this.scrollPane = scrollPane;
 		this.mapController.addObserver(this);
 		this.editorController.addObserver(this);
 		this.images = images;
@@ -61,6 +60,12 @@ public class MapView extends JComponent implements Observer,
 
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
+
+		// Setup the scroll bars to make requests for segments
+		AdjustmentListener listener = new MapViewAdjustmentListener(controller,
+				editorController, scrollPane);
+		scrollPane.getHorizontalScrollBar().addAdjustmentListener(listener);
+		scrollPane.getVerticalScrollBar().addAdjustmentListener(listener);
 	}
 
 	public MapController getMapController() {
@@ -89,8 +94,8 @@ public class MapView extends JComponent implements Observer,
 
 		g.drawImage(this.images[(tile / Constants.TILESET_WIDTH)
 				/ Constants.TILESET_HEIGHT], x, y, x + tileWidth, y
-				+ tileHeight, srcX, srcY, srcX + Constants.TILE_WIDTH,
-				srcY + Constants.TILE_HEIGHT, null);
+				+ tileHeight, srcX, srcY, srcX + Constants.TILE_WIDTH, srcY
+				+ Constants.TILE_HEIGHT, null);
 
 	}
 
@@ -117,15 +122,14 @@ public class MapView extends JComponent implements Observer,
 				AlphaComposite.SRC_OVER, 1.0f);
 
 		// Determine renderable area
-		int startX = Math.max(0, (container.getHorizontalScrollBar()
+		int startX = Math.max(0, (scrollPane.getHorizontalScrollBar()
 				.getValue() / tileWidth) - 4);
-		int startY = Math.max(0, (container.getVerticalScrollBar()
-				.getValue() / tileHeight) - 4);
-		int endX = Math.min(startX + 6
-				+ (container.getWidth() / tileWidth),
+		int startY = Math
+				.max(0,
+						(scrollPane.getVerticalScrollBar().getValue() / tileHeight) - 4);
+		int endX = Math.min(startX + 6 + (scrollPane.getWidth() / tileWidth),
 				mapController.getMapWidth());
-		int endY = Math.min(startY + 6
-				+ (container.getHeight() / tileHeight),
+		int endY = Math.min(startY + 6 + (scrollPane.getHeight() / tileHeight),
 				mapController.getMapHeight());
 		short tile;
 
@@ -164,8 +168,7 @@ public class MapView extends JComponent implements Observer,
 				int yWide = editorController.getTileRange().getEndY()
 						- editorController.getTileRange().getStartY() + 1;
 
-				int overlayTile = (editorController.getTileRange()
-						.getStartY() * Constants.TILESET_WIDTH)
+				int overlayTile = (editorController.getTileRange().getStartY() * Constants.TILESET_WIDTH)
 						+ editorController.getTileRange().getStartX();
 				for (int y = 0; y < yWide; y++) {
 					for (int x = 0; x < xWide; x++) {
@@ -189,8 +192,8 @@ public class MapView extends JComponent implements Observer,
 			// Render the entire tilerange
 			for (int y = startY; y < endY; y++) {
 				for (int x = startX; x < endX; x++) {
-					graphics.drawRect(x * tileWidth, y * tileHeight,
-							tileWidth, tileHeight);
+					graphics.drawRect(x * tileWidth, y * tileHeight, tileWidth,
+							tileHeight);
 				}
 			}
 			graphics.setComposite(regular);
@@ -259,12 +262,11 @@ public class MapView extends JComponent implements Observer,
 				// Make sure there is a change:
 				int startX = editorController.getTileRange().getStartX();
 				int startY = editorController.getTileRange().getStartY();
-				int diffX = editorController.getTileRange().getEndX()
-						- startX + 1;
-				int diffY = editorController.getTileRange().getEndY()
-						- startY + 1;
-				int currentTile = startX
-						+ (startY * Constants.TILESET_WIDTH);
+				int diffX = editorController.getTileRange().getEndX() - startX
+						+ 1;
+				int diffY = editorController.getTileRange().getEndY() - startY
+						+ 1;
+				int currentTile = startX + (startY * Constants.TILESET_WIDTH);
 
 				int layer = editorController.getCurrentLayer().ordinal();
 
@@ -274,9 +276,8 @@ public class MapView extends JComponent implements Observer,
 				int pY = y / tileHeight;
 
 				// Check each x/y value
-				for (int cY = pY; cY < Math.min(
-						mapController.getMapHeight(), pY + diffY)
-						&& !changed; cY++) {
+				for (int cY = pY; cY < Math.min(mapController.getMapHeight(),
+						pY + diffY) && !changed; cY++) {
 					for (int cX = pX; cX < Math.min(
 							mapController.getMapWidth(), pX + diffX); cX++) {
 						if (mapController.getTile(cX, cY, layer) != currentTile
@@ -292,9 +293,9 @@ public class MapView extends JComponent implements Observer,
 				if (changed) {
 
 					editorController.getChangeManager().addChange(
-							new MapEditorTileUpdateChange(
-									editorController, mapController, x
-											/ tileWidth, y / tileHeight));
+							new MapEditorTileUpdateChange(editorController,
+									mapController, x / tileWidth, y
+											/ tileHeight));
 				}
 
 			} else if (rightDown) {

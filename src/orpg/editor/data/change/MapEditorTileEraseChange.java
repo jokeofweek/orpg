@@ -23,8 +23,8 @@ public class MapEditorTileEraseChange implements EditorChange {
 		this.y = y;
 
 		this.oldTile = mapController.getPositionSegment(x, y).getTiles()[layer
-				.ordinal()][mapController.mapXToSegmentX(x)][mapController
-				.mapYToSegmentY(y)];
+				.ordinal()][mapController.getXRelativeToSegment(x)][mapController
+				.getYRelativeToSegment(y)];
 		this.segmentWasChanged = editorController.hasSegmentChanged(x, y);
 	}
 

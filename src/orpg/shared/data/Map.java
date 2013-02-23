@@ -136,7 +136,8 @@ public class Map {
 		 */
 	}
 
-	public Segment mapPositionToSegment(int x, int y) {
+	public Segment getPositionSegment(int x, int y)
+			throws IllegalArgumentException {
 		if (x < 0 || y < 0 || x >= this.segmentWidth * this.segments.length
 				|| y >= this.segmentHeight * this.segments[0].length) {
 			throw new IllegalArgumentException("Invalid segment position.");
@@ -145,11 +146,11 @@ public class Map {
 		return this.segments[x / this.segmentWidth][y / this.segmentHeight];
 	}
 
-	public int mapXToSegmentX(int x) {
+	public int getXRelativeToSegment(int x) {
 		return x % this.segmentWidth;
 	}
 
-	public int mapYToSegmentY(int y) {
+	public int getYRelativeToSegment(int y) {
 		return y % this.segmentHeight;
 	}
 

@@ -7,7 +7,6 @@ import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.store.DataStoreException;
 import orpg.server.net.packets.ErrorPacket;
 import orpg.shared.data.Map;
-import orpg.shared.data.Segment;
 
 public class EditorSaveMapHandler implements ServerPacketHandler {
 
