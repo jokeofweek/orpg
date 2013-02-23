@@ -46,10 +46,9 @@ public class MapViewAdjustmentListener implements AdjustmentListener {
 		endSegmentX = mapController.getSegmentX(endSegmentX);
 		endSegmentY = mapController.getSegmentY(endSegmentY);
 
-		for (; segmentX <= endSegmentX; segmentX++) {
-			for (; segmentY <= endSegmentY; segmentY++) {
-				mapController.getRequestManager().requestSegment(segmentX,
-						segmentY);
+		for (int x = segmentX; x <= endSegmentX; x++) {
+			for (int y = segmentY; y <= endSegmentY; y++) {
+				mapController.getRequestManager().requestSegment(x, y);
 			}
 		}
 	}
