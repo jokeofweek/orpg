@@ -29,7 +29,6 @@ public class MapDataHandler implements ClientPacketHandler {
 		// Switch to game state if we aren't already in game state
 		if (!(baseClient.getStateManager().getCurrentState() instanceof GameState)) {
 			Gdx.app.postRunnable(new Runnable() {
-
 				@Override
 				public void run() {
 					// Load the textures, and then pass them

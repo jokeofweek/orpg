@@ -41,6 +41,7 @@ import orpg.shared.Constants;
 import orpg.shared.Strings;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
+import orpg.shared.data.TileAttribute;
 
 public class MapEditorWindow extends JFrame implements Observer,
 		EditorWindow<Map> {
@@ -128,14 +129,15 @@ public class MapEditorWindow extends JFrame implements Observer,
 
 		JTabbedPane tabPane = new JTabbedPane();
 
-		tabPane.addTab("Tiles", getTilesTabPane(tilesets));
-		tabPane.addTab("Properties", getPropertiesTabPane());
+		tabPane.addTab("Tiles", getTilesTab(tilesets));
+		tabPane.addTab("Attributes", getAttributesTab());
+		tabPane.addTab("Properties", getPropertiesTab());
 		tabPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 0));
 
 		return tabPane;
 	}
 
-	public JComponent getTilesTabPane(Image[] tilesets) {
+	public JComponent getTilesTab(Image[] tilesets) {
 		// Set up the tile tab panel
 		JPanel tilesTabPanel = new JPanel(new BorderLayout());
 
@@ -170,7 +172,33 @@ public class MapEditorWindow extends JFrame implements Observer,
 		return tilesTabPanel;
 	}
 
-	public JComponent getPropertiesTabPane() {
+	public JComponent getAttributesTab() {
+		// Set up the tile tab panel
+		JPanel parentPanel = new JPanel(new BorderLayout());
+
+		// Build the layer header
+		JPanel attributeSelectPanel = new JPanel();
+		attributeSelectPanel.setLayout(new BoxLayout(attributeSelectPanel,
+				BoxLayout.PAGE_AXIS));
+
+		JLabel headerLabel = new JLabel("Attribute:");
+		headerLabel.setAlignmentX(LEFT_ALIGNMENT);
+		headerLabel.setFont(headerLabel.getFont().deriveFont(Font.BOLD));
+		attributeSelectPanel.add(headerLabel);
+
+		JComponent attributesPane = getAttributesPane();
+		attributesPane.setAlignmentX(LEFT_ALIGNMENT);
+		attributeSelectPanel.add(attributesPane);
+
+		parentPanel.add(attributeSelectPanel, BorderLayout.NORTH);
+
+		parentPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+		return parentPanel;
+
+	}
+
+	public JComponent getPropertiesTab() {
 		JPanel panel = new JPanel(new GridLayout(0, 2));
 		panel.add(new JLabel("Name:"));
 		mapNameTextField = new JTextField();
@@ -180,7 +208,7 @@ public class MapEditorWindow extends JFrame implements Observer,
 	}
 
 	public JComponent getLayersPane() {
-		JPanel layersPanel = new JPanel();
+		JPanel parentPanel = new JPanel();
 
 		ItemListener layerItemListener = new ItemListener() {
 
@@ -208,10 +236,46 @@ public class MapEditorWindow extends JFrame implements Observer,
 				layerGroup.setSelected(layerButton.getModel(), true);
 			}
 
-			layersPanel.add(layerButton);
+			parentPanel.add(layerButton);
 		}
 
-		return layersPanel;
+		return parentPanel;
+	}
+
+	public JComponent getAttributesPane() {
+		JPanel attributesPanel = new JPanel();
+
+		ItemListener attributeItemListesner = new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				JRadioButton button = (JRadioButton) e.getSource();
+				if (button.isSelected()) {
+					editorController
+							.setCurrentAttribute(TileAttribute.values()[Integer
+									.parseInt(button.getActionCommand())]);
+				}
+			}
+		};
+
+		// Setup a radio button for each layer
+		final ButtonGroup group = new ButtonGroup();
+		JRadioButton button;
+		for (TileAttribute tileAttribute : TileAttribute.values()) {
+			button = new JRadioButton(tileAttribute.getName());
+			button.setActionCommand(tileAttribute.ordinal() + "");
+			button.addItemListener(attributeItemListesner);
+			group.add(button);
+
+			// Needed to select the first layer
+			if (tileAttribute == editorController.getCurrentAttribute()) {
+				group.setSelected(button.getModel(), true);
+			}
+
+			attributesPanel.add(button);
+		}
+
+		return attributesPanel;
 	}
 
 	private void setupMenuBar() {

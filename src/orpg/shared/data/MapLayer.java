@@ -18,11 +18,5 @@ public enum MapLayer {
 		return this.name;
 	}
 
-	/**
-	 * @return the layer on top of which the player should be rendered.
-	 */
-	public static MapLayer getLayerBeforePlayer() {
-		return MASK_2;
-	}
 
 }

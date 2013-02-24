@@ -14,11 +14,14 @@ import orpg.editor.data.change.EditorChangeManager;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
 import orpg.shared.data.Segment;
+import orpg.shared.data.TileAttribute;
 
 public class MapEditorController extends EditorController<Map> implements
 		Observer {
 
 	private MapLayer currentLayer;
+	private TileAttribute currentAttribute;
+
 	private TileRange tileRange;
 	private EditorChangeManager changeManager;
 	private MapController mapController;
@@ -38,6 +41,7 @@ public class MapEditorController extends EditorController<Map> implements
 	public MapEditorController(BaseEditor baseEditor,
 			EditorWindow<Map> editorWindow, MapController mapController) {
 		super(baseEditor, editorWindow);
+		this.currentAttribute = TileAttribute.BLOCKED;
 		this.currentLayer = MapLayer.GROUND;
 		this.tileRange = new TileRange();
 		this.changeManager = new EditorChangeManager();
@@ -47,8 +51,7 @@ public class MapEditorController extends EditorController<Map> implements
 		this.gridEnabled = false;
 		this.hoverPreviewEnabled = true;
 		this.segmentChanged = new boolean[mapController.getMap()
-				.getSegmentsWide()][mapController.getMap()
-				.getSegmentsHigh()];
+				.getSegmentsWide()][mapController.getMap().getSegmentsHigh()];
 
 		setupActions();
 	}
@@ -62,6 +65,18 @@ public class MapEditorController extends EditorController<Map> implements
 			this.setChanged();
 		}
 		this.currentLayer = currentLayer;
+		this.notifyObservers();
+	}
+
+	public TileAttribute getCurrentAttribute() {
+		return currentAttribute;
+	}
+
+	public void setCurrentAttribute(TileAttribute currentAttribute) {
+		if (this.currentAttribute != currentAttribute) {
+			this.setChanged();
+		}
+		this.currentAttribute = currentAttribute;
 		this.notifyObservers();
 	}
 
@@ -214,8 +229,7 @@ public class MapEditorController extends EditorController<Map> implements
 					"Segment position out of bounds.");
 		}
 
-		setSegmentChanged(mapController.getPositionSegment(x, y),
-				hasChanged);
+		setSegmentChanged(mapController.getPositionSegment(x, y), hasChanged);
 	}
 
 	public void setSegmentChanged(Segment segment, boolean hasChanged) {
@@ -235,7 +249,6 @@ public class MapEditorController extends EditorController<Map> implements
 	}
 
 	public void save() {
-		this.getBaseEditor().saveMap(mapController.getMap(),
-				segmentChanged);
+		this.getBaseEditor().saveMap(mapController.getMap(), segmentChanged);
 	}
 }

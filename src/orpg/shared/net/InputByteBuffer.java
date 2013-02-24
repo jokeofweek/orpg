@@ -41,8 +41,7 @@ public class InputByteBuffer {
 		try {
 			in = new FileInputStream(file);
 			while (offset < this.bytes.length) {
-				read = in.read(this.bytes, offset, this.bytes.length
-						- offset);
+				read = in.read(this.bytes, offset, this.bytes.length - offset);
 				if (read == -1) {
 					throw new IOException(
 							"Could could not read any bytes. End of stream.");
@@ -154,17 +153,19 @@ public class InputByteBuffer {
 
 		// Ensure enough capacity for tiles
 		hasEnoughCapacity(width * height * MapLayer.values().length * 2);
-		short[][][] tiles = new short[MapLayer.values().length][height][width];
+		short[][][] tiles = new short[MapLayer.values().length][width][height];
+		byte[][] attributes = new byte[width][height];
 		int x, y, z;
-		for (z = 0; z < MapLayer.values().length; z++) {
-			for (x = 0; x < width; x++) {
-				for (y = 0; y < height; y++) {
+		for (x = 0; x < width; x++) {
+			for (y = 0; y < height; y++) {
+				attributes[x][y] = getByte();
+				for (z = 0; z < MapLayer.values().length; z++) {
 					tiles[z][x][y] = getShort();
 				}
 			}
 		}
 
-		return new Segment(segmentX, segmentY, width, height, tiles);
+		return new Segment(segmentX, segmentY, width, height, tiles, attributes);
 	}
 
 	public Map getMapDescriptor() {
@@ -231,8 +232,8 @@ public class InputByteBuffer {
 		// array. This permits us to have only partially compressed data in a
 		// buffer.
 		System.arraycopy(this.bytes, 0, newBytes, 0, this.pos);
-		System.arraycopy(this.bytes, this.pos + compressedLength,
-				newBytes, this.pos + decompressedLength, this.bytes.length
+		System.arraycopy(this.bytes, this.pos + compressedLength, newBytes,
+				this.pos + decompressedLength, this.bytes.length
 						- (this.pos + compressedLength));
 
 		// Now inject the decompressed bytes
