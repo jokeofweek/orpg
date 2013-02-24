@@ -27,28 +27,29 @@ public class GameState extends ClientState {
 	private ViewBox viewbox;
 	private Texture backgroundTexture;
 	private Texture[] tilesets;
+	private Texture loadingTileTexture;
 
-	public GameState(BaseClient baseClient) {
+	public GameState(BaseClient baseClient, Texture[] tilesets,
+			Texture loadingTileTexture) {
 		this.baseClient = baseClient;
 
 		// Setup the stage
 		this.stage = new Stage();
 
-		this.tilesets = new Texture[Constants.TILESETS];
-		for (int i = 0; i < Constants.TILESETS; i++) {
-			this.tilesets[i] = new Texture(Paths.asset("tiles_" + i + ".png"));
-		}
+		this.tilesets = tilesets;
+		this.loadingTileTexture = loadingTileTexture;
 
 		this.viewbox = new ViewBox(800, 478, baseClient.getMap().getWidth()
 				* Constants.TILE_WIDTH, baseClient.getMap().getHeight()
 				* Constants.TILE_HEIGHT);
 
 		Actor bottomLayersActor = new MapLayerActor(baseClient, viewbox,
-				tilesets, new int[] { MapLayer.GROUND.ordinal(),
-						MapLayer.MASK.ordinal(), MapLayer.MASK_2.ordinal() },
-				0, 800, 0, 478);
+				tilesets, loadingTileTexture, new int[] {
+						MapLayer.GROUND.ordinal(), MapLayer.MASK.ordinal(),
+						MapLayer.MASK_2.ordinal() }, 0, 800, 0, 478);
 		Actor topLayersActor = new MapLayerActor(baseClient, viewbox, tilesets,
-				new int[] { MapLayer.FRINGE.ordinal() }, 0, 800, 0, 478);
+				loadingTileTexture, new int[] { MapLayer.FRINGE.ordinal() }, 0,
+				800, 0, 478);
 		this.stage.addActor(bottomLayersActor);
 		this.stage.addActor(topLayersActor);
 
@@ -127,20 +128,21 @@ public class GameState extends ClientState {
 		for (int i = 0; i < Constants.TILESETS; i++) {
 			tilesets[i].dispose();
 		}
+		loadingTileTexture.dispose();
 	}
 
 	private void handleInput() {
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-			viewbox.scroll(-2, 0);
+			viewbox.scroll(-4, 0);
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-			viewbox.scroll(2, 0);
+			viewbox.scroll(4, 0);
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-			viewbox.scroll(0, 2);
+			viewbox.scroll(0, 4);
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-			viewbox.scroll(0, -2);
+			viewbox.scroll(0, -4);
 		}
 
 	}

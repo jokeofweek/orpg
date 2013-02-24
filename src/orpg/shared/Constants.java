@@ -30,7 +30,7 @@ public final class Constants {
 	public static final int TILESET_WIDTH = 8;
 	public static final int TILESET_HEIGHT = 8;
 	public static final int TILES_PER_TILESET = TILESET_WIDTH * TILESET_HEIGHT;
-	public static final int TILESETS = 4;
+	public static final int TILESETS = 28;
 
 	private Constants() {
 	};

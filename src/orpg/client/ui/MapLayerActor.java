@@ -2,6 +2,7 @@ package orpg.client.ui;
 
 import orpg.client.BaseClient;
 import orpg.client.Paths;
+import orpg.client.state.LoadingState;
 import orpg.shared.Constants;
 import orpg.shared.data.Map;
 
@@ -27,10 +28,11 @@ public class MapLayerActor extends Actor {
 	private ViewBox viewbox;
 
 	private Texture[] tilesets;
+	private Texture loadingTileTexture;
 
 	public MapLayerActor(BaseClient baseClient, ViewBox viewbox,
-			Texture[] tilesets, int[] layers, int leftX, int rightX, int upY,
-			int downY) {
+			Texture[] tilesets, Texture loadingTileTexture, int[] layers,
+			int leftX, int rightX, int upY, int downY) {
 		this.baseClient = baseClient;
 		this.layers = layers;
 		this.viewbox = viewbox;
@@ -43,8 +45,8 @@ public class MapLayerActor extends Actor {
 		this.tilesWide = ((rightX - leftX) / Constants.TILE_WIDTH) + 2;
 		this.tilesHigh = ((downY - upY) / Constants.TILE_HEIGHT) + 2;
 
-		// Load the tileset textures
 		this.tilesets = tilesets;
+		this.loadingTileTexture = loadingTileTexture;
 	}
 
 	@Override
@@ -70,19 +72,27 @@ public class MapLayerActor extends Actor {
 				for (x = 0; x < tilesWide; x++) {
 					tile = map.getTile(x + tileOffsetX, y + tileOffsetY, layer);
 					if (tile != 0 || layer == 0) {
-						batch.draw(
-								this.tilesets[tile
-										/ Constants.TILES_PER_TILESET],
-								dX,
-								dY,
-								Constants.TILE_WIDTH,
-								Constants.TILE_HEIGHT,
-								(tile % Constants.TILESET_WIDTH)
-										* Constants.TILE_WIDTH,
-								((tile / Constants.TILESET_HEIGHT) % Constants.TILESET_HEIGHT)
-										* Constants.TILE_HEIGHT,
-								Constants.TILE_WIDTH, Constants.TILE_HEIGHT,
-								false, true);
+						if (tile == Map.LOADING_TILE) {
+							batch.draw(loadingTileTexture, dX, dY,
+									Constants.TILE_WIDTH,
+									Constants.TILE_HEIGHT, 0, 0,
+									Constants.TILE_WIDTH,
+									Constants.TILE_HEIGHT, false, true);
+						} else {
+							batch.draw(
+									this.tilesets[tile
+											/ Constants.TILES_PER_TILESET],
+									dX,
+									dY,
+									Constants.TILE_WIDTH,
+									Constants.TILE_HEIGHT,
+									(tile % Constants.TILESET_WIDTH)
+											* Constants.TILE_WIDTH,
+									((tile / Constants.TILESET_HEIGHT) % Constants.TILESET_HEIGHT)
+											* Constants.TILE_HEIGHT,
+									Constants.TILE_WIDTH,
+									Constants.TILE_HEIGHT, false, true);
+						}
 					}
 					dX += Constants.TILE_WIDTH;
 				}
