@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 
 import orpg.server.data.ServerReceivedPacket;
+import orpg.server.net.handlers.ClientLoadMapHandler;
 import orpg.server.net.handlers.CreateAccountHandler;
 import orpg.server.net.handlers.EditorEditMapHandler;
 import orpg.server.net.handlers.EditorReadyHandler;
@@ -52,6 +53,8 @@ public class ServerGameThread implements Runnable {
 
 	private void setupClientHandlers() {
 		this.clientHandlers = new HashMap<ClientPacketType, ServerPacketHandler>();
+		clientHandlers.put(ClientPacketType.CLIENT_LOAD_MAP,
+				new ClientLoadMapHandler());
 	}
 
 	private void setupEditorHandlers() {

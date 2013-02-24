@@ -2,6 +2,7 @@ package orpg.client.state;
 
 import javax.swing.JOptionPane;
 
+import orpg.client.BaseClient;
 import orpg.client.Paths;
 import orpg.client.net.packets.LoginPacket;
 import orpg.client.ui.BackgroundTextureActor;
@@ -24,20 +25,17 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 public class MainMenuState extends ClientState {
 
 	private Stage stage;
-	private Game game;
 	private Texture backgroundTexture;
-	private AbstractClient baseClient;
+	private BaseClient baseClient;
 
-	public MainMenuState(Game game, final AbstractClient baseClient) {
+	public MainMenuState(final BaseClient baseClient) {
 		this.stage = new Stage();
-		this.game = game;
-		this.backgroundTexture = new Texture(
-				Paths.asset("menu_background.png"));
+		this.backgroundTexture = new Texture(Paths.asset("menu_background.png"));
 		this.baseClient = baseClient;
 
 		// Set the background
-		this.stage.addActor(new BackgroundTextureActor(backgroundTexture,
-				800, 600));
+		this.stage.addActor(new BackgroundTextureActor(backgroundTexture, 800,
+				600));
 
 		// Build the root table
 		Skin skin = new Skin(Paths.asset("uiskin.json"));
@@ -120,7 +118,6 @@ public class MainMenuState extends ClientState {
 	@Override
 	public void enter() {
 
-		
 	}
 
 	@Override

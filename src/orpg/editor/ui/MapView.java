@@ -22,6 +22,7 @@ import orpg.editor.controller.MapEditorController;
 import orpg.editor.data.change.MapEditorTileEraseChange;
 import orpg.editor.data.change.MapEditorTileUpdateChange;
 import orpg.shared.Constants;
+import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
 
 public class MapView extends JComponent implements Observer, MouseListener,
@@ -148,7 +149,7 @@ public class MapView extends JComponent implements Observer, MouseListener,
 									Constants.TILE_WIDTH,
 									Constants.TILE_HEIGHT, null);
 						}
-					} else if (tile == -1) {
+					} else if (tile == Map.LOADING_TILE) {
 						if (z == 0) {
 							graphics.drawImage(this.loadingTile, dX, dY, dX
 									+ tileWidth, dY + tileHeight, 0, 0,
@@ -291,7 +292,7 @@ public class MapView extends JComponent implements Observer, MouseListener,
 							mapController.getMapWidth(), pX + diffX); cX++) {
 						if (mapController.getTile(cX, cY, layer) != currentTile
 								+ (cX - pX)) {
-							if (mapController.getTile(cX, cY, layer) != MapController.LOADING_TILE) {
+							if (mapController.getTile(cX, cY, layer) != Map.LOADING_TILE) {
 								changed = true;
 								break;
 							}
@@ -320,7 +321,7 @@ public class MapView extends JComponent implements Observer, MouseListener,
 				if (mapController.getTile(x / tileWidth, y / tileHeight,
 						editorController.getCurrentLayer().ordinal()) != 0
 						&& mapController.getTile(x / tileWidth, y / tileHeight,
-								editorController.getCurrentLayer().ordinal()) != MapController.LOADING_TILE) {
+								editorController.getCurrentLayer().ordinal()) != Map.LOADING_TILE) {
 
 					editorController.getChangeManager().addChange(
 							new MapEditorTileEraseChange(editorController,

@@ -10,8 +10,6 @@ import orpg.shared.data.Segment;
 
 public class MapController extends Observable implements Observer {
 
-	public static final short LOADING_TILE = -1;
-
 	private Map map;
 	private EditorSegmentRequestManager requestManager;
 
@@ -122,15 +120,6 @@ public class MapController extends Observable implements Observer {
 		return this.map.getYRelativeToSegment(y);
 	}
 
-	public short getTile(int x, int y, int z) {
-		Segment segment = this.getPositionSegment(x, y);
-		if (segment == null) {
-			return LOADING_TILE;
-		} else {
-			return segment.getTiles()[z][getXRelativeToSegment(x)][getYRelativeToSegment(y)];
-		}
-	}
-
 	/**
 	 * This updates a given tile value at a coordinate point and layer, and will
 	 * notify all observers.
@@ -175,6 +164,24 @@ public class MapController extends Observable implements Observer {
 		this.notifyObservers();
 	}
 
+	/**
+	 * This fetches the tile at a given position and layer.
+	 * 
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @return the tile at a given position and layer, else
+	 *         {@link Map#LOADING_TILE} if the tile is currently loading.
+	 */
+	public short getTile(int x, int y, int z) {
+		return map.getTile(x, y, z);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o == requestManager) {

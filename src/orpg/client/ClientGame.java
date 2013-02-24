@@ -9,10 +9,11 @@ import orpg.shared.net.AbstractClient;
 import orpg.shared.state.StateManager;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.assets.AssetManager;
 
 public class ClientGame extends Game {
 
-	private AbstractClient baseClient;
+	private BaseClient baseClient;
 
 	@Override
 	public void create() {
@@ -27,10 +28,12 @@ public class ClientGame extends Game {
 
 		// Set up the queue of actions to perfor
 		StateManager stateManager = new ClientStateManager(this);
-		this.baseClient = new AbstractClient(s, new ClientProcessThread(),
+		this.baseClient = new BaseClient(this, s, new ClientProcessThread(),
 				stateManager);
-		stateManager.pushState(new MainMenuState(this, baseClient));
+		stateManager.pushState(new MainMenuState(baseClient));
 
 	}
+	
+	
 
 }

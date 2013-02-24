@@ -3,6 +3,9 @@ package orpg.shared.data;
 import orpg.shared.Constants;
 
 public class Map {
+
+	public static final short LOADING_TILE = -1;
+
 	private int id;
 	private short segmentsWide;
 	private short segmentsHigh;
@@ -160,6 +163,24 @@ public class Map {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * This fetches the tile at a given position and layer.
+	 * 
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @return the tile at a given position and layer, else
+	 *         {@link Map#LOADING_TILE} if the tile is not available.
+	 */
+	public short getTile(int x, int y, int z) {
+		Segment segment = this.getPositionSegment(x, y);
+		if (segment == null) {
+			return LOADING_TILE;
+		} else {
+			return segment.getTiles()[z][getXRelativeToSegment(x)][getYRelativeToSegment(y)];
+		}
 	}
 
 }

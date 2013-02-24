@@ -11,6 +11,7 @@ public class BackgroundTextureActor extends Actor {
 	
 	public BackgroundTextureActor(Texture texture, int width, int height) {
 		this.region = new TextureRegion(texture, width, height);
+		this.region.flip(false, true);
 	}
 	
 	@Override

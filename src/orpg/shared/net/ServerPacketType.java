@@ -1,6 +1,7 @@
 package orpg.shared.net;
 
 public enum ServerPacketType {
+	// Pre-login packets
 	PONG,
 	HELLO,
 	GOODBYE,
@@ -9,6 +10,9 @@ public enum ServerPacketType {
 	ERROR,
 	LOGIN_OK,
 	EDITOR_LOGIN_OK,
+	
+	// Client packet types
+	CLIENT_MAP_DATA,
 	
 	// Editor packet types
 	EDITOR_MAP_LIST,
