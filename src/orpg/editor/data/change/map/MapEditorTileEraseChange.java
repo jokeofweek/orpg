@@ -1,7 +1,8 @@
-package orpg.editor.data.change;
+package orpg.editor.data.change.map;
 
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
+import orpg.editor.data.change.EditorChange;
 import orpg.shared.data.MapLayer;
 
 public class MapEditorTileEraseChange implements EditorChange {

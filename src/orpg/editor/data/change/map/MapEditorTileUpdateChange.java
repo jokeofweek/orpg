@@ -1,4 +1,4 @@
-package orpg.editor.data.change;
+package orpg.editor.data.change.map;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,6 +7,7 @@ import java.util.Set;
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
 import orpg.editor.data.TileRange;
+import orpg.editor.data.change.EditorChange;
 import orpg.shared.Constants;
 import orpg.shared.data.MapLayer;
 import orpg.shared.data.Segment;

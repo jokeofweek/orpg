@@ -2,8 +2,8 @@ package orpg.editor.map.tool;
 
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
-import orpg.editor.data.change.MapEditorTileEraseChange;
-import orpg.editor.data.change.MapEditorTileUpdateChange;
+import orpg.editor.data.change.map.MapEditorTileEraseChange;
+import orpg.editor.data.change.map.MapEditorTileUpdateChange;
 import orpg.shared.Constants;
 import orpg.shared.data.Map;
 

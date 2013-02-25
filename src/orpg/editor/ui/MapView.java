@@ -19,8 +19,6 @@ import javax.swing.SwingUtilities;
 
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
-import orpg.editor.data.change.MapEditorTileEraseChange;
-import orpg.editor.data.change.MapEditorTileUpdateChange;
 import orpg.shared.Constants;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
