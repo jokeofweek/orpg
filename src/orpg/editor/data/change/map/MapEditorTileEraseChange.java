@@ -16,10 +16,10 @@ public class MapEditorTileEraseChange implements EditorChange {
 	private boolean segmentWasChanged;
 
 	public MapEditorTileEraseChange(MapEditorController editorController,
-			MapController mapController, int x, int y) {
+			MapController mapController, MapLayer layer, int x, int y) {
 		this.editorController = editorController;
 		this.mapController = mapController;
-		this.layer = editorController.getCurrentLayer();
+		this.layer = layer;
 		this.x = x;
 		this.y = y;
 

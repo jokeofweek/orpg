@@ -48,7 +48,7 @@ public class MapEditorController extends EditorController<Map> implements
 		this.changeManager = new EditorChangeManager();
 		this.changeManager.addObserver(this);
 		this.mapController = mapController;
-		
+
 		this.currentAttribute = TileAttribute.BLOCKED;
 		this.currentLayer = MapLayer.GROUND;
 		this.currentTool = PencilTool.getInstance();
@@ -73,12 +73,16 @@ public class MapEditorController extends EditorController<Map> implements
 		this.notifyObservers();
 	}
 
-	public TileAttribute getCurrentAttribute() {
-		return currentAttribute;
-	}
-
 	public Tool getCurrentTool() {
 		return currentTool;
+	}
+
+	public void setCurrentTool(Tool currentTool) {
+		this.currentTool = currentTool;
+	}
+
+	public TileAttribute getCurrentAttribute() {
+		return currentAttribute;
 	}
 
 	public void setCurrentAttribute(TileAttribute currentAttribute) {

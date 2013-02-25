@@ -20,11 +20,12 @@ public class MapEditorFillSegmentChange implements EditorChange {
 	private TileRange tileRange;
 
 	public MapEditorFillSegmentChange(MapEditorController editorController,
-			MapController mapController, int x, int y) {
+			MapController mapController, TileRange tileRange, MapLayer layer,
+			int x, int y) {
 		this.editorController = editorController;
 		this.mapController = mapController;
-		this.layer = editorController.getCurrentLayer();
-		this.tileRange = editorController.getTileRange();
+		this.layer = layer;
+		this.tileRange = new TileRange(tileRange);
 
 		// Setup bounds.
 		Segment segment = mapController.getPositionSegment(x, y);

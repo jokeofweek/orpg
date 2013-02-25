@@ -25,9 +25,10 @@ public class MapEditorTileUpdateChange implements EditorChange {
 	private Set<Segment> newlyChangedSegments;
 
 	public MapEditorTileUpdateChange(MapEditorController editorController,
-			MapController mapController, int x, int y) {
-		this.range = new TileRange(editorController.getTileRange());
-		this.layer = editorController.getCurrentLayer();
+			MapController mapController, TileRange tileRange, MapLayer layer,
+			int x, int y) {
+		this.range = new TileRange(tileRange);
+		this.layer = layer;
 		this.x = x;
 		this.y = y;
 		this.editorController = editorController;

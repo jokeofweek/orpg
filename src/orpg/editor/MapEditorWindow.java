@@ -35,6 +35,8 @@ import javax.swing.KeyStroke;
 
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
+import orpg.editor.map.tool.FillTool;
+import orpg.editor.map.tool.PencilTool;
 import orpg.editor.ui.MapView;
 import orpg.editor.ui.TilesView;
 import orpg.shared.Constants;
@@ -141,23 +143,12 @@ public class MapEditorWindow extends JFrame implements Observer,
 		// Set up the tile tab panel
 		JPanel tilesTabPanel = new JPanel(new BorderLayout());
 
-		// Build the layer header
-		JPanel layerOptionsPane = new JPanel();
-		layerOptionsPane.setLayout(new BoxLayout(layerOptionsPane,
-				BoxLayout.PAGE_AXIS));
+		JPanel topPanel = new JPanel();
+		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+		topPanel.add(getLayersPanel());
+		topPanel.add(getToolsPanel());
 
-		JLabel layersHeaderLabel = new JLabel("Layer:");
-		layersHeaderLabel.setAlignmentX(LEFT_ALIGNMENT);
-		layersHeaderLabel.setFont(layersHeaderLabel.getFont().deriveFont(
-				Font.BOLD));
-		layerOptionsPane.add(layersHeaderLabel);
-
-		// Build layer options
-		JComponent layersPane = getLayersPane();
-		layersPane.setAlignmentX(LEFT_ALIGNMENT);
-		layerOptionsPane.add(layersPane);
-
-		tilesTabPanel.add(layerOptionsPane, BorderLayout.NORTH);
+		tilesTabPanel.add(topPanel, BorderLayout.NORTH);
 
 		// Build the tiles view
 		TilesView tilesView = null;
@@ -176,7 +167,7 @@ public class MapEditorWindow extends JFrame implements Observer,
 		// Set up the tile tab panel
 		JPanel parentPanel = new JPanel(new BorderLayout());
 
-		// Build the layer header
+		// Build the attributes header
 		JPanel attributeSelectPanel = new JPanel();
 		attributeSelectPanel.setLayout(new BoxLayout(attributeSelectPanel,
 				BoxLayout.PAGE_AXIS));
@@ -207,10 +198,20 @@ public class MapEditorWindow extends JFrame implements Observer,
 
 	}
 
-	public JComponent getLayersPane() {
+	public JComponent getLayersPanel() {
 		JPanel parentPanel = new JPanel();
+		parentPanel.setLayout(new BoxLayout(parentPanel, BoxLayout.PAGE_AXIS));
 
-		ItemListener layerItemListener = new ItemListener() {
+		JLabel headerLabel = new JLabel("Layer:");
+		headerLabel.setAlignmentX(LEFT_ALIGNMENT);
+		headerLabel.setFont(headerLabel.getFont().deriveFont(Font.BOLD));
+		parentPanel.add(headerLabel);
+
+		// Build layer options
+		JPanel optionsPanel = new JPanel();
+		optionsPanel.setAlignmentX(LEFT_ALIGNMENT);
+
+		ItemListener itemListener = new ItemListener() {
 
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -228,7 +229,7 @@ public class MapEditorWindow extends JFrame implements Observer,
 		for (MapLayer layer : MapLayer.values()) {
 			layerButton = new JRadioButton(layer.getName());
 			layerButton.setActionCommand(layer.ordinal() + "");
-			layerButton.addItemListener(layerItemListener);
+			layerButton.addItemListener(itemListener);
 			layerGroup.add(layerButton);
 
 			// Needed to select the first layer
@@ -236,8 +237,62 @@ public class MapEditorWindow extends JFrame implements Observer,
 				layerGroup.setSelected(layerButton.getModel(), true);
 			}
 
-			parentPanel.add(layerButton);
+			optionsPanel.add(layerButton);
 		}
+
+		parentPanel.add(optionsPanel);
+
+		return parentPanel;
+	}
+
+	public JComponent getToolsPanel() {
+		JPanel parentPanel = new JPanel();
+		parentPanel.setLayout(new BoxLayout(parentPanel, BoxLayout.PAGE_AXIS));
+
+		JLabel headerLabel = new JLabel("Tools:");
+		headerLabel.setAlignmentX(LEFT_ALIGNMENT);
+		headerLabel.setFont(headerLabel.getFont().deriveFont(Font.BOLD));
+		parentPanel.add(headerLabel);
+
+		// Build options
+		JPanel optionsPanel = new JPanel();
+		optionsPanel.setAlignmentX(LEFT_ALIGNMENT);
+
+		ItemListener itemListener = new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				JRadioButton button = (JRadioButton) e.getSource();
+				if (button.isSelected()) {
+					if (button.getActionCommand().equals("pencil")) {
+						editorController.setCurrentTool(PencilTool
+								.getInstance());
+					} else if (button.getActionCommand().equals("fill")) {
+						editorController.setCurrentTool(FillTool.getInstance());
+					}
+				}
+			}
+		};
+
+		ButtonGroup toolGroup = new ButtonGroup();
+		JRadioButton toolButton;
+
+		// Pencil tool
+		toolButton = new JRadioButton("Pencil");
+		toolButton.setActionCommand("pencil");
+		toolButton.addItemListener(itemListener);
+		toolGroup.add(toolButton);
+		toolButton.setSelected(true);
+		optionsPanel.add(toolButton);
+
+		// Fill tool
+		toolButton = new JRadioButton("Fill");
+		toolButton.setActionCommand("fill");
+		toolButton.addItemListener(itemListener);
+		toolGroup.add(toolButton);
+		optionsPanel.add(toolButton);
+
+		parentPanel.add(optionsPanel);
 
 		return parentPanel;
 	}

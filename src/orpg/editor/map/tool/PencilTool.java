@@ -53,7 +53,8 @@ public class PencilTool implements Tool {
 		if (changed) {
 			editorController.getChangeManager().addChange(
 					new MapEditorTileUpdateChange(editorController,
-							mapController, x, y));
+							mapController, editorController.getTileRange(),
+							editorController.getCurrentLayer(), x, y));
 		}
 
 	}
@@ -70,7 +71,8 @@ public class PencilTool implements Tool {
 
 			editorController.getChangeManager().addChange(
 					new MapEditorTileEraseChange(editorController,
-							mapController, x, y));
+							mapController, editorController.getCurrentLayer(),
+							x, y));
 		}
 	}
 
