@@ -30,8 +30,8 @@ public class EditorSegmentRequestManager extends Observable {
 			if (map.getSegment(x, y) == null) {
 				synchronized (handlingRequestLock) {
 					this.pendingRequests.add(requestKey);
-					//this.baseEditor.sendPacket(new EditorRequestSegmentPacket(
-					//		map.getId(), x, y));
+					this.baseEditor.sendPacket(new EditorRequestSegmentPacket(
+							map.getId(), x, y));
 				}
 			}
 		}

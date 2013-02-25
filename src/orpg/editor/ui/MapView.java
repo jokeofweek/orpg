@@ -269,65 +269,20 @@ public class MapView extends JComponent implements Observer, MouseListener,
 					return;
 				}
 
-				// Make sure there is a change:
-				int startX = editorController.getTileRange().getStartX();
-				int startY = editorController.getTileRange().getStartY();
-				int diffX = editorController.getTileRange().getEndX() - startX
-						+ 1;
-				int diffY = editorController.getTileRange().getEndY() - startY
-						+ 1;
-				int currentTile = startX + (startY * Constants.TILESET_WIDTH);
-
-				int layer = editorController.getCurrentLayer().ordinal();
-
-				boolean changed = false;
-				// Convert to positional values
-				int pX = x / tileWidth;
-				int pY = y / tileHeight;
-
-				// Check each x/y value
-				for (int cY = pY; cY < Math.min(mapController.getMapHeight(),
-						pY + diffY) && !changed; cY++) {
-					for (int cX = pX; cX < Math.min(
-							mapController.getMapWidth(), pX + diffX); cX++) {
-						if (mapController.getTile(cX, cY, layer) != currentTile
-								+ (cX - pX)) {
-							if (mapController.getTile(cX, cY, layer) != Map.LOADING_TILE) {
-								changed = true;
-								break;
-							}
-						}
-					}
-					currentTile += Constants.TILESET_WIDTH;
-				}
-
-				// If there was a change, add it
-				if (changed) {
-					editorController.getChangeManager().addChange(
-							new MapEditorTileUpdateChange(editorController,
-									mapController, x / tileWidth, y
-											/ tileHeight));
-				}
+				editorController.getCurrentTool().leftClick(editorController,
+						mapController, x / tileWidth, y / tileHeight);
 
 			} else if (rightDown) {
 				// Make sure we fit in (could be possible not to, because of
 				// scale)
 				if (x / tileWidth >= mapController.getMapWidth()
-						|| y / tileHeight >= mapController.getMapHeight()) {
+						|| y / tileHeight >= mapController.getMapHeight()
+						|| x < 0 || y < 0) {
 					return;
 				}
 
-				// If a right-click, then erase the tile if not already empty.
-				if (mapController.getTile(x / tileWidth, y / tileHeight,
-						editorController.getCurrentLayer().ordinal()) != 0
-						&& mapController.getTile(x / tileWidth, y / tileHeight,
-								editorController.getCurrentLayer().ordinal()) != Map.LOADING_TILE) {
-
-					editorController.getChangeManager().addChange(
-							new MapEditorTileEraseChange(editorController,
-									mapController, x / tileWidth, y
-											/ tileHeight));
-				}
+				editorController.getCurrentTool().rightClick(editorController,
+						mapController, x / tileWidth, y / tileHeight);
 			}
 		}
 

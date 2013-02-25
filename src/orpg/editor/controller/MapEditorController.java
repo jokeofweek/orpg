@@ -11,6 +11,8 @@ import orpg.editor.BaseEditor;
 import orpg.editor.EditorWindow;
 import orpg.editor.data.TileRange;
 import orpg.editor.data.change.EditorChangeManager;
+import orpg.editor.map.tool.PencilTool;
+import orpg.editor.map.tool.Tool;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
 import orpg.shared.data.Segment;
@@ -19,12 +21,13 @@ import orpg.shared.data.TileAttribute;
 public class MapEditorController extends EditorController<Map> implements
 		Observer {
 
-	private MapLayer currentLayer;
-	private TileAttribute currentAttribute;
-
 	private TileRange tileRange;
 	private EditorChangeManager changeManager;
 	private MapController mapController;
+
+	private MapLayer currentLayer;
+	private TileAttribute currentAttribute;
+	private Tool currentTool;
 
 	private Action undoAction;
 	private Action redoAction;
@@ -41,12 +44,14 @@ public class MapEditorController extends EditorController<Map> implements
 	public MapEditorController(BaseEditor baseEditor,
 			EditorWindow<Map> editorWindow, MapController mapController) {
 		super(baseEditor, editorWindow);
-		this.currentAttribute = TileAttribute.BLOCKED;
-		this.currentLayer = MapLayer.GROUND;
 		this.tileRange = new TileRange();
 		this.changeManager = new EditorChangeManager();
 		this.changeManager.addObserver(this);
 		this.mapController = mapController;
+		
+		this.currentAttribute = TileAttribute.BLOCKED;
+		this.currentLayer = MapLayer.GROUND;
+		this.currentTool = PencilTool.getInstance();
 
 		this.gridEnabled = false;
 		this.hoverPreviewEnabled = true;
@@ -70,6 +75,10 @@ public class MapEditorController extends EditorController<Map> implements
 
 	public TileAttribute getCurrentAttribute() {
 		return currentAttribute;
+	}
+
+	public Tool getCurrentTool() {
+		return currentTool;
 	}
 
 	public void setCurrentAttribute(TileAttribute currentAttribute) {
