@@ -7,9 +7,9 @@
 .metadata
 
 # data files
-data/server/maps/*
-data/server/logs/*
-data/server/accounts/*
+data/server/maps/*.map*
+data/server/logs/*.log*
+data/server/accounts/*.ini*
 *.log
 
 # built files
