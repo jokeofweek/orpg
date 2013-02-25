@@ -161,13 +161,24 @@ public class EditorChangeManagerTest {
 		}
 
 		manager.reset();
-		
+
 		try {
 			manager.undo();
 			fail();
 		} catch (IllegalStateException e) {
 			assertNotNull(e);
 		}
+	}
+
+	@Test
+	public void testAddingAnUndoableChangeMakesTheManagerNotBeAbleToUndo() {
+		manager.addChange(new TestChange(1));
+		manager.addChange(new TestChange(2));
+		assertTrue(manager.canUndo());
+
+		manager.addChange(new UndoableTestChange(3));
+		assertEquals(3, testingValue);
+		assertFalse(manager.canUndo());
 	}
 
 	public class TestChange implements EditorChange {
@@ -189,6 +200,22 @@ public class EditorChangeManagerTest {
 		public void apply() {
 			testingValue = this.newValue;
 		}
+
+		@Override
+		public boolean canUndo() {
+			return true;
+		}
 	};
+
+	public class UndoableTestChange extends TestChange {
+		public UndoableTestChange(int value) {
+			super(value);
+		}
+
+		@Override
+		public boolean canUndo() {
+			return false;
+		}
+	}
 
 }

@@ -55,15 +55,14 @@ public class MapEditorTileUpdateChange implements EditorChange {
 			for (int dY = 0; dY < diffY; dY++) {
 				oldTiles[dX][dY] = mapController.getPositionSegment(x + dX,
 						y + dY).getTiles()[layerOrd][mapController
-						.getXRelativeToSegment(x + dX)][mapController.getYRelativeToSegment(y
-						+ dY)];
+						.getXRelativeToSegment(x + dX)][mapController
+						.getYRelativeToSegment(y + dY)];
 			}
 		}
 
 		// Find segments which were previously unchanged
 		this.newlyChangedSegments = new HashSet<Segment>();
-		Segment startSegment = mapController.getMap()
-				.getPositionSegment(x, y);
+		Segment startSegment = mapController.getMap().getPositionSegment(x, y);
 		Segment endSegment = mapController.getMap().getPositionSegment(
 				Math.min(mapController.getMapWidth() - 1, x + diffX),
 				Math.min(mapController.getMapHeight() - 1, y + diffY));
@@ -133,5 +132,10 @@ public class MapEditorTileUpdateChange implements EditorChange {
 		}
 
 		mapController.triggerTileUpdate();
+	}
+
+	@Override
+	public boolean canUndo() {
+		return true;
 	}
 }

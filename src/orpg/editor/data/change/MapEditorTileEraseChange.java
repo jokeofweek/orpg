@@ -40,4 +40,9 @@ public class MapEditorTileEraseChange implements EditorChange {
 		editorController.setSegmentChanged(this.x, this.y, segmentWasChanged);
 	}
 
+	@Override
+	public boolean canUndo() {
+		return true;
+	}
+
 }

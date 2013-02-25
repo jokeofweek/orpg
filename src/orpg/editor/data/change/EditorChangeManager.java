@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
-
 public class EditorChangeManager extends Observable {
 
 	private List<EditorChange> editorChanges;
@@ -18,11 +17,18 @@ public class EditorChangeManager extends Observable {
 	}
 
 	public void addChange(EditorChange change) {
-		// We must remove everything after current change position
-		while (editorChanges.size() > nextChange) {
-			editorChanges.remove(editorChanges.size() - 1);
+		// If this change cannot be undone, then just remove the list of editor
+		// changes and add this one
+		if (!change.canUndo()) {
+			this.editorChanges = new ArrayList<EditorChange>();
+			this.nextChange = 0;
+		} else {
+			// We must remove everything after current change position
+			while (editorChanges.size() > nextChange) {
+				editorChanges.remove(editorChanges.size() - 1);
+			}
 		}
-		
+
 		// Add the change
 		change.apply();
 		editorChanges.add(change);
@@ -72,11 +78,11 @@ public class EditorChangeManager extends Observable {
 		if (!canUndo()) {
 			throw new IllegalStateException("No changes to undo.");
 		}
-		
+
 		// Undo the previous change
 		nextChange--;
 		editorChanges.get(nextChange).undo();
-		
+
 		// Notify
 		this.setChanged();
 		this.notifyObservers();
@@ -86,11 +92,13 @@ public class EditorChangeManager extends Observable {
 	 * @return whether there is currently a change which can be undone.
 	 */
 	public boolean canUndo() {
-		return this.nextChange != 0;
+		return this.nextChange != 0
+				&& this.editorChanges.get(nextChange - 1).canUndo();
 	}
-	
+
 	/**
-	 * This resets the change manager, erasing all changes currently in the system.
+	 * This resets the change manager, erasing all changes currently in the
+	 * system.
 	 */
 	public void reset() {
 		this.editorChanges = new ArrayList<EditorChange>();
