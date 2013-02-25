@@ -1,6 +1,7 @@
 package orpg.editor.controller;
 
 import java.awt.event.ActionEvent;
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -9,6 +10,7 @@ import javax.swing.Action;
 
 import orpg.editor.BaseEditor;
 import orpg.editor.EditorWindow;
+import orpg.editor.data.MapEditorTab;
 import orpg.editor.data.TileRange;
 import orpg.editor.data.change.EditorChangeManager;
 import orpg.editor.map.tool.PencilTool;
@@ -28,6 +30,8 @@ public class MapEditorController extends EditorController<Map> implements
 	private MapLayer currentLayer;
 	private TileAttribute currentAttribute;
 	private Tool currentTool;
+	private MapEditorTab currentTab;
+	private HashMap<MapEditorTab, Tool> tabTools;
 
 	private Action undoAction;
 	private Action redoAction;
@@ -53,10 +57,18 @@ public class MapEditorController extends EditorController<Map> implements
 		this.currentLayer = MapLayer.GROUND;
 		this.currentTool = PencilTool.getInstance();
 
+		// Setup the tab tools and current tab
+		this.tabTools = new HashMap<MapEditorTab, Tool>();
+		for (MapEditorTab tab : MapEditorTab.values()) {
+			tabTools.put(tab, PencilTool.getInstance());
+		}
+		this.setCurrentTab(MapEditorTab.TILES);
+
 		this.gridEnabled = false;
 		this.hoverPreviewEnabled = true;
 		this.segmentChanged = new boolean[mapController.getMap()
-				.getSegmentsWide()][mapController.getMap().getSegmentsHigh()];
+				.getSegmentsWide()][mapController.getMap()
+				.getSegmentsHigh()];
 
 		setupActions();
 	}
@@ -83,6 +95,27 @@ public class MapEditorController extends EditorController<Map> implements
 
 	public TileAttribute getCurrentAttribute() {
 		return currentAttribute;
+	}
+
+	public void setCurrentTab(MapEditorTab editorTab) {
+		// To prevent infinite loops
+		if (this.currentTab == editorTab) {
+			return;
+		}
+
+		// Update the tool of the old tab
+		if (this.currentTab != null) {
+			this.tabTools.put(this.currentTab, currentTool);
+		}
+
+		this.currentTab = editorTab;
+		this.currentTool = this.tabTools.get(editorTab);
+		this.setChanged();
+		this.notifyObservers();
+	}
+
+	public MapEditorTab getCurrentTab() {
+		return currentTab;
 	}
 
 	public void setCurrentAttribute(TileAttribute currentAttribute) {
@@ -242,7 +275,8 @@ public class MapEditorController extends EditorController<Map> implements
 					"Segment position out of bounds.");
 		}
 
-		setSegmentChanged(mapController.getPositionSegment(x, y), hasChanged);
+		setSegmentChanged(mapController.getPositionSegment(x, y),
+				hasChanged);
 	}
 
 	public void setSegmentChanged(Segment segment, boolean hasChanged) {
@@ -262,6 +296,7 @@ public class MapEditorController extends EditorController<Map> implements
 	}
 
 	public void save() {
-		this.getBaseEditor().saveMap(mapController.getMap(), segmentChanged);
+		this.getBaseEditor().saveMap(mapController.getMap(),
+				segmentChanged);
 	}
 }

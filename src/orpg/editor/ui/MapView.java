@@ -23,8 +23,8 @@ import orpg.shared.Constants;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
 
-public class MapView extends JComponent implements Observer, MouseListener,
-		MouseMotionListener {
+public class MapView extends JComponent implements Observer,
+		MouseListener, MouseMotionListener {
 
 	private MapController mapController;
 	private MapEditorController editorController;
@@ -51,6 +51,8 @@ public class MapView extends JComponent implements Observer, MouseListener,
 		this.scrollPane = scrollPane;
 		this.mapController.addObserver(this);
 		this.editorController.addObserver(this);
+
+		// Setup the images
 		this.images = images;
 		this.loadingTile = loadingTile;
 
@@ -63,9 +65,10 @@ public class MapView extends JComponent implements Observer, MouseListener,
 		this.addMouseMotionListener(this);
 
 		// Setup the scroll bars to make requests for segments
-		AdjustmentListener listener = new MapViewAdjustmentListener(controller,
-				editorController, scrollPane);
-		scrollPane.getHorizontalScrollBar().addAdjustmentListener(listener);
+		AdjustmentListener listener = new MapViewAdjustmentListener(
+				controller, editorController, scrollPane);
+		scrollPane.getHorizontalScrollBar()
+				.addAdjustmentListener(listener);
 		scrollPane.getVerticalScrollBar().addAdjustmentListener(listener);
 	}
 
@@ -95,8 +98,8 @@ public class MapView extends JComponent implements Observer, MouseListener,
 
 		g.drawImage(this.images[(tile / Constants.TILESET_WIDTH)
 				/ Constants.TILESET_HEIGHT], x, y, x + tileWidth, y
-				+ tileHeight, srcX, srcY, srcX + Constants.TILE_WIDTH, srcY
-				+ Constants.TILE_HEIGHT, null);
+				+ tileHeight, srcX, srcY, srcX + Constants.TILE_WIDTH,
+				srcY + Constants.TILE_HEIGHT, null);
 
 	}
 
@@ -125,12 +128,13 @@ public class MapView extends JComponent implements Observer, MouseListener,
 		// Determine renderable area
 		int startX = Math.max(0, (scrollPane.getHorizontalScrollBar()
 				.getValue() / tileWidth) - 4);
-		int startY = Math
-				.max(0,
-						(scrollPane.getVerticalScrollBar().getValue() / tileHeight) - 4);
-		int endX = Math.min(startX + 6 + (scrollPane.getWidth() / tileWidth),
+		int startY = Math.max(0, (scrollPane.getVerticalScrollBar()
+				.getValue() / tileHeight) - 4);
+		int endX = Math.min(startX + 6
+				+ (scrollPane.getWidth() / tileWidth),
 				mapController.getMapWidth());
-		int endY = Math.min(startY + 6 + (scrollPane.getHeight() / tileHeight),
+		int endY = Math.min(startY + 6
+				+ (scrollPane.getHeight() / tileHeight),
 				mapController.getMapHeight());
 		short tile;
 
@@ -149,8 +153,8 @@ public class MapView extends JComponent implements Observer, MouseListener,
 						}
 					} else if (tile == Map.LOADING_TILE) {
 						if (z == 0) {
-							graphics.drawImage(this.loadingTile, dX, dY, dX
-									+ tileWidth, dY + tileHeight, 0, 0,
+							graphics.drawImage(this.loadingTile, dX, dY,
+									dX + tileWidth, dY + tileHeight, 0, 0,
 									Constants.TILE_WIDTH,
 									Constants.TILE_HEIGHT, null);
 						}
@@ -176,13 +180,14 @@ public class MapView extends JComponent implements Observer, MouseListener,
 				int yWide = editorController.getTileRange().getEndY()
 						- editorController.getTileRange().getStartY() + 1;
 
-				int overlayTile = (editorController.getTileRange().getStartY() * Constants.TILESET_WIDTH)
+				int overlayTile = (editorController.getTileRange()
+						.getStartY() * Constants.TILESET_WIDTH)
 						+ editorController.getTileRange().getStartX();
 				for (int y = 0; y < yWide; y++) {
 					for (int x = 0; x < xWide; x++) {
-						renderTile(graphics, (hoverOverTileX + x) * tileWidth,
-								(hoverOverTileY + y) * tileHeight, overlayTile
-										+ x);
+						renderTile(graphics, (hoverOverTileX + x)
+								* tileWidth, (hoverOverTileY + y)
+								* tileHeight, overlayTile + x);
 					}
 					overlayTile += Constants.TILESET_WIDTH;
 				}
@@ -200,12 +205,19 @@ public class MapView extends JComponent implements Observer, MouseListener,
 			// Render the entire tilerange
 			for (int y = startY; y < endY; y++) {
 				for (int x = startX; x < endX; x++) {
-					graphics.drawRect(x * tileWidth, y * tileHeight, tileWidth,
-							tileHeight);
+					graphics.drawRect(x * tileWidth, y * tileHeight,
+							tileWidth, tileHeight);
 				}
 			}
 			graphics.setComposite(regular);
 		}
+
+		graphics.setComposite(AlphaComposite.getInstance(
+				AlphaComposite.SRC_OVER,
+				Constants.MAP_EDITOR_GRID_TRANSPARENCY));
+		graphics.setColor(Color.red);
+		graphics.fillRect(10, 10, 30, 30);
+		graphics.setComposite(regular);
 
 	}
 
@@ -267,8 +279,9 @@ public class MapView extends JComponent implements Observer, MouseListener,
 					return;
 				}
 
-				editorController.getCurrentTool().leftClick(editorController,
-						mapController, x / tileWidth, y / tileHeight);
+				editorController.getCurrentTool().leftClick(
+						editorController, mapController, x / tileWidth,
+						y / tileHeight);
 
 			} else if (rightDown) {
 				// Make sure we fit in (could be possible not to, because of
@@ -279,8 +292,9 @@ public class MapView extends JComponent implements Observer, MouseListener,
 					return;
 				}
 
-				editorController.getCurrentTool().rightClick(editorController,
-						mapController, x / tileWidth, y / tileHeight);
+				editorController.getCurrentTool().rightClick(
+						editorController, mapController, x / tileWidth,
+						y / tileHeight);
 			}
 		}
 

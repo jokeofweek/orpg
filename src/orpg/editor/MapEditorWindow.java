@@ -38,6 +38,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
+import orpg.editor.data.MapEditorTab;
 import orpg.editor.map.tool.FillTool;
 import orpg.editor.map.tool.PencilTool;
 import orpg.editor.map.tool.Tool;
@@ -55,9 +56,9 @@ public class MapEditorWindow extends JFrame implements Observer,
 	private MapEditorController editorController;
 	private MapController mapController;
 
+	private JTabbedPane tabPane;
 	private JCheckBoxMenuItem gridToggleMenuItem;
 	private JCheckBoxMenuItem hoverPreviewToggleMenuItem;
-
 	private JTextField mapNameTextField;
 
 	private BaseEditor baseEditor;
@@ -136,7 +137,7 @@ public class MapEditorWindow extends JFrame implements Observer,
 
 	private JComponent getTabPane(Image[] tilesets) {
 
-		JTabbedPane tabPane = new JTabbedPane();
+		this.tabPane = new JTabbedPane();
 
 		tabPane.addTab("Tiles", getTilesTab(tilesets));
 		tabPane.addTab("Attributes", getAttributesTab());
@@ -144,12 +145,13 @@ public class MapEditorWindow extends JFrame implements Observer,
 		tabPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 0));
 
 		// Setup the tab change listener by associating an index with a tool
-		HashMap<Integer, Tool> tabTools = new HashMap<Integer, Tool>();
-		tabTools.put(0, editorController.getCurrentTool());
-		tabTools.put(1, PencilTool.getInstance());
-		tabTools.put(2, PencilTool.getInstance());
-		tabPane.addChangeListener(new TabChangeListener(editorController,
-				tabTools, tabPane.getSelectedIndex()));
+		tabPane.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				editorController.setCurrentTab(MapEditorTab.values()[tabPane
+						.getSelectedIndex()]);
+			}
+		});
 
 		return tabPane;
 	}
@@ -432,6 +434,10 @@ public class MapEditorWindow extends JFrame implements Observer,
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o == editorController) {
+			// Update the tab in case an external source changed our tab
+			this.tabPane.setSelectedIndex(editorController
+					.getCurrentTab().ordinal());
+			
 			this.repaint();
 
 			// Update toggle menu items.
@@ -456,30 +462,4 @@ public class MapEditorWindow extends JFrame implements Observer,
 		return null;
 	}
 
-	private static class TabChangeListener implements ChangeListener {
-
-		private HashMap<Integer, Tool> tabTools;
-		private int currentTab;
-		private MapEditorController editorController;
-
-		public TabChangeListener(MapEditorController editorController,
-				HashMap<Integer, Tool> tabTools, int currentTab) {
-			this.editorController = editorController;
-			this.tabTools = tabTools;
-			this.currentTab = currentTab;
-		}
-
-		@Override
-		public void stateChanged(ChangeEvent e) {
-			// Update the tool of the old tab
-			this.tabTools.put(currentTab,
-					editorController.getCurrentTool());
-
-			// Change the current tab and notify the controller
-			this.currentTab = ((JTabbedPane) e.getSource())
-					.getSelectedIndex();
-			editorController.setCurrentTool(tabTools.get(currentTab));
-		}
-
-	}
 }
