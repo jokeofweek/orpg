@@ -152,14 +152,14 @@ public class OutputByteBuffer {
 
 		// test for extra capacity right away to pre-allocate
 		short[][][] tiles = segment.getTiles();
-		byte[][] attributes = segment.getAttributes();
+		boolean[][] blocked = segment.getBlocked();
 		testForExtraCapacity(MapLayer.values().length * segment.getHeight()
 				* segment.getWidth() * 3);
 
 		int z, y, x;
 		for (x = 0; x < width; x++) {
 			for (y = 0; y < height; y++) {
-				putByte(attributes[x][y]);
+				putBoolean(blocked[x][y]);
 				for (z = 0; z < MapLayer.values().length; z++) {
 					putShort(tiles[z][x][y]);
 				}

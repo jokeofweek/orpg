@@ -7,11 +7,14 @@ import java.util.concurrent.PriorityBlockingQueue;
 
 import orpg.server.config.ServerConfigurationManager;
 import orpg.server.console.ServerConsole;
+import orpg.server.data.Account;
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.managers.MapManager;
 import orpg.server.data.store.DataStore;
+import orpg.server.data.store.DataStoreException;
 import orpg.server.data.store.FileDataStore;
 import orpg.server.net.packets.ServerPacket;
+import orpg.shared.data.AccountCharacter;
 
 public class BaseServer {
 
@@ -30,14 +33,13 @@ public class BaseServer {
 		this.console = console;
 
 		boolean encounteredSetupProblems = false;
-		
+
 		// Set up our queues
 		this.inputQueue = new LinkedBlockingQueue<ServerReceivedPacket>();
 		this.outputQueue = new PriorityBlockingQueue<ServerPacket>(100);
-		
+
 		// Set up the various threads
-		this.serverSessionManager = new ServerSessionManager(this,
-				outputQueue);
+		this.serverSessionManager = new ServerSessionManager(this, outputQueue);
 		this.serverGameThread = new ServerGameThread(this, inputQueue,
 				outputQueue);
 		try {
@@ -56,7 +58,7 @@ public class BaseServer {
 		if (!encounteredSetupProblems) {
 			encounteredSetupProblems = !loadData();
 		}
-
+		
 		// Close if any setup problems
 		if (encounteredSetupProblems) {
 			console.out().println(
@@ -87,7 +89,7 @@ public class BaseServer {
 	public void receivePacket(ServerReceivedPacket packet) {
 		inputQueue.add(packet);
 	}
-	
+
 	public ServerSessionManager getServerSessionManager() {
 		return serverSessionManager;
 	}

@@ -19,12 +19,24 @@ import javax.swing.SwingUtilities;
 
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
+import orpg.editor.data.MapEditorTab;
+import orpg.editor.map.tool.PencilTool;
 import orpg.shared.Constants;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
 
-public class MapView extends JComponent implements Observer,
-		MouseListener, MouseMotionListener {
+public class MapView extends JComponent implements Observer, MouseListener,
+		MouseMotionListener {
+
+	private static final AlphaComposite ATTRIBUTE_COMPOSITE = AlphaComposite
+			.getInstance(AlphaComposite.SRC_OVER,
+					Constants.MAP_EDITOR_ATTRIBUTE_TRANSPARENCY);
+	private static final AlphaComposite GRID_COMPOSITE = AlphaComposite
+			.getInstance(AlphaComposite.SRC_OVER,
+					Constants.MAP_EDITOR_GRID_TRANSPARENCY);
+	private static final AlphaComposite MOUSE_OVERLAY_COMPOSITE = AlphaComposite
+			.getInstance(AlphaComposite.SRC_OVER,
+					Constants.MAP_EDITOR_TILE_OVERLAY_TRANSPARENCY);
 
 	private MapController mapController;
 	private MapEditorController editorController;
@@ -65,10 +77,9 @@ public class MapView extends JComponent implements Observer,
 		this.addMouseMotionListener(this);
 
 		// Setup the scroll bars to make requests for segments
-		AdjustmentListener listener = new MapViewAdjustmentListener(
-				controller, editorController, scrollPane);
-		scrollPane.getHorizontalScrollBar()
-				.addAdjustmentListener(listener);
+		AdjustmentListener listener = new MapViewAdjustmentListener(controller,
+				editorController, scrollPane);
+		scrollPane.getHorizontalScrollBar().addAdjustmentListener(listener);
 		scrollPane.getVerticalScrollBar().addAdjustmentListener(listener);
 	}
 
@@ -98,8 +109,8 @@ public class MapView extends JComponent implements Observer,
 
 		g.drawImage(this.images[(tile / Constants.TILESET_WIDTH)
 				/ Constants.TILESET_HEIGHT], x, y, x + tileWidth, y
-				+ tileHeight, srcX, srcY, srcX + Constants.TILE_WIDTH,
-				srcY + Constants.TILE_HEIGHT, null);
+				+ tileHeight, srcX, srcY, srcX + Constants.TILE_WIDTH, srcY
+				+ Constants.TILE_HEIGHT, null);
 
 	}
 
@@ -122,19 +133,18 @@ public class MapView extends JComponent implements Observer,
 		// AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
 		// AlphaComposite blended =
 		// AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
-		AlphaComposite regular = AlphaComposite.getInstance(
+		AlphaComposite regularComposite = AlphaComposite.getInstance(
 				AlphaComposite.SRC_OVER, 1.0f);
 
 		// Determine renderable area
 		int startX = Math.max(0, (scrollPane.getHorizontalScrollBar()
 				.getValue() / tileWidth) - 4);
-		int startY = Math.max(0, (scrollPane.getVerticalScrollBar()
-				.getValue() / tileHeight) - 4);
-		int endX = Math.min(startX + 6
-				+ (scrollPane.getWidth() / tileWidth),
+		int startY = Math
+				.max(0,
+						(scrollPane.getVerticalScrollBar().getValue() / tileHeight) - 4);
+		int endX = Math.min(startX + 6 + (scrollPane.getWidth() / tileWidth),
 				mapController.getMapWidth());
-		int endY = Math.min(startY + 6
-				+ (scrollPane.getHeight() / tileHeight),
+		int endY = Math.min(startY + 6 + (scrollPane.getHeight() / tileHeight),
 				mapController.getMapHeight());
 		short tile;
 
@@ -153,8 +163,8 @@ public class MapView extends JComponent implements Observer,
 						}
 					} else if (tile == Map.LOADING_TILE) {
 						if (z == 0) {
-							graphics.drawImage(this.loadingTile, dX, dY,
-									dX + tileWidth, dY + tileHeight, 0, 0,
+							graphics.drawImage(this.loadingTile, dX, dY, dX
+									+ tileWidth, dY + tileHeight, 0, 0,
 									Constants.TILE_WIDTH,
 									Constants.TILE_HEIGHT, null);
 						}
@@ -168,56 +178,96 @@ public class MapView extends JComponent implements Observer,
 			}
 
 			// If we are hovering over the map, render overlay after.
-			if (inComponent && editorController.isHoverPreviewEnabled()
+			if (inComponent
+					&& editorController.getCurrentTool() instanceof PencilTool
+					&& editorController.isHoverPreviewEnabled()
 					&& z == editorController.getCurrentLayer().ordinal()) {
-				graphics.setComposite(AlphaComposite.getInstance(
-						AlphaComposite.SRC_OVER,
-						Constants.MAP_EDITOR_TILE_OVERLAY_TRANSPARENCY));
-				graphics.setColor(Color.blue);
-				// Render the entire tilerange
-				int xWide = editorController.getTileRange().getEndX()
-						- editorController.getTileRange().getStartX() + 1;
-				int yWide = editorController.getTileRange().getEndY()
-						- editorController.getTileRange().getStartY() + 1;
-
-				int overlayTile = (editorController.getTileRange()
-						.getStartY() * Constants.TILESET_WIDTH)
-						+ editorController.getTileRange().getStartX();
-				for (int y = 0; y < yWide; y++) {
-					for (int x = 0; x < xWide; x++) {
-						renderTile(graphics, (hoverOverTileX + x)
-								* tileWidth, (hoverOverTileY + y)
-								* tileHeight, overlayTile + x);
-					}
-					overlayTile += Constants.TILESET_WIDTH;
-				}
-
-				graphics.setComposite(regular);
+				renderOverlay(graphics, regularComposite);
 			}
 		}
 
 		// Render grid above everything if necessary
 		if (editorController.isGridEnabled()) {
-			graphics.setComposite(AlphaComposite.getInstance(
-					AlphaComposite.SRC_OVER,
-					Constants.MAP_EDITOR_GRID_TRANSPARENCY));
-			graphics.setColor(Color.gray);
-			// Render the entire tilerange
-			for (int y = startY; y < endY; y++) {
-				for (int x = startX; x < endX; x++) {
-					graphics.drawRect(x * tileWidth, y * tileHeight,
-							tileWidth, tileHeight);
-				}
-			}
-			graphics.setComposite(regular);
+			renderGrid(graphics, regularComposite, startX, startY, endX, endY);
 		}
 
-		graphics.setComposite(AlphaComposite.getInstance(
-				AlphaComposite.SRC_OVER,
-				Constants.MAP_EDITOR_GRID_TRANSPARENCY));
-		graphics.setColor(Color.red);
-		graphics.fillRect(10, 10, 30, 30);
-		graphics.setComposite(regular);
+		// Render attributes if we are in the attributes tab
+		if (editorController.getCurrentTab() == MapEditorTab.ATTRIBUTES) {
+			renderAttributes(graphics, regularComposite, startX, startY, endX,
+					endY);
+		}
+
+	}
+
+	/**
+	 * This renders the current tiles onto the map to show a preview of what
+	 * would be rendered
+	 * 
+	 * @param graphics
+	 * @param regularComposite
+	 */
+	private void renderOverlay(Graphics2D graphics,
+			AlphaComposite regularComposite) {
+		graphics.setComposite(MOUSE_OVERLAY_COMPOSITE);
+		graphics.setColor(Color.blue);
+		// Render the entire tilerange
+		int xWide = editorController.getTileRange().getEndX()
+				- editorController.getTileRange().getStartX() + 1;
+		int yWide = editorController.getTileRange().getEndY()
+				- editorController.getTileRange().getStartY() + 1;
+
+		int overlayTile = (editorController.getTileRange().getStartY() * Constants.TILESET_WIDTH)
+				+ editorController.getTileRange().getStartX();
+		for (int y = 0; y < yWide; y++) {
+			for (int x = 0; x < xWide; x++) {
+				renderTile(graphics, (hoverOverTileX + x) * tileWidth,
+						(hoverOverTileY + y) * tileHeight, overlayTile + x);
+			}
+			overlayTile += Constants.TILESET_WIDTH;
+		}
+
+		graphics.setComposite(regularComposite);
+	}
+
+	/**
+	 * This renders a grid on top of the current graphics.
+	 * 
+	 * @param graphics
+	 * @param regularComposite
+	 * @param startX
+	 * @param startY
+	 * @param endX
+	 * @param endY
+	 */
+	private void renderGrid(Graphics2D graphics,
+			AlphaComposite regularComposite, int startX, int startY, int endX,
+			int endY) {
+		graphics.setComposite(GRID_COMPOSITE);
+		graphics.setColor(Color.gray);
+		// Render the entire tilerange
+		for (int y = startY; y < endY; y++) {
+			for (int x = startX; x < endX; x++) {
+				graphics.drawRect(x * tileWidth, y * tileHeight, tileWidth,
+						tileHeight);
+			}
+		}
+		graphics.setComposite(regularComposite);
+	}
+
+	private void renderAttributes(Graphics2D graphics,
+			AlphaComposite regularComposite, int startX, int startY, int endX,
+			int endY) {
+		graphics.setComposite(ATTRIBUTE_COMPOSITE);
+		for (int y = startY; y < endY; y++) {
+			for (int x = startX; x < endX; x++) {
+				if (mapController.isBlocked(x, y)) {
+					graphics.setColor(Color.red);
+					graphics.fillRect(x * tileWidth, y * tileHeight, tileWidth,
+							tileHeight);
+				}
+			}
+		}
+		graphics.setComposite(regularComposite);
 
 	}
 
@@ -279,9 +329,8 @@ public class MapView extends JComponent implements Observer,
 					return;
 				}
 
-				editorController.getCurrentTool().leftClick(
-						editorController, mapController, x / tileWidth,
-						y / tileHeight);
+				editorController.getCurrentTool().leftClick(editorController,
+						mapController, x / tileWidth, y / tileHeight);
 
 			} else if (rightDown) {
 				// Make sure we fit in (could be possible not to, because of
@@ -292,9 +341,8 @@ public class MapView extends JComponent implements Observer,
 					return;
 				}
 
-				editorController.getCurrentTool().rightClick(
-						editorController, mapController, x / tileWidth,
-						y / tileHeight);
+				editorController.getCurrentTool().rightClick(editorController,
+						mapController, x / tileWidth, y / tileHeight);
 			}
 		}
 

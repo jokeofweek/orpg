@@ -28,9 +28,6 @@ public class ServerApplication {
 		}
 
 		new BaseServer(config, console);
-		while (true) {
-			Thread.sleep(1000000);
-		}
 	}
 
 }

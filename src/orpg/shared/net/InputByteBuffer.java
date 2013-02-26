@@ -154,18 +154,18 @@ public class InputByteBuffer {
 		// Ensure enough capacity for tiles
 		hasEnoughCapacity(width * height * MapLayer.values().length * 2);
 		short[][][] tiles = new short[MapLayer.values().length][width][height];
-		byte[][] attributes = new byte[width][height];
+		boolean[][] blocked = new boolean[width][height];
 		int x, y, z;
 		for (x = 0; x < width; x++) {
 			for (y = 0; y < height; y++) {
-				attributes[x][y] = getByte();
+				blocked[x][y] = getBoolean();
 				for (z = 0; z < MapLayer.values().length; z++) {
 					tiles[z][x][y] = getShort();
 				}
 			}
 		}
 
-		return new Segment(segmentX, segmentY, width, height, tiles, attributes);
+		return new Segment(segmentX, segmentY, width, height, tiles, blocked);
 	}
 
 	public Map getMapDescriptor() {

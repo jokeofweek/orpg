@@ -5,18 +5,18 @@ public class Segment {
 	private int x;
 	private int y;
 	private short[][][] tiles;
-	private byte[][] attributes;
 	private short width;
 	private short height;
+	private boolean blocked[][];
 
 	public Segment(int x, int y, short width, short height) {
 		this(x, y, width, height,
 				new short[MapLayer.values().length][width][height],
-				new byte[width][height]);
+				new boolean[width][height]);
 	}
 
 	public Segment(int x, int y, short width, short height, short[][][] tiles,
-			byte[][] attributes) {
+			boolean[][] blocked) {
 		// Ensure tiles has right amount of layers
 		if (tiles.length != MapLayer.values().length) {
 			throw new IllegalArgumentException(
@@ -27,13 +27,13 @@ public class Segment {
 			throw new IllegalArgumentException(
 					"Segment width and height do not match passed tiles.");
 		}
-		if (attributes.length != width || attributes[0].length != height) {
+		if (blocked.length != width || blocked[0].length != height) {
 			throw new IllegalArgumentException(
-					"Segment width and height do not match passed attrbiutes.");
+					"Segment width and height do not match passed simple attrbiutes.");
 		}
 
 		this.tiles = tiles;
-		this.attributes = attributes;
+		this.blocked = blocked;
 		this.x = x;
 		this.y = y;
 		this.height = height;
@@ -60,8 +60,8 @@ public class Segment {
 		return tiles;
 	}
 
-	public byte[][] getAttributes() {
-		return attributes;
+	public boolean[][] getBlocked() {
+		return blocked;
 	}
 
 }

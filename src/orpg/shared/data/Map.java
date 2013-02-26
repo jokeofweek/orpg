@@ -165,6 +165,22 @@ public class Map {
 		this.name = name;
 	}
 
+	public boolean isBlocked(int x, int y) {
+		Segment segment = this.getPositionSegment(x, y);
+		if (segment == null) {
+			return false;
+		} else {
+			return (segment.getBlocked()[getXRelativeToSegment(x)][getYRelativeToSegment(y)]);
+		}
+	}
+
+	public void setBlocked(int x, int y, boolean isBlocked) {
+		Segment segment = this.getPositionSegment(x, y);
+		if (segment != null) {
+			segment.getBlocked()[getXRelativeToSegment(x)][getYRelativeToSegment(y)] = isBlocked;
+		}
+	}
+
 	/**
 	 * This fetches the tile at a given position and layer.
 	 * 

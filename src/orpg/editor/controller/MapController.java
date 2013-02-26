@@ -177,6 +177,18 @@ public class MapController extends Observable implements Observer {
 		return map.getTile(x, y, z);
 	}
 
+	public boolean isBlocked(int x, int y) {
+		return map.isBlocked(x, y);
+	}
+
+	public void setBlocked(int x, int y, boolean isBlocked) {
+		if (map.isBlocked(x, y) != isBlocked) {
+			setChanged();
+		}
+		map.setBlocked(x, y, isBlocked);
+		notifyObservers();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

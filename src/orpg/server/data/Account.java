@@ -2,9 +2,11 @@ package orpg.server.data;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Random;
 
 import orpg.shared.Constants;
+import orpg.shared.data.AccountCharacter;
 
 public class Account {
 
@@ -13,6 +15,7 @@ public class Account {
 	private String email;
 	private String salt;
 	private String passwordHash;
+	private List<AccountCharacter> characters;
 
 	public long getId() {
 		return id;
@@ -41,7 +44,7 @@ public class Account {
 	public String getSalt() {
 		return salt;
 	}
-	
+
 	public void setSalt(String salt) {
 		this.salt = salt;
 	}
@@ -53,7 +56,15 @@ public class Account {
 	public void setPasswordHash(String passwordHash) {
 		this.passwordHash = passwordHash;
 	}
-	
+
+	public List<AccountCharacter> getCharacters() {
+		return characters;
+	}
+
+	public void setCharacters(List<AccountCharacter> characters) {
+		this.characters = characters;
+	}
+
 	private String hashPassword(char[] password, String salt)
 			throws NoSuchAlgorithmException {
 		MessageDigest digest = MessageDigest.getInstance("SHA-512");

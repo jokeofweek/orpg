@@ -1,9 +1,14 @@
 package orpg.server.data.store;
 
 import orpg.server.data.Account;
+import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
 import orpg.shared.data.Segment;
 
+/**
+ * @author Dom
+ * 
+ */
 /**
  * @author Dom
  * 
@@ -89,9 +94,60 @@ public interface DataStore {
 	 */
 	public boolean accountExists(String name);
 
-	public void createAccount(Account account) throws DataStoreException;
+	/**
+	 * This creates an account and calls {@link #saveAccount(Account)}
+	 * afterwards. <b>Note that this method assumes
+	 * {@link #accountExists(String)} has already been called.</b> The reasoning
+	 * behind this is to make sure it gets called regardless of data store
+	 * implementation.
+	 * 
+	 * @param account
+	 *            the account to save.
+	 * @throws IllegalArgumentException
+	 *             if the account name is not valid.
+	 * @throws DataStoreException
+	 *             if there is an error while creating said account.
+	 */
+	public void createAccount(Account account) throws IllegalArgumentException,
+			DataStoreException;
 
+	/**
+	 * This saves an account's status.
+	 * 
+	 * @param account
+	 *            the account to save
+	 * @throws DataStoreException
+	 *             if there is an error saving said account.
+	 */
 	public void saveAccount(Account account) throws DataStoreException;
+
+	/**
+	 * This determines whether there exists a character with a given name.
+	 * 
+	 * @param name
+	 *            the name to check
+	 * @return true if there is an active character with that name.
+	 */
+	public boolean characterExists(String name);
+
+	/**
+	 * This creates a character and associates it with a given account. It then
+	 * saves the entire account via {@link #saveAccount(Account)}. <b>Note that
+	 * this method assumes {@link #characterExists(String)} has already been
+	 * called.</b> The reasoning behind this is to make sure it gets called
+	 * regardless of data store implementation.
+	 * 
+	 * @param parent
+	 *            the account which owns the character.
+	 * @param character
+	 *            the character to save.
+	 * @throws IllegalArgumentException
+	 *             if the character name is not valid.
+	 * @throws DataStoreException
+	 *             if there is an error while creating said character.
+	 */
+	public void createCharacter(Account parent, AccountCharacter character)
+			throws IllegalArgumentException, DataStoreException;
 
 	/**
 	 * This attemps to load an account with a given name.
@@ -104,7 +160,7 @@ public interface DataStore {
 	 * @throws DataStoreException
 	 *             if there is an error loading that account from the datastore.
 	 */
-	public Account loadAccount(String name)
-			throws IllegalArgumentException, DataStoreException;
+	public Account loadAccount(String name) throws IllegalArgumentException,
+			DataStoreException;
 
 }

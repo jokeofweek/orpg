@@ -10,6 +10,7 @@
 data/server/maps/*.map*
 data/server/logs/*.log*
 data/server/accounts/*.ini*
+data/server/accounts/characters.txt
 *.log
 
 # built files
