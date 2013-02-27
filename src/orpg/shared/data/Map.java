@@ -150,6 +150,14 @@ public class Map {
 		return this.segments[x / this.segmentWidth][y / this.segmentHeight];
 	}
 
+	public int getSegmentX(int x) {
+		return x / this.segmentWidth;
+	}
+
+	public int getSegmentY(int y) {
+		return y / this.segmentHeight;
+	}
+
 	public int getXRelativeToSegment(int x) {
 		return x % this.segmentWidth;
 	}

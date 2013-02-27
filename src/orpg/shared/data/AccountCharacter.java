@@ -8,6 +8,11 @@ public class AccountCharacter {
 	private Map map;
 	private int x;
 	private int y;
+	private boolean changingMap;
+
+	public AccountCharacter() {
+		this.changingMap = true;
+	}
 
 	public int getId() {
 		return id;
@@ -57,4 +62,11 @@ public class AccountCharacter {
 		this.y = y;
 	}
 
+	public boolean isChangingMap() {
+		return changingMap;
+	}
+
+	public void setChangingMap(boolean changingMap) {
+		this.changingMap = changingMap;
+	}
 }

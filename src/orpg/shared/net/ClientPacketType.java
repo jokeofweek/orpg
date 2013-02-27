@@ -8,6 +8,7 @@ public enum ClientPacketType {
 	
 	USE_CHARACTER,
 	
+	CLIENT_NEED_SEGMENT,
 	CLIENT_LOAD_MAP,
 
 	// Editor packets

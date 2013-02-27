@@ -7,6 +7,7 @@ import java.util.logging.Level;
 
 import orpg.server.BaseServer;
 import orpg.server.data.store.DataStoreException;
+import orpg.server.net.packets.ClientNewMapPacket;
 import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
@@ -14,10 +15,6 @@ import orpg.shared.data.Pair;
 import orpg.shared.data.Segment;
 import orpg.shared.net.InputByteBuffer;
 
-/**
- * @author Dom
- *
- */
 /**
  * @author Dom
  * 
@@ -188,13 +185,13 @@ public class MapManager implements Manager<Map, Integer> {
 	 * @throws IndexOutOfBoundsException
 	 *             if the x and y are out of bounds.
 	 */
-	public void joinMap(AccountCharacter character, int mapId, int x, int y)
+	private void joinMap(AccountCharacter character, int mapId, int x, int y)
 			throws IllegalArgumentException, IndexOutOfBoundsException {
 		// Make sure the map is valid
 		Map map = get(mapId);
 
 		// Ensure the segment is loaded
-		getSegment(map.getId(), x, y);
+		getSegment(map.getId(), map.getSegmentX(x), map.getSegmentY(y));
 
 		map.addPlayer(character);
 
@@ -202,6 +199,11 @@ public class MapManager implements Manager<Map, Integer> {
 		character.setMap(map);
 		character.setX(x);
 		character.setY(y);
+
+		// Send the player the new map info and then we await for the need map
+		baseServer.sendPacket(new ClientNewMapPacket(baseServer
+				.getServerSessionManager()
+				.getInGameSession(character.getName())));
 	}
 
 	/**
@@ -211,7 +213,36 @@ public class MapManager implements Manager<Map, Integer> {
 	 * @param character
 	 *            the character that is leaving the map
 	 */
-	public void leaveMap(AccountCharacter character) {
+	private void leaveMap(AccountCharacter character) {
 		character.getMap().removePlayer(character);
 	}
+
+	/**
+	 * This warps a specific character to a given map and position, taking care
+	 * of leaving the player's old map if there was one.
+	 * 
+	 * @param character
+	 * @param mapId
+	 * @param x
+	 * @param y
+	 */
+	public void warpToMap(AccountCharacter character, int mapId, int x, int y) {
+		// We must check here if character is changing map as well, as it would
+		// be true when logging in.
+		if (character.getMap() != null && !character.isChangingMap()) {
+			if (mapId == character.getMap().getId()) {
+				// Then we don't need to send map ID, just update the position
+				// TODO: Update position
+				return;
+			} else {
+				leaveMap(character);
+			}
+		}
+
+		character.setChangingMap(true);
+
+		joinMap(character, mapId, x, y);
+
+	}
+
 }

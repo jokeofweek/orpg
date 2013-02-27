@@ -55,6 +55,10 @@ public class MapLayerActor extends Actor {
 		int y;
 		int tile;
 
+		if (baseClient.getAccountCharacter().isChangingMap()) {
+			return;
+		}
+		
 		Map map = baseClient.getMap();
 
 		// Calculate starting position of tile

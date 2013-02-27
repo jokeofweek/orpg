@@ -6,9 +6,10 @@ import orpg.client.BaseClient;
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.net.handlers.ClientPacketHandler;
 import orpg.client.net.handlers.ErrorPacketHandler;
+import orpg.client.net.handlers.InGameHandler;
 import orpg.client.net.handlers.LoginOkHandler;
-import orpg.client.net.handlers.MapDataHandler;
-import orpg.shared.net.AbstractClient;
+import orpg.client.net.handlers.NewMapHandler;
+import orpg.client.net.handlers.SegmentDataHandler;
 import orpg.shared.net.PacketProcessThread;
 import orpg.shared.net.ServerPacketType;
 
@@ -24,8 +25,10 @@ public class ClientProcessThread extends PacketProcessThread {
 		this.handlers = new HashMap<ServerPacketType, ClientPacketHandler>();
 		this.handlers.put(ServerPacketType.ERROR, new ErrorPacketHandler());
 		this.handlers.put(ServerPacketType.LOGIN_OK, new LoginOkHandler());
-		this.handlers.put(ServerPacketType.CLIENT_MAP_DATA,
-				new MapDataHandler());
+		this.handlers.put(ServerPacketType.CLIENT_IN_GAME, new InGameHandler());
+		this.handlers.put(ServerPacketType.CLIENT_NEW_MAP, new NewMapHandler());
+		this.handlers.put(ServerPacketType.CLIENT_SEGMENT_DATA,
+				new SegmentDataHandler());
 	}
 
 	@Override

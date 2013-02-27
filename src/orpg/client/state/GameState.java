@@ -50,6 +50,7 @@ public class GameState extends ClientState {
 		Actor topLayersActor = new MapLayerActor(baseClient, viewbox, tilesets,
 				loadingTileTexture, new int[] { MapLayer.FRINGE.ordinal() }, 0,
 				800, 0, 478);
+		
 		this.stage.addActor(bottomLayersActor);
 		this.stage.addActor(topLayersActor);
 
