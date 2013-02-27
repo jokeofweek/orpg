@@ -26,6 +26,18 @@ public class ViewBox {
 				Math.min(offsetY + dY, contentHeight - visibleHeight));
 	}
 
+	public void center(int x, int y) {
+
+		this.offsetX = Math.max(
+				0,
+				Math.min(x - (visibleWidth / 2), contentWidth
+						- visibleWidth));
+		this.offsetY = Math.max(
+				0,
+				Math.min(y - (visibleHeight / 2), contentHeight
+						- visibleHeight));
+	}
+
 	public int getOffsetX() {
 		return offsetX;
 	}
