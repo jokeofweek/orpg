@@ -191,6 +191,9 @@ public class ServerSession {
 									"Session %s sucesfully selected character and entered game.",
 									this.getId()));
 
+			// Setup the character
+			this.character.setChangingMap(true);
+			
 			// Notify the client that they are now in the game
 			baseServer.sendPacket(new ClientInGamePacket(this, character));
 			
