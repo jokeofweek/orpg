@@ -1,5 +1,7 @@
 package orpg.client.ui;
 
+import orpg.shared.Constants;
+
 public class ViewBox {
 
 	private int offsetX;
@@ -36,6 +38,22 @@ public class ViewBox {
 				0,
 				Math.min(y - (visibleHeight / 2), contentHeight
 						- visibleHeight));
+	}
+
+	public int getStartX() {
+		return offsetX / Constants.TILE_WIDTH;
+	}
+
+	public int getEndX() {
+		return (offsetX + visibleWidth) / Constants.TILE_WIDTH;
+	}
+
+	public int getStartY() {
+		return offsetY / Constants.TILE_HEIGHT;
+	}
+
+	public int getEndY() {
+		return (offsetY + visibleHeight) / Constants.TILE_HEIGHT;
 	}
 
 	public int getOffsetX() {

@@ -1,18 +1,16 @@
 package orpg.server.data;
 
 import orpg.server.ServerSession;
-import orpg.shared.Priority;
 import orpg.shared.net.ClientPacketType;
 import orpg.shared.net.InputByteBuffer;
 
-public class ServerReceivedPacket implements Comparable<ServerReceivedPacket> {
+public class ServerReceivedPacket {
 
 	private ServerSession session;
 	private ClientPacketType type;
 	private InputByteBuffer buffer;
-	private Priority priority;
 	
-	public ServerReceivedPacket(ServerSession session, ClientPacketType type, byte[] bytes, Priority priority) {
+	public ServerReceivedPacket(ServerSession session, ClientPacketType type, byte[] bytes) {
 		super();
 		this.session = session;
 		this.type = type;
@@ -30,15 +28,5 @@ public class ServerReceivedPacket implements Comparable<ServerReceivedPacket> {
 	public ServerSession getSession() {
 		return session;
 	}
-	
-	public Priority getPriority() {
-		return priority;
-	}
-	
-	@Override
-	public int compareTo(ServerReceivedPacket o) {
-		return this.getPriority().compareTo(o.getPriority());
-	}
-	
 	
 }

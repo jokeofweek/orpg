@@ -30,7 +30,8 @@ public class BaseServer {
 	private AccountManager accountManager;
 	private DataStore dataStore;
 
-	public BaseServer(ServerConfigurationManager config, ServerConsole console) {
+	public BaseServer(ServerConfigurationManager config,
+			ServerConsole console) {
 		this.config = config;
 		this.console = console;
 
@@ -38,10 +39,11 @@ public class BaseServer {
 
 		// Set up our queues
 		this.inputQueue = new LinkedBlockingQueue<ServerReceivedPacket>();
-		this.outputQueue = new PriorityBlockingQueue<ServerPacket>(100);
+		this.outputQueue = new LinkedBlockingQueue<ServerPacket>();
 
 		// Set up the various threads
-		this.serverSessionManager = new ServerSessionManager(this, outputQueue);
+		this.serverSessionManager = new ServerSessionManager(this,
+				outputQueue);
 		this.serverGameThread = new ServerGameThread(this, inputQueue,
 				outputQueue);
 		try {

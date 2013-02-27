@@ -1,7 +1,6 @@
 package orpg.server.net.packets;
 
 import orpg.server.ServerSession;
-import orpg.shared.Priority;
 import orpg.shared.net.OutputByteBuffer;
 import orpg.shared.net.ServerPacketType;
 
@@ -15,12 +14,7 @@ public class DisconnectPacket extends SessionPacket {
 		out.putString(reason);
 		this.bytes = out.getBytes();
 	}
-	
-	@Override
-	public Priority getPriority() {
-		return Priority.URGENT;
-	}
-	
+		
 	@Override
 	public ServerPacketType getPacketType() {
 		return ServerPacketType.DISCONNECT;

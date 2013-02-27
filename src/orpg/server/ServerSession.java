@@ -193,6 +193,7 @@ public class ServerSession {
 
 			// Notify the client that they are now in the game
 			baseServer.sendPacket(new ClientInGamePacket(this, character));
+			
 			baseServer.getMapManager().warpToMap(character,
 					character.getMap().getId(), character.getX(),
 					character.getY());

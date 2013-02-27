@@ -9,7 +9,6 @@ import java.util.Queue;
 
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.net.packets.DisconnectPacket;
-import orpg.shared.Priority;
 import orpg.shared.net.ClientPacketType;
 
 public class ServerSessionThread extends Thread {
@@ -101,8 +100,7 @@ public class ServerSessionThread extends Thread {
 									+ (data.length + 5) + ")");
 							baseServer
 									.receivePacket(new ServerReceivedPacket(
-											this.session, type, data,
-											Priority.MEDIUM));
+											this.session, type, data));
 							currentPosition = 0;
 							type = null;
 						}

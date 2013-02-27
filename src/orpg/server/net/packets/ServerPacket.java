@@ -1,19 +1,10 @@
 package orpg.server.net.packets;
 
 import orpg.server.data.DestinationType;
-import orpg.shared.Priority;
 import orpg.shared.net.ServerPacketType;
 
-public abstract class ServerPacket implements Comparable<ServerPacket> {
+public abstract class ServerPacket {
 
-	public Priority getPriority() {
-		return Priority.MEDIUM;
-	}
-
-	@Override
-	public int compareTo(ServerPacket o) {
-		return this.getPriority().compareTo(o.getPriority());
-	}
 
 	public abstract ServerPacketType getPacketType();
 

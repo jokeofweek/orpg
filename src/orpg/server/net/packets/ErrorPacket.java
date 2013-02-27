@@ -2,7 +2,6 @@ package orpg.server.net.packets;
 
 import orpg.server.ServerSession;
 import orpg.shared.ErrorMessage;
-import orpg.shared.Priority;
 import orpg.shared.net.OutputByteBuffer;
 import orpg.shared.net.ServerPacketType;
 
@@ -26,11 +25,6 @@ public class ErrorPacket extends SessionPacket {
 		out.putBoolean(true); // since it's an enum
 		out.putInt(message.ordinal());
 		this.bytes = out.getBytes();
-	}
-
-	@Override
-	public Priority getPriority() {
-		return Priority.URGENT;
 	}
 
 	@Override

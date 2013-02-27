@@ -3,6 +3,7 @@ package orpg.client.state;
 import orpg.client.BaseClient;
 import orpg.client.Paths;
 import orpg.client.ui.BackgroundTextureActor;
+import orpg.client.ui.MapEntitiesActor;
 import orpg.client.ui.MapLayerActor;
 import orpg.client.ui.ViewBox;
 import orpg.shared.Constants;
@@ -47,11 +48,15 @@ public class GameState extends ClientState {
 				tilesets, loadingTileTexture, new int[] {
 						MapLayer.GROUND.ordinal(), MapLayer.MASK.ordinal(),
 						MapLayer.MASK_2.ordinal() }, 0, 800, 0, 478);
+		Actor mapEntitiesActor = new MapEntitiesActor(baseClient, viewbox);
 		Actor topLayersActor = new MapLayerActor(baseClient, viewbox, tilesets,
 				loadingTileTexture, new int[] { MapLayer.FRINGE.ordinal() }, 0,
 				800, 0, 478);
 		
+		System.out.println("Entered?");
+
 		this.stage.addActor(bottomLayersActor);
+		this.stage.addActor(mapEntitiesActor);
 		this.stage.addActor(topLayersActor);
 
 		this.backgroundTexture = new Texture(Paths.asset("game_background.png"));

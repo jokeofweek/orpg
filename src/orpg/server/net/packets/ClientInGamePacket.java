@@ -1,7 +1,6 @@
 package orpg.server.net.packets;
 
 import orpg.server.ServerSession;
-import orpg.shared.Priority;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.net.OutputByteBuffer;
 import orpg.shared.net.ServerPacketType;
@@ -15,11 +14,6 @@ public class ClientInGamePacket extends SessionPacket {
 		OutputByteBuffer out = new OutputByteBuffer();
 		out.putAccountCharacter(character);
 		this.bytes = out.getBytes();
-	}
-
-	@Override
-	public Priority getPriority() {
-		return Priority.URGENT;
 	}
 
 	@Override

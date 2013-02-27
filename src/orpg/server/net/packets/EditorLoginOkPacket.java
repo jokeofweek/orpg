@@ -1,7 +1,6 @@
 package orpg.server.net.packets;
 
 import orpg.server.ServerSession;
-import orpg.shared.Priority;
 import orpg.shared.net.ServerPacketType;
 
 public class EditorLoginOkPacket extends SessionPacket {
@@ -9,11 +8,6 @@ public class EditorLoginOkPacket extends SessionPacket {
 	public EditorLoginOkPacket(ServerSession session) {
 		super(session);
 
-	}
-
-	@Override
-	public Priority getPriority() {
-		return Priority.URGENT;
 	}
 
 	@Override
