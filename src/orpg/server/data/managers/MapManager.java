@@ -129,7 +129,7 @@ public class MapManager implements Manager<Map, Integer> {
 			// Load the segment if it's not already loaded
 			try {
 				this.maps[id].updateSegment(baseServer.getDataStore()
-						.loadSegment(id, x, y));
+						.loadSegment(id + 1, x, y));
 			} catch (DataStoreException e) {
 				baseServer
 						.getConfigManager()

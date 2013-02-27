@@ -179,7 +179,7 @@ public class FileDataStore implements DataStore {
 	@Override
 	public boolean segmentExists(int id, int x, int y) {
 		return (new File(Constants.SERVER_MAPS_PATH + "map_" + id + "_" + x
-				+ "_" + y + " +.map").exists());
+				+ "_" + y + ".map").exists());
 
 	}
 

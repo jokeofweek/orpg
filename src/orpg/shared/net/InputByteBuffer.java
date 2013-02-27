@@ -184,10 +184,10 @@ public class InputByteBuffer {
 
 	public Map getMap() {
 		Map map = getMapDescriptor();
-		for (int x = 0; x < map.getSegmentsWide(); x++) {
-			for (int y = 0; y < map.getSegmentsHigh(); y++) {
-				map.updateSegment(getSegment());
-			}
+		int count = getInt();
+
+		for (int i = 0; i < count; i++) {
+			map.updateSegment(getSegment());
 		}
 		return map;
 	}
@@ -224,6 +224,17 @@ public class InputByteBuffer {
 		character.setX(getInt());
 		character.setY(getInt());
 
+		return character;
+	}
+
+	public AccountCharacter getMapCharacter(Map map) {
+		AccountCharacter character = new AccountCharacter();
+		character.setId(getInt());
+		character.setName(getString());
+		character.setSprite(getShort());
+		character.setX(getInt());
+		character.setY(getInt());
+		character.setMap(map);
 		return character;
 	}
 

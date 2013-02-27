@@ -182,9 +182,23 @@ public class OutputByteBuffer {
 		reserveExtraSpace(map.getSegmentsWide() * map.getSegmentsHigh()
 				* map.getSegmentHeight() * map.getSegmentWidth() * 2);
 
+		// Count non-null segments
+		int count = 0;
 		for (int x = 0; x < map.getSegmentsWide(); x++) {
 			for (int y = 0; y < map.getSegmentsHigh(); y++) {
-				putSegment(map.getSegment(x, y));
+				if (map.getSegment(x, y) != null) {
+					count++;
+				}
+			}
+		}
+
+		putInt(count);
+
+		for (int x = 0; x < map.getSegmentsWide(); x++) {
+			for (int y = 0; y < map.getSegmentsHigh(); y++) {
+				if (map.getSegment(x, y) != null) {
+					putSegment(map.getSegment(x, y));
+				}
 			}
 		}
 	}
@@ -195,6 +209,15 @@ public class OutputByteBuffer {
 		putString(character.getName());
 		putShort(character.getSprite());
 		putInt(character.getMap().getId());
+		putInt(character.getX());
+		putInt(character.getY());
+	}
+
+	public void putMapCharacter(AccountCharacter character) {
+		testForExtraCapacity(20);
+		putInt(character.getId());
+		putString(character.getName());
+		putShort(character.getSprite());
 		putInt(character.getX());
 		putInt(character.getY());
 	}
