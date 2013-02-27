@@ -23,6 +23,8 @@ public class LoadingState extends ClientState {
 		this.stage.addActor(root);
 
 		root.add("Loading...");
+		
+		
 
 	}
 

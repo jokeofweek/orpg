@@ -36,7 +36,7 @@ public class MainMenuState extends ClientState {
 
 		// Set the background
 		this.stage.addActor(new BackgroundTextureActor(backgroundTexture, 800,
-				600));
+				600, false));
 
 		// Build the root table
 		Skin skin = new Skin(Paths.asset("uiskin.json"));
@@ -82,6 +82,8 @@ public class MainMenuState extends ClientState {
 						.getText().toCharArray()));
 			}
 		});
+		
+		
 
 	}
 

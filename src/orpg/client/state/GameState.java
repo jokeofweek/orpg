@@ -56,7 +56,7 @@ public class GameState extends ClientState {
 
 		this.backgroundTexture = new Texture(Paths.asset("game_background.png"));
 		this.stage.addActor(new BackgroundTextureActor(backgroundTexture, 800,
-				600));
+				600, true));
 
 		// Setup the camera
 		this.camera = new OrthographicCamera(Gdx.graphics.getWidth(),

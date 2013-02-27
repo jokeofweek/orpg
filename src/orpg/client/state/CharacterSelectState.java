@@ -13,6 +13,7 @@ import orpg.client.ui.BackgroundTextureActor;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -30,6 +31,7 @@ public class CharacterSelectState extends ClientState {
 	private Stage stage;
 	private Texture backgroundTexture;
 	private Object baseClient;
+	private OrthographicCamera camera;
 
 	public CharacterSelectState(final BaseClient baseClient,
 			List<String> characters) {
@@ -41,7 +43,7 @@ public class CharacterSelectState extends ClientState {
 
 		// Set the background
 		this.stage.addActor(new BackgroundTextureActor(backgroundTexture, 800,
-				600));
+				600, false));
 
 		// Build the root table
 		Skin skin = new Skin(Paths.asset("uiskin.json"));
@@ -62,7 +64,6 @@ public class CharacterSelectState extends ClientState {
 			root.add(characterButton).colspan(2).width(100);
 			root.row();
 		}
-
 	}
 
 	@Override
