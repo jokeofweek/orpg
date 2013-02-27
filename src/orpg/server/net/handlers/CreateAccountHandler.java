@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import orpg.server.BaseServer;
 import orpg.server.data.Account;
 import orpg.server.data.ServerReceivedPacket;
+import orpg.server.data.SessionType;
 import orpg.server.data.store.DataStoreException;
 import orpg.server.net.packets.ErrorPacket;
 import orpg.shared.ErrorMessage;
@@ -24,17 +25,14 @@ public class CreateAccountHandler implements ServerPacketHandler {
 		// Validate the info first
 		try {
 			if (!Validator.isAccountNameValid(name)) {
-				baseServer
-						.sendPacket(new ErrorPacket(
-								packet.getSession(),
-								ErrorMessage.ACCOUNT_NAME_HAS_INVALID_CHARACTERS));
+				baseServer.sendPacket(new ErrorPacket(packet.getSession(),
+						ErrorMessage.ACCOUNT_NAME_HAS_INVALID_CHARACTERS));
 			} else {
 				synchronized (this) {
 					if (baseServer.getDataStore().accountExists(name)) {
-						baseServer
-								.sendPacket(new ErrorPacket(
-										packet.getSession(),
-										ErrorMessage.ACCOUNT_ALREADY_EXISTS));
+						baseServer.sendPacket(new ErrorPacket(packet
+								.getSession(),
+								ErrorMessage.ACCOUNT_ALREADY_EXISTS));
 					} else {
 						try {
 							// Create the account, filling in the details
@@ -42,15 +40,17 @@ public class CreateAccountHandler implements ServerPacketHandler {
 							account.setName(name);
 							account.setEmail(email);
 							account.updatePassword(password);
-							baseServer.getDataStore().createAccount(
-									account);
+							baseServer.getDataStore().createAccount(account);
+							baseServer.getAccountManager().update(account);
 							baseServer
 									.getConfigManager()
 									.getSessionLogger()
 									.log(Level.INFO,
-											"Account " + name + "("
-													+ email
+											"Account " + name + "(" + email
 													+ ") was created.");
+							packet.getSession().login(account,
+									SessionType.LOGGED_IN);
+
 						} catch (NoSuchAlgorithmException e) {
 							baseServer
 									.getConfigManager()
@@ -69,8 +69,7 @@ public class CreateAccountHandler implements ServerPacketHandler {
 									.getConfigManager()
 									.getErrorLogger()
 									.log(Level.SEVERE,
-											"Could not create account "
-													+ name
+											"Could not create account " + name
 													+ ". Error when creating: "
 													+ e.getMessage());
 							baseServer

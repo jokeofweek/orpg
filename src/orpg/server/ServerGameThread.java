@@ -12,6 +12,7 @@ import orpg.server.net.handlers.EditorRequestSegmentHandler;
 import orpg.server.net.handlers.EditorSaveMapHandler;
 import orpg.server.net.handlers.LoginHandler;
 import orpg.server.net.handlers.ServerPacketHandler;
+import orpg.server.net.handlers.UseCharacterHandler;
 import orpg.server.net.packets.ServerPacket;
 import orpg.shared.net.ClientPacketType;
 
@@ -28,7 +29,8 @@ public class ServerGameThread implements Runnable {
 	private BlockingQueue<ServerPacket> outputQueue;
 	private BaseServer baseServer;
 	private HashMap<ClientPacketType, ServerPacketHandler> anonymousHandlers;
-	private HashMap<ClientPacketType, ServerPacketHandler> clientHandlers;
+	private HashMap<ClientPacketType, ServerPacketHandler> gameHandlers;
+	private HashMap<ClientPacketType, ServerPacketHandler> loggedInHandlers;
 	private HashMap<ClientPacketType, ServerPacketHandler> editorHandlers;
 
 	public ServerGameThread(BaseServer baseServer,
@@ -39,21 +41,27 @@ public class ServerGameThread implements Runnable {
 		this.outputQueue = outputQueue;
 
 		setupAnonymousHandlers();
-		setupClientHandlers();
+		setupLoggedInHandlers();
+		setupGameHandlers();
 		setupEditorHandlers();
 	}
 
 	private void setupAnonymousHandlers() {
 		this.anonymousHandlers = new HashMap<ClientPacketType, ServerPacketHandler>();
-
 		anonymousHandlers.put(ClientPacketType.LOGIN, new LoginHandler());
 		anonymousHandlers.put(ClientPacketType.CREATE_ACCOUNT,
 				new CreateAccountHandler());
 	}
 
-	private void setupClientHandlers() {
-		this.clientHandlers = new HashMap<ClientPacketType, ServerPacketHandler>();
-		clientHandlers.put(ClientPacketType.CLIENT_LOAD_MAP,
+	private void setupLoggedInHandlers() {
+		this.loggedInHandlers = new HashMap<ClientPacketType, ServerPacketHandler>();
+		loggedInHandlers.put(ClientPacketType.USE_CHARACTER,
+				new UseCharacterHandler());
+	}
+
+	private void setupGameHandlers() {
+		this.gameHandlers = new HashMap<ClientPacketType, ServerPacketHandler>();
+		gameHandlers.put(ClientPacketType.CLIENT_LOAD_MAP,
 				new ClientLoadMapHandler());
 	}
 
@@ -79,11 +87,14 @@ public class ServerGameThread implements Runnable {
 				// Determine the right handler for the packet based on
 				// session type.
 				switch (packet.getSession().getSessionType()) {
-				case GAME:
-					handler = clientHandlers.get(packet.getType());
-					break;
 				case ANONYMOUS:
 					handler = anonymousHandlers.get(packet.getType());
+					break;
+				case LOGGED_IN:
+					handler = loggedInHandlers.get(packet.getType());
+					break;
+				case GAME:
+					handler = gameHandlers.get(packet.getType());
 					break;
 				case EDITOR:
 					handler = editorHandlers.get(packet.getType());

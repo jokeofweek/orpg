@@ -54,14 +54,17 @@ public interface DataStore {
 	 * 
 	 * @param id
 	 *            the id of the map to load
+	 * @param loadSegments
+	 *            whether segments should be loaded, or left null to be lazily
+	 *            loaded when needed.
 	 * @return the loaded map.
 	 * @throws IllegalArgumentException
 	 *             if there is no map with the id.
 	 * @throws DataStoreException
 	 *             if the load could not be completed.
 	 */
-	public Map loadMap(int id) throws IllegalArgumentException,
-			DataStoreException;
+	public Map loadMap(int id, boolean loadSegments)
+			throws IllegalArgumentException, DataStoreException;
 
 	/**
 	 * This loads a map segment from the data stored based on the id.

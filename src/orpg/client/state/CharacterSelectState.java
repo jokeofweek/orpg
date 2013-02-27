@@ -1,15 +1,16 @@
 package orpg.client.state;
 
+import java.util.List;
+
 import javax.swing.JOptionPane;
 
 import orpg.client.BaseClient;
 import orpg.client.Paths;
 import orpg.client.net.packets.CreateAccountPacket;
 import orpg.client.net.packets.LoginPacket;
+import orpg.client.net.packets.UseCharacterPacket;
 import orpg.client.ui.BackgroundTextureActor;
-import orpg.shared.net.AbstractClient;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
@@ -23,13 +24,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-public class MainMenuState extends ClientState {
+public class CharacterSelectState extends ClientState {
 
+	private List<String> characters;
 	private Stage stage;
 	private Texture backgroundTexture;
-	private BaseClient baseClient;
+	private Object baseClient;
 
-	public MainMenuState(final BaseClient baseClient) {
+	public CharacterSelectState(final BaseClient baseClient,
+			List<String> characters) {
+		this.characters = characters;
+
 		this.stage = new Stage();
 		this.backgroundTexture = new Texture(Paths.asset("menu_background.png"));
 		this.baseClient = baseClient;
@@ -44,44 +49,19 @@ public class MainMenuState extends ClientState {
 		root.setFillParent(true);
 		this.stage.addActor(root);
 
-		// Add components to root.
-		final TextField nameText = new TextField("", skin);
-		final TextField addressText = new TextField("", skin);
-		final TextField passwordText = new TextField("", skin);
-		passwordText.setPasswordCharacter('*');
-		passwordText.setPasswordMode(true);
+		Button characterButton;
 
-		root.add(new Label("Name:", skin)).left().pad(10);
-		root.add(nameText).width(150);
-		root.row();
-		root.add(new Label("Email:", skin)).left().pad(10);
-		root.add(addressText).width(150);
-		root.row();
-		root.add(new Label("Password:", skin)).left().pad(10);
-		root.add(passwordText).width(150);
-		root.row();
-
-		Button loginButton = new TextButton("Login", skin);
-		root.add(loginButton).colspan(2).width(100);
-		loginButton.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				baseClient.sendPacket(new LoginPacket(nameText.getText(),
-						passwordText.getText().toCharArray(), false));
-			}
-		});
-		root.row();
-
-		Button registerButton = new TextButton("Register", skin);
-		root.add(registerButton).colspan(2).width(100);
-		registerButton.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				baseClient.sendPacket(new CreateAccountPacket(nameText
-						.getText(), addressText.getText(), passwordText
-						.getText().toCharArray()));
-			}
-		});
+		for (final String character : characters) {
+			characterButton = new TextButton(character, skin);
+			characterButton.addListener(new ClickListener() {
+				@Override
+				public void clicked(InputEvent event, float x, float y) {
+					baseClient.sendPacket(new UseCharacterPacket(character));
+				}
+			});
+			root.add(characterButton).colspan(2).width(100);
+			root.row();
+		}
 
 	}
 
@@ -90,6 +70,23 @@ public class MainMenuState extends ClientState {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
+	}
+
+	@Override
+	public void enter() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void exit() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void displayError(String errorMessage) {
+		JOptionPane.showMessageDialog(null, errorMessage);
 	}
 
 	@Override
@@ -126,21 +123,6 @@ public class MainMenuState extends ClientState {
 	public void dispose() {
 		stage.dispose();
 		backgroundTexture.dispose();
-	}
-
-	@Override
-	public void enter() {
-
-	}
-
-	@Override
-	public void exit() {
-
-	}
-
-	@Override
-	public void displayError(String errorMessage) {
-		JOptionPane.showMessageDialog(null, errorMessage);
 	}
 
 }

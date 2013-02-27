@@ -2,6 +2,7 @@ package orpg.client.net;
 
 import java.util.HashMap;
 
+import orpg.client.BaseClient;
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.net.handlers.ClientPacketHandler;
 import orpg.client.net.handlers.ErrorPacketHandler;
@@ -31,7 +32,7 @@ public class ClientProcessThread extends PacketProcessThread {
 	public void handlePacket(ClientReceivedPacket packet) {
 		ClientPacketHandler handler = handlers.get(packet.getType());
 		if (handler != null) {
-			handler.handle(packet, getClient());
+			handler.handle(packet, (BaseClient) getClient());
 		} else {
 			System.err.println("[CLIENT] No handler setup for packet "
 					+ packet.getType());

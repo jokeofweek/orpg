@@ -1,5 +1,6 @@
 package orpg.shared.data;
 
+import orpg.server.data.managers.MapManager;
 import orpg.shared.Constants;
 
 public class Map {
@@ -199,4 +200,59 @@ public class Map {
 		}
 	}
 
+	/**
+	 * This adds a character to the map, putting it in the correct segment. Note
+	 * that this should not be called directly, as no tests are done to make
+	 * sure a segment is loaded. Rather, the {@link MapManager} should be used.
+	 * 
+	 * @param character
+	 *            the character to add.
+	 */
+	public void addPlayer(AccountCharacter character) {
+		Segment segment = getPositionSegment(character.getX(), character.getY());
+		segment.addPlayer(character);
+	}
+
+	/**
+	 * This updates the position of the character in the map.
+	 * 
+	 * @param character
+	 *            the character with the updated position
+	 * @param oldX
+	 *            the old X position of the character
+	 * @param oldY
+	 *            the old Y position of the character
+	 */
+	public void updatePlayer(AccountCharacter character, int oldX, int oldY) {
+		Segment oldSegment = getPositionSegment(oldX, oldY);
+		Segment newSegment = getPositionSegment(character.getX(),
+				character.getY());
+
+		if (oldSegment != newSegment) {
+			oldSegment.removePlayer(character);
+			newSegment.addPlayer(character);
+		}
+	}
+
+	/**
+	 * This removes a character from the map. Note that this should not be
+	 * called directly, as no tests are done to make sure a segment is loaded.
+	 * Rather, the {@link MapManager} should be used.
+	 * 
+	 * @param character
+	 *            the character to remove.
+	 * @throws IllegalArgumentException
+	 *             if the character is not on this map.
+	 */
+
+	public void removePlayer(AccountCharacter character)
+			throws IllegalArgumentException {
+		// Sanity test
+		if (character.getMap() != this) {
+			throw new IllegalArgumentException("Character is not on map "
+					+ this + ", so could not be removed.");
+		}
+		Segment segment = getPositionSegment(character.getX(), character.getY());
+		segment.removePlayer(character);
+	}
 }

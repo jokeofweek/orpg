@@ -9,6 +9,7 @@ import orpg.server.config.ServerConfigurationManager;
 import orpg.server.console.ServerConsole;
 import orpg.server.data.Account;
 import orpg.server.data.ServerReceivedPacket;
+import orpg.server.data.managers.AccountManager;
 import orpg.server.data.managers.MapManager;
 import orpg.server.data.store.DataStore;
 import orpg.server.data.store.DataStoreException;
@@ -26,6 +27,7 @@ public class BaseServer {
 	private BlockingQueue<ServerReceivedPacket> inputQueue;
 	private BlockingQueue<ServerPacket> outputQueue;
 	private MapManager mapManager;
+	private AccountManager accountManager;
 	private DataStore dataStore;
 
 	public BaseServer(ServerConfigurationManager config, ServerConsole console) {
@@ -58,7 +60,7 @@ public class BaseServer {
 		if (!encounteredSetupProblems) {
 			encounteredSetupProblems = !loadData();
 		}
-		
+
 		// Close if any setup problems
 		if (encounteredSetupProblems) {
 			console.out().println(
@@ -102,13 +104,27 @@ public class BaseServer {
 		return mapManager;
 	}
 
+	public AccountManager getAccountManager() {
+		return accountManager;
+	}
+
 	/**
 	 * @return true is the loading was successful, else false
 	 */
 	private boolean loadData() {
+		console.out().println("Setting up account manager...");
+		this.accountManager = new AccountManager(this);
+		if (!accountManager.setup()) {
+			return false;
+		}
+
 		console.out().println("Loading maps...");
 		this.mapManager = new MapManager(this);
-		return this.mapManager.setup();
+		if (!this.mapManager.setup()) {
+			return false;
+		}
+
+		return true;
 	}
 
 }

@@ -1,6 +1,6 @@
 package orpg.server.data.managers;
 
-public interface Manager<K> {
+public interface Manager<K, IDType> {
 
 	/**
 	 * This attemps to do any initial loading for the manager.
@@ -18,7 +18,7 @@ public interface Manager<K> {
 	 * @throws IllegalArgumentException
 	 *             if no object exists with that id
 	 */
-	public K get(int id) throws IllegalArgumentException;
+	public K get(IDType id) throws IllegalArgumentException;
 
 	public void update(K obj);
 }

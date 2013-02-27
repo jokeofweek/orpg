@@ -1,5 +1,7 @@
 package orpg.shared.data;
 
+import java.util.HashMap;
+
 public class Segment {
 
 	private int x;
@@ -8,6 +10,7 @@ public class Segment {
 	private short width;
 	private short height;
 	private boolean blocked[][];
+	private HashMap<String, AccountCharacter> players;
 
 	public Segment(int x, int y, short width, short height) {
 		this(x, y, width, height,
@@ -38,6 +41,7 @@ public class Segment {
 		this.y = y;
 		this.height = height;
 		this.width = width;
+		this.players = new HashMap<String, AccountCharacter>();
 	}
 
 	public short getWidth() {
@@ -64,4 +68,15 @@ public class Segment {
 		return blocked;
 	}
 
+	public HashMap<String, AccountCharacter> getPlayers() {
+		return players;
+	}
+
+	public void addPlayer(AccountCharacter accountCharacter) {
+		players.put(accountCharacter.getName(), accountCharacter);
+	}
+
+	public void removePlayer(AccountCharacter accountCharacter) {
+		players.remove(accountCharacter.getName());
+	}
 }

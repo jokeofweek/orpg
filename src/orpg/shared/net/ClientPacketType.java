@@ -6,6 +6,8 @@ public enum ClientPacketType {
 	CREATE_ACCOUNT,
 	LOGIN,
 	
+	USE_CHARACTER,
+	
 	CLIENT_LOAD_MAP,
 
 	// Editor packets

@@ -2,7 +2,10 @@ package orpg.shared.state;
 
 import java.util.EmptyStackException;
 import java.util.Observable;
+import java.util.Scanner;
 import java.util.Stack;
+
+import com.badlogic.gdx.Screen;
 
 public abstract class StateManager extends Observable {
 
@@ -47,14 +50,18 @@ public abstract class StateManager extends Observable {
 	 */
 	public void popState() throws IllegalStateException {
 		synchronized (switchingLock) {
-			getCurrentState().exit();
+			State currentState = getCurrentState();
+			if (currentState instanceof Screen) {
+				((Screen) currentState).dispose();
+			}
+			currentState.exit();
 			stateStack.pop();
 
 			if (!stateStack.isEmpty()) {
 				getCurrentState().enter();
 			}
 		}
-		
+
 		onChangeState();
 	}
 
@@ -73,7 +80,7 @@ public abstract class StateManager extends Observable {
 			stateStack.push(state);
 			state.enter();
 		}
-		
+
 		onChangeState();
 	}
 
@@ -88,12 +95,16 @@ public abstract class StateManager extends Observable {
 	 */
 	public void switchState(State state) throws IllegalStateException {
 		synchronized (switchingLock) {
-			getCurrentState().exit();
+			State currentState = getCurrentState();
+			if (currentState instanceof Screen) {
+				((Screen) currentState).dispose();
+			}
+			currentState.exit();
 			stateStack.pop();
 			stateStack.push(state);
 			state.enter();
 		}
-		
+
 		onChangeState();
 	}
 

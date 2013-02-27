@@ -15,7 +15,7 @@ import orpg.shared.net.AbstractClient;
 public class MapDataHandler implements ClientPacketHandler {
 
 	@Override
-	public void handle(ClientReceivedPacket packet, AbstractClient client) {
+	public void handle(ClientReceivedPacket packet, BaseClient client) {
 		final BaseClient baseClient = ((BaseClient) client);
 
 		packet.getByteBuffer().decompress();

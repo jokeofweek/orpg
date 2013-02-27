@@ -1,9 +1,11 @@
 package orpg.server;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Level;
 
+import orpg.server.data.SessionType;
 import orpg.server.net.packets.ConnectedPacket;
 import orpg.server.net.packets.ServerPacket;
 
@@ -20,11 +22,14 @@ public class ServerSessionManager implements Runnable {
 	private BaseServer server;
 	private BlockingQueue<ServerPacket> outputQueue;
 
+	private HashMap<String, ServerSession> inGameSessions;
+
 	public ServerSessionManager(BaseServer server,
 			BlockingQueue<ServerPacket> outputQueue) {
 		this.server = server;
-		this.sessions = new HashSet<ServerSession>();
 		this.outputQueue = outputQueue;
+		this.sessions = new HashSet<ServerSession>();
+		this.inGameSessions = new HashMap<String, ServerSession>();
 	}
 
 	public void addSession(ServerSession session) {
@@ -36,9 +41,40 @@ public class ServerSessionManager implements Runnable {
 	}
 
 	public void removeSession(ServerSession session) {
+		// If the client was in game, remove from in game sessions as well
+		if (session.getSessionType() == SessionType.GAME) {
+			inGameSessions.remove(session.getCharacter().getName());
+		}
 		sessions.remove(session);
 		server.getConfigManager().getSessionLogger()
 				.log(Level.INFO, "Session removed - " + session.getId());
+	}
+
+	public ServerSession getInGameSession(String name) {
+		return inGameSessions.get(name);
+	}
+
+	public synchronized boolean registerInGameSession(ServerSession session)
+			throws IllegalStateException {
+		if (session.getSessionType() != SessionType.GAME
+				|| session.getAccount() == null
+				|| session.getCharacter() == null) {
+			this.server
+					.getConfigManager()
+					.getErrorLogger()
+					.log(Level.SEVERE,
+							"Attempt to register invalid in-game session "
+									+ session.getId() + ".");
+			throw new IllegalStateException(
+					"Cannot register ingame session. Not a valid session.");
+		}
+
+		if (getInGameSession(session.getCharacter().getName()) != null) {
+			return false;
+		}
+
+		inGameSessions.put(session.getCharacter().getName(), session);
+		return true;
 	}
 
 	@Override

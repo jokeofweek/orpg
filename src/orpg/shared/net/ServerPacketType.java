@@ -11,7 +11,10 @@ public enum ServerPacketType {
 	LOGIN_OK,
 	EDITOR_LOGIN_OK,
 	
+	
+	
 	// Client packet types
+	CLIENT_IN_GAME,
 	CLIENT_MAP_DATA,
 	
 	// Editor packet types

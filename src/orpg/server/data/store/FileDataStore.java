@@ -140,8 +140,8 @@ public class FileDataStore implements DataStore {
 	 * @see orpg.server.data.store.DataStore#loadMap(int)
 	 */
 	@Override
-	public Map loadMap(int id) throws IllegalArgumentException,
-			DataStoreException {
+	public Map loadMap(int id, boolean loadSegments)
+			throws IllegalArgumentException, DataStoreException {
 		File mapFile = new File(Constants.SERVER_MAPS_PATH + "map_" + id
 				+ ".map");
 		if (!mapExists(id)) {
@@ -154,12 +154,14 @@ public class FileDataStore implements DataStore {
 			InputByteBuffer in = new InputByteBuffer(mapFile);
 			Map map = in.getMapDescriptor();
 
-			// Load each segment
-			for (int x = 0; x < map.getSegmentsWide(); x++) {
-				for (int y = 0; y < map.getSegmentsHigh(); y++) {
-					map.updateSegment(new InputByteBuffer(new File(
-							Constants.SERVER_MAPS_PATH + "map_" + id + "_" + x
-									+ "_" + y + ".map")).getSegment());
+			if (loadSegments) {
+				// Load each segment
+				for (int x = 0; x < map.getSegmentsWide(); x++) {
+					for (int y = 0; y < map.getSegmentsHigh(); y++) {
+						map.updateSegment(new InputByteBuffer(new File(
+								Constants.SERVER_MAPS_PATH + "map_" + id + "_"
+										+ x + "_" + y + ".map")).getSegment());
+					}
 				}
 			}
 			return map;

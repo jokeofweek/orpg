@@ -2,6 +2,7 @@ package orpg.server.data;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -16,6 +17,10 @@ public class Account {
 	private String salt;
 	private String passwordHash;
 	private List<AccountCharacter> characters;
+
+	public Account() {
+		this.characters = new ArrayList<AccountCharacter>(0);
+	}
 
 	public long getId() {
 		return id;

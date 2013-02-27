@@ -6,6 +6,7 @@ import net.jpountz.lz4.LZ4Compressor;
 import net.jpountz.lz4.LZ4Factory;
 
 import orpg.shared.Constants;
+import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
 import orpg.shared.data.Segment;
@@ -186,6 +187,16 @@ public class OutputByteBuffer {
 				putSegment(map.getSegment(x, y));
 			}
 		}
+	}
+
+	public void putAccountCharacter(AccountCharacter character) {
+		testForExtraCapacity(20);
+		putInt(character.getId());
+		putString(character.getName());
+		putShort(character.getSprite());
+		putInt(character.getMap().getId());
+		putInt(character.getX());
+		putInt(character.getY());
 	}
 
 	/**

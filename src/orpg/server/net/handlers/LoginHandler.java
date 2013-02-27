@@ -34,7 +34,14 @@ public class LoginHandler implements ServerPacketHandler {
 			// If username was valid, check if account exists, and if so load
 			// it.
 			Account account = null;
-			account = baseServer.getDataStore().loadAccount(name);
+			account = baseServer.getAccountManager().get(name);
+
+			// Make sure the account was loaded and that there was no error
+			if (account == null) {
+				baseServer.sendPacket(new ErrorPacket(packet.getSession(),
+						ErrorMessage.GENERIC_LOGIN_ERROR));
+				return;
+			}
 
 			// If we've finally loaded the account, test credentials.
 			if (!account.passwordMatches(password)) {
@@ -48,39 +55,14 @@ public class LoginHandler implements ServerPacketHandler {
 			}
 
 			// At this point, our login was successful, so update the session.
-			packet.getSession().setAccount(account);
-			baseServer
-					.getConfigManager()
-					.getSessionLogger()
-					.log(Level.INFO,
-							String.format(
-									"Session %s sucesfully logged in.",
-									packet.getSession().getId()));
-
-			// Update depending on editor and then send ok packet.
-			if (isEditorHandler) {
-				packet.getSession().setSessionType(SessionType.EDITOR);
-				baseServer.sendPacket(new EditorLoginOkPacket(packet
-						.getSession()));
-			} else {
-				packet.getSession().setSessionType(SessionType.GAME);
-				baseServer.sendPacket(new LoginOkPacket(packet
-						.getSession()));
-			}
+			packet.getSession().login(
+					account,
+					isEditorHandler ? SessionType.EDITOR
+							: SessionType.LOGGED_IN);
 		} catch (IllegalArgumentException e) {
 			// Thrown when the account does not exist
 			baseServer.sendPacket(new ErrorPacket(packet.getSession(),
 					ErrorMessage.LOGIN_INVALID_CREDENTIALS));
-		} catch (DataStoreException e) {
-			// Thrown when error loading account
-			baseServer
-					.getConfigManager()
-					.getErrorLogger()
-					.log(Level.SEVERE,
-							"Could not load account " + name
-									+ ". Reason: " + e.getMessage());
-			baseServer.sendPacket(new ErrorPacket(packet.getSession(),
-					ErrorMessage.GENERIC_LOGIN_ERROR));
 
 		} catch (NoSuchAlgorithmException e) {
 			// Could be thrown when testing password.

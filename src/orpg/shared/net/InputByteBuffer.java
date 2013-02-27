@@ -10,6 +10,7 @@ import net.jpountz.lz4.LZ4Decompressor;
 import net.jpountz.lz4.LZ4Factory;
 
 import orpg.shared.Constants;
+import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
 import orpg.shared.data.Segment;
@@ -210,6 +211,20 @@ public class InputByteBuffer {
 		}
 
 		return chars;
+	}
+
+	public AccountCharacter getAccountCharacter() {
+		AccountCharacter character = new AccountCharacter();
+		character.setId(getInt());
+		character.setName(getString());
+		character.setSprite(getShort());
+
+		getInt(); // Must drop an int for the map ID
+
+		character.setX(getInt());
+		character.setY(getInt());
+
+		return character;
 	}
 
 	/**
