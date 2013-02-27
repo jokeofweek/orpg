@@ -12,7 +12,7 @@ public class EditorMapDataPacketHandler implements EditorPacketHandler {
 	public void handle(ClientReceivedPacket packet, BaseEditor baseEditor) {
 		packet.getByteBuffer().decompress();
 		Map map = packet.getByteBuffer().getMapDescriptor();
-		map.updateSegment(packet.getByteBuffer().getSegment());
+		map.updateSegment(packet.getByteBuffer().getSegment(false));
 		baseEditor.closeMapSelectWindow();
 		baseEditor.editMap(map);
 	}

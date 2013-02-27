@@ -29,7 +29,7 @@ public class EditorSaveMapPacket extends ClientPacket {
 		// Put number of segments and then the individual segments.
 		out.putShort((short) segments.size());
 		for (Segment segment : segments) {
-			out.putSegment(segment);
+			out.putSegment(segment, false);
 		}
 
 		out.compress();

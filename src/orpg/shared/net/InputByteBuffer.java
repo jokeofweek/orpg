@@ -143,7 +143,7 @@ public class InputByteBuffer {
 		return bytes[pos - 1] == 1;
 	}
 
-	public Segment getSegment() {
+	public Segment getSegment(boolean storedPlayers) {
 		// Test for dimensions first
 		short width = getShort();
 		short height = getShort();
@@ -166,7 +166,17 @@ public class InputByteBuffer {
 			}
 		}
 
-		return new Segment(segmentX, segmentY, width, height, tiles, blocked);
+		Segment segment = new Segment(segmentX, segmentY, width, height, tiles,
+				blocked);
+
+		if (storedPlayers) {
+			int count = getInt();
+			for (int i = 0; i < count; i++) {
+				segment.addPlayer(getMapCharacter());
+			}
+		}
+
+		return segment;
 	}
 
 	public Map getMapDescriptor() {
@@ -182,12 +192,12 @@ public class InputByteBuffer {
 		return map;
 	}
 
-	public Map getMap() {
+	public Map getMap(boolean storedPlayers) {
 		Map map = getMapDescriptor();
 		int count = getInt();
 
 		for (int i = 0; i < count; i++) {
-			map.updateSegment(getSegment());
+			map.updateSegment(getSegment(storedPlayers));
 		}
 		return map;
 	}
@@ -227,14 +237,14 @@ public class InputByteBuffer {
 		return character;
 	}
 
-	public AccountCharacter getMapCharacter(Map map) {
+	public AccountCharacter getMapCharacter() {
 		AccountCharacter character = new AccountCharacter();
 		character.setId(getInt());
 		character.setName(getString());
 		character.setSprite(getShort());
 		character.setX(getInt());
 		character.setY(getInt());
-		character.setMap(map);
+
 		return character;
 	}
 

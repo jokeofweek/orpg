@@ -14,7 +14,7 @@ public class EditorMapDataPacket extends SessionPacket {
 		super(session);
 		OutputByteBuffer out = new OutputByteBuffer();
 		out.putMapDescriptor(map);
-		out.putSegment(segment);
+		out.putSegment(segment, false);
 		out.compress();
 		this.bytes = out.getBytes();
 	}

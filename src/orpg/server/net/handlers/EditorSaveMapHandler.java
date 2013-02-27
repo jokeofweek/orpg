@@ -20,7 +20,7 @@ public class EditorSaveMapHandler implements ServerPacketHandler {
 		// Fetch the new segments and apply them
 		short updatedSegments = packet.getByteBuffer().getShort();
 		for (int i = 0; i < updatedSegments; i++) {
-			map.updateSegment(packet.getByteBuffer().getSegment());
+			map.updateSegment(packet.getByteBuffer().getSegment(false));
 		}
 
 		try {

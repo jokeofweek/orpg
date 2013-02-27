@@ -29,7 +29,7 @@ public class SegmentFiller {
 			System.exit(1);
 		}
 
-		Segment segment = in.getSegment();
+		Segment segment = in.getSegment(false);
 
 		for (int x = 0; x < segment.getWidth(); x++) {
 			for (int y = 0; y < segment.getHeight(); y++) {
@@ -38,7 +38,7 @@ public class SegmentFiller {
 		}
 
 		OutputByteBuffer out = new OutputByteBuffer();
-		out.putSegment(segment);
+		out.putSegment(segment, false);
 
 		FileOutputStream fileOut = null;
 		try {
