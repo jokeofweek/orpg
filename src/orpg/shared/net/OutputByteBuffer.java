@@ -219,6 +219,7 @@ public class OutputByteBuffer {
 		putInt(character.getMap().getId());
 		putInt(character.getX());
 		putInt(character.getY());
+		putByte((byte) character.getDirection().ordinal());
 	}
 
 	public void putMapCharacter(AccountCharacter character) {
@@ -228,6 +229,7 @@ public class OutputByteBuffer {
 		putShort(character.getSprite());
 		putInt(character.getX());
 		putInt(character.getY());
+		putByte((byte) character.getDirection().ordinal());
 	}
 
 	/**

@@ -11,6 +11,7 @@ import net.jpountz.lz4.LZ4Factory;
 
 import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
+import orpg.shared.data.Direction;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
 import orpg.shared.data.Segment;
@@ -233,6 +234,7 @@ public class InputByteBuffer {
 
 		character.setX(getInt());
 		character.setY(getInt());
+		character.setDirection(Direction.values()[getByte()]);
 
 		return character;
 	}
@@ -244,6 +246,7 @@ public class InputByteBuffer {
 		character.setSprite(getShort());
 		character.setX(getInt());
 		character.setY(getInt());
+		character.setDirection(Direction.values()[getByte()]);
 
 		return character;
 	}

@@ -23,6 +23,7 @@ import orpg.server.BaseServer;
 import orpg.server.data.Account;
 import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
+import orpg.shared.data.Direction;
 import orpg.shared.data.Map;
 import orpg.shared.data.Segment;
 import orpg.shared.data.Validator;
@@ -294,6 +295,7 @@ public class FileDataStore implements DataStore {
 		ini.put(key, "map", character.getMap().getId());
 		ini.put(key, "x", character.getX());
 		ini.put(key, "y", character.getY());
+		ini.put(key, "dir", character.getDirection().ordinal());
 		ini.put(key, "sprite", character.getSprite());
 
 	}
@@ -346,6 +348,8 @@ public class FileDataStore implements DataStore {
 				ini.get(key, "map", int.class)));
 		character.setX(ini.get(key, "x", int.class));
 		character.setY(ini.get(key, "y", int.class));
+		character.setDirection(Direction.values()[ini
+				.get(key, "dir", int.class)]);
 		character.setSprite(ini.get(key, "sprite", short.class));
 
 		return character;

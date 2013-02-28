@@ -8,6 +8,7 @@ public class AccountCharacter {
 	private Map map;
 	private int x;
 	private int y;
+	private Direction direction;
 	private boolean changingMap;
 
 	public AccountCharacter() {
@@ -68,5 +69,13 @@ public class AccountCharacter {
 
 	public void setChangingMap(boolean changingMap) {
 		this.changingMap = changingMap;
+	}
+
+	public Direction getDirection() {
+		return direction;
+	}
+
+	public void setDirection(Direction direction) {
+		this.direction = direction;
 	}
 }
