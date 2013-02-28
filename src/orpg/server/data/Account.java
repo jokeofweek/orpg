@@ -11,7 +11,7 @@ import orpg.shared.data.AccountCharacter;
 
 public class Account {
 
-	private long id;
+	private int id;
 	private String name;
 	private String email;
 	private String salt;
@@ -22,11 +22,11 @@ public class Account {
 		this.characters = new ArrayList<AccountCharacter>(0);
 	}
 
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 

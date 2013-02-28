@@ -39,11 +39,38 @@ public class FileDataStore implements DataStore {
 
 	private HashSet<String> characterNames;
 
+	private IDFile accountIDFile;
+
 	public FileDataStore(BaseServer baseSever) {
 		this.baseServer = baseSever;
 		this.loadCharacterNames();
 	}
-	
+
+	@Override
+	public boolean setup() {
+		// Load the account ID file
+		File file = new File(Constants.SERVER_DATA_PATH
+				+ "accounts/account.id");
+		try {
+			this.accountIDFile = new IDFile(file);
+		} catch (IOException e) {
+			baseServer
+					.getConfigManager()
+					.getErrorLogger()
+					.log(Level.SEVERE,
+							"Error creating accounts ID file. Reason: "
+									+ e.getMessage());
+			return false;
+		}
+
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see orpg.server.data.store.DataStore#shutdown()
+	 */
 	@Override
 	public void shutdown() {
 		// Nothing to do for file data store
@@ -92,8 +119,9 @@ public class FileDataStore implements DataStore {
 	public boolean mapExists(int id) {
 		File mapFile = new File(Constants.SERVER_MAPS_PATH + "map_" + id
 				+ ".map");
-		return (id >= 1 && id <= baseServer.getConfigManager().getTotalMaps() && mapFile
-				.exists());
+		return (id >= 1
+				&& id <= baseServer.getConfigManager().getTotalMaps() && mapFile
+					.exists());
 	}
 
 	/*
@@ -109,7 +137,8 @@ public class FileDataStore implements DataStore {
 
 		try {
 			out = new BufferedOutputStream(new FileOutputStream(
-					Constants.SERVER_MAPS_PATH + "map_" + map.getId() + ".map"));
+					Constants.SERVER_MAPS_PATH + "map_" + map.getId()
+							+ ".map"));
 			out.write(buffer.getBytes());
 			out.close();
 
@@ -151,8 +180,8 @@ public class FileDataStore implements DataStore {
 		File mapFile = new File(Constants.SERVER_MAPS_PATH + "map_" + id
 				+ ".map");
 		if (!mapExists(id)) {
-			throw new IllegalArgumentException("No map exists with the number "
-					+ id + ".");
+			throw new IllegalArgumentException(
+					"No map exists with the number " + id + ".");
 		}
 
 		try {
@@ -165,8 +194,8 @@ public class FileDataStore implements DataStore {
 				for (int x = 0; x < map.getSegmentsWide(); x++) {
 					for (int y = 0; y < map.getSegmentsHigh(); y++) {
 						map.updateSegment(new InputByteBuffer(new File(
-								Constants.SERVER_MAPS_PATH + "map_" + id + "_"
-										+ x + "_" + y + ".map"))
+								Constants.SERVER_MAPS_PATH + "map_" + id
+										+ "_" + x + "_" + y + ".map"))
 								.getSegment(false));
 					}
 				}
@@ -185,8 +214,8 @@ public class FileDataStore implements DataStore {
 	 */
 	@Override
 	public boolean segmentExists(int id, int x, int y) {
-		return (new File(Constants.SERVER_MAPS_PATH + "map_" + id + "_" + x
-				+ "_" + y + ".map").exists());
+		return (new File(Constants.SERVER_MAPS_PATH + "map_" + id + "_"
+				+ x + "_" + y + ".map").exists());
 
 	}
 
@@ -201,8 +230,8 @@ public class FileDataStore implements DataStore {
 			DataStoreException {
 		// First make sure the map exists
 		if (!mapExists(id)) {
-			throw new IllegalArgumentException("No map exists with the number "
-					+ id + ".");
+			throw new IllegalArgumentException(
+					"No map exists with the number " + id + ".");
 		}
 
 		// Next make sure the segment exists
@@ -214,8 +243,8 @@ public class FileDataStore implements DataStore {
 		// Try to load the segment
 		try {
 			Segment segment = new InputByteBuffer(new File(
-					Constants.SERVER_MAPS_PATH + "map_" + id + "_" + x + "_"
-							+ y + ".map")).getSegment(false);
+					Constants.SERVER_MAPS_PATH + "map_" + id + "_" + x
+							+ "_" + y + ".map")).getSegment(false);
 			return segment;
 		} catch (IOException e) {
 			throw new DataStoreException(e);
@@ -233,7 +262,8 @@ public class FileDataStore implements DataStore {
 	}
 
 	private File getAccountFile(String accountName) {
-		return new File(Constants.SERVER_ACCOUNTS_PATH + accountName + ".ini");
+		return new File(Constants.SERVER_ACCOUNTS_PATH + accountName
+				+ ".ini");
 	}
 
 	/*
@@ -248,6 +278,12 @@ public class FileDataStore implements DataStore {
 		// Just a last condition check to prevent messing up the file system.
 		if (!Validator.isAccountNameValid(account.getName())) {
 			throw new IllegalArgumentException("Invalid account name.");
+		}
+
+		try {
+			account.setId(accountIDFile.getNextID());
+		} catch (IOException e) {
+			throw new DataStoreException(e);
 		}
 
 		File accountFile = getAccountFile(account.getName());
@@ -273,6 +309,7 @@ public class FileDataStore implements DataStore {
 				Wini ini = new Wini(getAccountFile(account.getName()));
 
 				// Store account details
+				ini.put("account", "id", account.getId());
 				ini.put("account", "name", account.getName());
 				ini.put("account", "email", account.getEmail());
 				ini.put("account", "salt", account.getSalt());
@@ -322,6 +359,7 @@ public class FileDataStore implements DataStore {
 			Wini ini = new Wini(getAccountFile(name));
 
 			Account account = new Account();
+			account.setId(ini.get("account", "id", int.class));
 			account.setName(ini.get("account", "name"));
 			account.setEmail(ini.get("account", "email"));
 			account.setSalt(ini.get("account", "salt"));
@@ -353,8 +391,8 @@ public class FileDataStore implements DataStore {
 				ini.get(key, "map", int.class)));
 		character.setX(ini.get(key, "x", int.class));
 		character.setY(ini.get(key, "y", int.class));
-		character.setDirection(Direction.values()[ini
-				.get(key, "dir", int.class)]);
+		character.setDirection(Direction.values()[ini.get(key, "dir",
+				int.class)]);
 		character.setSprite(ini.get(key, "sprite", short.class));
 
 		return character;
@@ -393,7 +431,8 @@ public class FileDataStore implements DataStore {
 					.log(Level.SEVERE,
 							"Could not add character name to character file. Reason: "
 									+ e.getMessage());
-			throw new DataStoreException("Error registering character name.", e);
+			throw new DataStoreException(
+					"Error registering character name.", e);
 		} finally {
 			if (printOut != null) {
 				printOut.close();
@@ -416,5 +455,42 @@ public class FileDataStore implements DataStore {
 		// Save the account
 		saveAccount(owner);
 
+	}
+
+	private static class IDFile {
+		private File file;
+
+		public IDFile(File file) throws IOException {
+			// Test to make sure the file exists, if not create and write a 1
+			if (!file.exists()) {
+				file.createNewFile();
+				FileWriter out = null;
+				try {
+					out = new FileWriter(file);
+					out.write("1");
+				} finally {
+					if (out != null) {
+						out.close();
+					}
+				}
+			}
+
+			this.file = file;
+		}
+
+		public synchronized int getNextID() throws IOException {
+			Scanner scan = new Scanner(file);
+			int id = scan.nextInt();
+			FileWriter out = null;
+			try {
+				out = new FileWriter(file);
+				out.write((id + 1) + "");
+			} finally {
+				if (out != null) {
+					out.close();
+				}
+			}
+			return id;
+		}
 	}
 }

@@ -30,7 +30,8 @@ public class BaseServer {
 	private AccountController accountController;
 	private DataStore dataStore;
 
-	public BaseServer(ServerConfigurationManager config, ServerConsole console) {
+	public BaseServer(ServerConfigurationManager config,
+			ServerConsole console) {
 		this.config = config;
 		this.console = console;
 
@@ -41,7 +42,8 @@ public class BaseServer {
 		this.outputQueue = new LinkedBlockingQueue<ServerPacket>();
 
 		// Set up the various threads
-		this.serverSessionManager = new ServerSessionManager(this, outputQueue);
+		this.serverSessionManager = new ServerSessionManager(this,
+				outputQueue);
 		this.serverGameThread = new ServerGameThread(this, inputQueue,
 				outputQueue);
 		try {
@@ -56,9 +58,14 @@ public class BaseServer {
 		}
 
 		// Load all necessary data
-		this.dataStore = new FileDataStore(this);
+		console.out().println("Setting up data store...");
 		if (!encounteredSetupProblems) {
-			encounteredSetupProblems = !loadData(dataStore);
+			this.dataStore = new FileDataStore(this);
+			encounteredSetupProblems = !this.dataStore.setup();
+
+			if (!encounteredSetupProblems) {
+				encounteredSetupProblems = !setupControllers(dataStore);
+			}
 		}
 
 		// Close if any setup problems
@@ -110,7 +117,7 @@ public class BaseServer {
 	/**
 	 * @return true is the loading was successful, else false
 	 */
-	private boolean loadData(DataStore dataStore) {
+	private boolean setupControllers(DataStore dataStore) {
 		console.out().println("Setting up account controller...");
 		this.accountController = new AccountController(this, dataStore);
 		if (!accountController.setup()) {

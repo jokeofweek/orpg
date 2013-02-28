@@ -6,11 +6,22 @@ import orpg.shared.data.Map;
 import orpg.shared.data.Segment;
 
 /**
- * @author Dom
+ * @author Dominic Charley-Roy
  * 
  */
 public interface DataStore {
 
+	/**
+	 * This attempts to perform an initial setup required by the datastore
+	 * 
+	 * @return true if the setup was succesful
+	 */
+	public boolean setup();
+
+	/**
+	 * This is called when the server is shutting down in order to do any
+	 * clean-up necessary.
+	 */
 	public void shutdown();
 
 	/**
@@ -100,7 +111,8 @@ public interface DataStore {
 	 * afterwards. <b>Note that this method assumes
 	 * {@link #accountExists(String)} has already been called.</b> The reasoning
 	 * behind this is to make sure it gets called regardless of data store
-	 * implementation.
+	 * implementation. This method should take care of updating the account's
+	 * ID.
 	 * 
 	 * @param account
 	 *            the account to save.
@@ -109,8 +121,8 @@ public interface DataStore {
 	 * @throws DataStoreException
 	 *             if there is an error while creating said account.
 	 */
-	public void createAccount(Account account) throws IllegalArgumentException,
-			DataStoreException;
+	public void createAccount(Account account)
+			throws IllegalArgumentException, DataStoreException;
 
 	/**
 	 * This saves an account's status.
@@ -161,7 +173,7 @@ public interface DataStore {
 	 * @throws DataStoreException
 	 *             if there is an error loading that account from the datastore.
 	 */
-	public Account loadAccount(String name) throws IllegalArgumentException,
-			DataStoreException;
+	public Account loadAccount(String name)
+			throws IllegalArgumentException, DataStoreException;
 
 }
