@@ -1,9 +1,11 @@
 package orpg.client;
 
 import java.net.Socket;
+import java.util.HashMap;
 
 import com.badlogic.gdx.Game;
 
+import orpg.client.data.ClientPlayerData;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
 import orpg.shared.net.AbstractClient;
@@ -15,11 +17,13 @@ public class BaseClient extends AbstractClient {
 	private Game game;
 	private Map map;
 	private AccountCharacter accountCharacter;
+	private HashMap<String, ClientPlayerData> playersData;
 
 	public BaseClient(Game game, Socket socket, PacketProcessThread gameThread,
 			StateManager stateManager) {
 		super(socket, gameThread, stateManager);
 		this.game = game;
+		this.playersData = new HashMap<String, ClientPlayerData>();
 	}
 
 	public Game getGame() {
@@ -44,6 +48,22 @@ public class BaseClient extends AbstractClient {
 
 	public void setAccountCharacter(AccountCharacter accountCharacter) {
 		this.accountCharacter = accountCharacter;
+	}
+
+	public ClientPlayerData getClientPlayerData(String name) {
+		return playersData.get(name);
+	}
+
+	public void clearClientPlayerData() {
+		this.playersData.clear();
+	}
+
+	public void addClientPlayerData(String name, ClientPlayerData playerData) {
+		this.playersData.put(name, playerData);
+	}
+
+	public void removeClientPlayerData(String name) {
+		this.playersData.remove(name);
 	}
 
 }

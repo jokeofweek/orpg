@@ -22,6 +22,7 @@ public class LeftMapHandler implements ClientPacketHandler {
 				@Override
 				public void run() {
 					client.getMap().removePlayer(character);
+					client.removeClientPlayerData(character.getName());
 				}
 			});
 		}

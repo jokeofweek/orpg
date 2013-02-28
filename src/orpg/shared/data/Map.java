@@ -215,10 +215,17 @@ public class Map {
 	 * 
 	 * @param character
 	 *            the character to add.
+	 * @return true if the character was added, or false if the segment is not
+	 *         yet loaded.
 	 */
-	public void addPlayer(AccountCharacter character) {
+	public boolean addPlayer(AccountCharacter character) {
 		Segment segment = getPositionSegment(character.getX(), character.getY());
-		segment.addPlayer(character);
+		if (segment != null) {
+			segment.addPlayer(character);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -249,11 +256,13 @@ public class Map {
 	 * 
 	 * @param character
 	 *            the character to remove.
+	 * @return true if the character was removed, or false if the segment is not
+	 *         yet loaded.
 	 * @throws IllegalArgumentException
 	 *             if the character is not on this map.
 	 */
 
-	public void removePlayer(AccountCharacter character)
+	public boolean removePlayer(AccountCharacter character)
 			throws IllegalArgumentException {
 		// Sanity test
 		if (character.getMap() != this) {
@@ -261,6 +270,11 @@ public class Map {
 					+ this + ", so could not be removed.");
 		}
 		Segment segment = getPositionSegment(character.getX(), character.getY());
-		segment.removePlayer(character);
+		if (segment != null) {
+			segment.removePlayer(character);
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

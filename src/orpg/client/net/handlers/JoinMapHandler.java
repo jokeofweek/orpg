@@ -3,6 +3,7 @@ package orpg.client.net.handlers;
 import com.badlogic.gdx.Gdx;
 
 import orpg.client.BaseClient;
+import orpg.client.data.ClientPlayerData;
 import orpg.client.data.ClientReceivedPacket;
 import orpg.shared.data.AccountCharacter;
 
@@ -21,7 +22,10 @@ public class JoinMapHandler implements ClientPacketHandler {
 			Gdx.app.postRunnable(new Runnable() {
 				@Override
 				public void run() {
-					client.getMap().addPlayer(character);
+					if (client.getMap().addPlayer(character)) {
+						client.addClientPlayerData(character.getName(),
+								new ClientPlayerData());
+					}
 				}
 			});
 		}

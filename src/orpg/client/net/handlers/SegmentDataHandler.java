@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 
 import orpg.client.BaseClient;
 import orpg.client.Paths;
+import orpg.client.data.ClientPlayerData;
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.state.GameState;
 import orpg.shared.Constants;
@@ -21,8 +22,8 @@ public class SegmentDataHandler implements ClientPacketHandler {
 		packet.getByteBuffer().decompress();
 
 		// Load the map
-		baseClient.getMap().updateSegment(
-				packet.getByteBuffer().getSegment(true));
+		final Segment segment = packet.getByteBuffer().getSegment(true);
+		baseClient.getMap().updateSegment(segment);
 
 		// Switch to game state if we aren't already in game state
 		if (!(baseClient.getStateManager().getCurrentState() instanceof GameState)) {
@@ -47,5 +48,17 @@ public class SegmentDataHandler implements ClientPacketHandler {
 
 		// If we were presently changing maps, we are done now
 		baseClient.getAccountCharacter().setChangingMap(false);
+
+		// Add all players to client player data cache
+		Gdx.app.postRunnable(new Runnable() {
+
+			@Override
+			public void run() {
+				for (String name : segment.getPlayers().keySet()) {
+					baseClient
+							.addClientPlayerData(name, new ClientPlayerData());
+				}
+			}
+		});
 	}
 }

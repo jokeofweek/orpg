@@ -1,5 +1,7 @@
 package orpg.client.net.handlers;
 
+import com.badlogic.gdx.Gdx;
+
 import orpg.client.BaseClient;
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.net.packets.NeedSegmentPacket;
@@ -9,7 +11,7 @@ import orpg.shared.net.InputByteBuffer;
 public class NewMapHandler implements ClientPacketHandler {
 
 	@Override
-	public void handle(ClientReceivedPacket packet, BaseClient client) {
+	public void handle(ClientReceivedPacket packet, final BaseClient client) {
 		client.getAccountCharacter().setChangingMap(true);
 
 		InputByteBuffer in = packet.getByteBuffer();
@@ -23,6 +25,14 @@ public class NewMapHandler implements ClientPacketHandler {
 
 		client.getAccountCharacter().setY(in.getInt());
 		int segmentY = map.getSegmentY(client.getAccountCharacter().getY());
+
+		// Clear the client data cache
+		Gdx.app.postRunnable(new Runnable() {
+			@Override
+			public void run() {
+				client.clearClientPlayerData();
+			}
+		});
 
 		// Send the need segment packet
 		client.sendPacket(new NeedSegmentPacket(segmentX, segmentY));
