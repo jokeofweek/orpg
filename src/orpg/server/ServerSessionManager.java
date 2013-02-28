@@ -1,13 +1,16 @@
 package orpg.server;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Level;
 
 import orpg.server.data.SessionType;
 import orpg.server.net.packets.ConnectedPacket;
 import orpg.server.net.packets.ServerPacket;
+import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
 import orpg.shared.data.Pair;
 import orpg.shared.data.Segment;
@@ -22,21 +25,22 @@ import orpg.shared.data.Segment;
 public class ServerSessionManager implements Runnable {
 
 	private HashSet<ServerSession> sessions;
-	private BaseServer server;
+	private BaseServer baseServer;
 	private BlockingQueue<ServerPacket> outputQueue;
-
+	private HashMap<String, List<ServerSession>> accountSessions;
 	private HashMap<String, ServerSession> inGameSessions;
 
 	public ServerSessionManager(BaseServer server,
 			BlockingQueue<ServerPacket> outputQueue) {
-		this.server = server;
+		this.baseServer = server;
 		this.outputQueue = outputQueue;
 		this.sessions = new HashSet<ServerSession>();
 		this.inGameSessions = new HashMap<String, ServerSession>();
+		this.accountSessions = new HashMap<String, List<ServerSession>>();
 	}
 
 	public void addSession(ServerSession session) {
-		server.getConfigManager().getSessionLogger()
+		baseServer.getConfigManager().getSessionLogger()
 				.log(Level.INFO, "Session created - " + session.getId());
 		// Send connected packet
 		outputQueue.add(new ConnectedPacket(session));
@@ -48,8 +52,19 @@ public class ServerSessionManager implements Runnable {
 		if (session.getSessionType() == SessionType.GAME) {
 			inGameSessions.remove(session.getCharacter().getName());
 		}
+
+		// If the session had an account, remove from the accountSessions
+		// and then check if we can release the account
+		if (session.getAccount() != null) {
+			String name = session.getAccount().getName();
+			accountSessions.get(name).remove(session);
+			if (accountSessions.get(name).size() == 0) {
+				baseServer.getAccountController().release(name);
+			}
+		}
+
 		sessions.remove(session);
-		server.getConfigManager().getSessionLogger()
+		baseServer.getConfigManager().getSessionLogger()
 				.log(Level.INFO, "Session removed - " + session.getId());
 	}
 
@@ -57,12 +72,37 @@ public class ServerSessionManager implements Runnable {
 		return inGameSessions.get(name);
 	}
 
+	public synchronized void registerAccountSession(ServerSession session) {
+		if (session.getAccount() == null) {
+			this.baseServer
+					.getConfigManager()
+					.getErrorLogger()
+					.log(Level.SEVERE,
+							"Attempt to register invalid account session "
+									+ session.getId() + ".");
+			throw new IllegalStateException(
+					"Cannot register account session. Not a valid session.");
+		}
+
+		// Either append to the list of active account sessions if
+		// there is at least one other session with that account, else
+		// create a new list.
+		if (accountSessions.containsKey(session.getAccount().getName())) {
+			accountSessions.get(session.getAccount().getName()).add(
+					session);
+		} else {
+			List<ServerSession> sessions = new ArrayList<ServerSession>(1);
+			sessions.add(session);
+			accountSessions.put(session.getAccount().getName(), sessions);
+		}
+	}
+
 	public synchronized boolean registerInGameSession(ServerSession session)
 			throws IllegalStateException {
 		if (session.getSessionType() != SessionType.GAME
 				|| session.getAccount() == null
 				|| session.getCharacter() == null) {
-			this.server
+			this.baseServer
 					.getConfigManager()
 					.getErrorLogger()
 					.log(Level.SEVERE,

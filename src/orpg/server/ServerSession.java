@@ -141,9 +141,12 @@ public class ServerSession {
 
 		this.setSessionType(sessionType);
 
+		// If our login was successful, notify the session manager
+		baseServer.getServerSessionManager().registerAccountSession(this);
+		
 		if (sessionType == SessionType.EDITOR) {
 			baseServer.sendPacket(new EditorLoginOkPacket(this));
-		} else if (sessionType == SessionType.LOGGED_IN) {
+		} else if (sessionType == SessionType.LOGGED_IN) {			
 			baseServer.sendPacket(new LoginOkPacket(this, account));
 		}
 

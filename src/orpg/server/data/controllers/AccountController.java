@@ -96,6 +96,18 @@ public class AccountController implements Controller<Account, String> {
 		}
 	}
 
+	/**
+	 * This notifies the controller that an account is no longer needed. Note
+	 * that the account should have been saved via
+	 * {@link AccountController#save(String)} beforehand.
+	 * 
+	 * @param name
+	 *            the name of the account to release
+	 */
+	public synchronized void release(String name) {
+		accounts.remove(name);
+	}
+
 	public boolean accountExists(String name) {
 		return dataStore.accountExists(name);
 	}
@@ -117,7 +129,8 @@ public class AccountController implements Controller<Account, String> {
 					.getConfigManager()
 					.getErrorLogger()
 					.log(Level.SEVERE,
-							"Could not create account " + account.getName()
+							"Could not create account "
+									+ account.getName()
 									+ ". Error when creating: "
 									+ e.getMessage());
 			return false;
