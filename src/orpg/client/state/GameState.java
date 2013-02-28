@@ -48,7 +48,7 @@ public class GameState extends ClientState {
 				tilesets, loadingTileTexture, new int[] {
 						MapLayer.GROUND.ordinal(), MapLayer.MASK.ordinal(),
 						MapLayer.MASK_2.ordinal() }, 0, 800, 0, 478);
-		Actor mapEntitiesActor = new MapEntitiesActor(baseClient, viewbox);
+		Actor mapEntitiesActor = new MapEntitiesActor(baseClient, viewbox, tilesets[0]);
 		Actor topLayersActor = new MapLayerActor(baseClient, viewbox, tilesets,
 				loadingTileTexture, new int[] { MapLayer.FRINGE.ordinal() }, 0,
 				800, 0, 478);

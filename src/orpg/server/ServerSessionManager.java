@@ -8,6 +8,9 @@ import java.util.logging.Level;
 import orpg.server.data.SessionType;
 import orpg.server.net.packets.ConnectedPacket;
 import orpg.server.net.packets.ServerPacket;
+import orpg.shared.data.Map;
+import orpg.shared.data.Pair;
+import orpg.shared.data.Segment;
 
 /**
  * The server sessions manager is responsible for keeping track of the current
@@ -77,6 +80,7 @@ public class ServerSessionManager implements Runnable {
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void run() {
 		ServerPacket packet;
@@ -108,7 +112,42 @@ public class ServerSessionManager implements Runnable {
 						}
 					}
 					break;
-
+				case MAP:
+					Map map = (Map) packet.getDestinationObject();
+					for (Segment[] segmentRow : map.getSegments()) {
+						for (Segment segment : segmentRow) {
+							if (segment != null) {
+								for (String name : segment.getPlayers()
+										.keySet()) {
+									getInGameSession(name)
+											.getOutputQueue()
+											.add(rawBytes);
+								}
+							}
+						}
+					}
+					break;
+				case MAP_EXCEPT_FOR:
+					Pair<ServerSession, Map> destinationObject = (Pair<ServerSession, Map>) packet
+							.getDestinationObject();
+					ServerSession session;
+					ServerSession toExclude = destinationObject.getFirst();
+					for (Segment[] segmentRow : destinationObject
+							.getSecond().getSegments()) {
+						for (Segment segment : segmentRow) {
+							if (segment != null) {
+								for (String name : segment.getPlayers()
+										.keySet()) {
+									session = getInGameSession(name);
+									if (session != toExclude) {
+										session.getOutputQueue().add(
+												rawBytes);
+									}
+								}
+							}
+						}
+					}
+					break;
 				}
 			}
 		} catch (InterruptedException e) {

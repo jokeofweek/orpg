@@ -78,11 +78,17 @@ public class ServerSession {
 	}
 
 	public void disconnect(String reason) {
+		// If the player was in game, remove them from the map
+		if (getSessionType() == SessionType.GAME) {
+			baseServer.getMapManager().leaveMap(getCharacter());
+		}
+
 		baseServer
 				.getConfigManager()
 				.getSessionLogger()
 				.log(Level.INFO,
-						String.format("Session %s disconnected for reason %s.",
+						String.format(
+								"Session %s disconnected for reason %s.",
 								getId(), reason));
 		baseServer.getServerSessionManager().removeSession(this);
 
@@ -110,7 +116,8 @@ public class ServerSession {
 					.getConfigManager()
 					.getErrorLogger()
 					.log(Level.SEVERE,
-							"Session " + getId() + " attempted to login to "
+							"Session " + getId()
+									+ " attempted to login to "
 									+ account.getName()
 									+ " while not in the correct state.");
 			return;
@@ -178,7 +185,8 @@ public class ServerSession {
 		// Now we register the in-game session.
 		this.character = character;
 		this.sessionType = SessionType.GAME;
-		if (baseServer.getServerSessionManager().registerInGameSession(this)) {
+		if (baseServer.getServerSessionManager().registerInGameSession(
+				this)) {
 			// Update the id to include character name
 			this.id = this.originalId + "(" + account.getName() + ":"
 					+ character.getName() + ")";
@@ -193,10 +201,10 @@ public class ServerSession {
 
 			// Setup the character
 			this.character.setChangingMap(true);
-			
+
 			// Notify the client that they are now in the game
 			baseServer.sendPacket(new ClientInGamePacket(this, character));
-			
+
 			baseServer.getMapManager().warpToMap(character,
 					character.getMap().getId(), character.getX(),
 					character.getY());

@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.logging.Level;
 
 import orpg.server.BaseServer;
+import orpg.server.ServerSession;
 import orpg.server.data.store.DataStoreException;
+import orpg.server.net.packets.ClientJoinMapPacket;
+import orpg.server.net.packets.ClientLeftMapPacket;
 import orpg.server.net.packets.ClientNewMapPacket;
 import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
@@ -45,7 +48,8 @@ public class MapManager implements Manager<Map, Integer> {
 					+ ".map");
 			if (!file.exists()) {
 				// Save the map based on the empty template
-				emptyMapTemplate = new Map(i + 1, (short) 3, (short) 3, true);
+				emptyMapTemplate = new Map(i + 1, (short) 3, (short) 3,
+						true);
 				try {
 					baseServer.getDataStore().saveMap(emptyMapTemplate);
 				} catch (DataStoreException e) {
@@ -53,8 +57,9 @@ public class MapManager implements Manager<Map, Integer> {
 							.getConsole()
 							.out()
 							.println(
-									"Could not create empty map " + (i + 1)
-											+ ". Reason: " + e.getMessage());
+									"Could not create empty map "
+											+ (i + 1) + ". Reason: "
+											+ e.getMessage());
 					return false;
 				}
 				this.maps[i] = emptyMapTemplate;
@@ -62,15 +67,16 @@ public class MapManager implements Manager<Map, Integer> {
 			} else {
 				// The file exists, so load the map
 				try {
-					this.maps[i] = baseServer.getDataStore().loadMap(i + 1,
-							false);
+					this.maps[i] = baseServer.getDataStore().loadMap(
+							i + 1, false);
 				} catch (DataStoreException e) {
 					baseServer
 							.getConsole()
 							.out()
 							.println(
 									"Could not load map " + (i + 1)
-											+ ". Reason: " + e.getMessage());
+											+ ". Reason: "
+											+ e.getMessage());
 					return false;
 				}
 			}
@@ -119,7 +125,8 @@ public class MapManager implements Manager<Map, Integer> {
 
 		if (x < 0 || x >= this.maps[id].getSegmentsWide() || y < 0
 				|| y >= this.maps[id].getSegmentsHigh()) {
-			throw new IndexOutOfBoundsException("Invalid segment position.");
+			throw new IndexOutOfBoundsException(
+					"Invalid segment position.");
 		}
 
 		if (this.maps[id].getSegment(x, y) == null) {
@@ -132,8 +139,9 @@ public class MapManager implements Manager<Map, Integer> {
 						.getConfigManager()
 						.getErrorLogger()
 						.log(Level.SEVERE,
-								"Could not load segment for map " + id + "["
-										+ x + "][" + y + "]. Error reason: "
+								"Could not load segment for map " + id
+										+ "[" + x + "][" + y
+										+ "]. Error reason: "
 										+ e.getMessage());
 			}
 		}
@@ -160,7 +168,8 @@ public class MapManager implements Manager<Map, Integer> {
 	 */
 	public void update(Map map) {
 		if (map.getId() <= 0
-				|| map.getId() > baseServer.getConfigManager().getTotalMaps()) {
+				|| map.getId() > baseServer.getConfigManager()
+						.getTotalMaps()) {
 			throw new IllegalArgumentException(
 					"Tried to update map with non-existant number "
 							+ map.getId());
@@ -185,8 +194,9 @@ public class MapManager implements Manager<Map, Integer> {
 	 * @throws IndexOutOfBoundsException
 	 *             if the x and y are out of bounds.
 	 */
-	private void joinMap(AccountCharacter character, int mapId, int x, int y)
-			throws IllegalArgumentException, IndexOutOfBoundsException {
+	public void joinMap(AccountCharacter character, int mapId, int x,
+			int y) throws IllegalArgumentException,
+			IndexOutOfBoundsException {
 		// Make sure the map is valid
 		Map map = get(mapId);
 
@@ -201,9 +211,14 @@ public class MapManager implements Manager<Map, Integer> {
 		character.setY(y);
 
 		// Send the player the new map info and then we await for the need map
-		baseServer.sendPacket(new ClientNewMapPacket(baseServer
-				.getServerSessionManager()
-				.getInGameSession(character.getName())));
+		ServerSession characterSession = baseServer
+				.getServerSessionManager().getInGameSession(
+						character.getName());
+		baseServer.sendPacket(new ClientNewMapPacket(characterSession));
+
+		// Notify the other players that this player has joined the map
+		baseServer.sendPacket(new ClientJoinMapPacket(characterSession,
+				character));
 	}
 
 	/**
@@ -213,7 +228,12 @@ public class MapManager implements Manager<Map, Integer> {
 	 * @param character
 	 *            the character that is leaving the map
 	 */
-	private void leaveMap(AccountCharacter character) {
+	public void leaveMap(AccountCharacter character) {
+		// Notify the other players that this player has left the map
+		baseServer.sendPacket(new ClientLeftMapPacket(baseServer
+				.getServerSessionManager().getInGameSession(
+						character.getName()), character));
+		
 		character.getMap().removePlayer(character);
 	}
 
@@ -226,7 +246,8 @@ public class MapManager implements Manager<Map, Integer> {
 	 * @param x
 	 * @param y
 	 */
-	public void warpToMap(AccountCharacter character, int mapId, int x, int y) {
+	public void warpToMap(AccountCharacter character, int mapId, int x,
+			int y) {
 		// We must check here if character is changing map as well, as it would
 		// be true when logging in.
 		if (character.getMap() != null && !character.isChangingMap()) {
