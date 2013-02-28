@@ -78,4 +78,16 @@ public class AccountCharacter {
 	public void setDirection(Direction direction) {
 		this.direction = direction;
 	}
+
+	public boolean canMove(Direction direction) {
+		if (direction == Direction.UP) {
+			return this.getMap().isWalkable(x, y - 1);
+		} else if (direction == Direction.DOWN) {
+			return this.getMap().isWalkable(x, y + 1);
+		} else if (direction == Direction.LEFT) {
+			return this.getMap().isWalkable(x - 1, y);
+		} else {
+			return this.getMap().isWalkable(x + 1, y);
+		}
+	}
 }

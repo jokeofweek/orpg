@@ -2,7 +2,7 @@ package orpg.server.net.handlers;
 
 import orpg.server.BaseServer;
 import orpg.server.data.ServerReceivedPacket;
-import orpg.server.data.managers.MapManager;
+import orpg.server.data.controllers.MapController;
 import orpg.server.net.packets.ClientSegmentDataPacket;
 import orpg.shared.data.Map;
 import orpg.shared.data.Segment;
@@ -16,7 +16,7 @@ public class ClientNeedSegmentHandler implements ServerPacketHandler {
 
 		// Load the segment
 		Map map = packet.getSession().getCharacter().getMap();
-		Segment segment = baseServer.getMapManager().getSegment(map.getId(),
+		Segment segment = baseServer.getMapController().getSegment(map.getId(),
 				segmentX, segmentY);
 
 		// Send the segment to the player.

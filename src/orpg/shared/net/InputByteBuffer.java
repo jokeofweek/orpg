@@ -229,9 +229,7 @@ public class InputByteBuffer {
 		character.setId(getInt());
 		character.setName(getString());
 		character.setSprite(getShort());
-
 		getInt(); // Must drop an int for the map ID
-
 		character.setX(getInt());
 		character.setY(getInt());
 		character.setDirection(Direction.values()[getByte()]);

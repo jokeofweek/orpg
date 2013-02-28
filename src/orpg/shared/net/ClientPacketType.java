@@ -10,6 +10,7 @@ public enum ClientPacketType {
 	
 	CLIENT_NEED_SEGMENT,
 	CLIENT_LOAD_MAP,
+	CLIENT_MOVE_REQUEST,
 
 	// Editor packets
 	EDITOR_READY,

@@ -29,7 +29,7 @@ public class CreateAccountHandler implements ServerPacketHandler {
 						ErrorMessage.ACCOUNT_NAME_HAS_INVALID_CHARACTERS));
 			} else {
 				synchronized (this) {
-					if (baseServer.getDataStore().accountExists(name)) {
+					if (baseServer.getAccountController().accountExists(name)) {
 						baseServer.sendPacket(new ErrorPacket(packet
 								.getSession(),
 								ErrorMessage.ACCOUNT_ALREADY_EXISTS));
@@ -40,14 +40,13 @@ public class CreateAccountHandler implements ServerPacketHandler {
 							account.setName(name);
 							account.setEmail(email);
 							account.updatePassword(password);
-							baseServer.getDataStore().createAccount(account);
-							baseServer.getAccountManager().update(account);
-							baseServer
-									.getConfigManager()
-									.getSessionLogger()
-									.log(Level.INFO,
-											"Account " + name + "(" + email
-													+ ") was created.");
+							if (!baseServer.getAccountController().createAccount(account)) {
+								baseServer
+										.sendPacket(new ErrorPacket(
+												packet.getSession(),
+												ErrorMessage.GENERIC_ACCOUNT_CREATION_ERROR));
+							}
+							
 							packet.getSession().login(account,
 									SessionType.LOGGED_IN);
 
@@ -59,18 +58,6 @@ public class CreateAccountHandler implements ServerPacketHandler {
 											"Could not create account "
 													+ name
 													+ ". Error when hashing password: "
-													+ e.getMessage());
-							baseServer
-									.sendPacket(new ErrorPacket(
-											packet.getSession(),
-											ErrorMessage.GENERIC_ACCOUNT_CREATION_ERROR));
-						} catch (DataStoreException e) {
-							baseServer
-									.getConfigManager()
-									.getErrorLogger()
-									.log(Level.SEVERE,
-											"Could not create account " + name
-													+ ". Error when creating: "
 													+ e.getMessage());
 							baseServer
 									.sendPacket(new ErrorPacket(

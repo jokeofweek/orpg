@@ -19,6 +19,7 @@ public enum ServerPacketType {
 	CLIENT_SEGMENT_DATA,
 	CLIENT_JOIN_MAP,
 	CLIENT_LEFT_MAP,
+	CLIENT_MOVE,
 	
 	// Editor packet types
 	EDITOR_MAP_LIST,

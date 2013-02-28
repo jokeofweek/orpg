@@ -1,6 +1,7 @@
 package orpg.shared.data;
 
-import orpg.server.data.managers.MapManager;
+import orpg.client.BaseClient;
+import orpg.server.data.controllers.MapController;
 import orpg.shared.Constants;
 
 public class Map {
@@ -174,6 +175,16 @@ public class Map {
 		this.name = name;
 	}
 
+	public boolean isWalkable(int x, int y) {
+		// Check bounds
+		if (x < 0 || y < 0 || x >= this.segmentsWide * this.segmentWidth
+				|| y >= this.segmentsHigh * this.segmentHeight) {
+			return false;
+		}
+
+		return !isBlocked(x, y);
+	}
+
 	public boolean isBlocked(int x, int y) {
 		Segment segment = this.getPositionSegment(x, y);
 		if (segment == null) {
@@ -211,7 +222,7 @@ public class Map {
 	/**
 	 * This adds a character to the map, putting it in the correct segment. Note
 	 * that this should not be called directly, as no tests are done to make
-	 * sure a segment is loaded. Rather, the {@link MapManager} should be used.
+	 * sure a segment is loaded. Rather, the {@link MapController} should be used.
 	 * 
 	 * @param character
 	 *            the character to add.
@@ -249,10 +260,47 @@ public class Map {
 		}
 	}
 
+	public AccountCharacter findPlayer(String name) {
+		for (Segment[] segmentRow : getSegments()) {
+			for (Segment segment : segmentRow) {
+				if (segment != null) {
+					if (segment.getPlayers().containsKey(name)) {
+						return segment.getPlayers().get(name);
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * This synchronizes a character's state with the character stored in the
+	 * map. It replaces the instance in the map with the passed instance, to
+	 * allow modification via {@link BaseClient#getAccountCharacter()}.
+	 * 
+	 * @param character
+	 *            the character to sync.
+	 */
+	public void syncPlayer(AccountCharacter character) {
+		AccountCharacter mapCharacter = findPlayer(character.getName());
+
+		// If they are already the same instance, return early
+		if (mapCharacter == character) {
+			return;
+		}
+
+		character.setX(mapCharacter.getX());
+		character.setY(mapCharacter.getY());
+		character.setDirection(mapCharacter.getDirection());
+
+		getPositionSegment(mapCharacter.getX(), mapCharacter.getY()).addPlayer(
+				character);
+	}
+
 	/**
 	 * This removes a character from the map. Note that this should not be
 	 * called directly, as no tests are done to make sure a segment is loaded.
-	 * Rather, the {@link MapManager} should be used.
+	 * Rather, the {@link MapController} should be used.
 	 * 
 	 * @param character
 	 *            the character to remove.

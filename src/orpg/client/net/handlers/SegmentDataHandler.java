@@ -9,6 +9,7 @@ import orpg.client.data.ClientPlayerData;
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.state.GameState;
 import orpg.shared.Constants;
+import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
 import orpg.shared.data.Segment;
 import orpg.shared.net.AbstractClient;
@@ -46,17 +47,25 @@ public class SegmentDataHandler implements ClientPacketHandler {
 			});
 		}
 
+		// If we were changing maps, then synchronize the instances
+		if (baseClient.getAccountCharacter().isChangingMap()) {
+			baseClient.getMap().syncPlayer(baseClient.getAccountCharacter());
+		}
+
 		// If we were presently changing maps, we are done now
 		baseClient.getAccountCharacter().setChangingMap(false);
+
+		final Map map = baseClient.getMap();
 
 		// Add all players to client player data cache
 		Gdx.app.postRunnable(new Runnable() {
 
 			@Override
 			public void run() {
-				for (String name : segment.getPlayers().keySet()) {
-					baseClient
-							.addClientPlayerData(name, new ClientPlayerData());
+				for (AccountCharacter character : segment.getPlayers().values()) {
+					character.setMap(map);
+					baseClient.addClientPlayerData(character.getName(),
+							new ClientPlayerData(character));
 				}
 			}
 		});

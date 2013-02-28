@@ -8,7 +8,8 @@ public enum ErrorMessage {
 	LOGIN_INVALID_CREDENTIALS("This set of credentials is not valid. Please try again."),
 	GENERIC_LOGIN_ERROR("An error occured while attempting to login. Please try again later."),
 	GENERIC_USE_CHARACTER_ERROR("An error occured while selecting this character. Please try again later."),
-	CHARACTER_IN_USE("This character is already logged in!");
+	CHARACTER_IN_USE("This character is already logged in!"),
+	GENERIC_MAP_SAVE_ERROR("An error occured while saving the map. Please try again later.");
 	
 	private String message;
 	

@@ -2,11 +2,15 @@ package orpg.client.state;
 
 import orpg.client.BaseClient;
 import orpg.client.Paths;
+import orpg.client.data.ClientPlayerData;
+import orpg.client.net.packets.MoveRequestPacket;
 import orpg.client.ui.BackgroundTextureActor;
 import orpg.client.ui.MapEntitiesActor;
 import orpg.client.ui.MapLayerActor;
 import orpg.client.ui.ViewBox;
 import orpg.shared.Constants;
+import orpg.shared.data.AccountCharacter;
+import orpg.shared.data.Direction;
 import orpg.shared.data.MapLayer;
 import orpg.shared.net.AbstractClient;
 
@@ -48,11 +52,12 @@ public class GameState extends ClientState {
 				tilesets, loadingTileTexture, new int[] {
 						MapLayer.GROUND.ordinal(), MapLayer.MASK.ordinal(),
 						MapLayer.MASK_2.ordinal() }, 0, 800, 0, 478);
-		Actor mapEntitiesActor = new MapEntitiesActor(baseClient, viewbox, tilesets[0]);
+		Actor mapEntitiesActor = new MapEntitiesActor(baseClient, viewbox,
+				tilesets[0]);
 		Actor topLayersActor = new MapLayerActor(baseClient, viewbox, tilesets,
 				loadingTileTexture, new int[] { MapLayer.FRINGE.ordinal() }, 0,
 				800, 0, 478);
-		
+
 		System.out.println("Entered?");
 
 		this.stage.addActor(bottomLayersActor);
@@ -73,20 +78,14 @@ public class GameState extends ClientState {
 
 	@Override
 	public void enter() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void exit() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void displayError(String errorMessage) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -99,8 +98,6 @@ public class GameState extends ClientState {
 
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -111,20 +108,14 @@ public class GameState extends ClientState {
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -138,17 +129,34 @@ public class GameState extends ClientState {
 	}
 
 	private void handleInput() {
-		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-			viewbox.scroll(-4, 0);
+		AccountCharacter accountCharacter = baseClient.getAccountCharacter();
+		ClientPlayerData playerData = baseClient
+				.getClientPlayerData(accountCharacter.getName());
+
+		// If player data isn't loaded, quit out
+		if (playerData == null) {
+			return;
 		}
-		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-			viewbox.scroll(4, 0);
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-			viewbox.scroll(0, 4);
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-			viewbox.scroll(0, -4);
+		
+		// Handle movement input
+		if (!playerData.isMoving()) {
+			if (Gdx.input.isKeyPressed(Input.Keys.LEFT)
+					&& accountCharacter.canMove(Direction.LEFT)) {
+				playerData.move(Direction.LEFT);
+				baseClient.sendPacket(MoveRequestPacket.LEFT);
+			} else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)
+					&& accountCharacter.canMove(Direction.RIGHT)) {
+				playerData.move(Direction.RIGHT);
+				baseClient.sendPacket(MoveRequestPacket.RIGHT);
+			} else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)
+					&& accountCharacter.canMove(Direction.DOWN)) {
+				playerData.move(Direction.DOWN);
+				baseClient.sendPacket(MoveRequestPacket.DOWN);
+			} else if (Gdx.input.isKeyPressed(Input.Keys.UP)
+					&& accountCharacter.canMove(Direction.UP)) {
+				playerData.move(Direction.UP);
+				baseClient.sendPacket(MoveRequestPacket.UP);
+			}
 		}
 
 	}

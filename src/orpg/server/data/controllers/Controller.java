@@ -1,6 +1,6 @@
-package orpg.server.data.managers;
+package orpg.server.data.controllers;
 
-public interface Manager<K, IDType> {
+public interface Controller<K, IDType> {
 
 	/**
 	 * This attemps to do any initial loading for the manager.

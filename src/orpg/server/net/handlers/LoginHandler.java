@@ -34,7 +34,7 @@ public class LoginHandler implements ServerPacketHandler {
 			// If username was valid, check if account exists, and if so load
 			// it.
 			Account account = null;
-			account = baseServer.getAccountManager().get(name);
+			account = baseServer.getAccountController().get(name);
 
 			// Make sure the account was loaded and that there was no error
 			if (account == null) {

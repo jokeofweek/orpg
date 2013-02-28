@@ -5,7 +5,7 @@ import java.nio.charset.Charset;
 public final class Constants {
 
 	public static final Charset CHARSET = Charset.forName("UTF-8");
-
+	
 	// Map editor options
 	public static final float MAP_EDITOR_ATTRIBUTE_TRANSPARENCY = 0.40f;
 	public static final float MAP_EDITOR_GRID_TRANSPARENCY = 0.60f;

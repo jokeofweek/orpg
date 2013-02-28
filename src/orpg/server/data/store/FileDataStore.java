@@ -43,6 +43,11 @@ public class FileDataStore implements DataStore {
 		this.baseServer = baseSever;
 		this.loadCharacterNames();
 	}
+	
+	@Override
+	public void shutdown() {
+		// Nothing to do for file data store
+	}
 
 	private void loadCharacterNames() {
 		this.characterNames = new HashSet<String>();
@@ -344,7 +349,7 @@ public class FileDataStore implements DataStore {
 
 		character.setId(ini.get(key, "id", int.class));
 		character.setName(ini.get(key, "name"));
-		character.setMap(baseServer.getMapManager().get(
+		character.setMap(baseServer.getMapController().get(
 				ini.get(key, "map", int.class)));
 		character.setX(ini.get(key, "x", int.class));
 		character.setY(ini.get(key, "y", int.class));

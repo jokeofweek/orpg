@@ -4,7 +4,7 @@ import java.util.logging.Level;
 
 import orpg.server.BaseServer;
 import orpg.server.data.ServerReceivedPacket;
-import orpg.server.data.managers.MapManager;
+import orpg.server.data.controllers.MapController;
 import orpg.server.data.store.DataStoreException;
 import orpg.server.net.packets.EditorMapDataPacket;
 import orpg.server.net.packets.ErrorPacket;
@@ -19,8 +19,8 @@ public class EditorEditMapHandler implements ServerPacketHandler {
 		int number = packet.getByteBuffer().getInt();
 
 		try {
-			Map map = baseServer.getMapManager().get(number);
-			Segment segment = baseServer.getMapManager().getSegment(
+			Map map = baseServer.getMapController().get(number);
+			Segment segment = baseServer.getMapController().getSegment(
 					map.getId(), 0, 0);
 			baseServer.sendPacket(new EditorMapDataPacket(packet.getSession(),
 					map, segment));

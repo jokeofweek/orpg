@@ -1,6 +1,8 @@
 package orpg.client.ui;
 
 import orpg.client.BaseClient;
+import orpg.client.data.ClientPlayerData;
+import orpg.shared.ClientConstants;
 import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
@@ -41,6 +43,7 @@ public class MapEntitiesActor extends Actor {
 		int dY = viewBox.getOffsetY() % Constants.TILE_HEIGHT;
 
 		Segment segment;
+		ClientPlayerData playerData;
 
 		for (int x = startSegmentX; x <= endSegmentX; x++) {
 			for (int y = startSegmentY; y <= endSegmentY; y++) {
@@ -48,19 +51,77 @@ public class MapEntitiesActor extends Actor {
 				if (segment != null) {
 					for (AccountCharacter character : segment.getPlayers()
 							.values()) {
+						playerData = baseClient.getClientPlayerData(character
+								.getName());
 						batch.draw(
 								texture,
 								((character.getX() - startX) * Constants.TILE_WIDTH)
-										- dX,
+										- dX + playerData.getXOffset(),
 								((character.getY() - startY) * Constants.TILE_WIDTH)
-										- dY, 32, 32, 96, 96, 32, 32,
-								true, false);
+										- dY + playerData.getYOffset(), 32, 32,
+								96, 96, 32, 32, true, false);
 					}
 				}
 			}
 		}
 
-		System.out
-				.println(viewBox.getStartX() + "," + viewBox.getStartY());
+	}
+
+	@Override
+	public void act(float delta) {
+		super.act(delta);
+
+		Map map = baseClient.getMap();
+		int startX = viewBox.getStartX();
+		int startY = viewBox.getStartY();
+		int startSegmentX = map.getSegmentX(startX);
+		int endSegmentX = map.getSegmentX(viewBox.getEndX());
+		int startSegmentY = map.getSegmentY(startY);
+		int endSegmentY = map.getSegmentY(viewBox.getEndY());
+
+		Segment segment;
+		ClientPlayerData playerData;
+
+		if (baseClient.getAccountCharacter().isChangingMap()) {
+			return;
+		}
+		
+		// Move each entity that is moving
+		for (int x = startSegmentX; x <= endSegmentX; x++) {
+			for (int y = startSegmentY; y <= endSegmentY; y++) {
+				segment = map.getSegment(x, y);
+				if (segment != null) {
+					for (AccountCharacter character : segment.getPlayers()
+							.values()) {
+						playerData = baseClient.getClientPlayerData(character
+								.getName());
+
+						if (playerData.isMoving()) {
+							// Update offset based on walk speed and direction
+							switch (playerData.getMoveDirection()) {
+							case UP:
+								playerData.setYOffset((int) (playerData.getYOffset() - (delta * ClientConstants.WALK_SPEED)));
+								break;
+							case DOWN:
+								playerData.setYOffset((int) (playerData.getYOffset() + (delta * ClientConstants.WALK_SPEED)));
+								break;
+							case LEFT:
+								playerData.setXOffset((int) (playerData.getXOffset() - (delta * ClientConstants.WALK_SPEED)));
+								break;
+							case RIGHT:
+								playerData.setXOffset((int) (playerData.getXOffset() + (delta * ClientConstants.WALK_SPEED)));
+								break;
+							}
+							if (playerData.getXOffset() == 0
+									&& playerData.getYOffset() == 0) {
+								playerData.setMoving(false);
+							}
+						}
+					}
+
+				}
+			}
+		}
+
 	}
 }

@@ -9,8 +9,8 @@ import orpg.server.config.ServerConfigurationManager;
 import orpg.server.console.ServerConsole;
 import orpg.server.data.Account;
 import orpg.server.data.ServerReceivedPacket;
-import orpg.server.data.managers.AccountManager;
-import orpg.server.data.managers.MapManager;
+import orpg.server.data.controllers.AccountController;
+import orpg.server.data.controllers.MapController;
 import orpg.server.data.store.DataStore;
 import orpg.server.data.store.DataStoreException;
 import orpg.server.data.store.FileDataStore;
@@ -26,12 +26,11 @@ public class BaseServer {
 	private ServerConsole console;
 	private BlockingQueue<ServerReceivedPacket> inputQueue;
 	private BlockingQueue<ServerPacket> outputQueue;
-	private MapManager mapManager;
-	private AccountManager accountManager;
+	private MapController mapController;
+	private AccountController accountController;
 	private DataStore dataStore;
 
-	public BaseServer(ServerConfigurationManager config,
-			ServerConsole console) {
+	public BaseServer(ServerConfigurationManager config, ServerConsole console) {
 		this.config = config;
 		this.console = console;
 
@@ -42,8 +41,7 @@ public class BaseServer {
 		this.outputQueue = new LinkedBlockingQueue<ServerPacket>();
 
 		// Set up the various threads
-		this.serverSessionManager = new ServerSessionManager(this,
-				outputQueue);
+		this.serverSessionManager = new ServerSessionManager(this, outputQueue);
 		this.serverGameThread = new ServerGameThread(this, inputQueue,
 				outputQueue);
 		try {
@@ -60,11 +58,14 @@ public class BaseServer {
 		// Load all necessary data
 		this.dataStore = new FileDataStore(this);
 		if (!encounteredSetupProblems) {
-			encounteredSetupProblems = !loadData();
+			encounteredSetupProblems = !loadData(dataStore);
 		}
 
 		// Close if any setup problems
 		if (encounteredSetupProblems) {
+			if (this.dataStore != null) {
+				this.dataStore.shutdown();
+			}
 			console.out().println(
 					"Encountered setup problems. Shutting down...");
 			System.exit(1);
@@ -98,31 +99,27 @@ public class BaseServer {
 		return serverSessionManager;
 	}
 
-	public DataStore getDataStore() {
-		return dataStore;
+	public MapController getMapController() {
+		return mapController;
 	}
 
-	public MapManager getMapManager() {
-		return mapManager;
-	}
-
-	public AccountManager getAccountManager() {
-		return accountManager;
+	public AccountController getAccountController() {
+		return accountController;
 	}
 
 	/**
 	 * @return true is the loading was successful, else false
 	 */
-	private boolean loadData() {
-		console.out().println("Setting up account manager...");
-		this.accountManager = new AccountManager(this);
-		if (!accountManager.setup()) {
+	private boolean loadData(DataStore dataStore) {
+		console.out().println("Setting up account controller...");
+		this.accountController = new AccountController(this, dataStore);
+		if (!accountController.setup()) {
 			return false;
 		}
 
-		console.out().println("Loading maps...");
-		this.mapManager = new MapManager(this);
-		if (!this.mapManager.setup()) {
+		console.out().println("Setting up map controller...");
+		this.mapController = new MapController(this, dataStore);
+		if (!this.mapController.setup()) {
 			return false;
 		}
 

@@ -9,11 +9,9 @@ import orpg.shared.data.Segment;
  * @author Dom
  * 
  */
-/**
- * @author Dom
- * 
- */
 public interface DataStore {
+
+	public void shutdown();
 
 	/**
 	 * Checks whether a map exists with a given id.

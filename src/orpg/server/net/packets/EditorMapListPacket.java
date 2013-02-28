@@ -3,7 +3,7 @@ package orpg.server.net.packets;
 import java.util.List;
 
 import orpg.server.ServerSession;
-import orpg.server.data.managers.MapManager;
+import orpg.server.data.controllers.MapController;
 import orpg.shared.data.Map;
 import orpg.shared.data.Pair;
 import orpg.shared.net.OutputByteBuffer;

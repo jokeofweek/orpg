@@ -18,6 +18,7 @@ public class NewMapHandler implements ClientPacketHandler {
 
 		Map map = in.getMapDescriptor();
 		client.setMap(map);
+		client.getAccountCharacter().setMap(map);
 
 		// Determine the segment
 		client.getAccountCharacter().setX(in.getInt());

@@ -13,7 +13,7 @@ public class EditorRequestSegmentHandler implements ServerPacketHandler {
 		int y = packet.getByteBuffer().getInt();
 
 		baseServer.sendPacket(new EditorMapSegmentDataPacket(packet
-				.getSession(), id, baseServer.getMapManager().getSegment(id, x,
+				.getSession(), id, baseServer.getMapController().getSegment(id, x,
 				y)));
 	}
 

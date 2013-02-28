@@ -24,7 +24,7 @@ public class JoinMapHandler implements ClientPacketHandler {
 				public void run() {
 					if (client.getMap().addPlayer(character)) {
 						client.addClientPlayerData(character.getName(),
-								new ClientPlayerData());
+								new ClientPlayerData(character));
 					}
 				}
 			});
