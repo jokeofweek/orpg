@@ -45,6 +45,10 @@ public class MapEntitiesActor extends Actor {
 		Segment segment;
 		ClientPlayerData playerData;
 
+		if (baseClient.getAccountCharacter().isChangingMap()) {
+			return;
+		}
+		
 		for (int x = startSegmentX; x <= endSegmentX; x++) {
 			for (int y = startSegmentY; y <= endSegmentY; y++) {
 				segment = map.getSegment(x, y);
