@@ -2,10 +2,12 @@ package orpg.shared;
 
 import java.nio.charset.Charset;
 
+import orpg.shared.data.Direction;
+
 public final class Constants {
 
 	public static final Charset CHARSET = Charset.forName("UTF-8");
-	
+
 	// Map editor options
 	public static final float MAP_EDITOR_ATTRIBUTE_TRANSPARENCY = 0.40f;
 	public static final float MAP_EDITOR_GRID_TRANSPARENCY = 0.60f;
@@ -32,6 +34,21 @@ public final class Constants {
 	public static final int TILESET_HEIGHT = 8;
 	public static final int TILES_PER_TILESET = TILESET_WIDTH * TILESET_HEIGHT;
 	public static final int TILESETS = 28;
+
+	// Sprite options
+	public static final int SPRITESETS = 10;
+	public static final int SPRITESET_WIDTH = 2;
+	public static final int SPRITESET_HEIGHT = 2;
+	public static final int SPRITES_PER_SPRITESET = SPRITESET_WIDTH
+			* SPRITESET_HEIGHT;
+	public static final int SPRITE_FRAME_WIDTH = 32;
+	public static final int SPRITE_FRAME_HEIGHT = 32;
+	public static final int SPRITE_FRAMES = 4;
+	public static final int SPRITE_WIDTH = SPRITE_FRAME_WIDTH * SPRITE_FRAMES;
+	public static final int SPRITE_HEIGHT = SPRITE_FRAME_HEIGHT
+			* Direction.values().length;
+	public static final int SPRITE_FRAME_OFFSET = Constants.TILE_WIDTH
+			/ Constants.SPRITE_FRAMES;
 
 	private Constants() {
 	};

@@ -17,13 +17,13 @@ public class MapEntitiesActor extends Actor {
 
 	private BaseClient baseClient;
 	private ViewBox viewBox;
-	private Texture texture;
+	private Texture[] spritesets;
 
 	public MapEntitiesActor(BaseClient baseClient, ViewBox viewBox,
-			Texture texture) {
+			Texture[] spritesets) {
 		this.baseClient = baseClient;
 		this.viewBox = viewBox;
-		this.texture = texture;
+		this.spritesets = spritesets;
 	}
 
 	@Override
@@ -48,7 +48,13 @@ public class MapEntitiesActor extends Actor {
 		if (baseClient.getAccountCharacter().isChangingMap()) {
 			return;
 		}
-		
+
+		int sprite;
+		int spriteSet;
+		int spriteY;
+		int spriteX;
+		int frame;
+
 		for (int x = startSegmentX; x <= endSegmentX; x++) {
 			for (int y = startSegmentY; y <= endSegmentY; y++) {
 				segment = map.getSegment(x, y);
@@ -57,13 +63,48 @@ public class MapEntitiesActor extends Actor {
 							.values()) {
 						playerData = baseClient.getClientPlayerData(character
 								.getName());
+
+						// Render the character's texture
+						sprite = playerData.getCharacter().getSprite();
+						spriteSet = sprite / Constants.SPRITES_PER_SPRITESET;
+						spriteX = sprite % Constants.SPRITESET_WIDTH;
+						spriteY = (sprite % Constants.SPRITES_PER_SPRITESET)
+								/ Constants.SPRITESET_WIDTH;
+
+						// Calculate the frame offset
+						frame = 0;
+						if (playerData.isMoving()) {
+							switch (playerData.getMoveDirection()) {
+							case UP:
+								frame = (playerData.getYOffset() > 16) ? 1 : 3;
+								break;
+							case DOWN:
+								frame = (playerData.getYOffset() > -16) ? 3 : 1;
+								break;
+							case LEFT:
+								frame = (playerData.getXOffset() > 16) ? 1 : 3;
+								break;
+							case RIGHT:
+								frame = (playerData.getXOffset() > -16) ? 3 : 1;
+								break;
+							}
+						}
+
 						batch.draw(
-								texture,
+								spritesets[spriteSet],
 								((character.getX() - startX) * Constants.TILE_WIDTH)
 										- dX + playerData.getXOffset(),
 								((character.getY() - startY) * Constants.TILE_WIDTH)
-										- dY + playerData.getYOffset(), 32, 32,
-								96, 96, 32, 32, true, false);
+										- dY + playerData.getYOffset(),
+								Constants.SPRITE_FRAME_WIDTH,
+								Constants.SPRITE_FRAME_HEIGHT,
+								(spriteX * Constants.SPRITE_WIDTH)
+										+ (frame * Constants.SPRITE_FRAME_WIDTH),
+								(spriteY * Constants.SPRITE_HEIGHT)
+										+ (playerData.getCharacter()
+												.getDirection().ordinal() * Constants.SPRITE_FRAME_HEIGHT),
+								Constants.SPRITE_FRAME_WIDTH,
+								Constants.SPRITE_FRAME_HEIGHT, false, true);
 					}
 				}
 			}
@@ -89,7 +130,7 @@ public class MapEntitiesActor extends Actor {
 		if (baseClient.getAccountCharacter().isChangingMap()) {
 			return;
 		}
-		
+
 		// Move each entity that is moving
 		for (int x = startSegmentX; x <= endSegmentX; x++) {
 			for (int y = startSegmentY; y <= endSegmentY; y++) {
@@ -104,16 +145,24 @@ public class MapEntitiesActor extends Actor {
 							// Update offset based on walk speed and direction
 							switch (playerData.getMoveDirection()) {
 							case UP:
-								playerData.setYOffset((int) (playerData.getYOffset() - (delta * ClientConstants.WALK_SPEED)));
+								playerData
+										.setYOffset((int) (playerData
+												.getYOffset() - (delta * ClientConstants.WALK_SPEED)));
 								break;
 							case DOWN:
-								playerData.setYOffset((int) (playerData.getYOffset() + (delta * ClientConstants.WALK_SPEED)));
+								playerData
+										.setYOffset((int) (playerData
+												.getYOffset() + (delta * ClientConstants.WALK_SPEED)));
 								break;
 							case LEFT:
-								playerData.setXOffset((int) (playerData.getXOffset() - (delta * ClientConstants.WALK_SPEED)));
+								playerData
+										.setXOffset((int) (playerData
+												.getXOffset() - (delta * ClientConstants.WALK_SPEED)));
 								break;
 							case RIGHT:
-								playerData.setXOffset((int) (playerData.getXOffset() + (delta * ClientConstants.WALK_SPEED)));
+								playerData
+										.setXOffset((int) (playerData
+												.getXOffset() + (delta * ClientConstants.WALK_SPEED)));
 								break;
 							}
 							if (playerData.getXOffset() == 0

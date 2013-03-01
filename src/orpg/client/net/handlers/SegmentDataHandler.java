@@ -37,20 +37,27 @@ public class SegmentDataHandler implements ClientPacketHandler {
 						tilesets[i] = new Texture(Paths.asset("tiles_" + i
 								+ ".png"));
 					}
+
 					Texture loadingTileTexture = new Texture(Paths
 							.asset("loading_tile.png"));
 
+					// Load sprite textures
+					Texture[] spritesets = new Texture[Constants.SPRITESETS];
+					for (int i = 0; i < Constants.SPRITESETS; i++) {
+						spritesets[i] = new Texture(Paths
+								.asset("sprites/sprite_" + i + ".png"));
+					}
+					
 					baseClient.getStateManager().switchState(
 							new GameState(baseClient, tilesets,
-									loadingTileTexture));
+									loadingTileTexture, spritesets));
 				}
 			});
 		}
 
 		// If we were changing maps, then synchronize the instances
 		if (baseClient.getAccountCharacter().isChangingMap()) {
-			baseClient.getMap().syncPlayer(
-					baseClient.getAccountCharacter());
+			baseClient.getMap().syncPlayer(baseClient.getAccountCharacter());
 		}
 
 		final Map map = baseClient.getMap();
@@ -60,8 +67,7 @@ public class SegmentDataHandler implements ClientPacketHandler {
 
 			@Override
 			public void run() {
-				for (AccountCharacter character : segment.getPlayers()
-						.values()) {
+				for (AccountCharacter character : segment.getPlayers().values()) {
 					character.setMap(map);
 					baseClient.addClientPlayerData(character.getName(),
 							new ClientPlayerData(character));

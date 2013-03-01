@@ -65,32 +65,31 @@ public class ClientPlayerData {
 			xOffset = 0;
 			yOffset = 32;
 			moveDirection = Direction.UP;
-			moving = true;
 			character.setY(character.getY() - 1);
 			break;
 		case DOWN:
 			xOffset = 0;
 			yOffset = -32;
 			moveDirection = Direction.DOWN;
-			moving = true;
 			character.setY(character.getY() + 1);
 			break;
 		case LEFT:
 			xOffset = 32;
 			yOffset = 0;
 			moveDirection = Direction.LEFT;
-			moving = true;
 			character.setX(character.getX() - 1);
 			break;
 		case RIGHT:
 			xOffset = -32;
 			yOffset = 0;
 			moveDirection = Direction.RIGHT;
-			moving = true;
 			character.setX(character.getX() + 1);
 			break;
 		}
 
+		moving = true;
+		character.setDirection(moveDirection);
+		
 		// Update the player on the map in case we moved segments.
 		character.getMap().updatePlayer(character, oldX, oldY);
 

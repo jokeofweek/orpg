@@ -33,9 +33,10 @@ public class GameState extends ClientState {
 	private Texture backgroundTexture;
 	private Texture[] tilesets;
 	private Texture loadingTileTexture;
+	private Texture[] spritesets;
 
 	public GameState(BaseClient baseClient, Texture[] tilesets,
-			Texture loadingTileTexture) {
+			Texture loadingTileTexture, Texture[] spritesets) {
 		this.baseClient = baseClient;
 
 		// Setup the stage
@@ -43,6 +44,7 @@ public class GameState extends ClientState {
 
 		this.tilesets = tilesets;
 		this.loadingTileTexture = loadingTileTexture;
+		this.spritesets = spritesets;
 
 		this.viewbox = new ViewBox(800, 478, baseClient.getMap().getWidth()
 				* Constants.TILE_WIDTH, baseClient.getMap().getHeight()
@@ -53,7 +55,7 @@ public class GameState extends ClientState {
 						MapLayer.GROUND.ordinal(), MapLayer.MASK.ordinal(),
 						MapLayer.MASK_2.ordinal() }, 0, 800, 0, 478);
 		Actor mapEntitiesActor = new MapEntitiesActor(baseClient, viewbox,
-				tilesets[0]);
+				spritesets);
 		Actor topLayersActor = new MapLayerActor(baseClient, viewbox, tilesets,
 				loadingTileTexture, new int[] { MapLayer.FRINGE.ordinal() }, 0,
 				800, 0, 478);
@@ -122,8 +124,11 @@ public class GameState extends ClientState {
 	public void dispose() {
 		stage.dispose();
 		backgroundTexture.dispose();
-		for (int i = 0; i < Constants.TILESETS; i++) {
+		for (int i = 0; i < tilesets.length; i++) {
 			tilesets[i].dispose();
+		}
+		for (int i = 0; i < spritesets.length; i++) {
+			spritesets[i].dispose();
 		}
 		loadingTileTexture.dispose();
 	}
@@ -137,7 +142,7 @@ public class GameState extends ClientState {
 		if (playerData == null) {
 			return;
 		}
-		
+
 		// Handle movement input
 		if (!playerData.isMoving()) {
 			if (Gdx.input.isKeyPressed(Input.Keys.LEFT)
