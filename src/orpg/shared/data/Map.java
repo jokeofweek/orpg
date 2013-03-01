@@ -125,6 +125,13 @@ public class Map {
 				|| segment.getY() >= segments[0].length) {
 			throw new IllegalArgumentException("Invalid segment position.");
 		}
+
+		// Copy over players
+		Segment oldSegment = this.segments[segment.getX()][segment.getY()];
+		if (oldSegment != null) {
+			segment.setPlayers(oldSegment.getPlayers());
+		}
+
 		this.segments[segment.getX()][segment.getY()] = segment;
 	}
 
@@ -222,7 +229,8 @@ public class Map {
 	/**
 	 * This adds a character to the map, putting it in the correct segment. Note
 	 * that this should not be called directly, as no tests are done to make
-	 * sure a segment is loaded. Rather, the {@link MapController} should be used.
+	 * sure a segment is loaded. Rather, the {@link MapController} should be
+	 * used.
 	 * 
 	 * @param character
 	 *            the character to add.

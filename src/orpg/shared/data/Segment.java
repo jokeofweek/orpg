@@ -72,6 +72,10 @@ public class Segment {
 		return players;
 	}
 
+	public void setPlayers(HashMap<String, AccountCharacter> players) {
+		this.players = players;
+	}
+	
 	public void addPlayer(AccountCharacter accountCharacter) {
 		players.put(accountCharacter.getName(), accountCharacter);
 	}

@@ -229,10 +229,10 @@ public class MapController implements Controller<Map, Integer> {
 		character.setX(x);
 		character.setY(y);
 
-		// Send the player the new map info and then we await for the need map
 		ServerSession characterSession = baseServer.getServerSessionManager()
 				.getInGameSession(character.getName());
-		baseServer.sendPacket(new ClientNewMapPacket(characterSession));
+
+		refreshMap(characterSession);
 
 		// Notify the other players that this player has joined the map
 		baseServer.sendPacket(new ClientJoinMapPacket(characterSession,
@@ -268,19 +268,22 @@ public class MapController implements Controller<Map, Integer> {
 		// We must check here if character is changing map as well, as it would
 		// be true when logging in.
 		if (character.getMap() != null && !character.isChangingMap()) {
-			if (mapId == character.getMap().getId()) {
-				// Then we don't need to send map ID, just update the position
-				// TODO: Update position
-				return;
-			} else {
-				leaveMap(character);
-			}
+			leaveMap(character);
 		}
 
-		character.setChangingMap(true);
-
 		joinMap(character, mapId, x, y);
+	}
 
+	/**
+	 * This notifies a session that their map should be refreshed.
+	 * 
+	 * @param session
+	 *            the session to notify.
+	 */
+	public void refreshMap(ServerSession session) {
+		// Send the player the new map info and then we await for the need map
+		session.getCharacter().setChangingMap(true);
+		baseServer.sendPacket(new ClientNewMapPacket(session));
 	}
 
 }
