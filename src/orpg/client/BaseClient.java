@@ -5,7 +5,10 @@ import java.util.HashMap;
 
 import com.badlogic.gdx.Game;
 
+import orpg.client.config.ClientConfigurationManager;
 import orpg.client.data.ClientPlayerData;
+import orpg.editor.config.EditorConfigurationManager;
+import orpg.shared.config.ConfigurationManager;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
 import orpg.shared.net.AbstractClient;
@@ -18,12 +21,18 @@ public class BaseClient extends AbstractClient {
 	private Map map;
 	private AccountCharacter accountCharacter;
 	private HashMap<String, ClientPlayerData> playersData;
+	private ClientConfigurationManager config;
 
 	public BaseClient(Game game, Socket socket, PacketProcessThread gameThread,
-			StateManager stateManager) {
+			StateManager stateManager, ClientConfigurationManager config) {
 		super(socket, gameThread, stateManager);
 		this.game = game;
 		this.playersData = new HashMap<String, ClientPlayerData>();
+		this.config = config;
+	}
+
+	public ClientConfigurationManager getConfigManager() {
+		return this.config;
 	}
 
 	public Game getGame() {

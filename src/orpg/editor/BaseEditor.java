@@ -3,6 +3,7 @@ package orpg.editor;
 import java.net.Socket;
 import java.util.HashMap;
 
+import orpg.editor.config.EditorConfigurationManager;
 import orpg.editor.controller.MapController;
 import orpg.editor.net.EditorProcessThread;
 import orpg.editor.net.packets.EditorEditMapPacket;

@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import orpg.editor.config.EditorConfigurationManager;
 import orpg.shared.Constants;
 import orpg.shared.Strings;
 
