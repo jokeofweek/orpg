@@ -29,9 +29,9 @@
     </target>
     
     <target name="build_client" depends="compile">
-        <jar destfile="${client_build.dir}/client.jar"
-             basedir="${classes.dir}"
-             excludes="orpg/server/**,orpg/editor/**">
+        <jar destfile="${client_build.dir}/client.jar">
+            <fileset dir="${classes.dir}" includes="**/*.class" excludes="orpg/server/**,orpg/editor/**" />
+            <zipgroupfileset dir="${lib.dir}" includes="*.jar" excludes="*source*,*junit*"/>
             <manifest>
                 <attribute name="Main-Class" value="orpg.client.ClientApplication"/>
             </manifest>
@@ -42,9 +42,9 @@
     </target>
     
     <target name="build_editor" depends="compile">
-        <jar destfile="${editor_build.dir}/editor.jar"
-             basedir="${classes.dir}"
-             excludes="orpg/server/**">
+        <jar destfile="${editor_build.dir}/editor.jar">
+            <fileset dir="${classes.dir}" includes="**/*.class" excludes="orpg/server/**" />
+            <zipgroupfileset dir="${lib.dir}" includes="*.jar" excludes=""/>
             <manifest>
                 <attribute name="Main-Class" value="orpg.editor.EditorApplication"/>
             </manifest>
