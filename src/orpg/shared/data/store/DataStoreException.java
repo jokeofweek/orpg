@@ -1,4 +1,4 @@
-package orpg.server.data.store;
+package orpg.shared.data.store;
 
 public class DataStoreException extends Exception {
 

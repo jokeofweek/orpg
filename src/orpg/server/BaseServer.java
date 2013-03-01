@@ -12,7 +12,6 @@ import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.controllers.AccountController;
 import orpg.server.data.controllers.MapController;
 import orpg.server.data.store.DataStore;
-import orpg.server.data.store.DataStoreException;
 import orpg.server.data.store.FileDataStore;
 import orpg.server.net.packets.ServerPacket;
 import orpg.shared.data.AccountCharacter;

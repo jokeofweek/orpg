@@ -153,6 +153,10 @@ public class InputByteBuffer {
 		int segmentX = getInt();
 		int segmentY = getInt();
 
+		// Revision
+		int revision = getInt();
+		long revisionTime = getLong();
+
 		// Ensure enough capacity for tiles
 		hasEnoughCapacity(width * height * MapLayer.values().length * 2);
 		short[][][] tiles = new short[MapLayer.values().length][width][height];
@@ -168,7 +172,7 @@ public class InputByteBuffer {
 		}
 
 		Segment segment = new Segment(segmentX, segmentY, width, height, tiles,
-				blocked);
+				blocked, revision, revisionTime);
 
 		if (storedPlayers) {
 			int count = getInt();
@@ -198,7 +202,7 @@ public class InputByteBuffer {
 		int count = getInt();
 
 		for (int i = 0; i < count; i++) {
-			map.updateSegment(getSegment(storedPlayers));
+			map.updateSegment(getSegment(storedPlayers), false);
 		}
 		return map;
 	}

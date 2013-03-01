@@ -200,7 +200,7 @@ public class MapController extends Observable implements Observer {
 			// If we received a requested segment, update the map and notify
 			// observers
 			if (arg instanceof Segment) {
-				map.updateSegment((Segment) arg);
+				map.updateSegment((Segment) arg, false);
 				triggerTileUpdate();
 			}
 		}

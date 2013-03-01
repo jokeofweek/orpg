@@ -8,7 +8,6 @@ import orpg.server.BaseServer;
 import orpg.server.ServerSessionManager;
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.controllers.MapController;
-import orpg.server.data.store.DataStoreException;
 import orpg.server.net.packets.ErrorPacket;
 import orpg.shared.ErrorMessage;
 import orpg.shared.data.AccountCharacter;
@@ -26,7 +25,7 @@ public class EditorSaveMapHandler implements ServerPacketHandler {
 		// Fetch the new segments and apply them
 		short updatedSegments = packet.getByteBuffer().getShort();
 		for (int i = 0; i < updatedSegments; i++) {
-			map.updateSegment(packet.getByteBuffer().getSegment(false));
+			map.updateSegment(packet.getByteBuffer().getSegment(false), true);
 		}
 
 		// Re-warp all players on map

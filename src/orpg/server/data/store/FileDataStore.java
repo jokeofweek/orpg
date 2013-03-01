@@ -27,6 +27,7 @@ import orpg.shared.data.Direction;
 import orpg.shared.data.Map;
 import orpg.shared.data.Segment;
 import orpg.shared.data.Validator;
+import orpg.shared.data.store.DataStoreException;
 import orpg.shared.net.InputByteBuffer;
 import orpg.shared.net.OutputByteBuffer;
 
@@ -196,7 +197,7 @@ public class FileDataStore implements DataStore {
 						map.updateSegment(new InputByteBuffer(new File(
 								Constants.SERVER_MAPS_PATH + "map_" + id
 										+ "_" + x + "_" + y + ".map"))
-								.getSegment(false));
+								.getSegment(false), false);
 					}
 				}
 			}

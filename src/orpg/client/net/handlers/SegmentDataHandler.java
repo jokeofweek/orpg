@@ -12,6 +12,7 @@ import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
 import orpg.shared.data.Segment;
+import orpg.shared.data.store.DataStoreException;
 import orpg.shared.net.AbstractClient;
 
 public class SegmentDataHandler implements ClientPacketHandler {
@@ -24,7 +25,7 @@ public class SegmentDataHandler implements ClientPacketHandler {
 
 		// Load the map
 		final Segment segment = packet.getByteBuffer().getSegment(true);
-		baseClient.getMap().updateSegment(segment);
+		baseClient.getMap().updateSegment(segment, false);
 
 		// Switch to game state if we aren't already in game state
 		if (!(baseClient.getStateManager().getCurrentState() instanceof GameState)) {
@@ -47,7 +48,7 @@ public class SegmentDataHandler implements ClientPacketHandler {
 						spritesets[i] = new Texture(Paths
 								.asset("sprites/sprite_" + i + ".png"));
 					}
-					
+
 					baseClient.getStateManager().switchState(
 							new GameState(baseClient, tilesets,
 									loadingTileTexture, spritesets));
@@ -78,5 +79,11 @@ public class SegmentDataHandler implements ClientPacketHandler {
 				}
 			}
 		});
+
+		// Save the segment
+		try {
+			baseClient.getDataStore().saveSegment(map.getId(), segment);
+		} catch (DataStoreException e) {
+		}
 	}
 }

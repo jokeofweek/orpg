@@ -8,7 +8,7 @@ import javax.naming.OperationNotSupportedException;
 import orpg.server.BaseServer;
 import orpg.server.data.Account;
 import orpg.server.data.store.DataStore;
-import orpg.server.data.store.DataStoreException;
+import orpg.shared.data.store.DataStoreException;
 import orpg.server.net.packets.ClientMovePacket;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Direction;

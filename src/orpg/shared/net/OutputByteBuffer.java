@@ -151,6 +151,10 @@ public class OutputByteBuffer {
 		putInt(segment.getX());
 		putInt(segment.getY());
 
+		// Revision data
+		putInt(segment.getRevision());
+		putLong(segment.getRevisionTime());
+
 		// test for extra capacity right away to pre-allocate
 		short[][][] tiles = segment.getTiles();
 		boolean[][] blocked = segment.getBlocked();

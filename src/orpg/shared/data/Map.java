@@ -119,7 +119,7 @@ public class Map {
 		return this.segments[x][y];
 	}
 
-	public void updateSegment(Segment segment) {
+	public void updateSegment(Segment segment, boolean updateRevision) {
 		if (segment.getX() < 0 || segment.getY() < 0
 				|| segment.getX() >= segments.length
 				|| segment.getY() >= segments[0].length) {
@@ -130,6 +130,11 @@ public class Map {
 		Segment oldSegment = this.segments[segment.getX()][segment.getY()];
 		if (oldSegment != null) {
 			segment.setPlayers(oldSegment.getPlayers());
+
+			// Update the map revision
+			if (updateRevision) {
+				segment.synchronizeAndUpdateRevision(oldSegment);
+			}
 		}
 
 		this.segments[segment.getX()][segment.getY()] = segment;

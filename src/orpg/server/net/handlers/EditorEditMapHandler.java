@@ -5,7 +5,6 @@ import java.util.logging.Level;
 import orpg.server.BaseServer;
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.controllers.MapController;
-import orpg.server.data.store.DataStoreException;
 import orpg.server.net.packets.EditorMapDataPacket;
 import orpg.server.net.packets.ErrorPacket;
 import orpg.shared.data.Map;

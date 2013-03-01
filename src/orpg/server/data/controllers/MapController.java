@@ -8,7 +8,7 @@ import java.util.logging.Level;
 import orpg.server.BaseServer;
 import orpg.server.ServerSession;
 import orpg.server.data.store.DataStore;
-import orpg.server.data.store.DataStoreException;
+import orpg.shared.data.store.DataStoreException;
 import orpg.server.net.packets.ClientJoinMapPacket;
 import orpg.server.net.packets.ClientLeftMapPacket;
 import orpg.server.net.packets.ClientNewMapPacket;
@@ -132,7 +132,7 @@ public class MapController implements Controller<Map, Integer> {
 			// Load the segment if it's not already loaded
 			try {
 				this.maps[id]
-						.updateSegment(dataStore.loadSegment(id + 1, x, y));
+						.updateSegment(dataStore.loadSegment(id + 1, x, y), false);
 			} catch (DataStoreException e) {
 				baseServer
 						.getConfigManager()

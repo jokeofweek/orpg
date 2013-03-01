@@ -4,6 +4,7 @@ import orpg.server.data.Account;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
 import orpg.shared.data.Segment;
+import orpg.shared.data.store.DataStoreException;
 
 /**
  * @author Dominic Charley-Roy
