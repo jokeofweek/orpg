@@ -47,19 +47,19 @@ public class GameState extends ClientState {
 		this.loadingTileTexture = loadingTileTexture;
 		this.spritesets = spritesets;
 
-		this.viewbox = new ViewBox(800, 478, baseClient.getMap().getWidth()
+		this.viewbox = new ViewBox(800, 446, baseClient.getMap().getWidth()
 				* Constants.TILE_WIDTH, baseClient.getMap().getHeight()
 				* Constants.TILE_HEIGHT);
 
 		Actor bottomLayersActor = new MapLayerActor(baseClient, viewbox,
 				tilesets, loadingTileTexture, new int[] {
 						MapLayer.GROUND.ordinal(), MapLayer.MASK.ordinal(),
-						MapLayer.MASK_2.ordinal() }, 0, 800, 0, 478);
+						MapLayer.MASK_2.ordinal() }, 0, 800, 0, 446);
 		Actor mapEntitiesActor = new MapEntitiesActor(baseClient, viewbox,
 				spritesets);
 		Actor topLayersActor = new MapLayerActor(baseClient, viewbox, tilesets,
 				loadingTileTexture, new int[] { MapLayer.FRINGE.ordinal() }, 0,
-				800, 0, 478);
+				800, 0, 446);
 
 		this.stage.addActor(bottomLayersActor);
 		this.stage.addActor(mapEntitiesActor);
