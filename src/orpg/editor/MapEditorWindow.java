@@ -11,8 +11,6 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -41,7 +39,6 @@ import orpg.editor.controller.MapEditorController;
 import orpg.editor.data.MapEditorTab;
 import orpg.editor.map.tool.FillTool;
 import orpg.editor.map.tool.PencilTool;
-import orpg.editor.map.tool.Tool;
 import orpg.editor.ui.MapView;
 import orpg.editor.ui.TilesView;
 import orpg.shared.Constants;

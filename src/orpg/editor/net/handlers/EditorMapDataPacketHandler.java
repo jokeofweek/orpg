@@ -2,8 +2,6 @@ package orpg.editor.net.handlers;
 
 import orpg.client.data.ClientReceivedPacket;
 import orpg.editor.BaseEditor;
-import orpg.editor.net.packets.EditorRequestSegmentPacket;
-import orpg.server.net.handlers.EditorRequestSegmentHandler;
 import orpg.shared.data.Map;
 
 public class EditorMapDataPacketHandler implements EditorPacketHandler {

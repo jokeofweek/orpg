@@ -12,13 +12,10 @@ import orpg.shared.data.store.DataStoreException;
 import orpg.server.net.packets.ClientJoinMapPacket;
 import orpg.server.net.packets.ClientLeftMapPacket;
 import orpg.server.net.packets.ClientNewMapPacket;
-import orpg.server.net.packets.ErrorPacket;
 import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
-import orpg.shared.data.Pair;
 import orpg.shared.data.Segment;
-import orpg.shared.net.InputByteBuffer;
 
 /**
  * @author Dom

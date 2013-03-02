@@ -1,6 +1,5 @@
 package orpg.client.data;
 
-import orpg.client.BaseClient;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Direction;
 

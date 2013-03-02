@@ -1,6 +1,5 @@
 package orpg.client.net.packets;
 
-import orpg.client.BaseClient;
 import orpg.shared.net.ClientPacketType;
 import orpg.shared.net.OutputByteBuffer;
 

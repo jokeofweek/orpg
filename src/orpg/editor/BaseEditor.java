@@ -8,8 +8,6 @@ import orpg.editor.controller.MapController;
 import orpg.editor.net.EditorProcessThread;
 import orpg.editor.net.packets.EditorEditMapPacket;
 import orpg.editor.net.packets.EditorSaveMapPacket;
-import orpg.server.config.ServerConfigurationManager;
-import orpg.shared.config.ConfigurationManager;
 import orpg.shared.data.Map;
 import orpg.shared.data.Pair;
 import orpg.shared.net.AbstractClient;

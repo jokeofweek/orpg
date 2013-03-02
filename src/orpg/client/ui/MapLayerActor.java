@@ -1,14 +1,9 @@
 package orpg.client.ui;
 
 import orpg.client.BaseClient;
-import orpg.client.Paths;
-import orpg.client.state.LoadingState;
 import orpg.shared.Constants;
 import orpg.shared.data.Map;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;

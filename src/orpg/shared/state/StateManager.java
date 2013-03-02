@@ -2,7 +2,6 @@ package orpg.shared.state;
 
 import java.util.EmptyStackException;
 import java.util.Observable;
-import java.util.Scanner;
 import java.util.Stack;
 
 import com.badlogic.gdx.Screen;

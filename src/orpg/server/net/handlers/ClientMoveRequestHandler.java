@@ -1,7 +1,5 @@
 package orpg.server.net.handlers;
 
-import java.util.logging.Level;
-
 import orpg.server.BaseServer;
 import orpg.server.data.ServerReceivedPacket;
 import orpg.shared.data.Direction;

@@ -1,7 +1,6 @@
 package orpg.server.net.packets;
 
 import orpg.server.ServerSession;
-import orpg.shared.data.Map;
 import orpg.shared.data.Segment;
 import orpg.shared.net.OutputByteBuffer;
 import orpg.shared.net.ServerPacketType;

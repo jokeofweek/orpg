@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.jpountz.lz4.LZ4Compressor;
 import net.jpountz.lz4.LZ4Decompressor;
 import net.jpountz.lz4.LZ4Factory;
 

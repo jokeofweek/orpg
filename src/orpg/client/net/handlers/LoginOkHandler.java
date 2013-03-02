@@ -7,10 +7,7 @@ import com.badlogic.gdx.Gdx;
 
 import orpg.client.BaseClient;
 import orpg.client.data.ClientReceivedPacket;
-import orpg.client.net.packets.LoadMapPacket;
 import orpg.client.state.CharacterSelectState;
-import orpg.client.state.LoadingState;
-import orpg.shared.net.AbstractClient;
 import orpg.shared.net.InputByteBuffer;
 
 public class LoginOkHandler implements ClientPacketHandler {

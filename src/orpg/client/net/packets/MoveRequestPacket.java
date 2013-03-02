@@ -2,7 +2,6 @@ package orpg.client.net.packets;
 
 import orpg.shared.data.Direction;
 import orpg.shared.net.ClientPacketType;
-import orpg.shared.net.InputByteBuffer;
 import orpg.shared.net.OutputByteBuffer;
 
 public class MoveRequestPacket extends ClientPacket {

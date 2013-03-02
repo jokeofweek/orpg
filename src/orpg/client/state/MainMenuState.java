@@ -7,9 +7,6 @@ import orpg.client.Paths;
 import orpg.client.net.packets.CreateAccountPacket;
 import orpg.client.net.packets.LoginPacket;
 import orpg.client.ui.BackgroundTextureActor;
-import orpg.shared.net.AbstractClient;
-
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;

@@ -12,10 +12,6 @@ import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Direction;
 import orpg.shared.data.MapLayer;
-import orpg.shared.net.AbstractClient;
-import sun.net.www.content.text.plain;
-
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL10;

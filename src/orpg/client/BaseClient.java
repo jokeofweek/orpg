@@ -10,8 +10,6 @@ import orpg.client.data.ClientPlayerData;
 import orpg.client.data.store.DataStore;
 import orpg.client.data.store.FileDataStore;
 import orpg.client.net.SegmentRequestManager;
-import orpg.editor.config.EditorConfigurationManager;
-import orpg.shared.config.ConfigurationManager;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
 import orpg.shared.net.AbstractClient;

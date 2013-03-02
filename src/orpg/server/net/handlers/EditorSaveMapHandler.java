@@ -1,9 +1,5 @@
 package orpg.server.net.handlers;
 
-import java.util.HashMap;
-import java.util.logging.Level;
-
-import orpg.client.net.handlers.SegmentDataHandler;
 import orpg.server.BaseServer;
 import orpg.server.ServerSessionManager;
 import orpg.server.data.ServerReceivedPacket;

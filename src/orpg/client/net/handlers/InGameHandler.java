@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 
 import orpg.client.BaseClient;
 import orpg.client.data.ClientReceivedPacket;
-import orpg.client.state.CharacterSelectState;
 import orpg.client.state.LoadingState;
 
 public class InGameHandler implements ClientPacketHandler {

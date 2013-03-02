@@ -6,8 +6,6 @@ import javax.swing.JOptionPane;
 
 import orpg.client.BaseClient;
 import orpg.client.Paths;
-import orpg.client.net.packets.CreateAccountPacket;
-import orpg.client.net.packets.LoginPacket;
 import orpg.client.net.packets.UseCharacterPacket;
 import orpg.client.ui.BackgroundTextureActor;
 
@@ -18,11 +16,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class CharacterSelectState extends ClientState {

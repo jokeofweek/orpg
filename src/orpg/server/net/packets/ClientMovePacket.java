@@ -3,8 +3,6 @@ package orpg.server.net.packets;
 import orpg.server.ServerSession;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Direction;
-import orpg.shared.data.Map;
-import orpg.shared.net.InputByteBuffer;
 import orpg.shared.net.OutputByteBuffer;
 import orpg.shared.net.ServerPacketType;
 

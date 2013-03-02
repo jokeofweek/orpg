@@ -15,7 +15,6 @@ import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
 import orpg.shared.data.Segment;
 import orpg.shared.data.store.DataStoreException;
-import orpg.shared.net.AbstractClient;
 
 public class SegmentDataHandler implements ClientPacketHandler {
 

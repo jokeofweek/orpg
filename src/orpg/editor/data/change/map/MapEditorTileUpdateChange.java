@@ -1,6 +1,5 @@
 package orpg.editor.data.change.map;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 

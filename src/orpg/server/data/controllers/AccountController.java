@@ -3,8 +3,6 @@ package orpg.server.data.controllers;
 import java.util.HashMap;
 import java.util.logging.Level;
 
-import javax.naming.OperationNotSupportedException;
-
 import orpg.server.BaseServer;
 import orpg.server.data.Account;
 import orpg.server.data.store.DataStore;

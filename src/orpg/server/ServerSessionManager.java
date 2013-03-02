@@ -10,7 +10,6 @@ import java.util.logging.Level;
 import orpg.server.data.SessionType;
 import orpg.server.net.packets.ConnectedPacket;
 import orpg.server.net.packets.ServerPacket;
-import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
 import orpg.shared.data.Pair;
 import orpg.shared.data.Segment;

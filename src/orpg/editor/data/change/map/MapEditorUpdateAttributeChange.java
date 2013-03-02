@@ -2,9 +2,7 @@ package orpg.editor.data.change.map;
 
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
-import orpg.editor.data.TileRange;
 import orpg.editor.data.change.EditorChange;
-import orpg.shared.data.MapLayer;
 import orpg.shared.data.TileAttribute;
 
 public class MapEditorUpdateAttributeChange implements EditorChange {

@@ -1,7 +1,5 @@
 package orpg.client.ui;
 
-import com.badlogic.gdx.utils.compression.lzma.Base;
-
 import orpg.shared.Constants;
 
 public class ViewBox {

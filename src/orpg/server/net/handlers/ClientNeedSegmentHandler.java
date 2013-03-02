@@ -2,7 +2,6 @@ package orpg.server.net.handlers;
 
 import orpg.server.BaseServer;
 import orpg.server.data.ServerReceivedPacket;
-import orpg.server.data.controllers.MapController;
 import orpg.server.net.packets.ClientSegmentDataPacket;
 import orpg.shared.data.Map;
 import orpg.shared.data.Segment;

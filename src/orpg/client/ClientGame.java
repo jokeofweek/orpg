@@ -10,11 +10,9 @@ import orpg.client.net.ClientProcessThread;
 import orpg.client.state.ClientStateManager;
 import orpg.client.state.MainMenuState;
 import orpg.shared.Constants;
-import orpg.shared.net.AbstractClient;
 import orpg.shared.state.StateManager;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.assets.AssetManager;
 
 public class ClientGame extends Game {
 

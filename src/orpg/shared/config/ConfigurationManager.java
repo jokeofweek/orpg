@@ -3,13 +3,6 @@ package orpg.shared.config;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-
-import orpg.server.console.ServerConsole;
-import orpg.shared.Constants;
 
 public abstract class ConfigurationManager {
 
