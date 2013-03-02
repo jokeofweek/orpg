@@ -8,8 +8,9 @@ public class NeedSegmentPacket extends ClientPacket {
 
 	private byte[] bytes;
 
-	public NeedSegmentPacket(int segmentX, int segmentY) {
+	public NeedSegmentPacket(int mapId, int segmentX, int segmentY) {
 		OutputByteBuffer out = new OutputByteBuffer();
+		out.putInt(mapId);
 		out.putInt(segmentX);
 		out.putInt(segmentY);
 		this.bytes = out.getBytes();

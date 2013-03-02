@@ -10,9 +10,10 @@ public class ClientSegmentDataPacket extends SessionPacket {
 
 	private byte[] bytes;
 
-	public ClientSegmentDataPacket(ServerSession session, Segment segment) {
+	public ClientSegmentDataPacket(ServerSession session, int mapId, Segment segment) {
 		super(session);
 		OutputByteBuffer out = new OutputByteBuffer();
+		out.putInt(mapId);
 		out.putSegment(segment, true);
 		out.compress();
 		this.bytes = out.getBytes();

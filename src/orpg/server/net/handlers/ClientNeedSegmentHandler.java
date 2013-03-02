@@ -11,16 +11,23 @@ public class ClientNeedSegmentHandler implements ServerPacketHandler {
 
 	@Override
 	public void handle(ServerReceivedPacket packet, BaseServer baseServer) {
+		int mapId = packet.getByteBuffer().getInt();
 		int segmentX = packet.getByteBuffer().getInt();
 		int segmentY = packet.getByteBuffer().getInt();
-
-		// Load the segment
+		
 		Map map = packet.getSession().getCharacter().getMap();
+
+		// Drop the request if map id doesn't match
+		if (map.getId() != mapId) {
+			return;
+		}
+		
+		// Load the segment
 		Segment segment = baseServer.getMapController().getSegment(map.getId(),
 				segmentX, segmentY);
 
 		// Send the segment to the player.
-		baseServer.sendPacket(new ClientSegmentDataPacket(packet.getSession(),
+		baseServer.sendPacket(new ClientSegmentDataPacket(packet.getSession(), map.getId(),
 				segment));
 
 		// If the player was changing maps before, then we update.
@@ -28,5 +35,4 @@ public class ClientNeedSegmentHandler implements ServerPacketHandler {
 			packet.getSession().getCharacter().setChangingMap(false);
 		}
 	}
-
 }

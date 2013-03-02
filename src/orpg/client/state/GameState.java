@@ -60,7 +60,7 @@ public class GameState extends ClientState {
 		Actor topLayersActor = new MapLayerActor(baseClient, viewbox, tilesets,
 				loadingTileTexture, new int[] { MapLayer.FRINGE.ordinal() }, 0,
 				800, 0, 478);
-		
+
 		this.stage.addActor(bottomLayersActor);
 		this.stage.addActor(mapEntitiesActor);
 		this.stage.addActor(topLayersActor);
@@ -78,10 +78,12 @@ public class GameState extends ClientState {
 	}
 
 	@Override
-	public void enter() {}
+	public void enter() {
+	}
 
 	@Override
-	public void exit() {}
+	public void exit() {
+	}
 
 	@Override
 	public void displayError(String errorMessage) {
@@ -96,7 +98,8 @@ public class GameState extends ClientState {
 	}
 
 	@Override
-	public void resize(int width, int height) {}
+	public void resize(int width, int height) {
+	}
 
 	@Override
 	public void show() {
@@ -105,13 +108,16 @@ public class GameState extends ClientState {
 	}
 
 	@Override
-	public void hide() {}
+	public void hide() {
+	}
 
 	@Override
-	public void pause() {}
+	public void pause() {
+	}
 
 	@Override
-	public void resume() {}
+	public void resume() {
+	}
 
 	@Override
 	public void dispose() {
@@ -142,24 +148,37 @@ public class GameState extends ClientState {
 					&& accountCharacter.canMove(Direction.LEFT)) {
 				playerData.move(Direction.LEFT);
 				baseClient.sendPacket(MoveRequestPacket.LEFT);
+				baseClient.getSegmentRequestManager()
+						.requestSurroundingSegments(
+								baseClient.getAccountCharacter());
 			} else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)
 					&& accountCharacter.canMove(Direction.RIGHT)) {
 				playerData.move(Direction.RIGHT);
 				baseClient.sendPacket(MoveRequestPacket.RIGHT);
+				baseClient.getSegmentRequestManager()
+						.requestSurroundingSegments(
+								baseClient.getAccountCharacter());
 			} else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)
 					&& accountCharacter.canMove(Direction.DOWN)) {
 				playerData.move(Direction.DOWN);
 				baseClient.sendPacket(MoveRequestPacket.DOWN);
+				baseClient.getSegmentRequestManager()
+						.requestSurroundingSegments(
+								baseClient.getAccountCharacter());
 			} else if (Gdx.input.isKeyPressed(Input.Keys.UP)
 					&& accountCharacter.canMove(Direction.UP)) {
 				playerData.move(Direction.UP);
 				baseClient.sendPacket(MoveRequestPacket.UP);
+				baseClient.getSegmentRequestManager()
+						.requestSurroundingSegments(
+								baseClient.getAccountCharacter());
 			}
 		}
 	}
-	
+
 	public void centerOnPlayer() {
-		viewbox.centerAtTile(baseClient.getAccountCharacter().getX(), baseClient.getAccountCharacter().getY());
+		viewbox.centerAtTile(baseClient.getAccountCharacter().getX(),
+				baseClient.getAccountCharacter().getY());
 	}
 
 }

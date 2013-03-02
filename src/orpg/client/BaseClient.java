@@ -9,6 +9,7 @@ import orpg.client.config.ClientConfigurationManager;
 import orpg.client.data.ClientPlayerData;
 import orpg.client.data.store.DataStore;
 import orpg.client.data.store.FileDataStore;
+import orpg.client.net.SegmentRequestManager;
 import orpg.editor.config.EditorConfigurationManager;
 import orpg.shared.config.ConfigurationManager;
 import orpg.shared.data.AccountCharacter;
@@ -25,6 +26,7 @@ public class BaseClient extends AbstractClient {
 	private HashMap<String, ClientPlayerData> playersData;
 	private ClientConfigurationManager config;
 	private DataStore dataStore;
+	private SegmentRequestManager segmentRequestManager;
 
 	public BaseClient(Game game, Socket socket, PacketProcessThread gameThread,
 			StateManager stateManager, ClientConfigurationManager config) {
@@ -33,6 +35,7 @@ public class BaseClient extends AbstractClient {
 		this.playersData = new HashMap<String, ClientPlayerData>();
 		this.config = config;
 		this.dataStore = new FileDataStore(this);
+		this.segmentRequestManager = new SegmentRequestManager(this);
 	}
 
 	public ClientConfigurationManager getConfigManager() {
@@ -52,11 +55,18 @@ public class BaseClient extends AbstractClient {
 	}
 
 	public void setMap(Map map) {
+		if (this.map != map) {
+			segmentRequestManager.reset();
+		}
 		this.map = map;
 	}
 
 	public DataStore getDataStore() {
 		return dataStore;
+	}
+
+	public SegmentRequestManager getSegmentRequestManager() {
+		return segmentRequestManager;
 	}
 
 	public AccountCharacter getAccountCharacter() {

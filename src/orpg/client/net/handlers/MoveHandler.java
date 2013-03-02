@@ -18,13 +18,16 @@ public class MoveHandler implements ClientPacketHandler {
 
 		final ClientPlayerData playerData = client.getClientPlayerData(name);
 
-		Gdx.app.postRunnable(new Runnable() {
+		// Check if we have the current player loaded, and if so update them
+		if (playerData != null) {
+			Gdx.app.postRunnable(new Runnable() {
 
-			@Override
-			public void run() {
-				playerData.move(direction);
-			}
-		});
+				@Override
+				public void run() {
+					playerData.move(direction);
+				}
+			});
+		}
 
 	}
 

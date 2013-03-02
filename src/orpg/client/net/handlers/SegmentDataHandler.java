@@ -23,9 +23,17 @@ public class SegmentDataHandler implements ClientPacketHandler {
 
 		packet.getByteBuffer().decompress();
 
+		int mapId = packet.getByteBuffer().getInt();
+
+		// If not the same map, drop the packet
+		if (mapId != baseClient.getMap().getId()) {
+			return;
+		}
+
 		// Load the map
 		final Segment segment = packet.getByteBuffer().getSegment(true);
 		baseClient.getMap().updateSegment(segment, false);
+		baseClient.getSegmentRequestManager().receivedResponse(mapId, segment);
 
 		// Switch to game state if we aren't already in game state
 		if (!(baseClient.getStateManager().getCurrentState() instanceof GameState)) {
@@ -56,8 +64,11 @@ public class SegmentDataHandler implements ClientPacketHandler {
 			});
 		}
 
-		// If we were changing maps, then synchronize the instances
-		if (baseClient.getAccountCharacter().isChangingMap()) {
+		// If we were changing maps, then synchronize the instances and request
+		// segments
+		final boolean wasChangingMaps = baseClient.getAccountCharacter().isChangingMap();
+		
+		if (wasChangingMaps){
 			baseClient.getMap().syncPlayer(baseClient.getAccountCharacter());
 		}
 
@@ -74,10 +85,17 @@ public class SegmentDataHandler implements ClientPacketHandler {
 							new ClientPlayerData(character));
 
 					// Update the view
-					((GameState) baseClient.getStateManager().getCurrentState()).centerOnPlayer();
+					((GameState) baseClient.getStateManager().getCurrentState())
+							.centerOnPlayer();
 					
 					// If we were presently changing maps, we are done now
 					baseClient.getAccountCharacter().setChangingMap(false);
+					
+					// If we are joining a map, request surrounding segments
+					if (wasChangingMaps) {
+						baseClient.getSegmentRequestManager().requestSurroundingSegments(
+								baseClient.getAccountCharacter());
+					}
 
 				}
 			}

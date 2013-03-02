@@ -37,7 +37,7 @@ public class NewMapHandler implements ClientPacketHandler {
 		});
 
 		// Send the need segment packet
-		client.sendPacket(new NeedSegmentPacket(segmentX, segmentY));
+		client.sendPacket(new NeedSegmentPacket(map.getId(), segmentX, segmentY));
 
 	}
 
