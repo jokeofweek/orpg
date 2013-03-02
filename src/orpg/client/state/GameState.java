@@ -13,6 +13,7 @@ import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Direction;
 import orpg.shared.data.MapLayer;
 import orpg.shared.net.AbstractClient;
+import sun.net.www.content.text.plain;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -77,12 +78,10 @@ public class GameState extends ClientState {
 	}
 
 	@Override
-	public void enter() {
-	}
+	public void enter() {}
 
 	@Override
-	public void exit() {
-	}
+	public void exit() {}
 
 	@Override
 	public void displayError(String errorMessage) {
@@ -97,8 +96,7 @@ public class GameState extends ClientState {
 	}
 
 	@Override
-	public void resize(int width, int height) {
-	}
+	public void resize(int width, int height) {}
 
 	@Override
 	public void show() {
@@ -107,16 +105,13 @@ public class GameState extends ClientState {
 	}
 
 	@Override
-	public void hide() {
-	}
+	public void hide() {}
 
 	@Override
-	public void pause() {
-	}
+	public void pause() {}
 
 	@Override
-	public void resume() {
-	}
+	public void resume() {}
 
 	@Override
 	public void dispose() {
@@ -161,7 +156,10 @@ public class GameState extends ClientState {
 				baseClient.sendPacket(MoveRequestPacket.UP);
 			}
 		}
-
+	}
+	
+	public void centerOnPlayer() {
+		viewbox.centerAtTile(baseClient.getAccountCharacter().getX(), baseClient.getAccountCharacter().getY());
 	}
 
 }

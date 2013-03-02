@@ -73,6 +73,9 @@ public class SegmentDataHandler implements ClientPacketHandler {
 					baseClient.addClientPlayerData(character.getName(),
 							new ClientPlayerData(character));
 
+					// Update the view
+					((GameState) baseClient.getStateManager().getCurrentState()).centerOnPlayer();
+					
 					// If we were presently changing maps, we are done now
 					baseClient.getAccountCharacter().setChangingMap(false);
 

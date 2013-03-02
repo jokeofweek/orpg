@@ -130,6 +130,30 @@ public class MapEntitiesActor extends Actor {
 			return;
 		}
 
+		// If the player is moving, scroll the viewbox as well
+		playerData = baseClient.getClientPlayerData(baseClient
+				.getAccountCharacter().getName());
+		if (playerData.isMoving()) {
+			switch (playerData.getMoveDirection()) {
+			case UP:
+				viewBox.scroll(0,
+						(int) -(delta * 2 * ClientConstants.WALK_SPEED));
+				break;
+			case DOWN:
+				viewBox.scroll(0,
+						(int) (delta * 2 * ClientConstants.WALK_SPEED));
+				break;
+			case LEFT:
+				viewBox.scroll((int) -(delta * 2 * ClientConstants.WALK_SPEED),
+						0);
+				break;
+			case RIGHT:
+				viewBox.scroll((int) (delta * 2 * ClientConstants.WALK_SPEED),
+						0);
+				break;
+			}
+		}
+
 		// Move each entity that is moving
 		for (int x = startSegmentX; x <= endSegmentX; x++) {
 			for (int y = startSegmentY; y <= endSegmentY; y++) {
@@ -147,21 +171,33 @@ public class MapEntitiesActor extends Actor {
 								playerData
 										.setYOffset((int) (playerData
 												.getYOffset() - (delta * ClientConstants.WALK_SPEED)));
+								if (playerData.getYOffset() < 0) {
+									playerData.setYOffset(0);
+								}
 								break;
 							case DOWN:
 								playerData
 										.setYOffset((int) (playerData
 												.getYOffset() + (delta * ClientConstants.WALK_SPEED)));
+								if (playerData.getYOffset() > 0) {
+									playerData.setYOffset(0);
+								}
 								break;
 							case LEFT:
 								playerData
 										.setXOffset((int) (playerData
 												.getXOffset() - (delta * ClientConstants.WALK_SPEED)));
+								if (playerData.getXOffset() < 0) {
+									playerData.setXOffset(0);
+								}
 								break;
 							case RIGHT:
 								playerData
 										.setXOffset((int) (playerData
 												.getXOffset() + (delta * ClientConstants.WALK_SPEED)));
+								if (playerData.getXOffset() > 0) {
+									playerData.setXOffset(0);
+								}
 								break;
 							}
 							if (playerData.getXOffset() == 0

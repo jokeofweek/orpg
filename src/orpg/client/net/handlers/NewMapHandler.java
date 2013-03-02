@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import orpg.client.BaseClient;
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.net.packets.NeedSegmentPacket;
+import orpg.client.state.GameState;
 import orpg.shared.data.Map;
 import orpg.shared.net.InputByteBuffer;
 

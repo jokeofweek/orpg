@@ -6,10 +6,14 @@ public class ViewBox {
 
 	private int offsetX;
 	private int offsetY;
+	private int boundedOffsetX;
+	private int boundedOffsetY;
 	private int visibleWidth;
 	private int visibleHeight;
 	private int contentWidth;
 	private int contentHeight;
+	private int initialOffsetX;
+	private int initialOffsetY;
 
 	public ViewBox(int visibleWidth, int visibleHeight, int contentWidth,
 			int contentHeight) {
@@ -19,48 +23,56 @@ public class ViewBox {
 		this.visibleWidth = visibleWidth;
 		this.contentHeight = contentHeight;
 		this.contentWidth = contentWidth;
+
+		// Set the initial offsets to factor in half a sprite
+		initialOffsetX = (Constants.SPRITE_FRAME_WIDTH / 2)
+				- (visibleWidth / 2);
+		initialOffsetY = (Constants.SPRITE_FRAME_HEIGHT / 2)
+				- (visibleHeight / 2);
 	}
 
 	public void scroll(int dX, int dY) {
-		this.offsetX = Math.max(0,
-				Math.min(offsetX + dX, contentWidth - visibleWidth));
-		this.offsetY = Math.max(0,
-				Math.min(offsetY + dY, contentHeight - visibleHeight));
+		this.offsetX += dX;
+		this.offsetY += dY;
+		updateBoundedOffsets();
 	}
 
-	public void center(int x, int y) {
+	public void centerAtTile(int x, int y) {
+		x = x * Constants.TILE_WIDTH;
+		y = y * Constants.TILE_WIDTH;
+		this.offsetX = x + initialOffsetX;
+		this.offsetY = y + initialOffsetY;
+		updateBoundedOffsets();
+	}
 
-		this.offsetX = Math.max(
-				0,
-				Math.min(x - (visibleWidth / 2), contentWidth
-						- visibleWidth));
-		this.offsetY = Math.max(
-				0,
-				Math.min(y - (visibleHeight / 2), contentHeight
-						- visibleHeight));
+	private void updateBoundedOffsets() {
+		this.boundedOffsetX = Math.max(0,
+				Math.min(offsetX, contentWidth - visibleWidth));
+		this.boundedOffsetY = Math.max(0,
+				Math.min(offsetY, contentHeight - visibleHeight));
 	}
 
 	public int getStartX() {
-		return offsetX / Constants.TILE_WIDTH;
+		return boundedOffsetX / Constants.TILE_WIDTH;
 	}
 
 	public int getEndX() {
-		return (offsetX + visibleWidth) / Constants.TILE_WIDTH;
+		return (boundedOffsetX + visibleWidth) / Constants.TILE_WIDTH;
 	}
 
 	public int getStartY() {
-		return offsetY / Constants.TILE_HEIGHT;
+		return boundedOffsetY / Constants.TILE_HEIGHT;
 	}
 
 	public int getEndY() {
-		return (offsetY + visibleHeight) / Constants.TILE_HEIGHT;
+		return (boundedOffsetY + visibleHeight) / Constants.TILE_HEIGHT;
 	}
 
 	public int getOffsetX() {
-		return offsetX;
+		return boundedOffsetX;
 	}
 
 	public int getOffsetY() {
-		return offsetY;
+		return boundedOffsetY;
 	}
 }
