@@ -7,6 +7,7 @@ import orpg.client.net.packets.NeedSegmentPacket;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
 import orpg.shared.data.Segment;
+import orpg.shared.data.store.DataStoreException;
 
 public class SegmentRequestManager {
 
@@ -32,10 +33,25 @@ public class SegmentRequestManager {
 		if (!this.pendingRequests.contains(requestKey)) {
 			// Make sure we don't already have the segment
 			if (baseClient.getMap().getSegment(x, y) == null) {
+
+				// Load the segment into the local map if possible
+				int revision = 0;
+				long revisionTime = 0l;
+				try {
+					Segment segment = baseClient.getDataStore().loadSegment(
+							baseClient.getMap().getId(), x, y);
+					if (segment != null) {
+						baseClient.getLocalMap().updateSegment(segment, false);
+						revision = segment.getRevision();
+						revisionTime = segment.getRevisionTime();
+					}
+				} catch (DataStoreException e) {
+				}
+
 				synchronized (handlingRequestLock) {
 					this.pendingRequests.add(requestKey);
 					this.baseClient.sendPacket(new NeedSegmentPacket(baseClient
-							.getMap().getId(), x, y));
+							.getMap().getId(), x, y, revision, revisionTime));
 				}
 			}
 		}
@@ -67,7 +83,7 @@ public class SegmentRequestManager {
 		requestSegment(segmentX - 1, segmentY);
 		requestSegment(segmentX + 1, segmentY);
 		requestSegment(segmentX, segmentY - 1);
-		requestSegment(segmentX, segmentY  + 1);
+		requestSegment(segmentX, segmentY + 1);
 
 		requestSegment(segmentX - 1, segmentY - 1);
 		requestSegment(segmentX - 1, segmentY + 1);

@@ -141,7 +141,7 @@ public class OutputByteBuffer {
 		}
 	}
 
-	public void putSegment(Segment segment, boolean storePlayers) {
+	public void putSegment(Segment segment) {
 		short height = segment.getHeight();
 		short width = segment.getWidth();
 
@@ -170,13 +170,12 @@ public class OutputByteBuffer {
 				}
 			}
 		}
-
-		// Store players if necessary
-		if (storePlayers) {
-			putInt(segment.getPlayers().size());
-			for (AccountCharacter character : segment.getPlayers().values()) {
-				putMapCharacter(character);
-			}
+	}
+	
+	public void putSegmentCharacters(Segment segment) {
+		putInt(segment.getPlayers().size());
+		for (AccountCharacter character : segment.getPlayers().values()) {
+			putMapCharacter(character);
 		}
 	}
 
@@ -209,7 +208,7 @@ public class OutputByteBuffer {
 		for (int x = 0; x < map.getSegmentsWide(); x++) {
 			for (int y = 0; y < map.getSegmentsHigh(); y++) {
 				if (map.getSegment(x, y) != null) {
-					putSegment(map.getSegment(x, y), storePlayers);
+					putSegment(map.getSegment(x, y));
 				}
 			}
 		}

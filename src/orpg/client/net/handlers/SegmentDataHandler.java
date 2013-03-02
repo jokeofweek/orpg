@@ -1,5 +1,7 @@
 package orpg.client.net.handlers;
 
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 
@@ -31,7 +33,23 @@ public class SegmentDataHandler implements ClientPacketHandler {
 		}
 
 		// Load the map
-		final Segment segment = packet.getByteBuffer().getSegment(true);
+		boolean usingLocal = packet.getByteBuffer().getBoolean();
+		int segmentX = -1;
+		int segmentY = -1;
+		if (usingLocal) {
+			segmentX = packet.getByteBuffer().getInt();
+			segmentY = packet.getByteBuffer().getInt();
+		}
+		
+		System.out.println("Using local? " + usingLocal);
+		
+		final Segment segment = (usingLocal ? client.getLocalMap().getSegment(segmentX, segmentY) : packet.getByteBuffer().getSegment());
+		
+		List<AccountCharacter> characters = packet.getByteBuffer().getSegmentPlayers();
+		for (AccountCharacter character : characters) {
+			segment.addPlayer(character);
+		}
+		
 		baseClient.getMap().updateSegment(segment, false);
 		baseClient.getSegmentRequestManager().receivedResponse(mapId, segment);
 
@@ -66,9 +84,10 @@ public class SegmentDataHandler implements ClientPacketHandler {
 
 		// If we were changing maps, then synchronize the instances and request
 		// segments
-		final boolean wasChangingMaps = baseClient.getAccountCharacter().isChangingMap();
-		
-		if (wasChangingMaps){
+		final boolean wasChangingMaps = baseClient.getAccountCharacter()
+				.isChangingMap();
+
+		if (wasChangingMaps) {
 			baseClient.getMap().syncPlayer(baseClient.getAccountCharacter());
 		}
 
@@ -87,14 +106,15 @@ public class SegmentDataHandler implements ClientPacketHandler {
 					// Update the view
 					((GameState) baseClient.getStateManager().getCurrentState())
 							.centerOnPlayer();
-					
+
 					// If we were presently changing maps, we are done now
 					baseClient.getAccountCharacter().setChangingMap(false);
-					
+
 					// If we are joining a map, request surrounding segments
 					if (wasChangingMaps) {
-						baseClient.getSegmentRequestManager().requestSurroundingSegments(
-								baseClient.getAccountCharacter());
+						baseClient.getSegmentRequestManager()
+								.requestSurroundingSegments(
+										baseClient.getAccountCharacter());
 					}
 
 				}

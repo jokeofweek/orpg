@@ -59,19 +59,22 @@ public class Segment {
 	}
 
 	public int getRevision() {
-		int ret;
 		synchronized (revisionLock) {
-			ret = revision;
+			return this.revision;
 		}
-		return ret;
 	}
 
 	public long getRevisionTime() {
-		long ret;
 		synchronized (revisionLock) {
-			ret = revisionTime;
+			return this.revisionTime;
 		}
-		return ret;
+	}
+
+	public boolean revisionMatches(int revision, long revisionTime) {
+		synchronized (revisionLock) {
+			return this.revision == revision
+					&& this.revisionTime == revisionTime;
+		}
 	}
 
 	/**
@@ -86,7 +89,7 @@ public class Segment {
 			this.revisionTime = System.currentTimeMillis();
 		}
 	}
-	
+
 	public int getX() {
 		return x;
 	}

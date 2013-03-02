@@ -147,7 +147,7 @@ public class FileDataStore implements DataStore {
 				for (int y = 0; y < map.getSegmentsHigh(); y++) {
 					if (map.getSegment(x, y) != null) {
 						buffer.reset();
-						buffer.putSegment(map.getSegment(x, y), false);
+						buffer.putSegment(map.getSegment(x, y));
 						out = new BufferedOutputStream(
 								new FileOutputStream(String.format(
 										Constants.SERVER_MAPS_PATH
@@ -197,7 +197,7 @@ public class FileDataStore implements DataStore {
 						map.updateSegment(new InputByteBuffer(new File(
 								Constants.SERVER_MAPS_PATH + "map_" + id
 										+ "_" + x + "_" + y + ".map"))
-								.getSegment(false), false);
+								.getSegment(), false);
 					}
 				}
 			}
@@ -245,7 +245,7 @@ public class FileDataStore implements DataStore {
 		try {
 			Segment segment = new InputByteBuffer(new File(
 					Constants.SERVER_MAPS_PATH + "map_" + id + "_" + x
-							+ "_" + y + ".map")).getSegment(false);
+							+ "_" + y + ".map")).getSegment();
 			return segment;
 		} catch (IOException e) {
 			throw new DataStoreException(e);

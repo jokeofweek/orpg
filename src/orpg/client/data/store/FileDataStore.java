@@ -37,7 +37,7 @@ public class FileDataStore implements DataStore {
 
 		try {
 			InputByteBuffer in = new InputByteBuffer(segmentFile);
-			return in.getSegment(false);
+			return in.getSegment();
 		} catch (IOException e) {
 			throw new DataStoreException(e);
 		}
@@ -47,7 +47,7 @@ public class FileDataStore implements DataStore {
 	public void saveSegment(int mapId, Segment segment)
 			throws DataStoreException {
 		OutputByteBuffer out = new OutputByteBuffer();
-		out.putSegment(segment, false);
+		out.putSegment(segment);
 
 		FileOutputStream fileOut = null;
 		try {

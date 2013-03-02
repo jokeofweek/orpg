@@ -11,7 +11,7 @@ public class EditorMapSegmentDataPacketHandler implements EditorPacketHandler {
 	public void handle(ClientReceivedPacket packet, BaseEditor baseEditor) {
 		packet.getByteBuffer().decompress();
 		int mapId = packet.getByteBuffer().getInt();
-		Segment segment = packet.getByteBuffer().getSegment(false);
+		Segment segment = packet.getByteBuffer().getSegment();
 
 		// Notify the map controller that we received the segment
 		MapController controller = baseEditor.getMapController(mapId);

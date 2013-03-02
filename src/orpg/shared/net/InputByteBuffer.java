@@ -3,7 +3,9 @@ package orpg.shared.net;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import net.jpountz.lz4.LZ4Compressor;
 import net.jpountz.lz4.LZ4Decompressor;
@@ -144,7 +146,7 @@ public class InputByteBuffer {
 		return bytes[pos - 1] == 1;
 	}
 
-	public Segment getSegment(boolean storedPlayers) {
+	public Segment getSegment() {
 		// Test for dimensions first
 		short width = getShort();
 		short height = getShort();
@@ -174,14 +176,17 @@ public class InputByteBuffer {
 		Segment segment = new Segment(segmentX, segmentY, width, height, tiles,
 				blocked, revision, revisionTime);
 
-		if (storedPlayers) {
-			int count = getInt();
-			for (int i = 0; i < count; i++) {
-				segment.addPlayer(getMapCharacter());
-			}
-		}
-
 		return segment;
+	}
+
+	public List<AccountCharacter> getSegmentPlayers() {
+		int count = getInt();
+		List<AccountCharacter> characters = new ArrayList<AccountCharacter>(
+				count);
+		for (int i = 0; i < count; i++) {
+			characters.add(getMapCharacter());
+		}
+		return characters;
 	}
 
 	public Map getMapDescriptor() {
@@ -197,12 +202,12 @@ public class InputByteBuffer {
 		return map;
 	}
 
-	public Map getMap(boolean storedPlayers) {
+	public Map getMap() {
 		Map map = getMapDescriptor();
 		int count = getInt();
 
 		for (int i = 0; i < count; i++) {
-			map.updateSegment(getSegment(storedPlayers), false);
+			map.updateSegment(getSegment(), false);
 		}
 		return map;
 	}
