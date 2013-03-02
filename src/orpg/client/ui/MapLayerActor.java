@@ -67,13 +67,15 @@ public class MapLayerActor extends Actor {
 		int layer;
 		int dY;
 		int dX;
-
+		
 		for (int z = 0; z < layers.length; z++) {
 			layer = layers[z];
 			dY = -(viewbox.getOffsetY() % Constants.TILE_HEIGHT);
 			for (y = 0; y < tilesHigh; y++) {
 				dX = -(viewbox.getOffsetX() % Constants.TILE_WIDTH);
 				for (x = 0; x < tilesWide; x++) {
+					if ((x + tileOffsetX) >= map.getWidth() || (y + tileOffsetX) >= map.getHeight()) break;
+					
 					tile = map.getTile(x + tileOffsetX, y + tileOffsetY, layer);
 					if (tile != 0 || layer == 0) {
 						if (tile == Map.LOADING_TILE) {

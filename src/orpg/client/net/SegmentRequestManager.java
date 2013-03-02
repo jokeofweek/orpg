@@ -67,7 +67,7 @@ public class SegmentRequestManager {
 		requestSegment(segmentX - 1, segmentY);
 		requestSegment(segmentX + 1, segmentY);
 		requestSegment(segmentX, segmentY - 1);
-		requestSegment(segmentX, segmentY + 1);
+		requestSegment(segmentX, segmentY  + 1);
 
 		requestSegment(segmentX - 1, segmentY - 1);
 		requestSegment(segmentX - 1, segmentY + 1);

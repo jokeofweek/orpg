@@ -1,5 +1,7 @@
 package orpg.client.ui;
 
+import com.badlogic.gdx.utils.compression.lzma.Base;
+
 import orpg.shared.Constants;
 
 public class ViewBox {
@@ -57,7 +59,8 @@ public class ViewBox {
 	}
 
 	public int getEndX() {
-		return (boundedOffsetX + visibleWidth) / Constants.TILE_WIDTH;
+		return Math.min((contentWidth / Constants.TILE_WIDTH) - 1,
+				(boundedOffsetX + visibleWidth) / Constants.TILE_WIDTH);
 	}
 
 	public int getStartY() {
@@ -65,7 +68,8 @@ public class ViewBox {
 	}
 
 	public int getEndY() {
-		return (boundedOffsetY + visibleHeight) / Constants.TILE_HEIGHT;
+		return Math.min((contentHeight / Constants.TILE_HEIGHT) - 1,
+				(boundedOffsetY + visibleHeight) / Constants.TILE_HEIGHT);
 	}
 
 	public int getOffsetX() {

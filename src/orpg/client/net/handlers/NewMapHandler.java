@@ -21,6 +21,9 @@ public class NewMapHandler implements ClientPacketHandler {
 		client.setMap(map);
 		client.getAccountCharacter().setMap(map);
 
+		in.reset();
+		client.setLocalMap(in.getMapDescriptor());
+
 		// Determine the segment
 		client.getAccountCharacter().setX(in.getInt());
 		int segmentX = map.getSegmentX(client.getAccountCharacter().getX());
@@ -36,8 +39,8 @@ public class NewMapHandler implements ClientPacketHandler {
 			}
 		});
 
-		// Send the need segment packet
-		client.sendPacket(new NeedSegmentPacket(map.getId(), segmentX, segmentY));
+		// Request the segment
+		client.getSegmentRequestManager().requestSegment(segmentX, segmentY);
 
 	}
 

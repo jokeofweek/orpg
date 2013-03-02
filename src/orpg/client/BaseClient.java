@@ -22,6 +22,7 @@ public class BaseClient extends AbstractClient {
 
 	private Game game;
 	private Map map;
+	private Map localMap;
 	private AccountCharacter accountCharacter;
 	private HashMap<String, ClientPlayerData> playersData;
 	private ClientConfigurationManager config;
@@ -59,6 +60,14 @@ public class BaseClient extends AbstractClient {
 			segmentRequestManager.reset();
 		}
 		this.map = map;
+	}
+
+	public Map getLocalMap() {
+		return localMap;
+	}
+
+	public void setLocalMap(Map localMap) {
+		this.localMap = localMap;
 	}
 
 	public DataStore getDataStore() {

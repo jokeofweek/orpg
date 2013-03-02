@@ -7,6 +7,7 @@
 - Implement autotiling.
 - Modify the NEED_SEGMENT packets to send over local revision.
 - Fix seamless scroll to determine which segments are need first perhaps?
+- On changing a map, the viewbox needs to be rebuilt with the right content width /content height
 
 ## DONE
 
