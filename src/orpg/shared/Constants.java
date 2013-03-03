@@ -34,6 +34,13 @@ public final class Constants {
 	public static final int TILESET_HEIGHT = 8;
 	public static final int TILES_PER_TILESET = TILESET_WIDTH * TILESET_HEIGHT;
 	public static final int TILESETS = 28;
+	
+	public static final int AUTOTILE_WIDTH = TILE_WIDTH / 2;
+	public static final int AUTOTILE_HEIGHT = TILE_HEIGHT / 2;
+	public static final int AUTOTILESET_WIDTH = 4; // In autotiles
+	public static final int TILESET_WIDTH_IN_AUTOTILES = TILESET_WIDTH * 2;
+	public static final int TILESET_HEIGHT_IN_AUTOTILES = TILESET_HEIGHT * 2;
+	public static final int AUTOTILES_PER_TILESET = TILESET_WIDTH_IN_AUTOTILES * TILESET_HEIGHT_IN_AUTOTILES;
 
 	// Sprite options
 	public static final int SPRITESETS = 10;

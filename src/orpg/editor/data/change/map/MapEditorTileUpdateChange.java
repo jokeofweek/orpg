@@ -89,6 +89,7 @@ public class MapEditorTileUpdateChange implements EditorChange {
 		short tile = (short) (range.getStartX() + (range.getStartY() * Constants.TILESET_WIDTH));
 
 		for (int dY = 0; dY < diffY; dY++) {
+			System.out.println(tile);
 			for (int dX = 0; dX < diffX; dX++) {
 				mapController.batchUpdateTile(this.x + dX, this.y + dY, layer,
 						(short) (tile + dX));
