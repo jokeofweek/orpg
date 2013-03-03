@@ -10,6 +10,7 @@ import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -17,11 +18,15 @@ import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import orpg.editor.ui.autotile.AutoTileRenderer;
+import orpg.editor.BaseEditor;
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
 import orpg.editor.data.MapEditorTab;
 import orpg.editor.map.tool.PencilTool;
+import orpg.editor.ui.autotile.TwoByThreeAutotileRenderer;
 import orpg.shared.Constants;
+import orpg.shared.data.AutoTileType;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
 
@@ -40,6 +45,8 @@ public class MapView extends JComponent implements Observer, MouseListener,
 
 	private MapController mapController;
 	private MapEditorController editorController;
+	private BaseEditor baseEditor;
+
 	private Image[] images;
 	private Image loadingTile;
 
@@ -55,11 +62,14 @@ public class MapView extends JComponent implements Observer, MouseListener,
 
 	private JScrollPane scrollPane;
 
+	private java.util.Map<AutoTileType, AutoTileRenderer> autoTileRenderers;
+
 	public MapView(final MapController controller,
 			MapEditorController editorController, JScrollPane scrollPane,
-			Image[] images, Image loadingTile) {
+			Image[] images, Image loadingTile, BaseEditor baseEditor) {
 		this.mapController = controller;
 		this.editorController = editorController;
+		this.baseEditor = baseEditor;
 		this.scrollPane = scrollPane;
 		this.mapController.addObserver(this);
 		this.editorController.addObserver(this);
@@ -81,6 +91,11 @@ public class MapView extends JComponent implements Observer, MouseListener,
 				editorController, scrollPane);
 		scrollPane.getHorizontalScrollBar().addAdjustmentListener(listener);
 		scrollPane.getVerticalScrollBar().addAdjustmentListener(listener);
+
+		// Setup autotile renderers
+		this.autoTileRenderers = new HashMap<AutoTileType, AutoTileRenderer>();
+		autoTileRenderers.put(AutoTileType.TWO_BY_THREE,
+				TwoByThreeAutotileRenderer.getInstance());
 	}
 
 	public MapController getMapController() {
@@ -148,6 +163,9 @@ public class MapView extends JComponent implements Observer, MouseListener,
 				mapController.getMapHeight());
 		short tile;
 
+		java.util.Map<Short, AutoTileType> autoTiles = baseEditor
+				.getAutoTiles();
+
 		for (int z = 0; z < l; z++) {
 			dY = startY * tileHeight;
 			for (int y = startY; y < endY; y++) {
@@ -169,7 +187,13 @@ public class MapView extends JComponent implements Observer, MouseListener,
 									Constants.TILE_HEIGHT, null);
 						}
 					} else {
-						renderTile(graphics, dX, dY, tile);
+						if (autoTiles.containsKey(tile)) {
+							autoTileRenderers.get(autoTiles.get(tile)).draw(
+									graphics, x, y, z, tile, dX, dY, tileWidth,
+									tileHeight, mapController, this.images);
+						} else {
+							renderTile(graphics, dX, dY, tile);
+						}
 					}
 
 					dX += tileWidth;

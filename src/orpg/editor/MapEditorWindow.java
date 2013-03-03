@@ -60,8 +60,7 @@ public class MapEditorWindow extends JFrame implements Observer,
 
 	private BaseEditor baseEditor;
 
-	public MapEditorWindow(BaseEditor baseEditor,
-			MapController mapController) {
+	public MapEditorWindow(BaseEditor baseEditor, MapController mapController) {
 		this.baseEditor = baseEditor;
 		this.mapController = mapController;
 		this.editorController = new MapEditorController(baseEditor, this,
@@ -87,21 +86,20 @@ public class MapEditorWindow extends JFrame implements Observer,
 		try {
 			for (i = 0; i < Constants.TILESETS; i++) {
 				tilesets[i] = ImageIO.read(new File(
-						Constants.CLIENT_ASSETS_PATH + "tiles_" + i
-								+ ".png").toURI().toURL());
+						Constants.CLIENT_ASSETS_PATH + "tiles_" + i + ".png")
+						.toURI().toURL());
 			}
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "Could not load tiles_"
-					+ i + ".png. Shutting down.");
+			JOptionPane.showMessageDialog(null, "Could not load tiles_" + i
+					+ ".png. Shutting down.");
 			e.printStackTrace();
 			System.exit(1);
 		}
 
 		BufferedImage loadingTile = null;
 		try {
-			loadingTile = ImageIO.read(new File(
-					Constants.CLIENT_ASSETS_PATH + "loading_tile.png")
-					.toURI().toURL());
+			loadingTile = ImageIO.read(new File(Constants.CLIENT_ASSETS_PATH
+					+ "loading_tile.png").toURI().toURL());
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null,
 					"Could not load loading_tile.png. Shutting down.");
@@ -118,15 +116,14 @@ public class MapEditorWindow extends JFrame implements Observer,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		MapView mapView = new MapView(mapController, editorController,
-				mapScrollPane, tilesets, loadingTile);
+				mapScrollPane, tilesets, loadingTile, baseEditor);
 		mapScrollPane.setViewportView(mapView);
 		mapScrollPane.getHorizontalScrollBar().setUnitIncrement(16);
 		mapScrollPane.getHorizontalScrollBar().setAutoscrolls(true);
 		mapScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 		mapScrollPane.setBackground(Color.black);
 		mapContainer.add(mapScrollPane);
-		mapContainer
-				.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		mapContainer.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
 		contentPane.add(mapContainer);
 		this.add(contentPane);
@@ -173,8 +170,7 @@ public class MapEditorWindow extends JFrame implements Observer,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 		tilesTabPanel.add(tilesScrollPane);
-		tilesTabPanel.setBorder(BorderFactory
-				.createEmptyBorder(5, 5, 5, 5));
+		tilesTabPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		return tilesTabPanel;
 	}
 
@@ -215,8 +211,7 @@ public class MapEditorWindow extends JFrame implements Observer,
 
 	public JComponent getLayersPanel() {
 		JPanel parentPanel = new JPanel();
-		parentPanel.setLayout(new BoxLayout(parentPanel,
-				BoxLayout.PAGE_AXIS));
+		parentPanel.setLayout(new BoxLayout(parentPanel, BoxLayout.PAGE_AXIS));
 
 		JLabel headerLabel = new JLabel("Layer:");
 		headerLabel.setAlignmentX(LEFT_ALIGNMENT);
@@ -233,9 +228,8 @@ public class MapEditorWindow extends JFrame implements Observer,
 			public void itemStateChanged(ItemEvent e) {
 				JRadioButton button = (JRadioButton) e.getSource();
 				if (button.isSelected()) {
-					editorController
-							.setCurrentLayer(MapLayer.values()[Integer
-									.parseInt(button.getActionCommand())]);
+					editorController.setCurrentLayer(MapLayer.values()[Integer
+							.parseInt(button.getActionCommand())]);
 				}
 			}
 		};
@@ -264,8 +258,7 @@ public class MapEditorWindow extends JFrame implements Observer,
 
 	public JComponent getToolsPanel() {
 		JPanel parentPanel = new JPanel();
-		parentPanel.setLayout(new BoxLayout(parentPanel,
-				BoxLayout.PAGE_AXIS));
+		parentPanel.setLayout(new BoxLayout(parentPanel, BoxLayout.PAGE_AXIS));
 
 		JLabel headerLabel = new JLabel("Tools:");
 		headerLabel.setAlignmentX(LEFT_ALIGNMENT);
@@ -286,8 +279,7 @@ public class MapEditorWindow extends JFrame implements Observer,
 						editorController.setCurrentTool(PencilTool
 								.getInstance());
 					} else if (button.getActionCommand().equals("fill")) {
-						editorController.setCurrentTool(FillTool
-								.getInstance());
+						editorController.setCurrentTool(FillTool.getInstance());
 					}
 				}
 			}
@@ -325,9 +317,9 @@ public class MapEditorWindow extends JFrame implements Observer,
 			public void itemStateChanged(ItemEvent e) {
 				JRadioButton button = (JRadioButton) e.getSource();
 				if (button.isSelected()) {
-					editorController.setCurrentAttribute(TileAttribute
-							.values()[Integer.parseInt(button
-							.getActionCommand())]);
+					editorController
+							.setCurrentAttribute(TileAttribute.values()[Integer
+									.parseInt(button.getActionCommand())]);
 				}
 			}
 		};
@@ -360,8 +352,7 @@ public class MapEditorWindow extends JFrame implements Observer,
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		menuBar.add(fileMenu);
 
-		JMenuItem saveItem = new JMenuItem(
-				editorController.getSaveAction());
+		JMenuItem saveItem = new JMenuItem(editorController.getSaveAction());
 		saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
 				KeyEvent.CTRL_DOWN_MASK));
 		fileMenu.add(saveItem);
@@ -371,14 +362,12 @@ public class MapEditorWindow extends JFrame implements Observer,
 		editMenu.setMnemonic(KeyEvent.VK_E);
 		menuBar.add(editMenu);
 
-		JMenuItem undoItem = new JMenuItem(
-				editorController.getUndoAction());
+		JMenuItem undoItem = new JMenuItem(editorController.getUndoAction());
 		undoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,
 				KeyEvent.CTRL_DOWN_MASK));
 		editMenu.add(undoItem);
 
-		JMenuItem redoItem = new JMenuItem(
-				editorController.getRedoAction());
+		JMenuItem redoItem = new JMenuItem(editorController.getRedoAction());
 		redoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y,
 				KeyEvent.CTRL_DOWN_MASK));
 		editMenu.add(redoItem);
@@ -388,17 +377,16 @@ public class MapEditorWindow extends JFrame implements Observer,
 		viewMenu.setMnemonic(KeyEvent.VK_V);
 		menuBar.add(viewMenu);
 
-		JMenuItem zoomInItem = new JMenuItem(
-				editorController.getZoomInAction());
-		zoomInItem.setAccelerator(KeyStroke.getKeyStroke(
-				KeyEvent.VK_EQUALS, KeyEvent.CTRL_DOWN_MASK));
+		JMenuItem zoomInItem = new JMenuItem(editorController.getZoomInAction());
+		zoomInItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS,
+				KeyEvent.CTRL_DOWN_MASK));
 
 		viewMenu.add(zoomInItem);
 
 		JMenuItem zoomOutItem = new JMenuItem(
 				editorController.getZoomOutAction());
-		zoomOutItem.setAccelerator(KeyStroke.getKeyStroke(
-				KeyEvent.VK_MINUS, KeyEvent.CTRL_DOWN_MASK));
+		zoomOutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS,
+				KeyEvent.CTRL_DOWN_MASK));
 		viewMenu.add(zoomOutItem);
 
 		gridToggleMenuItem = new JCheckBoxMenuItem("Grid",
@@ -407,13 +395,12 @@ public class MapEditorWindow extends JFrame implements Observer,
 		gridToggleMenuItem.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				editorController.setGridEnabled(gridToggleMenuItem
-						.getState());
+				editorController.setGridEnabled(gridToggleMenuItem.getState());
 			}
 		});
 
-		hoverPreviewToggleMenuItem = new JCheckBoxMenuItem(
-				"Mouse Preview", editorController.isHoverPreviewEnabled());
+		hoverPreviewToggleMenuItem = new JCheckBoxMenuItem("Mouse Preview",
+				editorController.isHoverPreviewEnabled());
 		viewMenu.add(hoverPreviewToggleMenuItem);
 		hoverPreviewToggleMenuItem.addItemListener(new ItemListener() {
 			@Override
@@ -432,9 +419,9 @@ public class MapEditorWindow extends JFrame implements Observer,
 	public void update(Observable o, Object arg) {
 		if (o == editorController) {
 			// Update the tab in case an external source changed our tab
-			this.tabPane.setSelectedIndex(editorController
-					.getCurrentTab().ordinal());
-			
+			this.tabPane.setSelectedIndex(editorController.getCurrentTab()
+					.ordinal());
+
 			this.repaint();
 
 			// Update toggle menu items.

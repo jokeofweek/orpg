@@ -8,6 +8,7 @@ import orpg.editor.controller.MapController;
 import orpg.editor.net.EditorProcessThread;
 import orpg.editor.net.packets.EditorEditMapPacket;
 import orpg.editor.net.packets.EditorSaveMapPacket;
+import orpg.shared.data.AutoTileType;
 import orpg.shared.data.Map;
 import orpg.shared.data.Pair;
 import orpg.shared.net.AbstractClient;
@@ -17,6 +18,7 @@ public class BaseEditor extends AbstractClient {
 	private MapSelectWindow mapSelectWindow;
 	private HashMap<Integer, MapController> mapControllers;
 	private EditorConfigurationManager config;
+	private java.util.Map<Short, AutoTileType> autoTiles;
 
 	public BaseEditor(Socket socket, EditorConfigurationManager config) {
 		super(socket, new EditorProcessThread(), null);
@@ -59,5 +61,13 @@ public class BaseEditor extends AbstractClient {
 
 	public void saveMap(Map map, boolean[][] segmentsChanged) {
 		sendPacket(new EditorSaveMapPacket(map, segmentsChanged));
+	}
+
+	public java.util.Map<Short, AutoTileType> getAutoTiles() {
+		return autoTiles;
+	}
+
+	public void setAutoTiles(java.util.Map<Short, AutoTileType> autoTiles) {
+		this.autoTiles = autoTiles;
 	}
 }

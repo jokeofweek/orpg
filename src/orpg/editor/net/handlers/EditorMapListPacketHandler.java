@@ -17,6 +17,8 @@ public class EditorMapListPacketHandler implements EditorPacketHandler {
 			mapNames[i] = new Pair<Integer, String>(i + 1, in.getString());
 		}
 
+		baseEditor.setAutoTiles(packet.getByteBuffer().getAutoTiles());
+
 		baseEditor.showMapSelectWindow(mapNames);
 	}
 

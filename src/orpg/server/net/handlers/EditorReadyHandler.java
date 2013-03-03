@@ -13,7 +13,8 @@ public class EditorReadyHandler implements ServerPacketHandler {
 		out.putInt(baseServer.getConfigManager().getTotalMaps());
 
 		baseServer.sendPacket(new EditorMapListPacket(packet.getSession(),
-				baseServer.getMapController().getNameList()));
+				baseServer.getMapController().getNameList(), baseServer
+						.getAutoTileController()));
 
 	}
 }
