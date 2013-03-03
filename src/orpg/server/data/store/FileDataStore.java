@@ -9,17 +9,21 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.logging.Level;
 
+import org.ini4j.InvalidFileFormatException;
 import org.ini4j.Wini;
 
 import orpg.server.BaseServer;
 import orpg.server.data.Account;
 import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
+import orpg.shared.data.AutoTileType;
 import orpg.shared.data.Direction;
 import orpg.shared.data.Map;
 import orpg.shared.data.Segment;
@@ -58,6 +62,25 @@ public class FileDataStore implements DataStore {
 							"Error creating accounts ID file. Reason: "
 									+ e.getMessage());
 			return false;
+		}
+
+		// Create the autotile file if it doesn't already exist.
+		File autotilesFile = new File(Constants.SERVER_DATA_PATH
+				+ "autotiles.ini");
+		if (!autotilesFile.exists()) {
+			try {
+				autotilesFile.createNewFile();
+				Wini ini = new Wini(autotilesFile);
+				ini.put("count", "count", 0);
+				ini.store();
+			} catch (IOException e) {
+				baseServer
+						.getConfigManager()
+						.getErrorLogger()
+						.log(Level.SEVERE,
+								"Could not create autotiles file. Reason: "
+										+ e.getMessage());
+			}
 		}
 
 		return true;
@@ -434,8 +457,6 @@ public class FileDataStore implements DataStore {
 				try {
 					out.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 			}
 		}
@@ -496,5 +517,54 @@ public class FileDataStore implements DataStore {
 			}
 			return id;
 		}
+	}
+
+	@Override
+	public java.util.Map<Short, AutoTileType> loadAutoTiles()
+			throws DataStoreException {
+		HashMap<Short, AutoTileType> autotiles = null;
+
+		try {
+			File autotilesFile = new File(Constants.SERVER_DATA_PATH
+					+ "autotiles.ini");
+			Wini ini = new Wini(autotilesFile);
+			int count = ini.get("count", "count", int.class);
+			autotiles = new HashMap<Short, AutoTileType>(count);
+
+			for (int i = 0; i < count; i++) {
+				autotiles.put(ini.get("entry" + i, "tile", short.class),
+						AutoTileType.values()[ini.get("entry" + i, "type",
+								int.class)]);
+			}
+		} catch (IOException e) {
+			throw new DataStoreException(e);
+		}
+
+		return autotiles;
+	}
+
+	@Override
+	public void saveAutoTiles(java.util.Map<Short, AutoTileType> autotiles)
+			throws DataStoreException {
+		try {
+
+			File autotilesFile = new File(Constants.SERVER_DATA_PATH
+					+ "autotiles.ini");
+			Wini ini = new Wini(autotilesFile);
+			ini.clear();
+
+			ini.put("count", "count", autotiles.size());
+			int i = 0;
+			for (Entry<Short, AutoTileType> entry : autotiles.entrySet()) {
+				ini.put("entry" + i, "tile", entry.getKey());
+				ini.put("entry" + i, "type", entry.getValue().ordinal());
+				i++;
+			}
+
+			ini.store();
+		} catch (IOException e) {
+			throw new DataStoreException(e);
+		}
+
 	}
 }

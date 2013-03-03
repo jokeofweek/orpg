@@ -1,9 +1,13 @@
 package orpg.client.ui;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import orpg.client.BaseClient;
+import orpg.client.ui.autotile.AutoTileRenderer;
+import orpg.client.ui.autotile.TwoByThreeAutotileRenderer;
 import orpg.shared.Constants;
+import orpg.shared.data.AutoTileType;
 import orpg.shared.data.Map;
 
 import com.badlogic.gdx.graphics.Texture;
@@ -27,64 +31,8 @@ public class MapLayerActor extends Actor {
 	private Texture[] tilesets;
 	private Texture loadingTileTexture;
 
-	private static final int TOP_LEFT = 1;
-	private static final int TOP_MIDDLE = 2;
-	private static final int TOP_RIGHT = 4;
-	private static final int MIDDLE_LEFT = 8;
-	private static final int MIDDLE_RIGHT = 16;
-	private static final int BOTTOM_LEFT = 32;
-	private static final int BOTTOM_MIDDLE = 64;
-	private static final int BOTTOM_RIGHT = 128;
-
-	private static final HashMap<Integer, Integer> autotileTopLeftCorner;
-	private static final HashMap<Integer, Integer> autotileTopRightCorner;
-	private static final HashMap<Integer, Integer> autotileBottomLeftCorner;
-	private static final HashMap<Integer, Integer> autotileBottomRightCorner;
-
-	static {
-		autotileTopLeftCorner = new HashMap<Integer, Integer>(7);
-		autotileTopLeftCorner.put(0, 8);
-		autotileTopLeftCorner.put(TOP_LEFT, 8);
-		autotileTopLeftCorner.put(TOP_MIDDLE, 12);
-		autotileTopLeftCorner.put(TOP_MIDDLE | TOP_LEFT, 12);
-		autotileTopLeftCorner.put(MIDDLE_LEFT, 9);
-		autotileTopLeftCorner.put(MIDDLE_LEFT | TOP_LEFT, 9);
-		autotileTopLeftCorner.put(TOP_MIDDLE | MIDDLE_LEFT, 2);
-		autotileTopLeftCorner.put(TOP_MIDDLE | MIDDLE_LEFT | TOP_LEFT, 13);
-
-		autotileTopRightCorner = new HashMap<Integer, Integer>(7);
-		autotileTopRightCorner.put(0, 11);
-		autotileTopRightCorner.put(TOP_RIGHT, 11);
-		autotileTopRightCorner.put(TOP_MIDDLE, 15);
-		autotileTopRightCorner.put(TOP_MIDDLE | TOP_RIGHT, 15);
-		autotileTopRightCorner.put(MIDDLE_RIGHT, 10);
-		autotileTopRightCorner.put(MIDDLE_RIGHT | TOP_RIGHT, 10);
-		autotileTopRightCorner.put(TOP_MIDDLE | MIDDLE_RIGHT, 3);
-		autotileTopRightCorner.put(TOP_MIDDLE | MIDDLE_RIGHT | TOP_RIGHT, 14);
-
-		autotileBottomLeftCorner = new HashMap<Integer, Integer>(7);
-		autotileBottomLeftCorner.put(0, 20);
-		autotileBottomLeftCorner.put(BOTTOM_LEFT, 20);
-		autotileBottomLeftCorner.put(MIDDLE_LEFT, 21);
-		autotileBottomLeftCorner.put(MIDDLE_LEFT | BOTTOM_LEFT, 21);
-		autotileBottomLeftCorner.put(BOTTOM_MIDDLE, 16);
-		autotileBottomLeftCorner.put(BOTTOM_MIDDLE | BOTTOM_LEFT, 16);
-		autotileBottomLeftCorner.put(MIDDLE_LEFT | BOTTOM_MIDDLE, 6);
-		autotileBottomLeftCorner.put(MIDDLE_LEFT | BOTTOM_MIDDLE | BOTTOM_LEFT,
-				17);
-
-		autotileBottomRightCorner = new HashMap<Integer, Integer>(7);
-		autotileBottomRightCorner.put(0, 23);
-		autotileBottomRightCorner.put(BOTTOM_RIGHT, 23);
-		autotileBottomRightCorner.put(MIDDLE_RIGHT, 22);
-		autotileBottomRightCorner.put(MIDDLE_RIGHT | BOTTOM_RIGHT, 22);
-		autotileBottomRightCorner.put(BOTTOM_MIDDLE, 19);
-		autotileBottomRightCorner.put(BOTTOM_MIDDLE | BOTTOM_RIGHT, 19);
-		autotileBottomRightCorner.put(MIDDLE_RIGHT | BOTTOM_MIDDLE, 7);
-		autotileBottomRightCorner.put(MIDDLE_RIGHT | BOTTOM_MIDDLE
-				| BOTTOM_RIGHT, 18);
-
-	}
+	private HashMap<Integer, AutoTileType> autotiles;
+	private HashMap<AutoTileType, AutoTileRenderer> autotileRenderers;
 
 	public MapLayerActor(BaseClient baseClient, ViewBox viewbox,
 			Texture[] tilesets, Texture loadingTileTexture, int[] layers,
@@ -103,6 +51,15 @@ public class MapLayerActor extends Actor {
 
 		this.tilesets = tilesets;
 		this.loadingTileTexture = loadingTileTexture;
+
+		this.autotiles = new HashMap<Integer, AutoTileType>();
+		this.autotileRenderers = new HashMap<AutoTileType, AutoTileRenderer>(
+				AutoTileType.values().length);
+
+		this.autotiles.put(122, AutoTileType.TWO_BY_THREE);
+		this.autotiles.put(722, AutoTileType.TWO_BY_THREE);
+		this.autotileRenderers.put(AutoTileType.TWO_BY_THREE,
+				new TwoByThreeAutotileRenderer());
 	}
 
 	@Override
@@ -142,9 +99,11 @@ public class MapLayerActor extends Actor {
 									Constants.TILE_HEIGHT, 0, 0,
 									Constants.TILE_WIDTH,
 									Constants.TILE_HEIGHT, false, true);
-						} else if (tile == 122) {
-							drawAutoTile(batch, parentAlpha, x + tileOffsetX, y
-									+ tileOffsetY, z, tile, dX, dY, map);
+						} else if (autotiles.containsKey(tile)) {
+							autotileRenderers.get(autotiles.get(tile)).draw(
+									batch, parentAlpha, x + tileOffsetX,
+									y + tileOffsetY, z, tile, dX, dY, map,
+									this.tilesets);
 						} else {
 							batch.draw(
 									this.tilesets[tile
@@ -166,122 +125,5 @@ public class MapLayerActor extends Actor {
 				dY += Constants.TILE_HEIGHT;
 			}
 		}
-	}
-
-	public void drawAutoTile(SpriteBatch batch, float parentAlpha, int x,
-			int y, int z, int tile, int dX, int dY, Map map) {
-		int matchingTiles = 0;
-		int convertedTile = ((tile / Constants.TILESET_WIDTH) * (2 * Constants.TILESET_WIDTH_IN_AUTOTILES))
-				+ ((tile % Constants.TILESET_WIDTH) * 2);
-
-		// First check boundaries
-		if (x == 0) {
-			matchingTiles |= TOP_LEFT | MIDDLE_LEFT | BOTTOM_LEFT;
-		} else if (x == map.getWidth() - 1) {
-			matchingTiles |= TOP_RIGHT | MIDDLE_RIGHT | BOTTOM_RIGHT;
-		}
-
-		if (y == 0) {
-			matchingTiles |= TOP_LEFT | TOP_MIDDLE | TOP_RIGHT;
-		} else if (y == map.getHeight() - 1) {
-			matchingTiles |= BOTTOM_LEFT | BOTTOM_LEFT | BOTTOM_RIGHT;
-		}
-
-		if (map.getTile(x - 1, y - 1, z) == tile)
-			matchingTiles |= TOP_LEFT;
-		if (map.getTile(x, y - 1, z) == tile)
-			matchingTiles |= TOP_MIDDLE;
-		if (map.getTile(x + 1, y - 1, z) == tile)
-			matchingTiles |= TOP_RIGHT;
-
-		if (map.getTile(x - 1, y, z) == tile)
-			matchingTiles |= MIDDLE_LEFT;
-		if (map.getTile(x + 1, y, z) == tile)
-			matchingTiles |= MIDDLE_RIGHT;
-
-		if (map.getTile(x - 1, y + 1, z) == tile)
-			matchingTiles |= BOTTOM_LEFT;
-		if (map.getTile(x, y + 1, z) == tile)
-			matchingTiles |= BOTTOM_MIDDLE;
-		if (map.getTile(x + 1, y + 1, z) == tile)
-			matchingTiles |= BOTTOM_RIGHT;
-
-		// Top left corner
-		int corner = autotileTopLeftCorner.get(matchingTiles
-				& (TOP_LEFT | TOP_MIDDLE | MIDDLE_LEFT));
-		int cornerTile = convertedTile
-				+ ((corner / (Constants.AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
-				+ (corner % Constants.AUTOTILESET_WIDTH);
-
-		batch.draw(
-				this.tilesets[cornerTile / Constants.AUTOTILES_PER_TILESET],
-				dX,
-				dY,
-				Constants.AUTOTILE_WIDTH,
-				Constants.AUTOTILE_HEIGHT,
-				(cornerTile % Constants.TILESET_WIDTH_IN_AUTOTILES)
-						* Constants.AUTOTILE_WIDTH,
-				((cornerTile / Constants.TILESET_HEIGHT_IN_AUTOTILES) % Constants.TILESET_HEIGHT_IN_AUTOTILES)
-						* Constants.AUTOTILE_HEIGHT, Constants.AUTOTILE_WIDTH,
-				Constants.AUTOTILE_HEIGHT, false, true);
-
-		// Top right corner
-		corner = autotileTopRightCorner.get(matchingTiles
-				& (TOP_RIGHT | MIDDLE_RIGHT | TOP_MIDDLE));
-		cornerTile = convertedTile
-				+ ((corner / (Constants.AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
-				+ (corner % Constants.AUTOTILESET_WIDTH);
-
-		batch.draw(
-				this.tilesets[cornerTile / Constants.AUTOTILES_PER_TILESET],
-				dX + Constants.AUTOTILE_WIDTH,
-				dY,
-				Constants.AUTOTILE_WIDTH,
-				Constants.AUTOTILE_HEIGHT,
-				(cornerTile % Constants.TILESET_WIDTH_IN_AUTOTILES)
-						* Constants.AUTOTILE_WIDTH,
-				((cornerTile / Constants.TILESET_HEIGHT_IN_AUTOTILES) % Constants.TILESET_HEIGHT_IN_AUTOTILES)
-						* Constants.AUTOTILE_HEIGHT, Constants.AUTOTILE_WIDTH,
-				Constants.AUTOTILE_HEIGHT, false, true);
-
-		// Bottom left corner
-		corner = autotileBottomLeftCorner.get(matchingTiles
-				& (MIDDLE_LEFT | BOTTOM_LEFT | BOTTOM_MIDDLE));
-		cornerTile = convertedTile
-				+ ((corner / (Constants.AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
-				+ (corner % Constants.AUTOTILESET_WIDTH);
-
-		batch.draw(
-				this.tilesets[cornerTile / Constants.AUTOTILES_PER_TILESET],
-				dX,
-				dY + Constants.AUTOTILE_WIDTH,
-				Constants.AUTOTILE_WIDTH,
-				Constants.AUTOTILE_HEIGHT,
-				(cornerTile % Constants.TILESET_WIDTH_IN_AUTOTILES)
-						* Constants.AUTOTILE_WIDTH,
-				((cornerTile / Constants.TILESET_HEIGHT_IN_AUTOTILES) % Constants.TILESET_HEIGHT_IN_AUTOTILES)
-						* Constants.AUTOTILE_HEIGHT, Constants.AUTOTILE_WIDTH,
-				Constants.AUTOTILE_HEIGHT, false, true);
-
-		// Bottom right corner
-		System.out.println(matchingTiles);
-		corner = autotileBottomRightCorner.get(matchingTiles
-				& (MIDDLE_RIGHT | BOTTOM_RIGHT | BOTTOM_MIDDLE));
-		cornerTile = convertedTile
-				+ ((corner / (Constants.AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
-				+ (corner % Constants.AUTOTILESET_WIDTH);
-
-		batch.draw(
-				this.tilesets[cornerTile / Constants.AUTOTILES_PER_TILESET],
-				dX + Constants.AUTOTILE_WIDTH,
-				dY + Constants.AUTOTILE_HEIGHT,
-				Constants.AUTOTILE_WIDTH,
-				Constants.AUTOTILE_HEIGHT,
-				(cornerTile % Constants.TILESET_WIDTH_IN_AUTOTILES)
-						* Constants.AUTOTILE_WIDTH,
-				((cornerTile / Constants.TILESET_HEIGHT_IN_AUTOTILES) % Constants.TILESET_HEIGHT_IN_AUTOTILES)
-						* Constants.AUTOTILE_HEIGHT, Constants.AUTOTILE_WIDTH,
-				Constants.AUTOTILE_HEIGHT, false, true);
-
 	}
 }

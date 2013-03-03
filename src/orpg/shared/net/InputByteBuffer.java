@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import net.jpountz.lz4.LZ4Decompressor;
@@ -12,6 +13,7 @@ import net.jpountz.lz4.LZ4Factory;
 
 import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
+import orpg.shared.data.AutoTileType;
 import orpg.shared.data.Direction;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
@@ -255,6 +257,18 @@ public class InputByteBuffer {
 		character.setDirection(Direction.values()[getByte()]);
 
 		return character;
+	}
+
+	public java.util.Map<Short, AutoTileType> getAutoTiles() {
+		short count = getShort();
+		HashMap<Short, AutoTileType> autoTiles = new HashMap<Short, AutoTileType>(
+				count);
+
+		for (short i = 0; i < count; i++) {
+			autoTiles.put(getShort(), AutoTileType.values()[getByte()]);
+		}
+
+		return autoTiles;
 	}
 
 	/**

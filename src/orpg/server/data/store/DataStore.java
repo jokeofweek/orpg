@@ -2,6 +2,7 @@ package orpg.server.data.store;
 
 import orpg.server.data.Account;
 import orpg.shared.data.AccountCharacter;
+import orpg.shared.data.AutoTileType;
 import orpg.shared.data.Map;
 import orpg.shared.data.Segment;
 import orpg.shared.data.store.DataStoreException;
@@ -122,8 +123,8 @@ public interface DataStore {
 	 * @throws DataStoreException
 	 *             if there is an error while creating said account.
 	 */
-	public void createAccount(Account account)
-			throws IllegalArgumentException, DataStoreException;
+	public void createAccount(Account account) throws IllegalArgumentException,
+			DataStoreException;
 
 	/**
 	 * This saves an account's status.
@@ -174,7 +175,13 @@ public interface DataStore {
 	 * @throws DataStoreException
 	 *             if there is an error loading that account from the datastore.
 	 */
-	public Account loadAccount(String name)
-			throws IllegalArgumentException, DataStoreException;
+	public Account loadAccount(String name) throws IllegalArgumentException,
+			DataStoreException;
+
+	public java.util.Map<Short, AutoTileType> loadAutoTiles()
+			throws DataStoreException;
+
+	public void saveAutoTiles(java.util.Map<Short, AutoTileType> autotiles)
+			throws DataStoreException;
 
 }

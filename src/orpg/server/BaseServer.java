@@ -7,6 +7,7 @@ import orpg.server.config.ServerConfigurationManager;
 import orpg.server.console.ServerConsole;
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.controllers.AccountController;
+import orpg.server.data.controllers.AutoTileController;
 import orpg.server.data.controllers.MapController;
 import orpg.server.data.store.DataStore;
 import orpg.server.data.store.FileDataStore;
@@ -23,6 +24,7 @@ public class BaseServer {
 	private BlockingQueue<ServerPacket> outputQueue;
 	private MapController mapController;
 	private AccountController accountController;
+	private AutoTileController autoTileController;
 	private DataStore dataStore;
 
 	public BaseServer(ServerConfigurationManager config,
@@ -122,6 +124,12 @@ public class BaseServer {
 		console.out().println("Setting up map controller...");
 		this.mapController = new MapController(this, dataStore);
 		if (!this.mapController.setup()) {
+			return false;
+		}
+
+		console.out().println("Setting up autotiles...");
+		this.autoTileController = new AutoTileController(this, dataStore);
+		if (!this.autoTileController.setup()) {
 			return false;
 		}
 

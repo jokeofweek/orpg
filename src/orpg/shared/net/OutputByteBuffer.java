@@ -7,6 +7,7 @@ import net.jpountz.lz4.LZ4Factory;
 
 import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
+import orpg.shared.data.AutoTileType;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
 import orpg.shared.data.Segment;
@@ -171,7 +172,7 @@ public class OutputByteBuffer {
 			}
 		}
 	}
-	
+
 	public void putSegmentCharacters(Segment segment) {
 		putInt(segment.getPlayers().size());
 		for (AccountCharacter character : segment.getPlayers().values()) {
@@ -233,6 +234,16 @@ public class OutputByteBuffer {
 		putInt(character.getX());
 		putInt(character.getY());
 		putByte((byte) character.getDirection().ordinal());
+	}
+
+	public void putAutoTiles(java.util.Map<Short, AutoTileType> autoTiles) {
+		testForExtraCapacity(2 + (3 * autoTiles.size()));
+		putShort((short) autoTiles.size());
+		for (java.util.Map.Entry<Short, AutoTileType> entry : autoTiles
+				.entrySet()) {
+			putShort(entry.getKey());
+			putByte((byte) entry.getValue().ordinal());
+		}
 	}
 
 	/**
