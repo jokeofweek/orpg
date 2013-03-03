@@ -148,8 +148,8 @@ public class OutputByteBuffer {
 		putShort(width);
 		putShort(height);
 
-		putInt(segment.getX());
-		putInt(segment.getY());
+		putShort(segment.getX());
+		putShort(segment.getY());
 
 		// Revision data
 		putInt(segment.getRevision());
@@ -195,8 +195,8 @@ public class OutputByteBuffer {
 
 		// Count non-null segments
 		int count = 0;
-		for (int x = 0; x < map.getSegmentsWide(); x++) {
-			for (int y = 0; y < map.getSegmentsHigh(); y++) {
+		for (short x = 0; x < map.getSegmentsWide(); x++) {
+			for (short y = 0; y < map.getSegmentsHigh(); y++) {
 				if (map.getSegment(x, y) != null) {
 					count++;
 				}
@@ -205,8 +205,8 @@ public class OutputByteBuffer {
 
 		putInt(count);
 
-		for (int x = 0; x < map.getSegmentsWide(); x++) {
-			for (int y = 0; y < map.getSegmentsHigh(); y++) {
+		for (short x = 0; x < map.getSegmentsWide(); x++) {
+			for (short y = 0; y < map.getSegmentsHigh(); y++) {
 				if (map.getSegment(x, y) != null) {
 					putSegment(map.getSegment(x, y));
 				}

@@ -137,8 +137,8 @@ public class FileDataStore implements DataStore {
 			out.write(buffer.getBytes());
 			out.close();
 
-			for (int x = 0; x < map.getSegmentsWide(); x++) {
-				for (int y = 0; y < map.getSegmentsHigh(); y++) {
+			for (short x = 0; x < map.getSegmentsWide(); x++) {
+				for (short y = 0; y < map.getSegmentsHigh(); y++) {
 					if (map.getSegment(x, y) != null) {
 						buffer.reset();
 						buffer.putSegment(map.getSegment(x, y));

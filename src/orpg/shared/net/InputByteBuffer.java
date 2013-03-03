@@ -151,8 +151,8 @@ public class InputByteBuffer {
 		short height = getShort();
 
 		// Get positions
-		int segmentX = getInt();
-		int segmentY = getInt();
+		short segmentX = getShort();
+		short segmentY = getShort();
 
 		// Revision
 		int revision = getInt();

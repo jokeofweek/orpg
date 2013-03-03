@@ -11,8 +11,8 @@ public class ClientNeedSegmentHandler implements ServerPacketHandler {
 	@Override
 	public void handle(ServerReceivedPacket packet, BaseServer baseServer) {
 		int mapId = packet.getByteBuffer().getInt();
-		int segmentX = packet.getByteBuffer().getInt();
-		int segmentY = packet.getByteBuffer().getInt();
+		short segmentX = packet.getByteBuffer().getShort();
+		short segmentY = packet.getByteBuffer().getShort();
 
 		Map map = packet.getSession().getCharacter().getMap();
 

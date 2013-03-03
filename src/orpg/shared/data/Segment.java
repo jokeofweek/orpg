@@ -4,8 +4,8 @@ import java.util.HashMap;
 
 public class Segment {
 
-	private int x;
-	private int y;
+	private short x;
+	private short y;
 	private int revision;
 	private long revisionTime;
 	private short[][][] tiles;
@@ -15,13 +15,13 @@ public class Segment {
 	private HashMap<String, AccountCharacter> players;
 	private Object revisionLock;
 
-	public Segment(int x, int y, short width, short height) {
+	public Segment(short x, short y, short width, short height) {
 		this(x, y, width, height,
 				new short[MapLayer.values().length][width][height],
 				new boolean[width][height], 0, System.currentTimeMillis());
 	}
 
-	public Segment(int x, int y, short width, short height, short[][][] tiles,
+	public Segment(short x, short y, short width, short height, short[][][] tiles,
 			boolean[][] blocked, int revision, long revisionTime) {
 		// Ensure tiles has right amount of layers
 		if (tiles.length != MapLayer.values().length) {
@@ -90,11 +90,11 @@ public class Segment {
 		}
 	}
 
-	public int getX() {
+	public short getX() {
 		return x;
 	}
 
-	public int getY() {
+	public short getY() {
 		return y;
 	}
 

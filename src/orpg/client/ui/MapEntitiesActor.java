@@ -34,10 +34,10 @@ public class MapEntitiesActor extends Actor {
 		Map map = baseClient.getMap();
 		int startX = viewBox.getStartX();
 		int startY = viewBox.getStartY();
-		int startSegmentX = map.getSegmentX(startX);
-		int endSegmentX = map.getSegmentX(viewBox.getEndX());
-		int startSegmentY = map.getSegmentY(startY);
-		int endSegmentY = map.getSegmentY(viewBox.getEndY());
+		short startSegmentX = map.getSegmentX(startX);
+		short endSegmentX = map.getSegmentX(viewBox.getEndX());
+		short startSegmentY = map.getSegmentY(startY);
+		short endSegmentY = map.getSegmentY(viewBox.getEndY());
 		int dX = viewBox.getOffsetX() % Constants.TILE_WIDTH;
 		int dY = viewBox.getOffsetY() % Constants.TILE_HEIGHT;
 
@@ -54,8 +54,8 @@ public class MapEntitiesActor extends Actor {
 		int spriteX;
 		int frame;
 
-		for (int x = startSegmentX; x <= endSegmentX; x++) {
-			for (int y = startSegmentY; y <= endSegmentY; y++) {
+		for (short x = startSegmentX; x <= endSegmentX; x++) {
+			for (short y = startSegmentY; y <= endSegmentY; y++) {
 				segment = map.getSegment(x, y);
 				if (segment != null) {
 					for (AccountCharacter character : segment.getPlayers()
@@ -118,10 +118,10 @@ public class MapEntitiesActor extends Actor {
 		Map map = baseClient.getMap();
 		int startX = viewBox.getStartX();
 		int startY = viewBox.getStartY();
-		int startSegmentX = map.getSegmentX(startX);
-		int endSegmentX = map.getSegmentX(viewBox.getEndX());
-		int startSegmentY = map.getSegmentY(startY);
-		int endSegmentY = map.getSegmentY(viewBox.getEndY());
+		short startSegmentX = map.getSegmentX(startX);
+		short endSegmentX = map.getSegmentX(viewBox.getEndX());
+		short startSegmentY = map.getSegmentY(startY);
+		short endSegmentY = map.getSegmentY(viewBox.getEndY());
 
 		Segment segment;
 		ClientPlayerData playerData;
@@ -155,8 +155,8 @@ public class MapEntitiesActor extends Actor {
 		}
 
 		// Move each entity that is moving
-		for (int x = startSegmentX; x <= endSegmentX; x++) {
-			for (int y = startSegmentY; y <= endSegmentY; y++) {
+		for (short x = startSegmentX; x <= endSegmentX; x++) {
+			for (short y = startSegmentY; y <= endSegmentY; y++) {
 				segment = map.getSegment(x, y);
 				if (segment != null) {
 					for (AccountCharacter character : segment.getPlayers()

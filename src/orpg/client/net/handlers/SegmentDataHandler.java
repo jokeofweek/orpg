@@ -33,11 +33,11 @@ public class SegmentDataHandler implements ClientPacketHandler {
 
 		// Load the map
 		boolean usingLocal = packet.getByteBuffer().getBoolean();
-		int segmentX = -1;
-		int segmentY = -1;
+		short segmentX = -1;
+		short segmentY = -1;
 		if (usingLocal) {
-			segmentX = packet.getByteBuffer().getInt();
-			segmentY = packet.getByteBuffer().getInt();
+			segmentX = packet.getByteBuffer().getShort();
+			segmentY = packet.getByteBuffer().getShort();
 		}
 		
 		System.out.println("Using local? " + usingLocal);

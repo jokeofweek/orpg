@@ -111,14 +111,14 @@ public class MapController implements Controller<Map, Integer> {
 	 * @throws IndexOutOfBoundsException
 	 *             if there is no segment with that position on that map.
 	 */
-	public Segment getSegment(int id, int x, int y)
+	public Segment getSegment(int id, short x, short y)
 			throws IllegalArgumentException, IndexOutOfBoundsException {
 		if (id <= 0 || id > baseServer.getConfigManager().getTotalMaps()) {
 			throw new IllegalArgumentException("No map with number " + id);
 		}
 
 		// Offset the id
-		id = id - 1;
+		id--;
 
 		if (x < 0 || x >= this.maps[id].getSegmentsWide() || y < 0
 				|| y >= this.maps[id].getSegmentsHigh()) {

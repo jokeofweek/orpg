@@ -22,7 +22,7 @@ public class EditorSegmentRequestManager extends Observable {
 		this.handlingRequestLock = new Object();
 	}
 
-	public void requestSegment(int x, int y) {
+	public void requestSegment(short x, short y) {
 		// If we've already requested the segment, don't do anything
 		String requestKey = dataToRequestKey(map.getId(), x, y);
 		if (!this.pendingRequests.contains(requestKey)) {

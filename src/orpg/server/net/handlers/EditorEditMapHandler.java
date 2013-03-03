@@ -19,7 +19,7 @@ public class EditorEditMapHandler implements ServerPacketHandler {
 		try {
 			Map map = baseServer.getMapController().get(number);
 			Segment segment = baseServer.getMapController().getSegment(
-					map.getId(), 0, 0);
+					map.getId(), (short)0, (short)0);
 			baseServer.sendPacket(new EditorMapDataPacket(packet.getSession(),
 					map, segment));
 		} catch (IllegalArgumentException e) {

@@ -19,8 +19,8 @@ public class ClientSegmentDataPacket extends SessionPacket {
 		if (!revisionsMatch) {
 			out.putSegment(segment);
 		} else {
-			out.putInt(segment.getX());
-			out.putInt(segment.getY());
+			out.putShort(segment.getX());
+			out.putShort(segment.getY());
 		}
 
 		out.putSegmentCharacters(segment);

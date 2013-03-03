@@ -21,7 +21,7 @@ public class SegmentRequestManager {
 		this.handlingRequestLock = new Object();
 	}
 
-	public void requestSegment(int x, int y) {
+	public void requestSegment(short x, short y) {
 		// Make sure the segment is valid
 		if (x < 0 || y < 0 || x >= baseClient.getMap().getSegmentsWide()
 				|| y >= baseClient.getMap().getSegmentsHigh()) {
@@ -77,17 +77,17 @@ public class SegmentRequestManager {
 
 	public void requestSurroundingSegments(AccountCharacter character) {
 		Map map = character.getMap();
-		int segmentX = map.getSegmentX(character.getX());
-		int segmentY = map.getSegmentX(character.getY());
+		short segmentX = map.getSegmentX(character.getX());
+		short segmentY = map.getSegmentX(character.getY());
 
-		requestSegment(segmentX - 1, segmentY);
-		requestSegment(segmentX + 1, segmentY);
-		requestSegment(segmentX, segmentY - 1);
-		requestSegment(segmentX, segmentY + 1);
+		requestSegment((short) (segmentX - 1), segmentY);
+		requestSegment((short) (segmentX + 1), segmentY);
+		requestSegment(segmentX, (short) (segmentY - 1));
+		requestSegment(segmentX, (short) (segmentY + 1));
 
-		requestSegment(segmentX - 1, segmentY - 1);
-		requestSegment(segmentX - 1, segmentY + 1);
-		requestSegment(segmentX + 1, segmentY - 1);
-		requestSegment(segmentX + 1, segmentY + 1);
+		requestSegment((short) (segmentX - 1), (short) (segmentY - 1));
+		requestSegment((short) (segmentX - 1), (short) (segmentY + 1));
+		requestSegment((short) (segmentX + 1), (short) (segmentY - 1));
+		requestSegment((short) (segmentX + 1), (short) (segmentY + 1));
 	}
 }

@@ -18,8 +18,8 @@ public class EditorSaveMapPacket extends ClientPacket {
 
 		// Fetch the segments that've changed
 		LinkedList<Segment> segments = new LinkedList<Segment>();
-		for (int x = 0; x < segmentsChanged.length; x++) {
-			for (int y = 0; y < segmentsChanged[0].length; y++) {
+		for (short x = 0; x < segmentsChanged.length; x++) {
+			for (short y = 0; y < segmentsChanged[0].length; y++) {
 				if (segmentsChanged[x][y]) {
 					segments.add(map.getSegment(x, y));
 				}

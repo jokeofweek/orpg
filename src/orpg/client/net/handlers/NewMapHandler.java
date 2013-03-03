@@ -24,10 +24,10 @@ public class NewMapHandler implements ClientPacketHandler {
 
 		// Determine the segment
 		client.getAccountCharacter().setX(in.getInt());
-		int segmentX = map.getSegmentX(client.getAccountCharacter().getX());
+		short segmentX = map.getSegmentX(client.getAccountCharacter().getX());
 
 		client.getAccountCharacter().setY(in.getInt());
-		int segmentY = map.getSegmentY(client.getAccountCharacter().getY());
+		short segmentY = map.getSegmentY(client.getAccountCharacter().getY());
 
 		// Clear the client data cache
 		Gdx.app.postRunnable(new Runnable() {

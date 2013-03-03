@@ -8,11 +8,11 @@ public class EditorRequestSegmentPacket extends ClientPacket {
 
 	private byte[] bytes;
 
-	public EditorRequestSegmentPacket(int mapId, int x, int y) {
+	public EditorRequestSegmentPacket(int mapId, short x, short y) {
 		OutputByteBuffer out = new OutputByteBuffer();
 		out.putInt(mapId);
-		out.putInt(x);
-		out.putInt(y);
+		out.putShort(x);
+		out.putShort(y);
 		this.bytes = out.getBytes();
 	}
 

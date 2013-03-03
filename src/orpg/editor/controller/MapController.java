@@ -19,9 +19,9 @@ public class MapController extends Observable implements Observer {
 		this.requestManager.addObserver(this);
 
 		// Make requests for outer segments
-		this.requestManager.requestSegment(1, 0);
-		this.requestManager.requestSegment(0, 1);
-		this.requestManager.requestSegment(1, 1);
+		this.requestManager.requestSegment((short)1, (short)0);
+		this.requestManager.requestSegment((short)0, (short)1);
+		this.requestManager.requestSegment((short)1, (short)1);
 	}
 
 	public Map getMap() {
@@ -77,8 +77,8 @@ public class MapController extends Observable implements Observer {
 	 *            the map-wide x position
 	 * @return the x of the segment in which this tile lies.
 	 */
-	public int getSegmentX(int x) {
-		return x / map.getSegmentWidth();
+	public short getSegmentX(int x) {
+		return map.getSegmentX(x);
 	}
 
 	/**
@@ -90,8 +90,8 @@ public class MapController extends Observable implements Observer {
 	 *            the map-wide y position
 	 * @return the y of the segment in which this tile lies.
 	 */
-	public int getSegmentY(int y) {
-		return y / map.getSegmentHeight();
+	public short getSegmentY(int y) {
+		return map.getSegmentY(y);
 	}
 
 	/**

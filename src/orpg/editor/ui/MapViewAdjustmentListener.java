@@ -29,9 +29,9 @@ public class MapViewAdjustmentListener implements AdjustmentListener {
 		int tileHeight = (Constants.TILE_HEIGHT / editorController
 				.getScaleFactor());
 
-		int segmentX = mapController.getSegmentX(scrollPane
+		short segmentX = mapController.getSegmentX(scrollPane
 				.getHorizontalScrollBar().getValue() / tileWidth);
-		int segmentY = mapController.getSegmentY(scrollPane
+		short segmentY = mapController.getSegmentY(scrollPane
 				.getVerticalScrollBar().getValue() / tileHeight);
 
 		int endSegmentX = (scrollPane.getHorizontalScrollBar().getValue() + (int) scrollPane
@@ -46,8 +46,8 @@ public class MapViewAdjustmentListener implements AdjustmentListener {
 		endSegmentX = mapController.getSegmentX(endSegmentX);
 		endSegmentY = mapController.getSegmentY(endSegmentY);
 
-		for (int x = segmentX; x <= endSegmentX; x++) {
-			for (int y = segmentY; y <= endSegmentY; y++) {
+		for (short x = segmentX; x <= endSegmentX; x++) {
+			for (short y = segmentY; y <= endSegmentY; y++) {
 				mapController.getRequestManager().requestSegment(x, y);
 			}
 		}

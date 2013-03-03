@@ -37,8 +37,8 @@ public class Map {
 		this.segments = new Segment[segmentsWide][segmentsHigh];
 		this.name = "";
 		if (createSegments) {
-			for (int x = 0; x < segmentsWide; x++) {
-				for (int y = 0; y < segmentsHigh; y++) {
+			for (short x = 0; x < segmentsWide; x++) {
+				for (short y = 0; y < segmentsHigh; y++) {
 					this.segments[x][y] = new Segment(x, y, segmentWidth,
 							segmentHeight);
 				}
@@ -111,7 +111,7 @@ public class Map {
 		return this.segments;
 	}
 
-	public Segment getSegment(int x, int y) {
+	public Segment getSegment(short x, short y) {
 		if (x < 0 || y < 0 || x >= segments.length || y >= segments[0].length) {
 			throw new IllegalArgumentException("Invalid segment position.");
 		}
@@ -163,20 +163,20 @@ public class Map {
 		return this.segments[x / this.segmentWidth][y / this.segmentHeight];
 	}
 
-	public int getSegmentX(int x) {
-		return x / this.segmentWidth;
+	public short getSegmentX(int x) {
+		return (short) (x / this.segmentWidth);
 	}
 
-	public int getSegmentY(int y) {
-		return y / this.segmentHeight;
+	public short getSegmentY(int y) {
+		return (short) (y / this.segmentHeight);
 	}
 
-	public int getXRelativeToSegment(int x) {
-		return x % this.segmentWidth;
+	public short getXRelativeToSegment(int x) {
+		return (short) (x % this.segmentWidth);
 	}
 
-	public int getYRelativeToSegment(int y) {
-		return y % this.segmentHeight;
+	public short getYRelativeToSegment(int y) {
+		return (short) (y % this.segmentHeight);
 	}
 
 	public String getName() {
