@@ -24,7 +24,7 @@ import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
 import orpg.editor.data.MapEditorTab;
 import orpg.editor.map.tool.PencilTool;
-import orpg.editor.ui.autotile.TwoByThreeAutotileRenderer;
+import orpg.editor.ui.autotile.TwoByThreeAutoTileRenderer;
 import orpg.shared.Constants;
 import orpg.shared.data.AutoTileType;
 import orpg.shared.data.Map;
@@ -95,7 +95,7 @@ public class MapView extends JComponent implements Observer, MouseListener,
 		// Setup autotile renderers
 		this.autoTileRenderers = new HashMap<AutoTileType, AutoTileRenderer>();
 		autoTileRenderers.put(AutoTileType.TWO_BY_THREE,
-				TwoByThreeAutotileRenderer.getInstance());
+				TwoByThreeAutoTileRenderer.getInstance());
 	}
 
 	public MapController getMapController() {

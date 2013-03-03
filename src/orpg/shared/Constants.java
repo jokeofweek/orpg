@@ -37,7 +37,6 @@ public final class Constants {
 	
 	public static final int AUTOTILE_WIDTH = TILE_WIDTH / 2;
 	public static final int AUTOTILE_HEIGHT = TILE_HEIGHT / 2;
-	public static final int AUTOTILESET_WIDTH = 4; // In autotiles
 	public static final int TILESET_WIDTH_IN_AUTOTILES = TILESET_WIDTH * 2;
 	public static final int TILESET_HEIGHT_IN_AUTOTILES = TILESET_HEIGHT * 2;
 	public static final int AUTOTILES_PER_TILESET = TILESET_WIDTH_IN_AUTOTILES * TILESET_HEIGHT_IN_AUTOTILES;

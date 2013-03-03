@@ -8,7 +8,7 @@ import orpg.shared.data.Map;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class TwoByThreeAutotileRenderer implements AutoTileRenderer {
+public class TwoByThreeAutoTileRenderer implements AutoTileRenderer {
 
 	private static final int TOP_LEFT = 1;
 	private static final int TOP_MIDDLE = 2;
@@ -23,6 +23,7 @@ public class TwoByThreeAutotileRenderer implements AutoTileRenderer {
 	private static final HashMap<Integer, Integer> autotileTopRightCorner;
 	private static final HashMap<Integer, Integer> autotileBottomLeftCorner;
 	private static final HashMap<Integer, Integer> autotileBottomRightCorner;
+	private static final int AUTOTILESET_WIDTH = 4; // In autotiles
 
 	static {
 		autotileTopLeftCorner = new HashMap<Integer, Integer>(7);
@@ -109,8 +110,8 @@ public class TwoByThreeAutotileRenderer implements AutoTileRenderer {
 		int corner = autotileTopLeftCorner.get(matchingTiles
 				& (TOP_LEFT | TOP_MIDDLE | MIDDLE_LEFT));
 		int cornerTile = convertedTile
-				+ ((corner / (Constants.AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
-				+ (corner % Constants.AUTOTILESET_WIDTH);
+				+ ((corner / (AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
+				+ (corner % AUTOTILESET_WIDTH);
 
 		batch.draw(
 				tilesets[cornerTile / Constants.AUTOTILES_PER_TILESET],
@@ -128,8 +129,8 @@ public class TwoByThreeAutotileRenderer implements AutoTileRenderer {
 		corner = autotileTopRightCorner.get(matchingTiles
 				& (TOP_RIGHT | MIDDLE_RIGHT | TOP_MIDDLE));
 		cornerTile = convertedTile
-				+ ((corner / (Constants.AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
-				+ (corner % Constants.AUTOTILESET_WIDTH);
+				+ ((corner / (AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
+				+ (corner % AUTOTILESET_WIDTH);
 
 		batch.draw(
 				tilesets[cornerTile / Constants.AUTOTILES_PER_TILESET],
@@ -147,8 +148,8 @@ public class TwoByThreeAutotileRenderer implements AutoTileRenderer {
 		corner = autotileBottomLeftCorner.get(matchingTiles
 				& (MIDDLE_LEFT | BOTTOM_LEFT | BOTTOM_MIDDLE));
 		cornerTile = convertedTile
-				+ ((corner / (Constants.AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
-				+ (corner % Constants.AUTOTILESET_WIDTH);
+				+ ((corner / (AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
+				+ (corner % AUTOTILESET_WIDTH);
 
 		batch.draw(
 				tilesets[cornerTile / Constants.AUTOTILES_PER_TILESET],
@@ -166,8 +167,8 @@ public class TwoByThreeAutotileRenderer implements AutoTileRenderer {
 		corner = autotileBottomRightCorner.get(matchingTiles
 				& (MIDDLE_RIGHT | BOTTOM_RIGHT | BOTTOM_MIDDLE));
 		cornerTile = convertedTile
-				+ ((corner / (Constants.AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
-				+ (corner % Constants.AUTOTILESET_WIDTH);
+				+ ((corner / (AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
+				+ (corner % AUTOTILESET_WIDTH);
 
 		batch.draw(
 				tilesets[cornerTile / Constants.AUTOTILES_PER_TILESET],

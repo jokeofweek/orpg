@@ -11,7 +11,7 @@ import orpg.shared.data.Map;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class TwoByThreeAutotileRenderer implements AutoTileRenderer {
+public class TwoByThreeAutoTileRenderer implements AutoTileRenderer {
 
 	private static final int TOP_LEFT = 1;
 	private static final int TOP_MIDDLE = 2;
@@ -21,6 +21,7 @@ public class TwoByThreeAutotileRenderer implements AutoTileRenderer {
 	private static final int BOTTOM_LEFT = 32;
 	private static final int BOTTOM_MIDDLE = 64;
 	private static final int BOTTOM_RIGHT = 128;
+	private static final int AUTOTILESET_WIDTH = 4; // In autotiles
 
 	private static final HashMap<Integer, Integer> autotileTopLeftCorner;
 	private static final HashMap<Integer, Integer> autotileTopRightCorner;
@@ -72,13 +73,13 @@ public class TwoByThreeAutotileRenderer implements AutoTileRenderer {
 
 	}
 
-	private static TwoByThreeAutotileRenderer instance = new TwoByThreeAutotileRenderer();
+	private static TwoByThreeAutoTileRenderer instance = new TwoByThreeAutoTileRenderer();
 
-	public static TwoByThreeAutotileRenderer getInstance() {
+	public static TwoByThreeAutoTileRenderer getInstance() {
 		return instance;
 	}
 
-	private TwoByThreeAutotileRenderer() {
+	private TwoByThreeAutoTileRenderer() {
 	}
 
 	@Override
@@ -125,8 +126,8 @@ public class TwoByThreeAutotileRenderer implements AutoTileRenderer {
 		int corner = autotileTopLeftCorner.get(matchingTiles
 				& (TOP_LEFT | TOP_MIDDLE | MIDDLE_LEFT));
 		int cornerTile = convertedTile
-				+ ((corner / (Constants.AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
-				+ (corner % Constants.AUTOTILESET_WIDTH);
+				+ ((corner / (AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
+				+ (corner % AUTOTILESET_WIDTH);
 		int srcX = (cornerTile % Constants.TILESET_WIDTH_IN_AUTOTILES)
 				* Constants.AUTOTILE_WIDTH;
 		int srcY = ((cornerTile / Constants.TILESET_HEIGHT_IN_AUTOTILES) % Constants.TILESET_HEIGHT_IN_AUTOTILES)
@@ -142,8 +143,8 @@ public class TwoByThreeAutotileRenderer implements AutoTileRenderer {
 		corner = autotileTopRightCorner.get(matchingTiles
 				& (TOP_RIGHT | MIDDLE_RIGHT | TOP_MIDDLE));
 		cornerTile = convertedTile
-				+ ((corner / (Constants.AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
-				+ (corner % Constants.AUTOTILESET_WIDTH);
+				+ ((corner / (AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
+				+ (corner % AUTOTILESET_WIDTH);
 		srcX = (cornerTile % Constants.TILESET_WIDTH_IN_AUTOTILES)
 				* Constants.AUTOTILE_WIDTH;
 		srcY = ((cornerTile / Constants.TILESET_HEIGHT_IN_AUTOTILES) % Constants.TILESET_HEIGHT_IN_AUTOTILES)
@@ -160,8 +161,8 @@ public class TwoByThreeAutotileRenderer implements AutoTileRenderer {
 		corner = autotileBottomLeftCorner.get(matchingTiles
 				& (MIDDLE_LEFT | BOTTOM_LEFT | BOTTOM_MIDDLE));
 		cornerTile = convertedTile
-				+ ((corner / (Constants.AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
-				+ (corner % Constants.AUTOTILESET_WIDTH);
+				+ ((corner / (AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
+				+ (corner % AUTOTILESET_WIDTH);
 		srcX = (cornerTile % Constants.TILESET_WIDTH_IN_AUTOTILES)
 				* Constants.AUTOTILE_WIDTH;
 		srcY = ((cornerTile / Constants.TILESET_HEIGHT_IN_AUTOTILES) % Constants.TILESET_HEIGHT_IN_AUTOTILES)
@@ -177,8 +178,8 @@ public class TwoByThreeAutotileRenderer implements AutoTileRenderer {
 		corner = autotileBottomRightCorner.get(matchingTiles
 				& (MIDDLE_RIGHT | BOTTOM_RIGHT | BOTTOM_MIDDLE));
 		cornerTile = convertedTile
-				+ ((corner / (Constants.AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
-				+ (corner % Constants.AUTOTILESET_WIDTH);
+				+ ((corner / (AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
+				+ (corner % AUTOTILESET_WIDTH);
 		srcX = (cornerTile % Constants.TILESET_WIDTH_IN_AUTOTILES)
 				* Constants.AUTOTILE_WIDTH;
 		srcY = ((cornerTile / Constants.TILESET_HEIGHT_IN_AUTOTILES) % Constants.TILESET_HEIGHT_IN_AUTOTILES)
