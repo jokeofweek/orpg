@@ -6,6 +6,7 @@ public enum DestinationType {
 	GLOBAL,
 	GLOBAL_EXCEPT_FOR,
 	MAP,
-	MAP_EXCEPT_FOR
+	MAP_EXCEPT_FOR,
+	GLOBAL_MULTI_CLIENT_TYPE
 	
 }

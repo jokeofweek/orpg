@@ -10,6 +10,10 @@ public class InGameHandler implements ClientPacketHandler {
 
 	@Override
 	public void handle(ClientReceivedPacket packet, final BaseClient client) {
+		// Update the client
+		client.setAccountCharacter(packet.getByteBuffer().getAccountCharacter());
+		client.setAutoTiles(packet.getByteBuffer().getAutoTiles());
+
 		// Switch to loading
 		Gdx.app.postRunnable(new Runnable() {
 			@Override
@@ -18,8 +22,6 @@ public class InGameHandler implements ClientPacketHandler {
 			}
 		});
 
-		// Update the client
-		client.setAccountCharacter(packet.getByteBuffer().getAccountCharacter());
 	}
 
 }

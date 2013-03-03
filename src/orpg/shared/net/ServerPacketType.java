@@ -11,7 +11,8 @@ public enum ServerPacketType {
 	LOGIN_OK,
 	EDITOR_LOGIN_OK,
 	
-	
+	// Shared packet types
+	SHARED_AUTO_TILE_LIST,
 	
 	// Client packet types
 	CLIENT_IN_GAME,

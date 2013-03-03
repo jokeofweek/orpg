@@ -27,8 +27,7 @@ public class BaseServer {
 	private AutoTileController autoTileController;
 	private DataStore dataStore;
 
-	public BaseServer(ServerConfigurationManager config,
-			ServerConsole console) {
+	public BaseServer(ServerConfigurationManager config, ServerConsole console) {
 		this.config = config;
 		this.console = console;
 
@@ -39,8 +38,7 @@ public class BaseServer {
 		this.outputQueue = new LinkedBlockingQueue<ServerPacket>();
 
 		// Set up the various threads
-		this.serverSessionManager = new ServerSessionManager(this,
-				outputQueue);
+		this.serverSessionManager = new ServerSessionManager(this, outputQueue);
 		this.serverGameThread = new ServerGameThread(this, inputQueue,
 				outputQueue);
 		try {
@@ -109,6 +107,10 @@ public class BaseServer {
 
 	public AccountController getAccountController() {
 		return accountController;
+	}
+
+	public AutoTileController getAutoTileController() {
+		return autoTileController;
 	}
 
 	/**

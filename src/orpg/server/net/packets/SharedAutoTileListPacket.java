@@ -2,31 +2,29 @@ package orpg.server.net.packets;
 
 import orpg.server.ServerSession;
 import orpg.server.data.controllers.AutoTileController;
-import orpg.shared.data.AccountCharacter;
 import orpg.shared.net.OutputByteBuffer;
 import orpg.shared.net.ServerPacketType;
 
-public class ClientInGamePacket extends SessionPacket {
+public class SharedAutoTileListPacket extends SessionPacket {
 
 	private byte[] bytes;
 
-	public ClientInGamePacket(ServerSession session,
-			AccountCharacter character, AutoTileController autoTileController) {
+	public SharedAutoTileListPacket(ServerSession session,
+			AutoTileController controller) {
 		super(session);
 		OutputByteBuffer out = new OutputByteBuffer();
-		out.putAccountCharacter(character);
-		out.putAutoTiles(autoTileController.getAutoTiles());
+		out.putAutoTiles(controller.getAutoTiles());
 		this.bytes = out.getBytes();
 	}
 
 	@Override
 	public ServerPacketType getPacketType() {
-		return ServerPacketType.CLIENT_IN_GAME;
+		return ServerPacketType.SHARED_AUTO_TILE_LIST;
 	}
 
 	@Override
 	public byte[] getBytes() {
-		return bytes;
+		return this.bytes;
 	}
 
 }

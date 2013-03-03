@@ -217,7 +217,7 @@ public class ServerSession {
 			this.character.setChangingMap(true);
 
 			// Notify the client that they are now in the game
-			baseServer.sendPacket(new ClientInGamePacket(this, character));
+			baseServer.sendPacket(new ClientInGamePacket(this, character, baseServer.getAutoTileController()));
 
 			baseServer.getMapController().warpToMap(character,
 					character.getMap().getId(), character.getX(),

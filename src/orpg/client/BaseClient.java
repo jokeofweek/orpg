@@ -11,6 +11,7 @@ import orpg.client.data.store.DataStore;
 import orpg.client.data.store.FileDataStore;
 import orpg.client.net.SegmentRequestManager;
 import orpg.shared.data.AccountCharacter;
+import orpg.shared.data.AutoTileType;
 import orpg.shared.data.Map;
 import orpg.shared.net.AbstractClient;
 import orpg.shared.net.PacketProcessThread;
@@ -22,10 +23,11 @@ public class BaseClient extends AbstractClient {
 	private Map map;
 	private Map localMap;
 	private AccountCharacter accountCharacter;
-	private HashMap<String, ClientPlayerData> playersData;
+	private java.util.Map<String, ClientPlayerData> playersData;
 	private ClientConfigurationManager config;
 	private DataStore dataStore;
 	private SegmentRequestManager segmentRequestManager;
+	private java.util.Map<Short, AutoTileType> autoTiles;
 
 	public BaseClient(Game game, Socket socket, PacketProcessThread gameThread,
 			StateManager stateManager, ClientConfigurationManager config) {
@@ -70,6 +72,14 @@ public class BaseClient extends AbstractClient {
 
 	public DataStore getDataStore() {
 		return dataStore;
+	}
+
+	public java.util.Map<Short, AutoTileType> getAutoTiles() {
+		return autoTiles;
+	}
+
+	public void setAutoTiles(java.util.Map<Short, AutoTileType> autoTiles) {
+		this.autoTiles = autoTiles;
 	}
 
 	public SegmentRequestManager getSegmentRequestManager() {

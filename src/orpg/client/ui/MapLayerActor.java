@@ -31,8 +31,8 @@ public class MapLayerActor extends Actor {
 	private Texture[] tilesets;
 	private Texture loadingTileTexture;
 
-	private HashMap<Integer, AutoTileType> autotiles;
-	private HashMap<AutoTileType, AutoTileRenderer> autotileRenderers;
+	private java.util.Map<Short, AutoTileType> autotiles;
+	private java.util.Map<AutoTileType, AutoTileRenderer> autotileRenderers;
 
 	public MapLayerActor(BaseClient baseClient, ViewBox viewbox,
 			Texture[] tilesets, Texture loadingTileTexture, int[] layers,
@@ -52,12 +52,10 @@ public class MapLayerActor extends Actor {
 		this.tilesets = tilesets;
 		this.loadingTileTexture = loadingTileTexture;
 
-		this.autotiles = new HashMap<Integer, AutoTileType>();
+		this.autotiles = baseClient.getAutoTiles();
+
 		this.autotileRenderers = new HashMap<AutoTileType, AutoTileRenderer>(
 				AutoTileType.values().length);
-
-		this.autotiles.put(122, AutoTileType.TWO_BY_THREE);
-		this.autotiles.put(722, AutoTileType.TWO_BY_THREE);
 		this.autotileRenderers.put(AutoTileType.TWO_BY_THREE,
 				new TwoByThreeAutotileRenderer());
 	}
@@ -66,7 +64,7 @@ public class MapLayerActor extends Actor {
 	public void draw(SpriteBatch batch, float parentAlpha) {
 		int x;
 		int y;
-		int tile;
+		short tile;
 
 		if (baseClient.getAccountCharacter().isChangingMap()) {
 			return;
