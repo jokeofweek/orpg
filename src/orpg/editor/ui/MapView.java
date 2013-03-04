@@ -21,6 +21,7 @@ import javax.swing.SwingUtilities;
 import orpg.editor.ui.autotile.AutoTileRenderer;
 import orpg.editor.ui.autotile.TwoByTwoAutoTileRenderer;
 import orpg.editor.BaseEditor;
+import orpg.editor.EditorConstants;
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
 import orpg.editor.data.MapEditorTab;
@@ -36,13 +37,13 @@ public class MapView extends JComponent implements Observer, MouseListener,
 
 	private static final AlphaComposite ATTRIBUTE_COMPOSITE = AlphaComposite
 			.getInstance(AlphaComposite.SRC_OVER,
-					Constants.MAP_EDITOR_ATTRIBUTE_TRANSPARENCY);
+					EditorConstants.MAP_EDITOR_ATTRIBUTE_TRANSPARENCY);
 	private static final AlphaComposite GRID_COMPOSITE = AlphaComposite
 			.getInstance(AlphaComposite.SRC_OVER,
-					Constants.MAP_EDITOR_GRID_TRANSPARENCY);
+					EditorConstants.MAP_EDITOR_GRID_TRANSPARENCY);
 	private static final AlphaComposite MOUSE_OVERLAY_COMPOSITE = AlphaComposite
 			.getInstance(AlphaComposite.SRC_OVER,
-					Constants.MAP_EDITOR_TILE_OVERLAY_TRANSPARENCY);
+					EditorConstants.MAP_EDITOR_TILE_OVERLAY_TRANSPARENCY);
 
 	private MapController mapController;
 	private MapEditorController editorController;

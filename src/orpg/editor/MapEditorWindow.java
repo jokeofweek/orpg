@@ -163,7 +163,7 @@ public class MapEditorWindow extends JFrame implements Observer,
 
 		// Build the tiles view
 		TilesView tilesView = null;
-		tilesView = new TilesView(editorController, tilesets);
+		tilesView = new TilesView(baseEditor, editorController, tilesets);
 
 		JScrollPane tilesScrollPane = new JScrollPane(tilesView,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
