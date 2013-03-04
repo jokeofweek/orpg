@@ -19,7 +19,7 @@ import orpg.editor.map.tool.Tool;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
 import orpg.shared.data.Segment;
-import orpg.shared.data.TileAttribute;
+import orpg.shared.data.TileFlag;
 
 public class MapEditorController extends EditorController<Map> implements
 		Observer {
@@ -29,7 +29,7 @@ public class MapEditorController extends EditorController<Map> implements
 	private MapController mapController;
 
 	private MapLayer currentLayer;
-	private TileAttribute currentAttribute;
+	private TileFlag currentFlag;
 	private Tool currentTool;
 	private MapEditorTab currentTab;
 	private HashMap<MapEditorTab, Tool> tabTools;
@@ -54,7 +54,7 @@ public class MapEditorController extends EditorController<Map> implements
 		this.changeManager.addObserver(this);
 		this.mapController = mapController;
 
-		this.currentAttribute = TileAttribute.BLOCKED;
+		this.currentFlag = TileFlag.BLOCKED;
 		this.currentLayer = MapLayer.GROUND;
 		this.currentTool = PencilTool.getInstance();
 
@@ -98,8 +98,16 @@ public class MapEditorController extends EditorController<Map> implements
 		this.currentTool = currentTool;
 	}
 
-	public TileAttribute getCurrentAttribute() {
-		return currentAttribute;
+	public TileFlag getCurrentTileFlag() {
+		return currentFlag;
+	}
+
+	public void setCurrentTileFlag(TileFlag tileFlag) {
+		if (this.currentFlag != tileFlag) {
+			this.setChanged();
+		}
+		this.currentFlag = tileFlag;
+		this.notifyObservers();
 	}
 
 	public void setCurrentTab(MapEditorTab editorTab) {
@@ -121,14 +129,6 @@ public class MapEditorController extends EditorController<Map> implements
 
 	public MapEditorTab getCurrentTab() {
 		return currentTab;
-	}
-
-	public void setCurrentAttribute(TileAttribute currentAttribute) {
-		if (this.currentAttribute != currentAttribute) {
-			this.setChanged();
-		}
-		this.currentAttribute = currentAttribute;
-		this.notifyObservers();
 	}
 
 	public TileRange getTileRange() {

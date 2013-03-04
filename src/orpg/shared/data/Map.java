@@ -21,8 +21,9 @@ public class Map {
 
 	public Map(int id, short segmentsWide, short segmentsHigh,
 			boolean createSegments) {
-		this(id, Constants.MAP_SEGMENT_WIDTH, Constants.MAP_SEGMENT_HEIGHT,
-				segmentsWide, segmentsHigh, createSegments);
+		this(id, Constants.MAP_SEGMENT_WIDTH,
+				Constants.MAP_SEGMENT_HEIGHT, segmentsWide, segmentsHigh,
+				createSegments);
 	}
 
 	public Map(int id, short segmentWidth, short segmentHeight,
@@ -112,7 +113,8 @@ public class Map {
 	}
 
 	public Segment getSegment(short x, short y) {
-		if (x < 0 || y < 0 || x >= segments.length || y >= segments[0].length) {
+		if (x < 0 || y < 0 || x >= segments.length
+				|| y >= segments[0].length) {
 			throw new IllegalArgumentException("Invalid segment position.");
 		}
 
@@ -155,7 +157,8 @@ public class Map {
 
 	public Segment getPositionSegment(int x, int y)
 			throws IllegalArgumentException {
-		if (x < 0 || y < 0 || x >= this.segmentWidth * this.segments.length
+		if (x < 0 || y < 0
+				|| x >= this.segmentWidth * this.segments.length
 				|| y >= this.segmentHeight * this.segments[0].length) {
 			throw new IllegalArgumentException("Invalid segment position.");
 		}
@@ -194,22 +197,29 @@ public class Map {
 			return false;
 		}
 
-		return !isBlocked(x, y);
+		return !hasFlag(x, y, TileFlag.BLOCKED);
 	}
 
-	public boolean isBlocked(int x, int y) {
+	public boolean hasFlag(int x, int y, TileFlag flag) {
 		Segment segment = this.getPositionSegment(x, y);
 		if (segment == null) {
 			return false;
 		} else {
-			return (segment.getBlocked()[getXRelativeToSegment(x)][getYRelativeToSegment(y)]);
+			return ((segment.getFlags()[getXRelativeToSegment(x)][getYRelativeToSegment(y)]) & flag
+					.getMask()) != 0;
 		}
 	}
 
-	public void setBlocked(int x, int y, boolean isBlocked) {
+	public void setFlag(int x, int y, TileFlag flag, boolean enabled) {
 		Segment segment = this.getPositionSegment(x, y);
 		if (segment != null) {
-			segment.getBlocked()[getXRelativeToSegment(x)][getYRelativeToSegment(y)] = isBlocked;
+			if (enabled) {
+				segment.getFlags()[getXRelativeToSegment(x)][getYRelativeToSegment(y)] |= flag
+						.getMask();
+			} else {
+				segment.getFlags()[getXRelativeToSegment(x)][getYRelativeToSegment(y)] &= ~flag
+						.getMask();
+			}
 		}
 	}
 
@@ -230,7 +240,7 @@ public class Map {
 			return segment.getAutoTileCache()[z][getXRelativeToSegment(x)][getYRelativeToSegment(y)];
 		}
 	}
-	
+
 	/**
 	 * This fetches the tile at a given position and layer.
 	 * 
@@ -261,7 +271,8 @@ public class Map {
 	 *         yet loaded.
 	 */
 	public boolean addPlayer(AccountCharacter character) {
-		Segment segment = getPositionSegment(character.getX(), character.getY());
+		Segment segment = getPositionSegment(character.getX(),
+				character.getY());
 		if (segment != null) {
 			segment.addPlayer(character);
 			return true;
@@ -324,8 +335,8 @@ public class Map {
 		character.setY(mapCharacter.getY());
 		character.setDirection(mapCharacter.getDirection());
 
-		getPositionSegment(mapCharacter.getX(), mapCharacter.getY()).addPlayer(
-				character);
+		getPositionSegment(mapCharacter.getX(), mapCharacter.getY())
+				.addPlayer(character);
 	}
 
 	/**
@@ -348,7 +359,8 @@ public class Map {
 			throw new IllegalArgumentException("Character is not on map "
 					+ this + ", so could not be removed.");
 		}
-		Segment segment = getPositionSegment(character.getX(), character.getY());
+		Segment segment = getPositionSegment(character.getX(),
+				character.getY());
 		if (segment != null) {
 			segment.removePlayer(character);
 			return true;

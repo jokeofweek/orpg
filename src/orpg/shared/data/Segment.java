@@ -11,8 +11,8 @@ public class Segment {
 	private short[][][] tiles;
 	private short width;
 	private short height;
-	private boolean blocked[][];
-	
+	private byte flags[][];
+
 	// Transient data
 	private HashMap<String, AccountCharacter> players;
 	private Object revisionLock;
@@ -21,11 +21,12 @@ public class Segment {
 	public Segment(short x, short y, short width, short height) {
 		this(x, y, width, height,
 				new short[MapLayer.values().length][width][height],
-				new boolean[width][height], 0, System.currentTimeMillis());
+				new byte[width][height], 0, System.currentTimeMillis());
 	}
 
-	public Segment(short x, short y, short width, short height, short[][][] tiles,
-			boolean[][] blocked, int revision, long revisionTime) {
+	public Segment(short x, short y, short width, short height,
+			short[][][] tiles, byte[][] flags, int revision,
+			long revisionTime) {
 		// Ensure tiles has right amount of layers
 		if (tiles.length != MapLayer.values().length) {
 			throw new IllegalArgumentException(
@@ -36,13 +37,13 @@ public class Segment {
 			throw new IllegalArgumentException(
 					"Segment width and height do not match passed tiles.");
 		}
-		if (blocked.length != width || blocked[0].length != height) {
+		if (flags.length != width || flags[0].length != height) {
 			throw new IllegalArgumentException(
-					"Segment width and height do not match passed simple attrbiutes.");
+					"Segment width and height do not match passed flags.");
 		}
 
 		this.tiles = tiles;
-		this.blocked = blocked;
+		this.flags = flags;
 		this.x = x;
 		this.y = y;
 		this.revision = revision;
@@ -105,8 +106,8 @@ public class Segment {
 		return tiles;
 	}
 
-	public boolean[][] getBlocked() {
-		return blocked;
+	public byte[][] getFlags() {
+		return flags;
 	}
 
 	public HashMap<String, AccountCharacter> getPlayers() {
@@ -124,11 +125,11 @@ public class Segment {
 	public void removePlayer(AccountCharacter accountCharacter) {
 		players.remove(accountCharacter.getName());
 	}
-	
+
 	public int[][][] getAutoTileCache() {
 		return autoTileCache;
 	}
-	
+
 	public void setAutoTileCache(int[][][] autoTileCache) {
 		this.autoTileCache = autoTileCache;
 	}

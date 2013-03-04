@@ -31,6 +31,7 @@ import orpg.shared.Constants;
 import orpg.shared.data.AutoTileType;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
+import orpg.shared.data.TileFlag;
 
 public class MapView extends JComponent implements Observer, MouseListener,
 		MouseMotionListener {
@@ -285,10 +286,11 @@ public class MapView extends JComponent implements Observer, MouseListener,
 	private void renderAttributes(Graphics2D graphics,
 			AlphaComposite regularComposite, int startX, int startY, int endX,
 			int endY) {
+		TileFlag flag = editorController.getCurrentTileFlag();
 		graphics.setComposite(ATTRIBUTE_COMPOSITE);
 		for (int y = startY; y < endY; y++) {
 			for (int x = startX; x < endX; x++) {
-				if (mapController.isBlocked(x, y)) {
+				if (mapController.hasFlag(x, y, flag)) {
 					graphics.setColor(Color.red);
 					graphics.fillRect(x * tileWidth, y * tileHeight, tileWidth,
 							tileHeight);

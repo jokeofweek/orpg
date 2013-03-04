@@ -163,11 +163,11 @@ public class InputByteBuffer {
 		// Ensure enough capacity for tiles
 		hasEnoughCapacity(width * height * MapLayer.values().length * 2);
 		short[][][] tiles = new short[MapLayer.values().length][width][height];
-		boolean[][] blocked = new boolean[width][height];
+		byte[][] flags = new byte[width][height];
 		int x, y, z;
 		for (x = 0; x < width; x++) {
 			for (y = 0; y < height; y++) {
-				blocked[x][y] = getBoolean();
+				flags[x][y] = getByte();
 				for (z = 0; z < MapLayer.values().length; z++) {
 					tiles[z][x][y] = getShort();
 				}
@@ -175,7 +175,7 @@ public class InputByteBuffer {
 		}
 
 		Segment segment = new Segment(segmentX, segmentY, width, height, tiles,
-				blocked, revision, revisionTime);
+				flags, revision, revisionTime);
 
 		return segment;
 	}

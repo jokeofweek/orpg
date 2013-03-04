@@ -7,6 +7,7 @@ import orpg.editor.BaseEditor;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
 import orpg.shared.data.Segment;
+import orpg.shared.data.TileFlag;
 
 public class MapController extends Observable implements Observer {
 
@@ -177,15 +178,15 @@ public class MapController extends Observable implements Observer {
 		return map.getTile(x, y, z);
 	}
 
-	public boolean isBlocked(int x, int y) {
-		return map.isBlocked(x, y);
+	public boolean hasFlag(int x, int y, TileFlag flag) {
+		return map.hasFlag(x, y, flag);
 	}
 
-	public void setBlocked(int x, int y, boolean isBlocked) {
-		if (map.isBlocked(x, y) != isBlocked) {
+	public void setFlag(int x, int y, TileFlag flag, boolean value) {
+		if (map.hasFlag(x, y, flag)!= value) {
 			setChanged();
 		}
-		map.setBlocked(x, y, isBlocked);
+		map.setFlag(x, y, flag, value);
 		notifyObservers();
 	}
 

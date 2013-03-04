@@ -7,8 +7,7 @@ public class Test {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new LwjglApplication(new TiledMapTest(), "Game", 512, 512, true);
-
+		System.out.println(6 & ~2);
 	}
 
 }

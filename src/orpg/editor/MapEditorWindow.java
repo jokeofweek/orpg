@@ -45,7 +45,7 @@ import orpg.shared.Constants;
 import orpg.shared.Strings;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
-import orpg.shared.data.TileAttribute;
+import orpg.shared.data.TileFlag;
 
 public class MapEditorWindow extends JFrame implements Observer,
 		EditorWindow<Map> {
@@ -318,7 +318,7 @@ public class MapEditorWindow extends JFrame implements Observer,
 				JRadioButton button = (JRadioButton) e.getSource();
 				if (button.isSelected()) {
 					editorController
-							.setCurrentAttribute(TileAttribute.values()[Integer
+							.setCurrentTileFlag(TileFlag.values()[Integer
 									.parseInt(button.getActionCommand())]);
 				}
 			}
@@ -327,14 +327,14 @@ public class MapEditorWindow extends JFrame implements Observer,
 		// Setup a radio button for each layer
 		final ButtonGroup group = new ButtonGroup();
 		JRadioButton button;
-		for (TileAttribute tileAttribute : TileAttribute.values()) {
+		for (TileFlag tileAttribute : TileFlag.values()) {
 			button = new JRadioButton(tileAttribute.getName());
 			button.setActionCommand(tileAttribute.ordinal() + "");
 			button.addItemListener(attributeItemListesner);
 			group.add(button);
 
 			// Needed to select the first layer
-			if (tileAttribute == editorController.getCurrentAttribute()) {
+			if (tileAttribute == editorController.getCurrentTileFlag()) {
 				group.setSelected(button.getModel(), true);
 			}
 
