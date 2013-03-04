@@ -19,6 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import orpg.editor.ui.autotile.AutoTileRenderer;
+import orpg.editor.ui.autotile.TwoByTwoAutoTileRenderer;
 import orpg.editor.BaseEditor;
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
@@ -96,6 +97,8 @@ public class MapView extends JComponent implements Observer, MouseListener,
 		this.autoTileRenderers = new HashMap<AutoTileType, AutoTileRenderer>();
 		autoTileRenderers.put(AutoTileType.TWO_BY_THREE,
 				TwoByThreeAutoTileRenderer.getInstance());
+		autoTileRenderers.put(AutoTileType.TWO_BY_TWO,
+				TwoByTwoAutoTileRenderer.getInstance());
 	}
 
 	public MapController getMapController() {

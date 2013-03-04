@@ -6,8 +6,7 @@
 - Fix up the account ID system and then replace all the packets that use the name of the character is the ID.
 - Fix seamless scroll to request segments in order of need.
 - On changing a map, the viewbox needs to be rebuilt with the right content width /content height
-- Allow for editing of autotiles via editor application.
-- Create a 2x2 autotiler.
+- Allow for editing of autotiles via editor application. 
 
 ## DONE
 
@@ -16,3 +15,4 @@
 - Scroll client map and request segments as you go.
 - "Modify the NEED_SEGMENT packets to send over local revision." - The local segments are now loaded on a local Map object and the revision/revisionTime are sent along with the need segment. The ClientNeedSegmentHandler then checks with the server revision data, and passes it to the ClientSegmentDataPacket. A boolean is sent in the segment data packet stating whether the revisions match. If the revisions do not match, then it sends the segment data. Finally it sends the players in both cases.
 - Implement autotiling.
+- Create a 2x2 autotiler.
