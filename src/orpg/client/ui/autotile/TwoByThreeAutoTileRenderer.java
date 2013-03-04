@@ -1,17 +1,14 @@
-package orpg.editor.ui.autotile;
+package orpg.client.ui.autotile;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.util.HashMap;
 
-import orpg.editor.controller.MapController;
 import orpg.shared.Constants;
 import orpg.shared.data.Map;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class TwoByThreeAutoTileRenderer2 implements AutoTileRenderer {
+public class TwoByThreeAutoTileRenderer implements AutoTileRenderer {
 
 	private static final int TOP_LEFT = 1;
 	private static final int TOP_MIDDLE = 2;
@@ -21,12 +18,12 @@ public class TwoByThreeAutoTileRenderer2 implements AutoTileRenderer {
 	private static final int BOTTOM_LEFT = 32;
 	private static final int BOTTOM_MIDDLE = 64;
 	private static final int BOTTOM_RIGHT = 128;
-	private static final int AUTOTILESET_WIDTH = 4; // In autotiles
 
 	private static final HashMap<Integer, Integer> autotileTopLeftCorner;
 	private static final HashMap<Integer, Integer> autotileTopRightCorner;
 	private static final HashMap<Integer, Integer> autotileBottomLeftCorner;
 	private static final HashMap<Integer, Integer> autotileBottomRightCorner;
+	private static final int AUTOTILESET_WIDTH = 4; // In autotiles
 
 	static {
 		autotileTopLeftCorner = new HashMap<Integer, Integer>(7);
@@ -72,53 +69,50 @@ public class TwoByThreeAutoTileRenderer2 implements AutoTileRenderer {
 				| BOTTOM_RIGHT, 18);
 
 	}
+	
 
-	private static TwoByThreeAutoTileRenderer2 instance = new TwoByThreeAutoTileRenderer2();
+	private static TwoByThreeAutoTileRenderer instance = new TwoByThreeAutoTileRenderer();
 
-	public static TwoByThreeAutoTileRenderer2 getInstance() {
+	public static TwoByThreeAutoTileRenderer getInstance() {
 		return instance;
 	}
 
-	private TwoByThreeAutoTileRenderer2() {
+	private TwoByThreeAutoTileRenderer() {
 	}
 
 	@Override
-	public void draw(Graphics2D graphics, int x, int y, int z, int tile,
-			int xRenderPos, int yRenderPos, int tileWidth, int tileHeight,
-			MapController mapController, Image[] tilesets) {
+	public void draw(SpriteBatch batch, float parentAlpha, int x, int y, int z,
+			int tile, int xRenderPos, int dY, Map map, Texture[] tilesets) {
+
 		int matchingTiles = 0;
 		int convertedTile = ((tile / Constants.TILESET_WIDTH) * (2 * Constants.TILESET_WIDTH_IN_AUTOTILES))
 				+ ((tile % Constants.TILESET_WIDTH) * 2);
 
 		boolean xLeftBound = x == 0;
-		boolean xRightBound = x == mapController.getMapWidth() - 1;
+		boolean xRightBound = x == map.getWidth() - 1;
 		boolean yUpBound = y == 0;
-		boolean yDownBound = y == mapController.getMapHeight() - 1;
+		boolean yDownBound = y == map.getHeight() - 1;
 
-		if (xLeftBound || mapController.getTile(x - 1, y, z) == tile)
+		if (xLeftBound || map.getTile(x - 1, y, z) == tile)
 			matchingTiles |= MIDDLE_LEFT;
-		if (xRightBound || mapController.getTile(x + 1, y, z) == tile)
+		if (xRightBound || map.getTile(x + 1, y, z) == tile)
 			matchingTiles |= MIDDLE_RIGHT;
 
-		if (yUpBound || mapController.getTile(x, y - 1, z) == tile)
+		if (yUpBound || map.getTile(x, y - 1, z) == tile)
 			matchingTiles |= TOP_MIDDLE;
-		if (yDownBound || mapController.getTile(x, y + 1, z) == tile)
+		if (yDownBound || map.getTile(x, y + 1, z) == tile)
 			matchingTiles |= BOTTOM_MIDDLE;
 
-		if (xLeftBound || yUpBound
-				|| mapController.getTile(x - 1, y - 1, z) == tile) {
+		if (xLeftBound || yUpBound || map.getTile(x - 1, y - 1, z) == tile) {
 			matchingTiles |= TOP_LEFT;
 		}
-		if (xLeftBound || yDownBound
-				|| mapController.getTile(x - 1, y + 1, z) == tile) {
+		if (xLeftBound || yDownBound || map.getTile(x - 1, y + 1, z) == tile) {
 			matchingTiles |= BOTTOM_LEFT;
 		}
-		if (xRightBound || yUpBound
-				|| mapController.getTile(x + 1, y - 1, z) == tile) {
+		if (xRightBound || yUpBound || map.getTile(x + 1, y - 1, z) == tile) {
 			matchingTiles |= TOP_RIGHT;
 		}
-		if (xRightBound || yDownBound
-				|| mapController.getTile(x + 1, y + 1, z) == tile) {
+		if (xRightBound || yDownBound || map.getTile(x + 1, y + 1, z) == tile) {
 			matchingTiles |= BOTTOM_RIGHT;
 		}
 
@@ -128,16 +122,18 @@ public class TwoByThreeAutoTileRenderer2 implements AutoTileRenderer {
 		int cornerTile = convertedTile
 				+ ((corner / (AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
 				+ (corner % AUTOTILESET_WIDTH);
-		int srcX = (cornerTile % Constants.TILESET_WIDTH_IN_AUTOTILES)
-				* Constants.AUTOTILE_WIDTH;
-		int srcY = ((cornerTile / Constants.TILESET_HEIGHT_IN_AUTOTILES) % Constants.TILESET_HEIGHT_IN_AUTOTILES)
-				* Constants.AUTOTILE_HEIGHT;
 
-		graphics.drawImage(tilesets[cornerTile
-				/ Constants.AUTOTILES_PER_TILESET], xRenderPos, yRenderPos,
-				xRenderPos + (tileWidth / 2), yRenderPos + (tileHeight / 2),
-				srcX, srcY, srcX + Constants.AUTOTILE_WIDTH, srcY
-						+ Constants.AUTOTILE_HEIGHT, null);
+		batch.draw(
+				tilesets[cornerTile / Constants.AUTOTILES_PER_TILESET],
+				xRenderPos,
+				dY,
+				Constants.AUTOTILE_WIDTH,
+				Constants.AUTOTILE_HEIGHT,
+				(cornerTile % Constants.TILESET_WIDTH_IN_AUTOTILES)
+						* Constants.AUTOTILE_WIDTH,
+				((cornerTile / Constants.TILESET_HEIGHT_IN_AUTOTILES) % Constants.TILESET_HEIGHT_IN_AUTOTILES)
+						* Constants.AUTOTILE_HEIGHT, Constants.AUTOTILE_WIDTH,
+				Constants.AUTOTILE_HEIGHT, false, true);
 
 		// Top right corner
 		corner = autotileTopRightCorner.get(matchingTiles
@@ -145,17 +141,18 @@ public class TwoByThreeAutoTileRenderer2 implements AutoTileRenderer {
 		cornerTile = convertedTile
 				+ ((corner / (AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
 				+ (corner % AUTOTILESET_WIDTH);
-		srcX = (cornerTile % Constants.TILESET_WIDTH_IN_AUTOTILES)
-				* Constants.AUTOTILE_WIDTH;
-		srcY = ((cornerTile / Constants.TILESET_HEIGHT_IN_AUTOTILES) % Constants.TILESET_HEIGHT_IN_AUTOTILES)
-				* Constants.AUTOTILE_HEIGHT;
 
-		graphics.drawImage(tilesets[cornerTile
-				/ Constants.AUTOTILES_PER_TILESET], xRenderPos
-				+ (tileWidth / 2), yRenderPos, xRenderPos + (tileWidth),
-				yRenderPos + (tileHeight / 2), srcX, srcY, srcX
-						+ Constants.AUTOTILE_WIDTH, srcY
-						+ Constants.AUTOTILE_HEIGHT, null);
+		batch.draw(
+				tilesets[cornerTile / Constants.AUTOTILES_PER_TILESET],
+				xRenderPos + Constants.AUTOTILE_WIDTH,
+				dY,
+				Constants.AUTOTILE_WIDTH,
+				Constants.AUTOTILE_HEIGHT,
+				(cornerTile % Constants.TILESET_WIDTH_IN_AUTOTILES)
+						* Constants.AUTOTILE_WIDTH,
+				((cornerTile / Constants.TILESET_HEIGHT_IN_AUTOTILES) % Constants.TILESET_HEIGHT_IN_AUTOTILES)
+						* Constants.AUTOTILE_HEIGHT, Constants.AUTOTILE_WIDTH,
+				Constants.AUTOTILE_HEIGHT, false, true);
 
 		// Bottom left corner
 		corner = autotileBottomLeftCorner.get(matchingTiles
@@ -163,16 +160,18 @@ public class TwoByThreeAutoTileRenderer2 implements AutoTileRenderer {
 		cornerTile = convertedTile
 				+ ((corner / (AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
 				+ (corner % AUTOTILESET_WIDTH);
-		srcX = (cornerTile % Constants.TILESET_WIDTH_IN_AUTOTILES)
-				* Constants.AUTOTILE_WIDTH;
-		srcY = ((cornerTile / Constants.TILESET_HEIGHT_IN_AUTOTILES) % Constants.TILESET_HEIGHT_IN_AUTOTILES)
-				* Constants.AUTOTILE_HEIGHT;
 
-		graphics.drawImage(tilesets[cornerTile
-				/ Constants.AUTOTILES_PER_TILESET], xRenderPos, yRenderPos
-				+ (tileHeight / 2), xRenderPos + (tileWidth / 2), yRenderPos
-				+ (tileHeight), srcX, srcY, srcX + Constants.AUTOTILE_WIDTH,
-				srcY + Constants.AUTOTILE_HEIGHT, null);
+		batch.draw(
+				tilesets[cornerTile / Constants.AUTOTILES_PER_TILESET],
+				xRenderPos,
+				dY + Constants.AUTOTILE_WIDTH,
+				Constants.AUTOTILE_WIDTH,
+				Constants.AUTOTILE_HEIGHT,
+				(cornerTile % Constants.TILESET_WIDTH_IN_AUTOTILES)
+						* Constants.AUTOTILE_WIDTH,
+				((cornerTile / Constants.TILESET_HEIGHT_IN_AUTOTILES) % Constants.TILESET_HEIGHT_IN_AUTOTILES)
+						* Constants.AUTOTILE_HEIGHT, Constants.AUTOTILE_WIDTH,
+				Constants.AUTOTILE_HEIGHT, false, true);
 
 		// Bottom right corner
 		corner = autotileBottomRightCorner.get(matchingTiles
@@ -180,18 +179,18 @@ public class TwoByThreeAutoTileRenderer2 implements AutoTileRenderer {
 		cornerTile = convertedTile
 				+ ((corner / (AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
 				+ (corner % AUTOTILESET_WIDTH);
-		srcX = (cornerTile % Constants.TILESET_WIDTH_IN_AUTOTILES)
-				* Constants.AUTOTILE_WIDTH;
-		srcY = ((cornerTile / Constants.TILESET_HEIGHT_IN_AUTOTILES) % Constants.TILESET_HEIGHT_IN_AUTOTILES)
-				* Constants.AUTOTILE_HEIGHT;
 
-		graphics.drawImage(tilesets[cornerTile
-				/ Constants.AUTOTILES_PER_TILESET], xRenderPos
-				+ (tileWidth / 2), yRenderPos + (tileHeight / 2), xRenderPos
-				+ (tileWidth), yRenderPos + (tileHeight), srcX, srcY, srcX
-				+ Constants.AUTOTILE_WIDTH, srcY + Constants.AUTOTILE_HEIGHT,
-				null);
-
+		batch.draw(
+				tilesets[cornerTile / Constants.AUTOTILES_PER_TILESET],
+				xRenderPos + Constants.AUTOTILE_WIDTH,
+				dY + Constants.AUTOTILE_HEIGHT,
+				Constants.AUTOTILE_WIDTH,
+				Constants.AUTOTILE_HEIGHT,
+				(cornerTile % Constants.TILESET_WIDTH_IN_AUTOTILES)
+						* Constants.AUTOTILE_WIDTH,
+				((cornerTile / Constants.TILESET_HEIGHT_IN_AUTOTILES) % Constants.TILESET_HEIGHT_IN_AUTOTILES)
+						* Constants.AUTOTILE_HEIGHT, Constants.AUTOTILE_WIDTH,
+				Constants.AUTOTILE_HEIGHT, false, true);
 	}
 
 }

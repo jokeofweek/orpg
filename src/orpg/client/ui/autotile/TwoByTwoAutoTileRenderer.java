@@ -2,7 +2,7 @@ package orpg.client.ui.autotile;
 
 import java.util.HashMap;
 
-import orpg.editor.ui.autotile.TwoByThreeAutoTileRenderer2;
+import orpg.editor.ui.autotile.TwoByThreeAutoTileRenderer;
 import orpg.shared.Constants;
 import orpg.shared.data.Map;
 

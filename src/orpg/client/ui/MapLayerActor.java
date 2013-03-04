@@ -5,7 +5,7 @@ import java.util.HashSet;
 
 import orpg.client.BaseClient;
 import orpg.client.ui.autotile.AutoTileRenderer;
-import orpg.client.ui.autotile.TwoByThreeAutoTileRenderer2;
+import orpg.client.ui.autotile.TwoByThreeAutoTileRenderer;
 import orpg.client.ui.autotile.TwoByTwoAutoTileRenderer;
 import orpg.shared.Constants;
 import orpg.shared.data.AutoTileType;
@@ -58,7 +58,7 @@ public class MapLayerActor extends Actor {
 		this.autotileRenderers = new HashMap<AutoTileType, AutoTileRenderer>(
 				AutoTileType.values().length);
 		this.autotileRenderers.put(AutoTileType.TWO_BY_THREE,
-				TwoByThreeAutoTileRenderer2.getInstance());
+				TwoByThreeAutoTileRenderer.getInstance());
 		this.autotileRenderers.put(AutoTileType.TWO_BY_TWO,
 				TwoByTwoAutoTileRenderer.getInstance());
 	}
