@@ -5,10 +5,10 @@ import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import orpg.shared.net.InputByteBuffer;
-import orpg.shared.net.OutputByteBuffer;
-import orpg.shared.net.SerializableValue;
-import orpg.shared.net.ValueSerializer;
+import orpg.shared.net.serialize.InputByteBuffer;
+import orpg.shared.net.serialize.OutputByteBuffer;
+import orpg.shared.net.serialize.SerializableValue;
+import orpg.shared.net.serialize.ValueSerializer;
 
 public class ValueSerializerTest {
 

@@ -8,8 +8,8 @@ import orpg.client.BaseClient;
 import orpg.shared.Constants;
 import orpg.shared.data.Segment;
 import orpg.shared.data.store.DataStoreException;
-import orpg.shared.net.InputByteBuffer;
-import orpg.shared.net.OutputByteBuffer;
+import orpg.shared.net.serialize.InputByteBuffer;
+import orpg.shared.net.serialize.OutputByteBuffer;
 
 public class FileDataStore implements DataStore {
 

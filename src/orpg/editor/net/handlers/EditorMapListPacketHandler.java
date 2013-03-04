@@ -3,7 +3,7 @@ package orpg.editor.net.handlers;
 import orpg.client.data.ClientReceivedPacket;
 import orpg.editor.BaseEditor;
 import orpg.shared.data.Pair;
-import orpg.shared.net.InputByteBuffer;
+import orpg.shared.net.serialize.InputByteBuffer;
 
 public class EditorMapListPacketHandler implements EditorPacketHandler {
 

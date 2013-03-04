@@ -1,4 +1,4 @@
-package orpg.shared.net;
+package orpg.shared.net.serialize;
 
 import java.io.File;
 import java.io.FileInputStream;

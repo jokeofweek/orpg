@@ -6,7 +6,7 @@ import orpg.client.net.packets.ClientPacket;
 import orpg.shared.data.Map;
 import orpg.shared.data.Segment;
 import orpg.shared.net.ClientPacketType;
-import orpg.shared.net.OutputByteBuffer;
+import orpg.shared.net.serialize.OutputByteBuffer;
 
 public class EditorSaveMapPacket extends ClientPacket {
 

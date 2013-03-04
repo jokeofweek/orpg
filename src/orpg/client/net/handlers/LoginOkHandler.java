@@ -8,7 +8,7 @@ import com.badlogic.gdx.Gdx;
 import orpg.client.BaseClient;
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.state.CharacterSelectState;
-import orpg.shared.net.InputByteBuffer;
+import orpg.shared.net.serialize.InputByteBuffer;
 
 public class LoginOkHandler implements ClientPacketHandler {
 

@@ -10,7 +10,7 @@ import orpg.server.data.SessionType;
 import orpg.server.net.packets.ErrorPacket;
 import orpg.shared.ErrorMessage;
 import orpg.shared.data.Validator;
-import orpg.shared.net.InputByteBuffer;
+import orpg.shared.net.serialize.InputByteBuffer;
 
 public class CreateAccountHandler implements ServerPacketHandler {
 

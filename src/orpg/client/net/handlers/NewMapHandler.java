@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx;
 import orpg.client.BaseClient;
 import orpg.client.data.ClientReceivedPacket;
 import orpg.shared.data.Map;
-import orpg.shared.net.InputByteBuffer;
+import orpg.shared.net.serialize.InputByteBuffer;
 
 public class NewMapHandler implements ClientPacketHandler {
 

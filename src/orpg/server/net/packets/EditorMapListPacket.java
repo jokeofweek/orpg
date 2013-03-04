@@ -4,8 +4,8 @@ import java.util.List;
 
 import orpg.server.ServerSession;
 import orpg.server.data.controllers.AutoTileController;
-import orpg.shared.net.OutputByteBuffer;
 import orpg.shared.net.ServerPacketType;
+import orpg.shared.net.serialize.OutputByteBuffer;
 
 public class EditorMapListPacket extends SessionPacket {
 

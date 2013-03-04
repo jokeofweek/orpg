@@ -1,7 +1,7 @@
 package orpg.client.net.packets;
 
 import orpg.shared.net.ClientPacketType;
-import orpg.shared.net.OutputByteBuffer;
+import orpg.shared.net.serialize.OutputByteBuffer;
 
 public class LoginPacket extends ClientPacket {
 

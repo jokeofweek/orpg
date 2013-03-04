@@ -2,8 +2,8 @@ package orpg.server.net.packets;
 
 import orpg.server.ServerSession;
 import orpg.shared.data.AccountCharacter;
-import orpg.shared.net.OutputByteBuffer;
 import orpg.shared.net.ServerPacketType;
+import orpg.shared.net.serialize.OutputByteBuffer;
 
 public class ClientJoinMapPacket extends MapExceptForPacket {
 

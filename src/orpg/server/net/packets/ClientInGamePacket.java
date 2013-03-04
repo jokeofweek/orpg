@@ -3,8 +3,8 @@ package orpg.server.net.packets;
 import orpg.server.ServerSession;
 import orpg.server.data.controllers.AutoTileController;
 import orpg.shared.data.AccountCharacter;
-import orpg.shared.net.OutputByteBuffer;
 import orpg.shared.net.ServerPacketType;
+import orpg.shared.net.serialize.OutputByteBuffer;
 
 public class ClientInGamePacket extends SessionPacket {
 

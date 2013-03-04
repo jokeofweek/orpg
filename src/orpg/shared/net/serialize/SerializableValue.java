@@ -1,4 +1,4 @@
-package orpg.shared.net;
+package orpg.shared.net.serialize;
 
 public interface SerializableValue<K extends SerializableValue> {
 

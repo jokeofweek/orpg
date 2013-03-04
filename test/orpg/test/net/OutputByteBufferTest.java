@@ -5,8 +5,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import orpg.shared.Constants;
-import orpg.shared.net.InputByteBuffer;
-import orpg.shared.net.OutputByteBuffer;
+import orpg.shared.net.serialize.InputByteBuffer;
+import orpg.shared.net.serialize.OutputByteBuffer;
 
 public class OutputByteBufferTest {
 

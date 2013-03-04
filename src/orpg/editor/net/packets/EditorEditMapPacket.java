@@ -2,7 +2,7 @@ package orpg.editor.net.packets;
 
 import orpg.client.net.packets.ClientPacket;
 import orpg.shared.net.ClientPacketType;
-import orpg.shared.net.OutputByteBuffer;
+import orpg.shared.net.serialize.OutputByteBuffer;
 
 public class EditorEditMapPacket extends ClientPacket {
 

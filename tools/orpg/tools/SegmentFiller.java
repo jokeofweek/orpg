@@ -5,8 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import orpg.shared.data.Segment;
-import orpg.shared.net.InputByteBuffer;
-import orpg.shared.net.OutputByteBuffer;
+import orpg.shared.net.serialize.InputByteBuffer;
+import orpg.shared.net.serialize.OutputByteBuffer;
 
 public class SegmentFiller {
 

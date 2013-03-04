@@ -2,8 +2,8 @@ package orpg.server.net.packets;
 
 import orpg.server.ServerSession;
 import orpg.shared.data.Segment;
-import orpg.shared.net.OutputByteBuffer;
 import orpg.shared.net.ServerPacketType;
+import orpg.shared.net.serialize.OutputByteBuffer;
 
 public class EditorMapSegmentDataPacket extends SessionPacket {
 
