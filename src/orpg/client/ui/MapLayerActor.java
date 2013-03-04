@@ -114,6 +114,7 @@ public class MapLayerActor extends Actor {
 													+ tileOffsetY, z), dX,
 											dY, map, this.tilesets);
 						} else {
+							System.out.println(tile);
 							batch.draw(
 									this.tilesets[tile
 											/ Constants.TILES_PER_TILESET],

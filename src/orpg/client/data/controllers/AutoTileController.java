@@ -36,7 +36,13 @@ public class AutoTileController {
 		return autoTiles;
 	}
 
-	public void updateAutoTileCache(Map map, Segment segment) {
+	public void updateAutoTileCache(Map map, Segment segment,
+			boolean updateSurroundingSegments) {
+		// If the segment isn't loaded, exit out
+		if (segment == null) {
+			return;
+		}
+
 		// Create cache if necessary
 		int[][][] cache = segment.getAutoTileCache();
 		if (cache == null) {
@@ -47,17 +53,42 @@ public class AutoTileController {
 
 		// Iterate through each layer and tile, updating the cache if necessary
 		AutoTileType type;
+		int startX = segment.getX() * segment.getWidth();
+		int startY = segment.getY() * segment.getHeight();
 		for (int z = 0; z < MapLayer.values().length; z++) {
 			for (short x = 0; x < segment.getWidth(); x++) {
 				for (short y = 0; y < segment.getHeight(); y++) {
 					type = autoTiles.get(segment.getTiles()[z][x][y]);
 					if (type != null) {
 						cache[z][x][y] = autoTileRenderers.get(type)
-								.getCacheValue(x, y, z, map);
+								.getCacheValue(startX + x, startY + y, z, map);
 					}
 				}
 			}
 		}
+		
+		segment.setAutoTileCache(cache);
+
+		// Update surrounding segments
+		if (updateSurroundingSegments) {
+			short segmentX = segment.getX();
+			short segmentY = segment.getY();
+
+			// Decrement to start left
+			segmentX--;
+			segmentY--;
+
+			for (short x = (short) Math.max(0, segmentX); x < Math.min(
+					segmentX + 3, map.getSegmentsWide()); x++) {
+				for (short y = (short) Math.max(0, segmentY); y < Math
+						.min(segmentX + 3, map.getSegmentsHigh()); y++) {
+					if (x == segmentX && y == segmentY)
+						continue;
+					updateAutoTileCache(map, map.getSegment(x, y), false);
+				}
+			}
+		}
+
 	}
 
 }

@@ -158,7 +158,7 @@ public class TwoByThreeAutoTileRenderer implements AutoTileRenderer {
 
 		// Must render in opposite order that we stored in cache value
 		// Bottom right corner
-		int corner = cacheValue & 0xff;
+		int corner = cacheValue & 0x0ff;
 		cacheValue >>= 8;
 		int cornerTile = convertedTile
 				+ ((corner / (AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
@@ -178,7 +178,7 @@ public class TwoByThreeAutoTileRenderer implements AutoTileRenderer {
 				false, true);
 
 		// Bottom left corner
-		corner = cacheValue & 0xff;
+		corner = cacheValue & 0x0ff;
 		cacheValue >>= 8;
 		cornerTile = convertedTile
 				+ ((corner / (AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
@@ -198,7 +198,7 @@ public class TwoByThreeAutoTileRenderer implements AutoTileRenderer {
 				false, true);
 
 		// Top right corner
-		corner = cacheValue & 0xff;
+		corner = cacheValue & 0x0ff;
 		cacheValue >>= 8;
 		cornerTile = convertedTile
 				+ ((corner / (AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
@@ -218,7 +218,7 @@ public class TwoByThreeAutoTileRenderer implements AutoTileRenderer {
 				false, true);
 
 		// Top left corner
-		corner = cacheValue & 0xff;
+		corner = cacheValue & 0x0ff;
 		cacheValue >>= 8;
 		cornerTile = convertedTile
 				+ ((corner / (AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)

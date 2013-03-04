@@ -210,12 +210,11 @@ public class TwoByTwoAutoTileRenderer implements AutoTileRenderer {
 			int z, int tile, int cacheValue, int xRenderPos, int dY, Map map,
 			Texture[] tilesets) {
 
-		int matchingTiles = 0;
 		int convertedTile = ((tile / Constants.TILESET_WIDTH) * (2 * Constants.TILESET_WIDTH_IN_AUTOTILES))
 				+ ((tile % Constants.TILESET_WIDTH) * 2);
 
 		// Bottom right corner
-		int corner = cacheValue & 0xff;
+		int corner = cacheValue & 0x0ff;
 		cacheValue >>= 8;
 		int cornerTile = convertedTile
 				+ ((corner / (AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
@@ -236,7 +235,7 @@ public class TwoByTwoAutoTileRenderer implements AutoTileRenderer {
 		
 
 		// Bottom left corner
-		corner = corner = cacheValue & 0xff;
+		corner = corner = cacheValue & 0x0ff;
 		cacheValue >>= 8;
 		cornerTile = convertedTile
 				+ ((corner / (AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
@@ -256,7 +255,7 @@ public class TwoByTwoAutoTileRenderer implements AutoTileRenderer {
 				false, true);
 
 		// Top right corner
-		corner = corner = cacheValue & 0xff;
+		corner = corner = cacheValue & 0x0ff;
 		cacheValue >>= 8;
 		cornerTile = convertedTile
 				+ ((corner / (AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)
@@ -276,7 +275,7 @@ public class TwoByTwoAutoTileRenderer implements AutoTileRenderer {
 				false, true);
 
 		// Top left corner
-		corner = corner = cacheValue & 0xff;
+		corner = corner = cacheValue & 0x0ff;
 		cacheValue >>= 8;
 		cornerTile = convertedTile
 				+ ((corner / (AUTOTILESET_WIDTH)) * Constants.TILESET_WIDTH_IN_AUTOTILES)

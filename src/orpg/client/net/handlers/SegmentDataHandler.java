@@ -53,7 +53,7 @@ public class SegmentDataHandler implements ClientPacketHandler {
 
 		baseClient.getMap().updateSegment(segment, false);
 		baseClient.getAutoTileController().updateAutoTileCache(
-				baseClient.getMap(), segment);
+				baseClient.getMap(), segment, true);
 		baseClient.getSegmentRequestManager().receivedResponse(mapId,
 				segment);
 
