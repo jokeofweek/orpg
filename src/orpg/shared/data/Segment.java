@@ -12,8 +12,11 @@ public class Segment {
 	private short width;
 	private short height;
 	private boolean blocked[][];
+	
+	// Transient data
 	private HashMap<String, AccountCharacter> players;
 	private Object revisionLock;
+	private int[][][] autoTileCache;
 
 	public Segment(short x, short y, short width, short height) {
 		this(x, y, width, height,
@@ -120,5 +123,13 @@ public class Segment {
 
 	public void removePlayer(AccountCharacter accountCharacter) {
 		players.remove(accountCharacter.getName());
+	}
+	
+	public int[][][] getAutoTileCache() {
+		return autoTileCache;
+	}
+	
+	public void setAutoTileCache(int[][][] autoTileCache) {
+		this.autoTileCache = autoTileCache;
 	}
 }

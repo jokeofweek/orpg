@@ -53,7 +53,7 @@ public class MapLayerActor extends Actor {
 		this.tilesets = tilesets;
 		this.loadingTileTexture = loadingTileTexture;
 
-		this.autotiles = baseClient.getAutoTiles();
+		this.autotiles = baseClient.getAutoTileController().getAutoTiles();
 
 		this.autotileRenderers = new HashMap<AutoTileType, AutoTileRenderer>(
 				AutoTileType.values().length);
@@ -92,7 +92,8 @@ public class MapLayerActor extends Actor {
 							|| (y + tileOffsetY) >= map.getHeight())
 						break;
 
-					tile = map.getTile(x + tileOffsetX, y + tileOffsetY, layer);
+					tile = map.getTile(x + tileOffsetX, y + tileOffsetY,
+							layer);
 					if (tile != 0 || layer == 0) {
 						if (tile == Map.LOADING_TILE) {
 							batch.draw(loadingTileTexture, dX, dY,
@@ -101,10 +102,17 @@ public class MapLayerActor extends Actor {
 									Constants.TILE_WIDTH,
 									Constants.TILE_HEIGHT, false, true);
 						} else if (autotiles.containsKey(tile)) {
-							autotileRenderers.get(autotiles.get(tile)).draw(
-									batch, parentAlpha, x + tileOffsetX,
-									y + tileOffsetY, z, tile, dX, dY, map,
-									this.tilesets);
+							autotileRenderers.get(autotiles.get(tile))
+									.draw(batch,
+											parentAlpha,
+											x + tileOffsetX,
+											y + tileOffsetY,
+											z,
+											tile,
+											map.getAutoTileCacheValue(x
+													+ tileOffsetX, y
+													+ tileOffsetY, z), dX,
+											dY, map, this.tilesets);
 						} else {
 							batch.draw(
 									this.tilesets[tile

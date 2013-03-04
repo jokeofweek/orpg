@@ -19,9 +19,8 @@ import orpg.shared.data.store.DataStoreException;
 public class SegmentDataHandler implements ClientPacketHandler {
 
 	@Override
-	public void handle(ClientReceivedPacket packet, BaseClient client) {
-		final BaseClient baseClient = ((BaseClient) client);
-
+	public void handle(ClientReceivedPacket packet,
+			final BaseClient baseClient) {
 		packet.getByteBuffer().decompress();
 
 		int mapId = packet.getByteBuffer().getInt();
@@ -39,18 +38,24 @@ public class SegmentDataHandler implements ClientPacketHandler {
 			segmentX = packet.getByteBuffer().getShort();
 			segmentY = packet.getByteBuffer().getShort();
 		}
-		
+
 		System.out.println("Using local? " + usingLocal);
-		
-		final Segment segment = (usingLocal ? client.getLocalMap().getSegment(segmentX, segmentY) : packet.getByteBuffer().getSegment());
-		
-		List<AccountCharacter> characters = packet.getByteBuffer().getSegmentPlayers();
+
+		final Segment segment = (usingLocal ? baseClient.getLocalMap()
+				.getSegment(segmentX, segmentY) : packet.getByteBuffer()
+				.getSegment());
+
+		List<AccountCharacter> characters = packet.getByteBuffer()
+				.getSegmentPlayers();
 		for (AccountCharacter character : characters) {
 			segment.addPlayer(character);
 		}
-		
+
 		baseClient.getMap().updateSegment(segment, false);
-		baseClient.getSegmentRequestManager().receivedResponse(mapId, segment);
+		baseClient.getAutoTileController().updateAutoTileCache(
+				baseClient.getMap(), segment);
+		baseClient.getSegmentRequestManager().receivedResponse(mapId,
+				segment);
 
 		// Switch to game state if we aren't already in game state
 		if (!(baseClient.getStateManager().getCurrentState() instanceof GameState)) {
@@ -87,7 +92,8 @@ public class SegmentDataHandler implements ClientPacketHandler {
 				.isChangingMap();
 
 		if (wasChangingMaps) {
-			baseClient.getMap().syncPlayer(baseClient.getAccountCharacter());
+			baseClient.getMap().syncPlayer(
+					baseClient.getAccountCharacter());
 		}
 
 		final Map map = baseClient.getMap();
@@ -97,14 +103,15 @@ public class SegmentDataHandler implements ClientPacketHandler {
 
 			@Override
 			public void run() {
-				for (AccountCharacter character : segment.getPlayers().values()) {
+				for (AccountCharacter character : segment.getPlayers()
+						.values()) {
 					character.setMap(map);
 					baseClient.addClientPlayerData(character.getName(),
 							new ClientPlayerData(character));
 
 					// Update the view
-					((GameState) baseClient.getStateManager().getCurrentState())
-							.centerOnPlayer();
+					((GameState) baseClient.getStateManager()
+							.getCurrentState()).centerOnPlayer();
 
 					// If we were presently changing maps, we are done now
 					baseClient.getAccountCharacter().setChangingMap(false);

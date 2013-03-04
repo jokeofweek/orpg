@@ -214,6 +214,24 @@ public class Map {
 	}
 
 	/**
+	 * This fetches the autotile cached value at a given position and layer.
+	 * 
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @return the autotile cached value at a given position and layer, else
+	 *         {@link Map#LOADING_TILE} if the tile is not available.
+	 */
+	public int getAutoTileCacheValue(int x, int y, int z) {
+		Segment segment = this.getPositionSegment(x, y);
+		if (segment == null || segment.getAutoTileCache() == null) {
+			return LOADING_TILE;
+		} else {
+			return segment.getAutoTileCache()[z][getXRelativeToSegment(x)][getYRelativeToSegment(y)];
+		}
+	}
+	
+	/**
 	 * This fetches the tile at a given position and layer.
 	 * 
 	 * @param x

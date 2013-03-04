@@ -6,6 +6,7 @@ import java.util.HashMap;
 import com.badlogic.gdx.Game;
 
 import orpg.client.config.ClientConfigurationManager;
+import orpg.client.data.controllers.AutoTileController;
 import orpg.client.data.ClientPlayerData;
 import orpg.client.data.store.DataStore;
 import orpg.client.data.store.FileDataStore;
@@ -27,7 +28,7 @@ public class BaseClient extends AbstractClient {
 	private ClientConfigurationManager config;
 	private DataStore dataStore;
 	private SegmentRequestManager segmentRequestManager;
-	private java.util.Map<Short, AutoTileType> autoTiles;
+	private AutoTileController autoTileController;
 
 	public BaseClient(Game game, Socket socket, PacketProcessThread gameThread,
 			StateManager stateManager, ClientConfigurationManager config) {
@@ -37,6 +38,7 @@ public class BaseClient extends AbstractClient {
 		this.config = config;
 		this.dataStore = new FileDataStore(this);
 		this.segmentRequestManager = new SegmentRequestManager(this);
+		this.autoTileController = new AutoTileController(this);
 	}
 
 	public ClientConfigurationManager getConfigManager() {
@@ -73,13 +75,9 @@ public class BaseClient extends AbstractClient {
 	public DataStore getDataStore() {
 		return dataStore;
 	}
-
-	public java.util.Map<Short, AutoTileType> getAutoTiles() {
-		return autoTiles;
-	}
-
-	public void setAutoTiles(java.util.Map<Short, AutoTileType> autoTiles) {
-		this.autoTiles = autoTiles;
+	
+	public AutoTileController getAutoTileController() {
+		return autoTileController;
 	}
 
 	public SegmentRequestManager getSegmentRequestManager() {
