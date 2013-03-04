@@ -23,7 +23,7 @@ public class InputByteBuffer {
 
 	private byte[] bytes;
 	private int pos;
-
+	
 	public InputByteBuffer(byte[] bytes) {
 		this.bytes = bytes;
 		this.reset();
@@ -269,6 +269,10 @@ public class InputByteBuffer {
 		}
 
 		return autoTiles;
+	}
+	
+	public <K> K getValue(ValueSerializer<K> valueReader) {
+		return valueReader.read(this);
 	}
 
 	/**

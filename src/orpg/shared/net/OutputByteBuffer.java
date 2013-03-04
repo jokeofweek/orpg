@@ -1,6 +1,7 @@
 package orpg.shared.net;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 import net.jpountz.lz4.LZ4Compressor;
 import net.jpountz.lz4.LZ4Factory;
@@ -62,8 +63,8 @@ public class OutputByteBuffer {
 		if (this.bytes.length < pos + extraCapacity) {
 			// If necessary, expand the byte array. Note we also shift new
 			// capacity by 1 to have extra space for later.
-			this.bytes = Arrays.copyOfRange(this.bytes, 0, this.bytes.length
-					+ (extraCapacity << 1));
+			this.bytes = Arrays.copyOfRange(this.bytes, 0,
+					this.bytes.length + (extraCapacity << 1));
 		}
 	}
 
@@ -159,8 +160,8 @@ public class OutputByteBuffer {
 		// test for extra capacity right away to pre-allocate
 		short[][][] tiles = segment.getTiles();
 		boolean[][] blocked = segment.getBlocked();
-		testForExtraCapacity(MapLayer.values().length * segment.getHeight()
-				* segment.getWidth() * 3);
+		testForExtraCapacity(MapLayer.values().length
+				* segment.getHeight() * segment.getWidth() * 3);
 
 		int z, y, x;
 		for (x = 0; x < width; x++) {
@@ -246,6 +247,14 @@ public class OutputByteBuffer {
 		}
 	}
 
+	public <K extends SerializableValue> void putValue(K value) {
+		value.getSerializer().put(this, value);
+	}
+
+	public <K> void putValue(K value, ValueSerializer<K> serializer) {
+		serializer.put(this, value);
+	}
+
 	/**
 	 * This notifies the output byte buffer to set the compression marker to the
 	 * current state of the output byte buffer. A subsequent call to
@@ -271,8 +280,8 @@ public class OutputByteBuffer {
 		byte[] originalBytes = this.bytes;
 
 		// Copy all bytes over into our new bytes
-		this.bytes = new byte[this.pos - decompressedLength + maxRequiredLength
-				+ 8];
+		this.bytes = new byte[this.pos - decompressedLength
+				+ maxRequiredLength + 8];
 		System.arraycopy(originalBytes, 0, this.bytes, 0,
 				this.compressionMarker);
 		this.pos = this.compressionMarker;
