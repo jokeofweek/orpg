@@ -1,8 +1,8 @@
 package orpg.client.ui;
 
 import orpg.client.BaseClient;
+import orpg.client.ClientConstants;
 import orpg.client.data.ClientPlayerData;
-import orpg.shared.ClientConstants;
 import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
