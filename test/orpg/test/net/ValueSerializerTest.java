@@ -69,7 +69,7 @@ public class ValueSerializerTest {
 		}
 
 		@Override
-		public ValueContainer read(InputByteBuffer in) {
+		public ValueContainer get(InputByteBuffer in) {
 			return new ValueContainer(in.getInt());
 		}
 
@@ -93,7 +93,7 @@ public class ValueSerializerTest {
 		}
 
 		@Override
-		public String read(InputByteBuffer in) {
+		public String get(InputByteBuffer in) {
 			return in.getString();
 		}
 

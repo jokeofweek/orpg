@@ -272,7 +272,7 @@ public class InputByteBuffer {
 	}
 	
 	public <K> K getValue(ValueSerializer<K> valueReader) {
-		return valueReader.read(this);
+		return valueReader.get(this);
 	}
 
 	/**
