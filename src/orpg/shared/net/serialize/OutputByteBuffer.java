@@ -3,6 +3,10 @@ package orpg.shared.net.serialize;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import com.artemis.Entity;
+import com.artemis.utils.Bag;
+import com.artemis.utils.ImmutableBag;
+
 import net.jpountz.lz4.LZ4Compressor;
 import net.jpountz.lz4.LZ4Factory;
 
@@ -174,10 +178,24 @@ public class OutputByteBuffer {
 		}
 	}
 
-	public void putSegmentCharacters(Segment segment) {
-		putInt(segment.getPlayers().size());
-		for (AccountCharacter character : segment.getPlayers().values()) {
-			putMapCharacter(character);
+
+	/**
+	 * This puts a bag of entities into the byte buffer. <b>Note this assumes
+	 * all entities are part of the same world.</b>
+	 * 
+	 * @param entities
+	 */
+	public void putEntities(ImmutableBag<Entity> entities) {
+		putInt(entities.size());
+
+		EntitySerializer serializer = null;
+		if (entities.size() != 0) {
+			serializer = EntitySerializer.getInstance(entities.get(0)
+					.getWorld());
+		}
+
+		for (int i = 0; i < entities.size(); i++) {
+			putValue(entities.get(i), serializer);
 		}
 	}
 

@@ -5,9 +5,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.artemis.ComponentMapper;
+import com.artemis.Entity;
+import com.artemis.annotations.Mapper;
+import com.artemis.managers.GroupManager;
+import com.artemis.managers.PlayerManager;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.sun.org.apache.bcel.internal.generic.NEW;
+
 import orpg.server.BaseServer;
 import orpg.server.ServerSession;
 import orpg.server.data.store.DataStore;
+import orpg.shared.component.Named;
+import orpg.shared.component.Position;
 import orpg.shared.data.store.DataStoreException;
 import orpg.server.net.packets.ClientJoinMapPacket;
 import orpg.server.net.packets.ClientLeftMapPacket;
@@ -23,6 +33,9 @@ import orpg.shared.data.Segment;
  */
 public class MapController implements Controller<Map, Integer> {
 
+	private ComponentMapper<Position> positionMapper;
+	private ComponentMapper<Named> namedMapper;
+
 	private Map[] maps;
 	private BaseServer baseServer;
 	private DataStore dataStore;
@@ -30,6 +43,9 @@ public class MapController implements Controller<Map, Integer> {
 	public MapController(BaseServer baseServer, DataStore dataStore) {
 		this.baseServer = baseServer;
 		this.dataStore = dataStore;
+		this.positionMapper = baseServer.getWorld().getMapper(
+				Position.class);
+		this.namedMapper = baseServer.getWorld().getMapper(Named.class);
 	}
 
 	/*
@@ -49,7 +65,8 @@ public class MapController implements Controller<Map, Integer> {
 					+ ".map");
 			if (!file.exists()) {
 				// Save the map based on the empty template
-				emptyMapTemplate = new Map(i + 1, (short) 3, (short) 3, true);
+				emptyMapTemplate = new Map(i + 1, (short) 3, (short) 3,
+						true);
 				try {
 					dataStore.saveMap(emptyMapTemplate);
 				} catch (DataStoreException e) {
@@ -57,8 +74,9 @@ public class MapController implements Controller<Map, Integer> {
 							.getConsole()
 							.out()
 							.println(
-									"Could not create empty map " + (i + 1)
-											+ ". Reason: " + e.getMessage());
+									"Could not create empty map "
+											+ (i + 1) + ". Reason: "
+											+ e.getMessage());
 					return false;
 				}
 				this.maps[i] = emptyMapTemplate;
@@ -73,7 +91,8 @@ public class MapController implements Controller<Map, Integer> {
 							.out()
 							.println(
 									"Could not load map " + (i + 1)
-											+ ". Reason: " + e.getMessage());
+											+ ". Reason: "
+											+ e.getMessage());
 					return false;
 				}
 			}
@@ -122,21 +141,23 @@ public class MapController implements Controller<Map, Integer> {
 
 		if (x < 0 || x >= this.maps[id].getSegmentsWide() || y < 0
 				|| y >= this.maps[id].getSegmentsHigh()) {
-			throw new IndexOutOfBoundsException("Invalid segment position.");
+			throw new IndexOutOfBoundsException(
+					"Invalid segment position.");
 		}
 
 		if (this.maps[id].getSegment(x, y) == null) {
 			// Load the segment if it's not already loaded
 			try {
-				this.maps[id]
-						.updateSegment(dataStore.loadSegment(id + 1, x, y), false);
+				this.maps[id].updateSegment(
+						dataStore.loadSegment(id + 1, x, y), false);
 			} catch (DataStoreException e) {
 				baseServer
 						.getConfigManager()
 						.getErrorLogger()
 						.log(Level.SEVERE,
-								"Could not load segment for map " + id + "["
-										+ x + "][" + y + "]. Error reason: "
+								"Could not load segment for map " + id
+										+ "[" + x + "][" + y
+										+ "]. Error reason: "
 										+ e.getMessage());
 			}
 		}
@@ -163,7 +184,8 @@ public class MapController implements Controller<Map, Integer> {
 	 */
 	public void update(Map map) {
 		if (map.getId() <= 0
-				|| map.getId() > baseServer.getConfigManager().getTotalMaps()) {
+				|| map.getId() > baseServer.getConfigManager()
+						.getTotalMaps()) {
 			throw new IllegalArgumentException(
 					"Tried to update map with non-existant number "
 							+ map.getId());
@@ -189,17 +211,18 @@ public class MapController implements Controller<Map, Integer> {
 					.getErrorLogger()
 					.log(Level.SEVERE,
 							"Could not save map " + map.getId()
-									+ " in editor. Reason: " + e.getMessage());
+									+ " in editor. Reason: "
+									+ e.getMessage());
 			return false;
 		}
 	}
 
 	/**
 	 * 
-	 * This joins a character to a given map, updating the characters position.
+	 * This joins an entity to a given map, updating the entity's position.
 	 * 
-	 * @param character
-	 *            the character to join
+	 * @param entity
+	 *            the entity to join
 	 * @param mapId
 	 *            the id of the map we are joining
 	 * @param x
@@ -211,7 +234,7 @@ public class MapController implements Controller<Map, Integer> {
 	 * @throws IndexOutOfBoundsException
 	 *             if the x and y are out of bounds.
 	 */
-	public void joinMap(AccountCharacter character, int mapId, int x, int y)
+	public void joinMap(Entity entity, int mapId, int x, int y)
 			throws IllegalArgumentException, IndexOutOfBoundsException {
 		// Make sure the map is valid
 		Map map = get(mapId);
@@ -219,56 +242,108 @@ public class MapController implements Controller<Map, Integer> {
 		// Ensure the segment is loaded
 		getSegment(map.getId(), map.getSegmentX(x), map.getSegmentY(y));
 
-		map.addPlayer(character);
-
 		// Update the player
-		character.setMap(map);
-		character.setX(x);
-		character.setY(y);
+		Position position = positionMapper.get(entity);
+		position.setMap(mapId);
+		position.setX(x);
+		position.setY(y);
 
-		ServerSession characterSession = baseServer.getServerSessionManager()
-				.getInGameSession(character.getName());
+		GroupManager groupManager = baseServer.getWorld().getManager(
+				GroupManager.class);
+		groupManager.add(entity,
+				String.format(Constants.GROUP_MAP, position.getMap()));
+		groupManager.add(entity, String.format(Constants.GROUP_SEGMENT,
+				position.getMap(), map.getSegmentX(position.getX()),
+				map.getSegmentY(position.getY())));
 
-		refreshMap(characterSession);
+		// If this particular entity is a player, must remove them from segment
+		// players as well
+		ServerSession session = null;
+
+		if (groupManager.inInGroup(entity, Constants.GROUP_PLAYERS)) {
+			groupManager.add(
+					entity,
+					String.format(Constants.GROUP_MAP_PLAYERS,
+							position.getMap()));
+
+			session = baseServer.getServerSessionManager()
+					.getInGameSession(namedMapper.get(entity).getName());
+
+			if (session != null) {
+				refreshMap(session);
+			}
+		}
 
 		// Notify the other players that this player has joined the map
-		baseServer.sendPacket(new ClientJoinMapPacket(characterSession,
-				character));
+		baseServer.sendPacket(new ClientJoinMapPacket(session, map, entity));
 	}
 
 	/**
-	 * This notifies the map the a character is currently on that they are
-	 * leaving, and removes the character from the map.
+	 * This notifies an entity's given map that the entity is leaving said map.
 	 * 
-	 * @param character
-	 *            the character that is leaving the map
+	 * @param entity
+	 *            the entity that is leaving the map
 	 */
-	public void leaveMap(AccountCharacter character) {
-		// Notify the other players that this player has left the map
-		baseServer.sendPacket(new ClientLeftMapPacket(baseServer
-				.getServerSessionManager()
-				.getInGameSession(character.getName()), character));
+	public void leaveMap(Entity entity) {
+		// Remove from the old groups
+		GroupManager groupManager = baseServer.getWorld().getManager(
+				GroupManager.class);
+		Position position = positionMapper.get(entity);
 
-		character.getMap().removePlayer(character);
+		// If it is a player, get the server session
+		ServerSession session = null;
+		if (groupManager.inInGroup(entity, Constants.GROUP_PLAYERS)) {
+			session = baseServer.getServerSessionManager()
+					.getInGameSession(namedMapper.get(entity).getName());
+		}
+
+		Map map = get(position.getMap());
+
+		// Notify the other players that this player has left the map
+		baseServer
+				.sendPacket(new ClientLeftMapPacket(session, map, entity));
+
+		groupManager.remove(entity,
+				String.format(Constants.GROUP_MAP, position.getMap()));
+		groupManager.remove(entity, String.format(Constants.GROUP_SEGMENT,
+				position.getMap(), map.getSegmentX(position.getX()),
+				map.getSegmentY(position.getY())));
+
+		// If this particular entity is a player, must remove them from segment
+		// players as well
+		if (groupManager.inInGroup(entity, Constants.GROUP_PLAYERS)) {
+			groupManager.remove(
+					entity,
+					String.format(Constants.GROUP_MAP_PLAYERS,
+							position.getMap()));
+		}
 	}
 
 	/**
-	 * This warps a specific character to a given map and position, taking care
-	 * of leaving the player's old map if there was one.
+	 * This warps a specific entity to a given map and position, taking care of
+	 * leaving the entity's old map if there was one.
 	 * 
-	 * @param character
+	 * @param entity
 	 * @param mapId
 	 * @param x
 	 * @param y
 	 */
-	public void warpToMap(AccountCharacter character, int mapId, int x, int y) {
-		// We must check here if character is changing map as well, as it would
-		// be true when logging in.
-		if (character.getMap() != null && !character.isChangingMap()) {
-			leaveMap(character);
+	public void warpToMap(Entity entity, int mapId, int x, int y) {
+		// Check to make sure the session isn't currently waiting for a map.
+
+		if (!baseServer.getWorld().getManager(GroupManager.class).inInGroup(entity, Constants.GROUP_PLAYERS)
+				|| !baseServer
+						.getServerSessionManager()
+						.getInGameSession(
+								baseServer.getWorld()
+										.getManager(PlayerManager.class)
+										.getPlayer(entity))
+						.isWaitingForMap()) {
+
+			leaveMap(entity);
 		}
 
-		joinMap(character, mapId, x, y);
+		joinMap(entity, mapId, x, y);
 	}
 
 	/**
@@ -279,7 +354,7 @@ public class MapController implements Controller<Map, Integer> {
 	 */
 	public void refreshMap(ServerSession session) {
 		// Send the player the new map info and then we await for the need map
-		session.getCharacter().setChangingMap(true);
+		session.setWaitingForMap(true);
 		baseServer.sendPacket(new ClientNewMapPacket(session));
 	}
 

@@ -3,6 +3,7 @@ package orpg.client.ui;
 import orpg.client.BaseClient;
 import orpg.client.ClientConstants;
 import orpg.client.data.ClientPlayerData;
+import orpg.client.systems.RenderSystem;
 import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
@@ -16,120 +17,36 @@ public class MapEntitiesActor extends Actor {
 
 	private BaseClient baseClient;
 	private ViewBox viewBox;
-	private Texture[] spritesets;
-
+	private Texture[] spriteSets;
+	
 	public MapEntitiesActor(BaseClient baseClient, ViewBox viewBox,
-			Texture[] spritesets) {
+			Texture[] spriteSets) {
 		this.baseClient = baseClient;
 		this.viewBox = viewBox;
-		this.spritesets = spritesets;
+		this.spriteSets = spriteSets;
 	}
 
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
 		super.draw(batch, 0);
 
-		// Iterate through all possible segments, rendering all possible
-		// entities
-		Map map = baseClient.getMap();
-		int startX = viewBox.getStartX();
-		int startY = viewBox.getStartY();
-		short startSegmentX = map.getSegmentX(startX);
-		short endSegmentX = map.getSegmentX(viewBox.getEndX());
-		short startSegmentY = map.getSegmentY(startY);
-		short endSegmentY = map.getSegmentY(viewBox.getEndY());
-		int dX = viewBox.getOffsetX() % Constants.TILE_WIDTH;
-		int dY = viewBox.getOffsetY() % Constants.TILE_HEIGHT;
-
-		Segment segment;
-		ClientPlayerData playerData;
-
-		if (baseClient.getAccountCharacter().isChangingMap()) {
+		if (baseClient.isChangingMap()) {
 			return;
 		}
 
-		int sprite;
-		int spriteSet;
-		int spriteY;
-		int spriteX;
-		int frame;
-
-		for (short x = startSegmentX; x <= endSegmentX; x++) {
-			for (short y = startSegmentY; y <= endSegmentY; y++) {
-				segment = map.getSegment(x, y);
-				if (segment != null) {
-					for (AccountCharacter character : segment.getPlayers()
-							.values()) {
-						playerData = baseClient.getClientPlayerData(character
-								.getName());
-
-						// Render the character's texture
-						sprite = playerData.getCharacter().getSprite();
-						spriteSet = sprite / Constants.SPRITES_PER_SPRITESET;
-						spriteX = sprite % Constants.SPRITESET_WIDTH;
-						spriteY = (sprite % Constants.SPRITES_PER_SPRITESET)
-								/ Constants.SPRITESET_WIDTH;
-
-						// Calculate the frame offset
-						frame = 0;
-						if (playerData.isMoving()) {
-							switch (playerData.getMoveDirection()) {
-							case UP:
-								frame = (playerData.getYOffset() > 16) ? 1 : 3;
-								break;
-							case DOWN:
-								frame = (playerData.getYOffset() > -16) ? 3 : 1;
-								break;
-							case LEFT:
-								frame = (playerData.getXOffset() > 16) ? 1 : 3;
-								break;
-							case RIGHT:
-								frame = (playerData.getXOffset() > -16) ? 3 : 1;
-								break;
-							}
-						}
-
-						batch.draw(
-								spritesets[spriteSet],
-								((character.getX() - startX) * Constants.TILE_WIDTH)
-										- dX + playerData.getXOffset(),
-								((character.getY() - startY) * Constants.TILE_WIDTH)
-										- dY + playerData.getYOffset(),
-								Constants.SPRITE_FRAME_WIDTH,
-								Constants.SPRITE_FRAME_HEIGHT,
-								(spriteX * Constants.SPRITE_WIDTH)
-										+ (frame * Constants.SPRITE_FRAME_WIDTH),
-								(spriteY * Constants.SPRITE_HEIGHT)
-										+ (playerData.getCharacter()
-												.getDirection().ordinal() * Constants.SPRITE_FRAME_HEIGHT),
-								Constants.SPRITE_FRAME_WIDTH,
-								Constants.SPRITE_FRAME_HEIGHT, false, true);
-					}
-				}
-			}
-		}
-
+		RenderSystem system = baseClient.getWorld().getSystem(RenderSystem.class);
+		system.prepare(viewBox, spriteSets, batch);
+		system.process();
 	}
 
 	@Override
 	public void act(float delta) {
 		super.act(delta);
 
-		Map map = baseClient.getMap();
-		int startX = viewBox.getStartX();
-		int startY = viewBox.getStartY();
-		short startSegmentX = map.getSegmentX(startX);
-		short endSegmentX = map.getSegmentX(viewBox.getEndX());
-		short startSegmentY = map.getSegmentY(startY);
-		short endSegmentY = map.getSegmentY(viewBox.getEndY());
-
-		Segment segment;
-		ClientPlayerData playerData;
-
-		if (baseClient.getAccountCharacter().isChangingMap()) {
+		if (baseClient.isChangingMap()) {
 			return;
 		}
-
+		/*
 		// If the player is moving, scroll the viewbox as well
 		playerData = baseClient.getClientPlayerData(baseClient
 				.getAccountCharacter().getName());
@@ -206,10 +123,10 @@ public class MapEntitiesActor extends Actor {
 							}
 						}
 					}
-
 				}
-			}
-		}
+			
+			}	
+		}*/
 
 	}
 }

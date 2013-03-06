@@ -9,10 +9,8 @@ public class AccountCharacter {
 	private int x;
 	private int y;
 	private Direction direction;
-	private boolean changingMap;
 
 	public AccountCharacter() {
-		this.changingMap = true;
 	}
 
 	public int getId() {
@@ -61,14 +59,6 @@ public class AccountCharacter {
 
 	public void setY(int y) {
 		this.y = y;
-	}
-
-	public boolean isChangingMap() {
-		return changingMap;
-	}
-
-	public void setChangingMap(boolean changingMap) {
-		this.changingMap = changingMap;
 	}
 
 	public Direction getDirection() {

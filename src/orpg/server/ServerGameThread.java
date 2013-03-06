@@ -101,7 +101,6 @@ public class ServerGameThread implements Runnable {
 					packet.getSession().disconnect("Invalid packet.");
 				} else {
 					handler.handle(packet, baseServer);
-
 				}
 			}
 		} catch (InterruptedException e) {

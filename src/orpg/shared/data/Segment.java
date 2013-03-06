@@ -14,7 +14,6 @@ public class Segment {
 	private byte flags[][];
 
 	// Transient data
-	private HashMap<String, AccountCharacter> players;
 	private Object revisionLock;
 	private int[][][] autoTileCache;
 
@@ -50,7 +49,6 @@ public class Segment {
 		this.revisionTime = revisionTime;
 		this.height = height;
 		this.width = width;
-		this.players = new HashMap<String, AccountCharacter>();
 		this.revisionLock = new Object();
 	}
 
@@ -108,22 +106,6 @@ public class Segment {
 
 	public byte[][] getFlags() {
 		return flags;
-	}
-
-	public HashMap<String, AccountCharacter> getPlayers() {
-		return players;
-	}
-
-	public void setPlayers(HashMap<String, AccountCharacter> players) {
-		this.players = players;
-	}
-
-	public void addPlayer(AccountCharacter accountCharacter) {
-		players.put(accountCharacter.getName(), accountCharacter);
-	}
-
-	public void removePlayer(AccountCharacter accountCharacter) {
-		players.remove(accountCharacter.getName());
 	}
 
 	public int[][][] getAutoTileCache() {

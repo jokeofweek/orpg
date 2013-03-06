@@ -1,5 +1,7 @@
 package orpg.shared.net.serialize;
 
+import java.util.HashMap;
+
 import orpg.shared.component.SynchronizeableComponent;
 
 import com.artemis.Component;
@@ -11,12 +13,31 @@ import com.artemis.utils.Bag;
 public class EntitySerializer extends Object implements
 		ValueSerializer<Entity> {
 
+	private static HashMap<World, EntitySerializer> instances = new HashMap<World, EntitySerializer>(
+			1);
+
+	public static EntitySerializer getInstance(World world) {
+		EntitySerializer serializer = instances.get(world);
+		if (serializer == null) {
+			serializer = new EntitySerializer(world);
+			instances.put(world, serializer);
+		}
+		return serializer;
+	}
+
 	private World world;
 
-	public EntitySerializer(World world) {
+	private EntitySerializer(World world) {
 		this.world = world;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * orpg.shared.net.serialize.ValueSerializer#put(orpg.shared.net.serialize
+	 * .OutputByteBuffer, java.lang.Object)
+	 */
 	@Override
 	public void put(OutputByteBuffer out, Entity obj) {
 		out.putInt(obj.getId());
@@ -33,13 +54,23 @@ public class EntitySerializer extends Object implements
 
 		out.putInt(count);
 
+		SynchronizeableComponent component;
 		for (int i = 0; i < bag.size(); i++) {
 			if (bag.get(i) instanceof SynchronizeableComponent) {
-				out.putValue((SynchronizeableComponent) bag.get(i));
+				component = (SynchronizeableComponent) bag.get(i);
+				out.putByte((byte)component.getType().ordinal());
+				out.putValue(component);
 			}
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * orpg.shared.net.serialize.ValueSerializer#get(orpg.shared.net.serialize
+	 * .InputByteBuffer)
+	 */
 	@Override
 	public Entity get(InputByteBuffer in) {
 		Entity entity = world.createEntity();
@@ -52,7 +83,7 @@ public class EntitySerializer extends Object implements
 					.getValue(SynchronizeableComponentSerializer
 							.getInstance()));
 		}
-
+		
 		return entity;
 	}
 

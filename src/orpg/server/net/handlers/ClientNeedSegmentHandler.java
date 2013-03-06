@@ -35,8 +35,8 @@ public class ClientNeedSegmentHandler implements ServerPacketHandler {
 				map.getId(), segment, revisionsMatch));
 
 		// If the player was changing maps before, then we update.
-		if (packet.getSession().getCharacter().isChangingMap()) {
-			packet.getSession().getCharacter().setChangingMap(false);
+		if (packet.getSession().isWaitingForMap()) {
+			packet.getSession().setWaitingForMap(false);
 		}
 	}
 }

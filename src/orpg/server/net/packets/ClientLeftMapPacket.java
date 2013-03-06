@@ -1,7 +1,14 @@
 package orpg.server.net.packets;
 
+import com.artemis.ComponentMapper;
+import com.artemis.Entity;
+import com.artemis.annotations.Mapper;
+
 import orpg.server.ServerSession;
+import orpg.server.data.DestinationType;
+import orpg.shared.component.Position;
 import orpg.shared.data.AccountCharacter;
+import orpg.shared.data.Map;
 import orpg.shared.net.ServerPacketType;
 import orpg.shared.net.serialize.OutputByteBuffer;
 
@@ -10,23 +17,23 @@ public class ClientLeftMapPacket extends MapExceptForPacket {
 	private byte[] bytes;
 
 	/**
-	 * This sends a packet to the character's map saying that the character has
-	 * left the map. Note that it uses the character's
-	 * {@link AccountCharacter#getMap()} method to determine the map.
+	 * This sends a packet to an entity's map saying that the entity has left
+	 * the map.
 	 * 
 	 * @param serverSession
-	 *            the session of the character
-	 * @param character
-	 *            the character that has left.
+	 *            the session of the entity
+	 * @param map
+	 * 			  the map the entity is leaving
+	 * @param entity
+	 *            the entity that has left.
 	 */
-	public ClientLeftMapPacket(ServerSession serverSession,
-			AccountCharacter character) {
-		super(serverSession, character.getMap());
+	public ClientLeftMapPacket(ServerSession serverSession, Map map,
+			Entity entity) {
+		super(serverSession, map);
+		OutputByteBuffer out = new OutputByteBuffer(8);
 
-		OutputByteBuffer out = new OutputByteBuffer();
-		out.putInt(character.getMap().getId()); // put this for sanity check on
-												// client side
-		out.putMapCharacter(character);
+		out.putInt(map.getId()); // put this for sanity check on client side
+		out.putInt(entity.getId());
 		this.bytes = out.getBytes();
 
 	}

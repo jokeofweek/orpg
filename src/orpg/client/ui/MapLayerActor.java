@@ -69,7 +69,7 @@ public class MapLayerActor extends Actor {
 		int y;
 		short tile;
 
-		if (baseClient.getAccountCharacter().isChangingMap()) {
+		if (baseClient.isChangingMap()) {
 			return;
 		}
 

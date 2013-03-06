@@ -11,7 +11,7 @@ public class NewMapHandler implements ClientPacketHandler {
 
 	@Override
 	public void handle(ClientReceivedPacket packet, final BaseClient client) {
-		client.getAccountCharacter().setChangingMap(true);
+		client.setChangingMap(true);
 
 		InputByteBuffer in = packet.getByteBuffer();
 
@@ -24,21 +24,25 @@ public class NewMapHandler implements ClientPacketHandler {
 
 		// Determine the segment
 		client.getAccountCharacter().setX(in.getInt());
-		short segmentX = map.getSegmentX(client.getAccountCharacter().getX());
+		short segmentX = map.getSegmentX(client.getAccountCharacter()
+				.getX());
 
 		client.getAccountCharacter().setY(in.getInt());
-		short segmentY = map.getSegmentY(client.getAccountCharacter().getY());
+		short segmentY = map.getSegmentY(client.getAccountCharacter()
+				.getY());
 
 		// Clear the client data cache
 		Gdx.app.postRunnable(new Runnable() {
 			@Override
 			public void run() {
-				client.clearClientPlayerData();
+				client.setChangingMap(true);
+				client.resetWorld();
 			}
 		});
 
 		// Request the segment
-		client.getSegmentRequestManager().requestSegment(segmentX, segmentY);
+		client.getSegmentRequestManager().requestSegment(segmentX,
+				segmentY);
 
 	}
 

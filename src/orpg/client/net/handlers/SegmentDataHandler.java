@@ -2,6 +2,8 @@ package orpg.client.net.handlers;
 
 import java.util.List;
 
+import com.artemis.Entity;
+import com.artemis.utils.Bag;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 
@@ -19,7 +21,7 @@ import orpg.shared.data.store.DataStoreException;
 public class SegmentDataHandler implements ClientPacketHandler {
 
 	@Override
-	public void handle(ClientReceivedPacket packet,
+	public void handle(final ClientReceivedPacket packet,
 			final BaseClient baseClient) {
 		packet.getByteBuffer().decompress();
 
@@ -45,12 +47,17 @@ public class SegmentDataHandler implements ClientPacketHandler {
 				.getSegment(segmentX, segmentY) : packet.getByteBuffer()
 				.getSegment());
 
-		List<AccountCharacter> characters = packet.getByteBuffer()
-				.getSegmentPlayers();
-		for (AccountCharacter character : characters) {
-			segment.addPlayer(character);
-		}
+		Gdx.app.postRunnable(new Runnable() {
+			@Override
+			public void run() {
+				Bag<Entity> entities = packet.getByteBuffer().getEntities(baseClient.getWorld());
+				for (int i = 0; i < entities.size(); i++) {
+					baseClient.getWorld().addEntity(entities.get(i));
+				}
+			}
+		});
 
+		// No more data should be withdrawn from the byte buffer at this time!!
 		baseClient.getMap().updateSegment(segment, false);
 		baseClient.getAutoTileController().updateAutoTileCache(
 				baseClient.getMap(), segment, true);
@@ -88,12 +95,11 @@ public class SegmentDataHandler implements ClientPacketHandler {
 
 		// If we were changing maps, then synchronize the instances and request
 		// segments
-		final boolean wasChangingMaps = baseClient.getAccountCharacter()
-				.isChangingMap();
+		final boolean wasChangingMaps = baseClient.isChangingMap();
 
 		if (wasChangingMaps) {
-			baseClient.getMap().syncPlayer(
-					baseClient.getAccountCharacter());
+		//	baseClient.getMap().syncPlayer(
+			//		baseClient.getAccountCharacter());
 		}
 
 		final Map map = baseClient.getMap();
@@ -103,27 +109,21 @@ public class SegmentDataHandler implements ClientPacketHandler {
 
 			@Override
 			public void run() {
-				for (AccountCharacter character : segment.getPlayers()
-						.values()) {
-					character.setMap(map);
-					baseClient.addClientPlayerData(character.getName(),
-							new ClientPlayerData(character));
 
-					// Update the view
-					((GameState) baseClient.getStateManager()
-							.getCurrentState()).centerOnPlayer();
+				// Update the view
+				((GameState) baseClient.getStateManager()
+						.getCurrentState()).centerOnPlayer();
 
-					// If we were presently changing maps, we are done now
-					baseClient.getAccountCharacter().setChangingMap(false);
+				// If we were presently changing maps, we are done now
+				baseClient.setChangingMap(false);
 
-					// If we are joining a map, request surrounding segments
-					if (wasChangingMaps) {
-						baseClient.getSegmentRequestManager()
-								.requestSurroundingSegments(
-										baseClient.getAccountCharacter());
-					}
-
+				// If we are joining a map, request surrounding segments
+				if (wasChangingMaps) {
+					baseClient.getSegmentRequestManager()
+							.requestSurroundingSegments(
+									baseClient.getAccountCharacter());
 				}
+
 			}
 		});
 

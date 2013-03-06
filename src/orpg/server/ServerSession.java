@@ -6,6 +6,12 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.logging.Level;
 
+import com.artemis.Entity;
+import com.artemis.World;
+import com.artemis.managers.PlayerManager;
+import com.artemis.managers.TagManager;
+import com.artemis.utils.ImmutableBag;
+
 import orpg.server.data.Account;
 import orpg.server.data.SessionType;
 import orpg.server.net.packets.ClientInGamePacket;
@@ -23,9 +29,11 @@ public class ServerSession {
 	private volatile boolean connected;
 	private String disconnectReason;
 	private ServerSessionThread thread;
+	private World world;
 
 	private Account account;
 	private AccountCharacter character;
+	private boolean isWaitingForMap;
 
 	private String originalId;
 	private String id;
@@ -82,7 +90,8 @@ public class ServerSession {
 				.getConfigManager()
 				.getErrorLogger()
 				.log(Level.WARNING,
-						"Session " + getId()
+						"Session "
+								+ getId()
 								+ " preventatively disconnected for reason "
 								+ reason + ".");
 		disconnect("Preventative disconnect.");
@@ -91,7 +100,13 @@ public class ServerSession {
 	public void disconnect(String reason) {
 		// If the player was in game, remove them from the map
 		if (getSessionType() == SessionType.GAME) {
-			baseServer.getMapController().leaveMap(getCharacter());
+			ImmutableBag<Entity> playerEntities = baseServer.getWorld()
+					.getManager(PlayerManager.class)
+					.getEntitiesOfPlayer(getCharacter().getName());
+			for (int i = 0; i < playerEntities.size(); i++) {
+				baseServer.getMapController().leaveMap(
+						playerEntities.get(i));
+			}
 
 			// Save the account
 			baseServer.getAccountController().save(getAccount().getName());
@@ -101,7 +116,8 @@ public class ServerSession {
 				.getConfigManager()
 				.getSessionLogger()
 				.log(Level.INFO,
-						String.format("Session %s disconnected for reason %s.",
+						String.format(
+								"Session %s disconnected for reason %s.",
 								getId(), reason));
 		baseServer.getServerSessionManager().removeSession(this);
 
@@ -122,6 +138,14 @@ public class ServerSession {
 		return character;
 	}
 
+	public World getWorld() {
+		return world;
+	}
+	
+	public void setWorld(World world) {
+		this.world = world;
+	}
+	
 	public void login(Account account, SessionType sessionType) {
 		if (sessionType != SessionType.EDITOR
 				&& sessionType != SessionType.LOGGED_IN) {
@@ -129,7 +153,8 @@ public class ServerSession {
 					.getConfigManager()
 					.getErrorLogger()
 					.log(Level.SEVERE,
-							"Session " + getId() + " attempted to login to "
+							"Session " + getId()
+									+ " attempted to login to "
 									+ account.getName()
 									+ " while not in the correct state.");
 			return;
@@ -143,10 +168,10 @@ public class ServerSession {
 
 		// If our login was successful, notify the session manager
 		baseServer.getServerSessionManager().registerAccountSession(this);
-		
+
 		if (sessionType == SessionType.EDITOR) {
 			baseServer.sendPacket(new EditorLoginOkPacket(this));
-		} else if (sessionType == SessionType.LOGGED_IN) {			
+		} else if (sessionType == SessionType.LOGGED_IN) {
 			baseServer.sendPacket(new LoginOkPacket(this, account));
 		}
 
@@ -200,7 +225,8 @@ public class ServerSession {
 		// Now we register the in-game session.
 		this.character = character;
 		this.sessionType = SessionType.GAME;
-		if (baseServer.getServerSessionManager().registerInGameSession(this)) {
+		if (baseServer.getServerSessionManager().registerInGameSession(
+				this)) {
 			// Update the id to include character name
 			this.id = this.originalId + "(" + account.getName() + ":"
 					+ character.getName() + ")";
@@ -213,13 +239,18 @@ public class ServerSession {
 									"Session %s sucesfully selected character and entered game.",
 									this.getId()));
 
-			// Setup the character
-			this.character.setChangingMap(true);
-
+			// Create the entity
+			Entity entity = baseServer.getEntityFactory()
+					.addAccountCharacterEntity(character);
+			this.setWorld(entity.getWorld());
+			
+			this.setWaitingForMap(true);
+			
 			// Notify the client that they are now in the game
-			baseServer.sendPacket(new ClientInGamePacket(this, character, baseServer.getAutoTileController()));
+			baseServer.sendPacket(new ClientInGamePacket(this, character,
+					baseServer.getAutoTileController()));
 
-			baseServer.getMapController().warpToMap(character,
+			baseServer.getMapController().warpToMap(entity,
 					character.getMap().getId(), character.getX(),
 					character.getY());
 		} else {
@@ -229,5 +260,13 @@ public class ServerSession {
 			baseServer.sendPacket(new ErrorPacket(this,
 					ErrorMessage.CHARACTER_IN_USE));
 		}
+	}
+	
+	public boolean isWaitingForMap() {
+		return isWaitingForMap;
+	}
+	
+	public void setWaitingForMap(boolean isWaitingForMap) {
+		this.isWaitingForMap = isWaitingForMap;
 	}
 }

@@ -8,6 +8,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import com.artemis.Entity;
+import com.artemis.World;
+import com.artemis.utils.Bag;
+
 import net.jpountz.lz4.LZ4Decompressor;
 import net.jpountz.lz4.LZ4Factory;
 
@@ -23,7 +27,7 @@ public class InputByteBuffer {
 
 	private byte[] bytes;
 	private int pos;
-	
+
 	public InputByteBuffer(byte[] bytes) {
 		this.bytes = bytes;
 		this.reset();
@@ -46,7 +50,8 @@ public class InputByteBuffer {
 		try {
 			in = new FileInputStream(file);
 			while (offset < this.bytes.length) {
-				read = in.read(this.bytes, offset, this.bytes.length - offset);
+				read = in.read(this.bytes, offset, this.bytes.length
+						- offset);
 				if (read == -1) {
 					throw new IOException(
 							"Could could not read any bytes. End of stream.");
@@ -174,8 +179,8 @@ public class InputByteBuffer {
 			}
 		}
 
-		Segment segment = new Segment(segmentX, segmentY, width, height, tiles,
-				flags, revision, revisionTime);
+		Segment segment = new Segment(segmentX, segmentY, width, height,
+				tiles, flags, revision, revisionTime);
 
 		return segment;
 	}
@@ -188,6 +193,17 @@ public class InputByteBuffer {
 			characters.add(getMapCharacter());
 		}
 		return characters;
+	}
+
+	public Bag<Entity> getEntities(World world) {
+		int count = getInt();
+		Bag<Entity> entities = new Bag<Entity>(count);
+
+		for (int i = 0; i < count; i++) {
+			entities.add(getValue(EntitySerializer.getInstance(world)));
+		}
+
+		return entities;
 	}
 
 	public Map getMapDescriptor() {
@@ -270,7 +286,7 @@ public class InputByteBuffer {
 
 		return autoTiles;
 	}
-	
+
 	public <K> K getValue(ValueSerializer<K> valueReader) {
 		return valueReader.get(this);
 	}
@@ -295,8 +311,8 @@ public class InputByteBuffer {
 		// array. This permits us to have only partially compressed data in a
 		// buffer.
 		System.arraycopy(this.bytes, 0, newBytes, 0, this.pos);
-		System.arraycopy(this.bytes, this.pos + compressedLength, newBytes,
-				this.pos + decompressedLength, this.bytes.length
+		System.arraycopy(this.bytes, this.pos + compressedLength,
+				newBytes, this.pos + decompressedLength, this.bytes.length
 						- (this.pos + compressedLength));
 
 		// Now inject the decompressed bytes

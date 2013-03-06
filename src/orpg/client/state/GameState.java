@@ -88,7 +88,10 @@ public class GameState extends ClientState {
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		handleInput();
+		//handleInput();
+		baseClient.getWorld().setDelta(delta);
+		baseClient.getWorld().process();
+		
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
 	}
@@ -130,8 +133,8 @@ public class GameState extends ClientState {
 
 	private void handleInput() {
 		AccountCharacter accountCharacter = baseClient.getAccountCharacter();
-		ClientPlayerData playerData = baseClient
-				.getClientPlayerData(accountCharacter.getName());
+		ClientPlayerData playerData = null;// baseClient
+				//.getClientPlayerData(accountCharacter.getName());
 
 		// If player data isn't loaded, quit out
 		if (playerData == null) {

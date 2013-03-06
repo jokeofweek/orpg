@@ -4,12 +4,29 @@ import orpg.shared.net.serialize.InputByteBuffer;
 import orpg.shared.net.serialize.OutputByteBuffer;
 import orpg.shared.net.serialize.ValueSerializer;
 
+/**
+ * This component represents the spatial position of an entity on a map.
+ * 
+ * @author Dominic Charley-Roy
+ */
 public class Position extends SynchronizeableComponent {
 
+	private int map;
 	private int x;
 	private int y;
 
-	public Position() {
+	public Position(int map, int x, int y) {
+		this.map = map;
+		this.x = x;
+		this.y = y;
+	}
+
+	public int getMap() {
+		return map;
+	}
+
+	public void setMap(int map) {
+		this.map = map;
 	}
 
 	public int getX() {
@@ -33,7 +50,8 @@ public class Position extends SynchronizeableComponent {
 		return SynchronizeableComponentType.POSITION;
 	}
 
-	public static class Serializer implements ValueSerializer<SynchronizeableComponent> {
+	public static class Serializer implements
+			ValueSerializer<SynchronizeableComponent> {
 
 		private static Serializer instance = new Serializer();
 
@@ -47,15 +65,15 @@ public class Position extends SynchronizeableComponent {
 		@Override
 		public void put(OutputByteBuffer out, SynchronizeableComponent obj) {
 			Position pos = (Position) obj;
+			out.putInt(pos.getMap());
 			out.putInt(pos.getX());
 			out.putInt(pos.getY());
 		}
 
 		@Override
 		public Position get(InputByteBuffer in) {
-			Position pos = new Position();
-			pos.setX(in.getInt());
-			pos.setY(in.getInt());
+			Position pos = new Position(in.getInt(), in.getInt(),
+					in.getInt());
 			return pos;
 		}
 	}

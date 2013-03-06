@@ -171,7 +171,7 @@ public class AccountController implements Controller<Account, String> {
 			}
 
 			// Update the position on the map (perhaps changing segments)
-			character.getMap().updatePlayer(character, oldX, oldY);
+			// character.getMap().updatePlayer(character, oldX, oldY);
 
 			// Send the move packet
 			baseServer.sendPacket(new ClientMovePacket(baseServer

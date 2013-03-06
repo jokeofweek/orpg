@@ -61,6 +61,12 @@ public final class Constants {
 	public static final int SPRITE_FRAME_OFFSET = Constants.TILE_WIDTH
 			/ Constants.SPRITE_FRAMES;
 
+	// Group options
+	public static final String GROUP_PLAYERS = "players";
+	public static final String GROUP_MAP = "map_%d";
+	public static final String GROUP_MAP_PLAYERS = "map_%d_players";
+	public static final String GROUP_SEGMENT = "map_%d_%d_%d";
+	
 	private Constants() {
 	};
 

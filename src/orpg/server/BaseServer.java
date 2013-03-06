@@ -3,12 +3,18 @@ package orpg.server;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import com.artemis.World;
+import com.artemis.managers.GroupManager;
+import com.artemis.managers.PlayerManager;
+
 import orpg.server.config.ServerConfigurationManager;
 import orpg.server.console.ServerConsole;
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.controllers.AccountController;
 import orpg.server.data.controllers.AutoTileController;
 import orpg.server.data.controllers.MapController;
+import orpg.server.data.entity.EntityFactory;
 import orpg.server.data.store.DataStore;
 import orpg.server.data.store.FileDataStore;
 import orpg.server.net.packets.ServerPacket;
@@ -26,6 +32,11 @@ public class BaseServer {
 	private AccountController accountController;
 	private AutoTileController autoTileController;
 	private DataStore dataStore;
+	
+	// World and entity datas
+	private ServerWorldThread serverWorldThread;
+	private World world;
+	private EntityFactory entityFactory;
 
 	public BaseServer(ServerConfigurationManager config, ServerConsole console) {
 		this.config = config;
@@ -36,7 +47,16 @@ public class BaseServer {
 		// Set up our queues
 		this.inputQueue = new LinkedBlockingQueue<ServerReceivedPacket>();
 		this.outputQueue = new LinkedBlockingQueue<ServerPacket>();
-
+		
+		// Initialize the world
+		console.out().println("Creating world...");
+		this.world = new World();
+		world.setManager(new GroupManager());
+		world.setManager(new PlayerManager());
+		world.initialize();
+		this.entityFactory = new EntityFactory(this, this.world);
+		this.serverWorldThread = new ServerWorldThread(this);
+		
 		// Set up the various threads
 		this.serverSessionManager = new ServerSessionManager(this, outputQueue);
 		this.serverGameThread = new ServerGameThread(this, inputQueue,
@@ -75,6 +95,7 @@ public class BaseServer {
 
 		// Now that everything is setup, we are ready to go.
 		console.out().println("Starting threads...");
+		new Thread(serverWorldThread).start();
 		new Thread(serverSessionManager).start();
 		new Thread(serverGameThread).start();
 		new Thread(serverSocketThread).start();
@@ -111,6 +132,14 @@ public class BaseServer {
 
 	public AutoTileController getAutoTileController() {
 		return autoTileController;
+	}
+	
+	public World getWorld() {
+		return world;
+	}
+	
+	public EntityFactory getEntityFactory() {
+		return entityFactory;
 	}
 
 	/**

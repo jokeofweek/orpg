@@ -7,9 +7,19 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Level;
 
+import com.artemis.ComponentMapper;
+import com.artemis.Entity;
+import com.artemis.annotations.Mapper;
+import com.artemis.managers.GroupManager;
+import com.artemis.managers.PlayerManager;
+import com.artemis.utils.ImmutableBag;
+
 import orpg.server.data.SessionType;
 import orpg.server.net.packets.ConnectedPacket;
 import orpg.server.net.packets.ServerPacket;
+import orpg.shared.Constants;
+import orpg.shared.component.Named;
+import orpg.shared.component.Position;
 import orpg.shared.data.Map;
 import orpg.shared.data.Pair;
 import orpg.shared.data.Segment;
@@ -22,6 +32,8 @@ import orpg.shared.data.Segment;
  * @author Dominic Charley-Roy
  */
 public class ServerSessionManager implements Runnable {
+
+	private ComponentMapper<Named> namedMapper;
 
 	private HashSet<ServerSession> sessions;
 	private BaseServer baseServer;
@@ -36,6 +48,8 @@ public class ServerSessionManager implements Runnable {
 		this.sessions = new HashSet<ServerSession>();
 		this.inGameSessions = new HashMap<String, ServerSession>();
 		this.accountSessions = new HashMap<String, List<ServerSession>>();
+
+		this.namedMapper = baseServer.getWorld().getMapper(Named.class);
 	}
 
 	public void addSession(ServerSession session) {
@@ -59,6 +73,13 @@ public class ServerSessionManager implements Runnable {
 			accountSessions.get(name).remove(session);
 			if (accountSessions.get(name).size() == 0) {
 				baseServer.getAccountController().release(name);
+			}
+
+			ImmutableBag<Entity> entities = baseServer.getWorld()
+					.getManager(PlayerManager.class)
+					.getEntitiesOfPlayer(name);
+			for (int i = 0; i < entities.size(); i++) {
+				entities.get(i).deleteFromWorld();
 			}
 		}
 
@@ -153,37 +174,42 @@ public class ServerSessionManager implements Runnable {
 					break;
 				case MAP:
 					Map map = (Map) packet.getDestinationObject();
-					for (Segment[] segmentRow : map.getSegments()) {
-						for (Segment segment : segmentRow) {
-							if (segment != null) {
-								for (String name : segment.getPlayers()
-										.keySet()) {
-									getInGameSession(name)
-											.getOutputQueue()
-											.add(rawBytes);
-								}
-							}
-						}
+
+					ImmutableBag<Entity> entities = baseServer
+							.getWorld()
+							.getManager(GroupManager.class)
+							.getEntities(
+									String.format(
+											Constants.GROUP_MAP_PLAYERS,
+											map.getId()));
+
+					for (int i = 0; i < entities.size(); i++) {
+						getInGameSession(
+								namedMapper.get(entities.get(i)).getName())
+								.getOutputQueue().add(rawBytes);
 					}
+
 					break;
 				case MAP_EXCEPT_FOR:
 					Pair<ServerSession, Map> destinationObject = (Pair<ServerSession, Map>) packet
 							.getDestinationObject();
 					ServerSession session;
 					ServerSession toExclude = destinationObject.getFirst();
-					for (Segment[] segmentRow : destinationObject
-							.getSecond().getSegments()) {
-						for (Segment segment : segmentRow) {
-							if (segment != null) {
-								for (String name : segment.getPlayers()
-										.keySet()) {
-									session = getInGameSession(name);
-									if (session != toExclude) {
-										session.getOutputQueue().add(
-												rawBytes);
-									}
-								}
-							}
+
+					entities = baseServer
+							.getWorld()
+							.getManager(GroupManager.class)
+							.getEntities(
+									String.format(
+											Constants.GROUP_MAP_PLAYERS,
+											destinationObject.getSecond()
+													.getId()));
+
+					for (int i = 0; i < entities.size(); i++) {
+						session = getInGameSession(namedMapper.get(
+								entities.get(i)).getName());
+						if (session != toExclude) {
+							session.getOutputQueue().add(rawBytes);
 						}
 					}
 					break;
