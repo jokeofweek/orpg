@@ -3,6 +3,7 @@ package orpg.client.systems;
 import orpg.client.BaseClient;
 import orpg.client.ui.ViewBox;
 import orpg.shared.Constants;
+import orpg.shared.component.Directioned;
 import orpg.shared.component.Position;
 import orpg.shared.component.Renderable;
 
@@ -21,6 +22,8 @@ public class RenderSystem extends EntityProcessingSystem {
 	ComponentMapper<Position> positionMapper;
 	@Mapper
 	ComponentMapper<Renderable> renderableMapper;
+	@Mapper
+	ComponentMapper<Directioned> directionedMapper;
 
 	private BaseClient baseClient;
 
@@ -64,7 +67,8 @@ public class RenderSystem extends EntityProcessingSystem {
 		}
 		
 		Renderable renderable = renderableMapper.get(e);
-
+		Directioned direction = directionedMapper.get(e);
+		
 		// Render the character's texture
 		int sprite = renderable.getRenderReference();
 		int spriteSet = sprite / Constants.SPRITES_PER_SPRITESET;
@@ -102,8 +106,7 @@ public class RenderSystem extends EntityProcessingSystem {
 				(spriteX * Constants.SPRITE_WIDTH)
 						+ (frame * Constants.SPRITE_FRAME_WIDTH),
 				(spriteY * Constants.SPRITE_HEIGHT)
-						/*+ (playerData.getCharacter()
-								.getDirection().ordinal() * Constants.SPRITE_FRAME_HEIGHT)*/,
+						+ (direction.getDirection().ordinal() * Constants.SPRITE_FRAME_HEIGHT),
 				Constants.SPRITE_FRAME_WIDTH,
 				Constants.SPRITE_FRAME_HEIGHT, false, true);
 	}
