@@ -104,7 +104,7 @@ public class ServerSessionManager implements Runnable {
 			return entitySessions.get(entity);
 		}
 	}
-	
+
 	public synchronized void registerAccountSession(ServerSession session) {
 		if (session.getAccount() == null) {
 			this.baseServer
@@ -152,9 +152,9 @@ public class ServerSessionManager implements Runnable {
 		inGameSessions.put(session.getCharacter().getName(), session);
 		return true;
 	}
-	
+
 	public void registerSessionEntity(ServerSession session) {
-		synchronized(entitySessions) {
+		synchronized (entitySessions) {
 			entitySessions.put(session.getEntity(), session);
 		}
 	}
@@ -203,9 +203,8 @@ public class ServerSessionManager implements Runnable {
 											map.getId()));
 
 					for (int i = 0; i < entities.size(); i++) {
-						getInGameSession(
-								namedMapper.get(entities.get(i)).getName())
-								.getOutputQueue().add(rawBytes);
+						getEntitySession(entities.get(i)).getOutputQueue()
+								.add(rawBytes);
 					}
 
 					break;
@@ -225,8 +224,7 @@ public class ServerSessionManager implements Runnable {
 													.getId()));
 
 					for (int i = 0; i < entities.size(); i++) {
-						session = getInGameSession(namedMapper.get(
-								entities.get(i)).getName());
+						session = getEntitySession(entities.get(i));
 						if (session != toExclude) {
 							session.getOutputQueue().add(rawBytes);
 						}
