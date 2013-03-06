@@ -266,8 +266,7 @@ public class MapController implements Controller<Map, Integer> {
 					String.format(Constants.GROUP_MAP_PLAYERS,
 							position.getMap()));
 
-			session = baseServer.getServerSessionManager()
-					.getInGameSession(namedMapper.get(entity).getName());
+			session = baseServer.getServerSessionManager().getEntitySession(entity);
 
 			if (session != null) {
 				refreshMap(session);
@@ -293,8 +292,7 @@ public class MapController implements Controller<Map, Integer> {
 		// If it is a player, get the server session
 		ServerSession session = null;
 		if (groupManager.inInGroup(entity, Constants.GROUP_PLAYERS)) {
-			session = baseServer.getServerSessionManager()
-					.getInGameSession(namedMapper.get(entity).getName());
+			session = baseServer.getServerSessionManager().getEntitySession(entity);
 		}
 
 		Map map = get(position.getMap());
@@ -334,10 +332,7 @@ public class MapController implements Controller<Map, Integer> {
 		if (!baseServer.getWorld().getManager(GroupManager.class).inInGroup(entity, Constants.GROUP_PLAYERS)
 				|| !baseServer
 						.getServerSessionManager()
-						.getInGameSession(
-								baseServer.getWorld()
-										.getManager(PlayerManager.class)
-										.getPlayer(entity))
+						.getEntitySession(entity)
 						.isWaitingForMap()) {
 
 			leaveMap(entity);

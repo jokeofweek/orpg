@@ -33,6 +33,7 @@ public class ServerSession {
 
 	private Account account;
 	private AccountCharacter character;
+	private Entity entity;
 	private boolean isWaitingForMap;
 
 	private String originalId;
@@ -146,6 +147,14 @@ public class ServerSession {
 		this.world = world;
 	}
 	
+	public Entity getEntity() {
+		return entity;
+	}
+	
+	public void setEntity(Entity entity) {
+		this.entity = entity;
+	}
+	
 	public void login(Account account, SessionType sessionType) {
 		if (sessionType != SessionType.EDITOR
 				&& sessionType != SessionType.LOGGED_IN) {
@@ -243,7 +252,8 @@ public class ServerSession {
 			Entity entity = baseServer.getEntityFactory()
 					.addAccountCharacterEntity(character);
 			this.setWorld(entity.getWorld());
-			
+			this.setEntity(entity);
+			this.baseServer.getServerSessionManager().registerSessionEntity(this);
 			this.setWaitingForMap(true);
 			
 			// Notify the client that they are now in the game

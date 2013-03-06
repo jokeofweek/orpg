@@ -40,6 +40,7 @@ public class ServerSessionManager implements Runnable {
 	private BlockingQueue<ServerPacket> outputQueue;
 	private HashMap<String, List<ServerSession>> accountSessions;
 	private HashMap<String, ServerSession> inGameSessions;
+	private HashMap<Entity, ServerSession> entitySessions;
 
 	public ServerSessionManager(BaseServer server,
 			BlockingQueue<ServerPacket> outputQueue) {
@@ -48,6 +49,7 @@ public class ServerSessionManager implements Runnable {
 		this.sessions = new HashSet<ServerSession>();
 		this.inGameSessions = new HashMap<String, ServerSession>();
 		this.accountSessions = new HashMap<String, List<ServerSession>>();
+		this.entitySessions = new HashMap<Entity, ServerSession>();
 
 		this.namedMapper = baseServer.getWorld().getMapper(Named.class);
 	}
@@ -72,8 +74,13 @@ public class ServerSessionManager implements Runnable {
 			ImmutableBag<Entity> entities = baseServer.getWorld()
 					.getManager(PlayerManager.class)
 					.getEntitiesOfPlayer(session.getCharacter().getName());
-			for (int i = 0; i < entities.size(); i++) {
-				entities.get(i).deleteFromWorld();
+
+			// Delete the entities
+			synchronized (entitySessions) {
+				for (int i = 0; i < entities.size(); i++) {
+					entitySessions.remove(entities.get(i));
+					entities.get(i).deleteFromWorld();
+				}
 			}
 
 			String name = session.getAccount().getName();
@@ -92,6 +99,12 @@ public class ServerSessionManager implements Runnable {
 		return inGameSessions.get(name);
 	}
 
+	public ServerSession getEntitySession(Entity entity) {
+		synchronized (entitySessions) {
+			return entitySessions.get(entity);
+		}
+	}
+	
 	public synchronized void registerAccountSession(ServerSession session) {
 		if (session.getAccount() == null) {
 			this.baseServer
@@ -138,6 +151,12 @@ public class ServerSessionManager implements Runnable {
 
 		inGameSessions.put(session.getCharacter().getName(), session);
 		return true;
+	}
+	
+	public void registerSessionEntity(ServerSession session) {
+		synchronized(entitySessions) {
+			entitySessions.put(session.getEntity(), session);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
