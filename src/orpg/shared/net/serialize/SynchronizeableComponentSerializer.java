@@ -1,7 +1,7 @@
 package orpg.shared.net.serialize;
 
-import orpg.shared.component.SynchronizeableComponent;
-import orpg.shared.component.SynchronizeableComponentType;
+import orpg.shared.data.component.SynchronizeableComponent;
+import orpg.shared.data.component.SynchronizeableComponentType;
 
 /**
  * This class is responsible for taking a generic synchronizeable component and

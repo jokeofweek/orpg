@@ -2,7 +2,7 @@ package orpg.shared.net.serialize;
 
 import java.util.HashMap;
 
-import orpg.shared.component.SynchronizeableComponent;
+import orpg.shared.data.component.SynchronizeableComponent;
 
 import com.artemis.Component;
 import com.artemis.Entity;

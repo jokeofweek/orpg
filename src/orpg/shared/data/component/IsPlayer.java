@@ -1,4 +1,4 @@
-package orpg.shared.component;
+package orpg.shared.data.component;
 
 import orpg.shared.net.serialize.InputByteBuffer;
 import orpg.shared.net.serialize.OutputByteBuffer;

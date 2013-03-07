@@ -6,9 +6,9 @@ import com.artemis.annotations.Mapper;
 
 import orpg.server.ServerSession;
 import orpg.server.data.DestinationType;
-import orpg.shared.component.Position;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
+import orpg.shared.data.component.Position;
 import orpg.shared.net.ServerPacketType;
 import orpg.shared.net.serialize.OutputByteBuffer;
 

@@ -1,5 +1,6 @@
 package orpg.client.net.handlers;
 
+import com.artemis.managers.PlayerManager;
 import com.badlogic.gdx.Gdx;
 
 import orpg.client.BaseClient;
@@ -23,6 +24,7 @@ public class MoveHandler implements ClientPacketHandler {
 
 				@Override
 				public void run() {
+					client.getWorld().getManager(PlayerManager.class)
 					playerData.move(direction);
 				}
 			});

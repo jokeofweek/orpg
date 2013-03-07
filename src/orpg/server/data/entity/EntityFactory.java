@@ -9,12 +9,13 @@ import com.artemis.utils.ImmutableBag;
 
 import orpg.server.BaseServer;
 import orpg.shared.Constants;
-import orpg.shared.component.Directioned;
-import orpg.shared.component.IsPlayer;
-import orpg.shared.component.Named;
-import orpg.shared.component.Position;
-import orpg.shared.component.Renderable;
 import orpg.shared.data.AccountCharacter;
+import orpg.shared.data.component.IsPlayer;
+import orpg.shared.data.component.Moveable;
+import orpg.shared.data.component.Named;
+import orpg.shared.data.component.Position;
+import orpg.shared.data.component.Renderable;
+import sun.awt.CausedFocusEvent.Cause;
 
 public class EntityFactory {
 
@@ -42,7 +43,9 @@ public class EntityFactory {
 		entity.addComponent(new Renderable(character.getSprite()));
 		entity.addComponent(new Named(character.getName()));
 		entity.addComponent(IsPlayer.getInstance());
-		entity.addComponent(Directioned.getInstances(character.getDirection()));
+		Moveable moveable = new Moveable();
+		moveable.setDirection(character.getDirection());
+		entity.addComponent(moveable);
 
 		// Add the player to the players group
 		GroupManager groups = world.getManager(GroupManager.class);

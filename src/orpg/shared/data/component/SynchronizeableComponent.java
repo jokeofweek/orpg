@@ -1,4 +1,4 @@
-package orpg.shared.component;
+package orpg.shared.data.component;
 
 import orpg.server.net.packets.ClientSyncEntity;
 import orpg.shared.net.serialize.SerializableValue;

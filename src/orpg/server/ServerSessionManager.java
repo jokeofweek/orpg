@@ -18,11 +18,11 @@ import orpg.server.data.SessionType;
 import orpg.server.net.packets.ConnectedPacket;
 import orpg.server.net.packets.ServerPacket;
 import orpg.shared.Constants;
-import orpg.shared.component.Named;
-import orpg.shared.component.Position;
 import orpg.shared.data.Map;
 import orpg.shared.data.Pair;
 import orpg.shared.data.Segment;
+import orpg.shared.data.component.Named;
+import orpg.shared.data.component.Position;
 
 /**
  * The server sessions manager is responsible for keeping track of the current

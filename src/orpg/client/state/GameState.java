@@ -88,7 +88,7 @@ public class GameState extends ClientState {
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		//handleInput();
+
 		baseClient.getWorld().setDelta(delta);
 		baseClient.getWorld().process();
 		
@@ -129,50 +129,6 @@ public class GameState extends ClientState {
 			spritesets[i].dispose();
 		}
 		loadingTileTexture.dispose();
-	}
-
-	private void handleInput() {
-		AccountCharacter accountCharacter = baseClient.getAccountCharacter();
-		ClientPlayerData playerData = null;// baseClient
-				//.getClientPlayerData(accountCharacter.getName());
-
-		// If player data isn't loaded, quit out
-		if (playerData == null) {
-			return;
-		}
-
-		// Handle movement input
-		if (!playerData.isMoving()) {
-			if (Gdx.input.isKeyPressed(Input.Keys.LEFT)
-					&& accountCharacter.canMove(Direction.LEFT)) {
-				playerData.move(Direction.LEFT);
-				baseClient.sendPacket(MoveRequestPacket.LEFT);
-				baseClient.getSegmentRequestManager()
-						.requestSurroundingSegments(
-								baseClient.getAccountCharacter());
-			} else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)
-					&& accountCharacter.canMove(Direction.RIGHT)) {
-				playerData.move(Direction.RIGHT);
-				baseClient.sendPacket(MoveRequestPacket.RIGHT);
-				baseClient.getSegmentRequestManager()
-						.requestSurroundingSegments(
-								baseClient.getAccountCharacter());
-			} else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)
-					&& accountCharacter.canMove(Direction.DOWN)) {
-				playerData.move(Direction.DOWN);
-				baseClient.sendPacket(MoveRequestPacket.DOWN);
-				baseClient.getSegmentRequestManager()
-						.requestSurroundingSegments(
-								baseClient.getAccountCharacter());
-			} else if (Gdx.input.isKeyPressed(Input.Keys.UP)
-					&& accountCharacter.canMove(Direction.UP)) {
-				playerData.move(Direction.UP);
-				baseClient.sendPacket(MoveRequestPacket.UP);
-				baseClient.getSegmentRequestManager()
-						.requestSurroundingSegments(
-								baseClient.getAccountCharacter());
-			}
-		}
 	}
 
 	public void centerOnPlayer() {

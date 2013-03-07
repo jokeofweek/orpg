@@ -1,5 +1,6 @@
-import orpg.shared.component.Position;
-import orpg.shared.component.Renderable;
+import orpg.shared.data.component.Position;
+import orpg.shared.data.component.Renderable;
+
 import com.artemis.Component;
 import com.artemis.Entity;
 import com.artemis.World;

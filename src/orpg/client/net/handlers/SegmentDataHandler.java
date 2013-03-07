@@ -34,23 +34,27 @@ public class SegmentDataHandler implements ClientPacketHandler {
 
 		// Load the map
 		boolean usingLocal = packet.getByteBuffer().getBoolean();
-		short segmentX = -1;
-		short segmentY = -1;
+		short tmpSegmentX = -1;
+		short tmpSegmentY = -1;
 		if (usingLocal) {
-			segmentX = packet.getByteBuffer().getShort();
-			segmentY = packet.getByteBuffer().getShort();
+			tmpSegmentX = packet.getByteBuffer().getShort();
+			tmpSegmentY = packet.getByteBuffer().getShort();
 		}
 
 		System.out.println("Using local? " + usingLocal);
 
 		final Segment segment = (usingLocal ? baseClient.getLocalMap()
-				.getSegment(segmentX, segmentY) : packet.getByteBuffer()
-				.getSegment());
+				.getSegment(tmpSegmentX, tmpSegmentY) : packet
+				.getByteBuffer().getSegment());
+
+		final short segmentX = usingLocal ? tmpSegmentX : segment.getX();
+		final short segmentY = usingLocal ? tmpSegmentY : segment.getY();
 
 		Gdx.app.postRunnable(new Runnable() {
 			@Override
 			public void run() {
-				Bag<Entity> entities = packet.getByteBuffer().getEntities(baseClient.getWorld());
+				Bag<Entity> entities = packet.getByteBuffer().getEntities(
+						baseClient.getWorld());
 				for (int i = 0; i < entities.size(); i++) {
 					baseClient.getWorld().addEntity(entities.get(i));
 				}
@@ -98,8 +102,8 @@ public class SegmentDataHandler implements ClientPacketHandler {
 		final boolean wasChangingMaps = baseClient.isChangingMap();
 
 		if (wasChangingMaps) {
-		//	baseClient.getMap().syncPlayer(
-			//		baseClient.getAccountCharacter());
+			// baseClient.getMap().syncPlayer(
+			// baseClient.getAccountCharacter());
 		}
 
 		final Map map = baseClient.getMap();
@@ -120,8 +124,8 @@ public class SegmentDataHandler implements ClientPacketHandler {
 				// If we are joining a map, request surrounding segments
 				if (wasChangingMaps) {
 					baseClient.getSegmentRequestManager()
-							.requestSurroundingSegments(
-									baseClient.getAccountCharacter());
+							.requestSurroundingSegmentsOfSegment(segmentX,
+									segmentY);
 				}
 
 			}

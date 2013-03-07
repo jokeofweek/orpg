@@ -16,6 +16,9 @@ import orpg.client.data.ClientPlayerData;
 import orpg.client.data.store.DataStore;
 import orpg.client.data.store.FileDataStore;
 import orpg.client.net.SegmentRequestManager;
+import orpg.client.systems.AnimationSystem;
+import orpg.client.systems.InputSystem;
+import orpg.client.systems.MovementSystem;
 import orpg.client.systems.RenderSystem;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.AutoTileType;
@@ -111,6 +114,9 @@ public class BaseClient extends AbstractClient {
 		this.world.setManager(new PlayerManager());
 		this.world.setManager(new TagManager());
 		this.world.setManager(new EntityPreprocessor(this));
+		this.world.setSystem(new InputSystem(this));
+		this.world.setSystem(new MovementSystem(this));
+		this.world.setSystem(new AnimationSystem(this));
 		this.world.setSystem(new RenderSystem(this), true);
 		this.world.initialize();
 	}

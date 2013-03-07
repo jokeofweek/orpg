@@ -4,8 +4,8 @@ import com.artemis.ComponentType;
 import com.artemis.Entity;
 
 import orpg.server.ServerSession;
-import orpg.shared.component.Position;
-import orpg.shared.component.SynchronizeableComponent;
+import orpg.shared.data.component.Position;
+import orpg.shared.data.component.SynchronizeableComponent;
 import orpg.shared.net.ServerPacketType;
 import orpg.shared.net.serialize.OutputByteBuffer;
 
