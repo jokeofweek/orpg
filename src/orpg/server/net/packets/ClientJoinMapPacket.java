@@ -19,17 +19,17 @@ public class ClientJoinMapPacket extends MapExceptForPacket {
 	 * 
 	 * @param serverSession
 	 *            the session of the entity
-	 * @param map
-	 *            the map the entity is joining
+	 * @param mapId
+	 *            the id of the map the entity is joining
 	 * @param entity
 	 *            the entity that has joined.
 	 */
-	public ClientJoinMapPacket(ServerSession serverSession, Map map,
+	public ClientJoinMapPacket(ServerSession serverSession, int mapId,
 			Entity entity) {
-		super(serverSession, map);
+		super(serverSession, mapId);
 
 		OutputByteBuffer out = new OutputByteBuffer(10);
-		out.putInt(map.getId()); // put this for sanity check on client side
+		out.putInt(mapId); // put this for sanity check on client side
 		out.putValue(entity, EntitySerializer.getInstance(entity.getWorld()));
 		this.bytes = out.getBytes();
 

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.PlayerManager;
@@ -11,6 +12,7 @@ import com.artemis.managers.PlayerManager;
 import orpg.server.config.ServerConfigurationManager;
 import orpg.server.console.ServerConsole;
 import orpg.server.data.ServerReceivedPacket;
+import orpg.server.data.components.EventProcessor;
 import orpg.server.data.controllers.AccountController;
 import orpg.server.data.controllers.AutoTileController;
 import orpg.server.data.controllers.MapController;
@@ -18,6 +20,7 @@ import orpg.server.data.entity.EntityFactory;
 import orpg.server.data.store.DataStore;
 import orpg.server.data.store.FileDataStore;
 import orpg.server.net.packets.ServerPacket;
+import orpg.server.systems.MovementSystem;
 
 public class BaseServer {
 
@@ -53,9 +56,15 @@ public class BaseServer {
 		this.world = new World();
 		world.setManager(new GroupManager());
 		world.setManager(new PlayerManager());
+		world.setSystem(new MovementSystem(this));
 		world.initialize();
 		this.entityFactory = new EntityFactory(this, this.world);
 		this.serverWorldThread = new ServerWorldThread(this);
+		
+		// Create an event processor entity to be used by the aspects
+		Entity entity = world.createEntity();
+		entity.addComponent(new EventProcessor());
+		world.addEntity(entity);
 		
 		// Set up the various threads
 		this.serverSessionManager = new ServerSessionManager(this, outputQueue);

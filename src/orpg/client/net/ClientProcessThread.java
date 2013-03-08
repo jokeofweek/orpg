@@ -13,6 +13,7 @@ import orpg.client.net.handlers.LoginOkHandler;
 import orpg.client.net.handlers.MoveHandler;
 import orpg.client.net.handlers.NewMapHandler;
 import orpg.client.net.handlers.SegmentDataHandler;
+import orpg.client.net.handlers.SyncEntityPropertiesHandler;
 import orpg.shared.net.PacketProcessThread;
 import orpg.shared.net.ServerPacketType;
 
@@ -34,6 +35,7 @@ public class ClientProcessThread extends PacketProcessThread {
 		this.handlers.put(ServerPacketType.CLIENT_JOIN_MAP, new JoinMapHandler());
 		this.handlers.put(ServerPacketType.CLIENT_LEFT_MAP, new LeftMapHandler());
 		this.handlers.put(ServerPacketType.CLIENT_MOVE, new MoveHandler());
+		this.handlers.put(ServerPacketType.CLIENT_SYNC_ENTITY_PROPERTIES, new SyncEntityPropertiesHandler());
 	}
 
 	@Override

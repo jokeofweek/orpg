@@ -7,11 +7,11 @@ import orpg.shared.data.Pair;
 
 public abstract class MapExceptForPacket extends ServerPacket {
 
-	private Pair<ServerSession, Map> destinationObject;
+	private Pair<ServerSession, Integer> destinationObject;
 
-	public MapExceptForPacket(ServerSession serverSession, Map map) {
-		this.destinationObject = new Pair<ServerSession, Map>(
-				serverSession, map);
+	public MapExceptForPacket(ServerSession serverSession, int mapId) {
+		this.destinationObject = new Pair<ServerSession, Integer>(
+				serverSession, mapId);
 	}
 
 	@Override

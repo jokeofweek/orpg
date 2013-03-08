@@ -48,8 +48,8 @@ public class InputSystem extends EntityProcessingSystem {
 					&& movementSystem.canMove(e, x - 1, y)) {
 				moveable.setDirection(Direction.LEFT);
 				moveable.setMoving(true);
-
-				// baseClient.sendPacket(MoveRequestPacket.LEFT);
+				
+				baseClient.sendPacket(MoveRequestPacket.LEFT);
 				baseClient.getSegmentRequestManager()
 						.requestSurroundingSegments(x - 1, y);
 			} else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)
@@ -57,7 +57,7 @@ public class InputSystem extends EntityProcessingSystem {
 				moveable.setDirection(Direction.RIGHT);
 				moveable.setMoving(true);
 
-				// baseClient.sendPacket(MoveRequestPacket.RIGHT);
+				baseClient.sendPacket(MoveRequestPacket.RIGHT);
 				baseClient.getSegmentRequestManager()
 						.requestSurroundingSegments(x + 1, y);
 			} else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)
@@ -66,7 +66,7 @@ public class InputSystem extends EntityProcessingSystem {
 				moveable.setDirection(Direction.DOWN);
 				moveable.setMoving(true);
 
-				// baseClient.sendPacket(MoveRequestPacket.DOWN);
+				baseClient.sendPacket(MoveRequestPacket.DOWN);
 				baseClient.getSegmentRequestManager()
 						.requestSurroundingSegments(x, y + 1);
 			} else if (Gdx.input.isKeyPressed(Input.Keys.UP)
@@ -75,7 +75,7 @@ public class InputSystem extends EntityProcessingSystem {
 				moveable.setDirection(Direction.UP);
 				moveable.setMoving(true);
 
-				// baseClient.sendPacket(MoveRequestPacket.UP);
+				baseClient.sendPacket(MoveRequestPacket.UP);
 				baseClient.getSegmentRequestManager()
 						.requestSurroundingSegments(x, y - 1);
 			}

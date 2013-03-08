@@ -58,7 +58,6 @@ public class EntitySerializer extends Object implements
 		for (int i = 0; i < bag.size(); i++) {
 			if (bag.get(i) instanceof SynchronizeableComponent) {
 				component = (SynchronizeableComponent) bag.get(i);
-				out.putByte((byte)component.getType().ordinal());
 				out.putValue(component);
 			}
 		}

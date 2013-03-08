@@ -2,6 +2,8 @@ package orpg.server.net.handlers;
 
 import orpg.server.BaseServer;
 import orpg.server.data.ServerReceivedPacket;
+import orpg.server.event.PlayerRequestMovementEvent;
+import orpg.server.systems.MovementSystem;
 import orpg.shared.data.Direction;
 
 public class ClientMoveRequestHandler implements ServerPacketHandler {
@@ -14,16 +16,13 @@ public class ClientMoveRequestHandler implements ServerPacketHandler {
 					"Invalid move direction.");
 		}
 
-		// Make sure we can move
-		if (packet.getSession().getCharacter()
-				.canMove(Direction.values()[direction])) {
-			baseServer.getAccountController().move(
-					packet.getSession().getCharacter(),
-					Direction.values()[direction]);
-		} else {
-			packet.getSession()
-					.preventativeDisconnect("Position modification.");
-		}
+		baseServer
+				.getWorld()
+				.getSystem(MovementSystem.class)
+				.addEvent(
+						new PlayerRequestMovementEvent(packet.getSession(), Direction
+								.values()[direction]));
+
 	}
 
 }

@@ -19,11 +19,12 @@ import orpg.client.data.ClientReceivedPacket;
 public class PacketReadThread implements Runnable {
 
 	private Socket socket;
-	private AbstractClient baseClient;
+	private AbstractClient client;
 	private Queue<ClientReceivedPacket> inputQueue;
 
-	public PacketReadThread(Socket socket, AbstractClient baseClient,
+	public PacketReadThread(Socket socket, AbstractClient client,
 			BlockingQueue<ClientReceivedPacket> inputQueue) {
+		this.client = client;
 		this.socket = socket;
 		this.inputQueue = inputQueue;
 	}
@@ -47,8 +48,7 @@ public class PacketReadThread implements Runnable {
 					throw new EOFException("End of stream.");
 				} else if (tmpVal < -1
 						|| tmpVal >= ServerPacketType.values().length) {
-					this.baseClient
-							.disconnect("Invalid server packet type.");
+					this.client.disconnect("Invalid server packet type.");
 					break;
 				}
 
@@ -97,7 +97,7 @@ public class PacketReadThread implements Runnable {
 				inputQueue.add(new ClientReceivedPacket(type, bytes));
 			}
 		} catch (IOException io) {
-			this.baseClient.disconnect("End of stream.");
+			this.client.disconnect("End of stream.");
 		}
 	}
 

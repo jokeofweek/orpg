@@ -93,6 +93,8 @@ public class ServerSessionManager implements Runnable {
 		sessions.remove(session);
 		baseServer.getConfigManager().getSessionLogger()
 				.log(Level.INFO, "Session removed - " + session.getId());
+
+		session.setSessionType(SessionType.LOGGED_OUT);
 	}
 
 	public ServerSession getInGameSession(String name) {
@@ -121,8 +123,7 @@ public class ServerSessionManager implements Runnable {
 		// there is at least one other session with that account, else
 		// create a new list.
 		if (accountSessions.containsKey(session.getAccount().getName())) {
-			accountSessions.get(session.getAccount().getName()).add(
-					session);
+			accountSessions.get(session.getAccount().getName()).add(session);
 		} else {
 			List<ServerSession> sessions = new ArrayList<ServerSession>(1);
 			sessions.add(session);
@@ -192,24 +193,23 @@ public class ServerSessionManager implements Runnable {
 					}
 					break;
 				case MAP:
-					Map map = (Map) packet.getDestinationObject();
+					Integer id = (Integer) packet.getDestinationObject();
 
 					ImmutableBag<Entity> entities = baseServer
 							.getWorld()
 							.getManager(GroupManager.class)
 							.getEntities(
-									String.format(
-											Constants.GROUP_MAP_PLAYERS,
-											map.getId()));
+									String.format(Constants.GROUP_MAP_PLAYERS,
+											id));
 
 					for (int i = 0; i < entities.size(); i++) {
-						getEntitySession(entities.get(i)).getOutputQueue()
-								.add(rawBytes);
+						getEntitySession(entities.get(i)).getOutputQueue().add(
+								rawBytes);
 					}
 
 					break;
 				case MAP_EXCEPT_FOR:
-					Pair<ServerSession, Map> destinationObject = (Pair<ServerSession, Map>) packet
+					Pair<ServerSession, Integer> destinationObject = (Pair<ServerSession, Integer>) packet
 							.getDestinationObject();
 					ServerSession session;
 					ServerSession toExclude = destinationObject.getFirst();
@@ -218,10 +218,8 @@ public class ServerSessionManager implements Runnable {
 							.getWorld()
 							.getManager(GroupManager.class)
 							.getEntities(
-									String.format(
-											Constants.GROUP_MAP_PLAYERS,
-											destinationObject.getSecond()
-													.getId()));
+									String.format(Constants.GROUP_MAP_PLAYERS,
+											destinationObject.getSecond()));
 
 					for (int i = 0; i < entities.size(); i++) {
 						session = getEntitySession(entities.get(i));

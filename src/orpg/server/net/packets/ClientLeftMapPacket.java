@@ -22,17 +22,17 @@ public class ClientLeftMapPacket extends MapExceptForPacket {
 	 * 
 	 * @param serverSession
 	 *            the session of the entity
-	 * @param map
-	 * 			  the map the entity is leaving
+	 * @param mapId
+	 * 			  the id of the map the entity is leaving
 	 * @param entity
 	 *            the entity that has left.
 	 */
-	public ClientLeftMapPacket(ServerSession serverSession, Map map,
+	public ClientLeftMapPacket(ServerSession serverSession, int mapId,
 			Entity entity) {
-		super(serverSession, map);
+		super(serverSession, mapId);
 		OutputByteBuffer out = new OutputByteBuffer(8);
 
-		out.putInt(map.getId()); // put this for sanity check on client side
+		out.putInt(mapId); // put this for sanity check on client side
 		out.putInt(entity.getId());
 		this.bytes = out.getBytes();
 

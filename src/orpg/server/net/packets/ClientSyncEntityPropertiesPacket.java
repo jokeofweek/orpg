@@ -1,30 +1,37 @@
 package orpg.server.net.packets;
 
+import java.beans.DesignMode;
+
 import com.artemis.ComponentType;
 import com.artemis.Entity;
 
 import orpg.server.ServerSession;
+import orpg.server.data.DestinationType;
 import orpg.shared.data.component.Position;
 import orpg.shared.data.component.SynchronizeableComponent;
 import orpg.shared.net.ServerPacketType;
 import orpg.shared.net.serialize.OutputByteBuffer;
+import sun.security.krb5.internal.crypto.Des;
 
-public class ClientSyncEntity extends SessionPacket {
+public class ClientSyncEntityPropertiesPacket extends MapExceptForPacket {
 
 	private byte[] bytes;
 
-	public ClientSyncEntity(ServerSession session, Entity entity,
-			Class<SynchronizeableComponent>... components) {
-		super(session);
+	public ClientSyncEntityPropertiesPacket(ServerSession session, Entity entity,
+			boolean ignoreSession,
+			Class<? extends SynchronizeableComponent>... components) {
+		super(ignoreSession ? session : null, entity.getComponent(
+				Position.class).getMap());
+
 		OutputByteBuffer out = new OutputByteBuffer();
 		out.putInt(entity.getId());
 		out.putByte((byte) components.length);
 
-		for (Class<SynchronizeableComponent> type : components) {
+		for (Class<? extends SynchronizeableComponent> component : components) {
 			out.putValue((SynchronizeableComponent) entity
-					.getComponent(ComponentType.getTypeFor(type)));
+					.getComponent(ComponentType.getTypeFor(component)));
 		}
-		
+
 		this.bytes = out.getBytes();
 	}
 
@@ -37,4 +44,5 @@ public class ClientSyncEntity extends SessionPacket {
 	public byte[] getBytes() {
 		return bytes;
 	}
+
 }

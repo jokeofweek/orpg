@@ -43,8 +43,7 @@ public class MapController implements Controller<Map, Integer> {
 	public MapController(BaseServer baseServer, DataStore dataStore) {
 		this.baseServer = baseServer;
 		this.dataStore = dataStore;
-		this.positionMapper = baseServer.getWorld().getMapper(
-				Position.class);
+		this.positionMapper = baseServer.getWorld().getMapper(Position.class);
 		this.namedMapper = baseServer.getWorld().getMapper(Named.class);
 	}
 
@@ -65,8 +64,7 @@ public class MapController implements Controller<Map, Integer> {
 					+ ".map");
 			if (!file.exists()) {
 				// Save the map based on the empty template
-				emptyMapTemplate = new Map(i + 1, (short) 3, (short) 3,
-						true);
+				emptyMapTemplate = new Map(i + 1, (short) 3, (short) 3, true);
 				try {
 					dataStore.saveMap(emptyMapTemplate);
 				} catch (DataStoreException e) {
@@ -74,9 +72,8 @@ public class MapController implements Controller<Map, Integer> {
 							.getConsole()
 							.out()
 							.println(
-									"Could not create empty map "
-											+ (i + 1) + ". Reason: "
-											+ e.getMessage());
+									"Could not create empty map " + (i + 1)
+											+ ". Reason: " + e.getMessage());
 					return false;
 				}
 				this.maps[i] = emptyMapTemplate;
@@ -91,8 +88,7 @@ public class MapController implements Controller<Map, Integer> {
 							.out()
 							.println(
 									"Could not load map " + (i + 1)
-											+ ". Reason: "
-											+ e.getMessage());
+											+ ". Reason: " + e.getMessage());
 					return false;
 				}
 			}
@@ -141,8 +137,7 @@ public class MapController implements Controller<Map, Integer> {
 
 		if (x < 0 || x >= this.maps[id].getSegmentsWide() || y < 0
 				|| y >= this.maps[id].getSegmentsHigh()) {
-			throw new IndexOutOfBoundsException(
-					"Invalid segment position.");
+			throw new IndexOutOfBoundsException("Invalid segment position.");
 		}
 
 		if (this.maps[id].getSegment(x, y) == null) {
@@ -155,9 +150,8 @@ public class MapController implements Controller<Map, Integer> {
 						.getConfigManager()
 						.getErrorLogger()
 						.log(Level.SEVERE,
-								"Could not load segment for map " + id
-										+ "[" + x + "][" + y
-										+ "]. Error reason: "
+								"Could not load segment for map " + id + "["
+										+ x + "][" + y + "]. Error reason: "
 										+ e.getMessage());
 			}
 		}
@@ -184,8 +178,7 @@ public class MapController implements Controller<Map, Integer> {
 	 */
 	public void update(Map map) {
 		if (map.getId() <= 0
-				|| map.getId() > baseServer.getConfigManager()
-						.getTotalMaps()) {
+				|| map.getId() > baseServer.getConfigManager().getTotalMaps()) {
 			throw new IllegalArgumentException(
 					"Tried to update map with non-existant number "
 							+ map.getId());
@@ -211,8 +204,7 @@ public class MapController implements Controller<Map, Integer> {
 					.getErrorLogger()
 					.log(Level.SEVERE,
 							"Could not save map " + map.getId()
-									+ " in editor. Reason: "
-									+ e.getMessage());
+									+ " in editor. Reason: " + e.getMessage());
 			return false;
 		}
 	}
@@ -252,9 +244,11 @@ public class MapController implements Controller<Map, Integer> {
 				GroupManager.class);
 		groupManager.add(entity,
 				String.format(Constants.GROUP_MAP, position.getMap()));
-		groupManager.add(entity, String.format(Constants.GROUP_SEGMENT,
-				position.getMap(), map.getSegmentX(position.getX()),
-				map.getSegmentY(position.getY())));
+		groupManager.add(
+				entity,
+				String.format(Constants.GROUP_SEGMENT, position.getMap(),
+						map.getSegmentX(position.getX()),
+						map.getSegmentY(position.getY())));
 
 		// If this particular entity is a player, must remove them from segment
 		// players as well
@@ -266,7 +260,8 @@ public class MapController implements Controller<Map, Integer> {
 					String.format(Constants.GROUP_MAP_PLAYERS,
 							position.getMap()));
 
-			session = baseServer.getServerSessionManager().getEntitySession(entity);
+			session = baseServer.getServerSessionManager().getEntitySession(
+					entity);
 
 			if (session != null) {
 				refreshMap(session);
@@ -274,7 +269,8 @@ public class MapController implements Controller<Map, Integer> {
 		}
 
 		// Notify the other players that this player has joined the map
-		baseServer.sendPacket(new ClientJoinMapPacket(session, map, entity));
+		baseServer.sendPacket(new ClientJoinMapPacket(session, map.getId(),
+				entity));
 	}
 
 	/**
@@ -292,20 +288,23 @@ public class MapController implements Controller<Map, Integer> {
 		// If it is a player, get the server session
 		ServerSession session = null;
 		if (groupManager.inInGroup(entity, Constants.GROUP_PLAYERS)) {
-			session = baseServer.getServerSessionManager().getEntitySession(entity);
+			session = baseServer.getServerSessionManager().getEntitySession(
+					entity);
 		}
 
 		Map map = get(position.getMap());
 
 		// Notify the other players that this player has left the map
-		baseServer
-				.sendPacket(new ClientLeftMapPacket(session, map, entity));
+		baseServer.sendPacket(new ClientLeftMapPacket(session, map.getId(),
+				entity));
 
 		groupManager.remove(entity,
 				String.format(Constants.GROUP_MAP, position.getMap()));
-		groupManager.remove(entity, String.format(Constants.GROUP_SEGMENT,
-				position.getMap(), map.getSegmentX(position.getX()),
-				map.getSegmentY(position.getY())));
+		groupManager.remove(
+				entity,
+				String.format(Constants.GROUP_SEGMENT, position.getMap(),
+						map.getSegmentX(position.getX()),
+						map.getSegmentY(position.getY())));
 
 		// If this particular entity is a player, must remove them from segment
 		// players as well
@@ -329,11 +328,10 @@ public class MapController implements Controller<Map, Integer> {
 	public void warpToMap(Entity entity, int mapId, int x, int y) {
 		// Check to make sure the session isn't currently waiting for a map.
 
-		if (!baseServer.getWorld().getManager(GroupManager.class).inInGroup(entity, Constants.GROUP_PLAYERS)
-				|| !baseServer
-						.getServerSessionManager()
-						.getEntitySession(entity)
-						.isWaitingForMap()) {
+		if (!baseServer.getWorld().getManager(GroupManager.class)
+				.inInGroup(entity, Constants.GROUP_PLAYERS)
+				|| !baseServer.getServerSessionManager()
+						.getEntitySession(entity).isWaitingForMap()) {
 
 			leaveMap(entity);
 		}

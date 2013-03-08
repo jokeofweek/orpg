@@ -8,7 +8,6 @@ import com.artemis.managers.GroupManager;
 import com.artemis.managers.PlayerManager;
 import com.artemis.utils.Bag;
 
-
 public class Test {
 
 	/**
@@ -16,15 +15,18 @@ public class Test {
 	 */
 	public static void main(String[] args) {
 		World world = new World();
-		world.setManager(new GroupManager());
-		world.setManager(new PlayerManager());
 		world.initialize();
-		
+
 		Entity e = world.createEntity();
-		world.getManager(PlayerManager.class).setPlayer(e, "blab");
-		e.deleteFromWorld();
-		System.out.println(world.getManager(PlayerManager.class).getEntitiesOfPlayer("blah").size());
-		
+		e.addComponent(new Position(5, 5, 5));
+		world.addEntity(e);
+		world.process();
+		e.addComponent(new Position(10, 10, 1000));
+		world.changedEntity(e);
+		world.process();
+
+		System.out.println(e.getComponent(Position.class).getX());
+
 	}
 
 }

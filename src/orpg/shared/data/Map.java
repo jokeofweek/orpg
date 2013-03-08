@@ -25,9 +25,8 @@ public class Map {
 
 	public Map(int id, short segmentsWide, short segmentsHigh,
 			boolean createSegments) {
-		this(id, Constants.MAP_SEGMENT_WIDTH,
-				Constants.MAP_SEGMENT_HEIGHT, segmentsWide, segmentsHigh,
-				createSegments);
+		this(id, Constants.MAP_SEGMENT_WIDTH, Constants.MAP_SEGMENT_HEIGHT,
+				segmentsWide, segmentsHigh, createSegments);
 	}
 
 	public Map(int id, short segmentWidth, short segmentHeight,
@@ -117,8 +116,7 @@ public class Map {
 	}
 
 	public Segment getSegment(short x, short y) {
-		if (x < 0 || y < 0 || x >= segments.length
-				|| y >= segments[0].length) {
+		if (x < 0 || y < 0 || x >= segments.length || y >= segments[0].length) {
 			throw new IllegalArgumentException("Invalid segment position.");
 		}
 
@@ -132,7 +130,6 @@ public class Map {
 			throw new IllegalArgumentException("Invalid segment position.");
 		}
 
-				
 		// Copy over players
 		Segment oldSegment = this.segments[segment.getX()][segment.getY()];
 		if (oldSegment != null) {
@@ -160,8 +157,7 @@ public class Map {
 
 	public Segment getPositionSegment(int x, int y)
 			throws IllegalArgumentException {
-		if (x < 0 || y < 0
-				|| x >= this.segmentWidth * this.segments.length
+		if (x < 0 || y < 0 || x >= this.segmentWidth * this.segments.length
 				|| y >= this.segmentHeight * this.segments[0].length) {
 			throw new IllegalArgumentException("Invalid segment position.");
 		}

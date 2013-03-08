@@ -7,7 +7,6 @@ import orpg.server.BaseServer;
 import orpg.server.data.Account;
 import orpg.server.data.store.DataStore;
 import orpg.shared.data.store.DataStoreException;
-import orpg.server.net.packets.ClientMovePacket;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Direction;
 
@@ -144,43 +143,4 @@ public class AccountController implements Controller<Account, String> {
 		return true;
 	}
 
-	/**
-	 * This attempts to move a character in a given direction.
-	 * 
-	 * @param character
-	 * @param direction
-	 * @return true if the move was successful.
-	 */
-	public boolean move(AccountCharacter character, Direction direction) {
-		if (character.canMove(direction)) {
-			int oldX = character.getX();
-			int oldY = character.getY();
-			switch (direction) {
-			case UP:
-				character.setY(character.getY() - 1);
-				break;
-			case DOWN:
-				character.setY(character.getY() + 1);
-				break;
-			case LEFT:
-				character.setX(character.getX() - 1);
-				break;
-			case RIGHT:
-				character.setX(character.getX() + 1);
-				break;
-			}
-
-			// Update the position on the map (perhaps changing segments)
-			// character.getMap().updatePlayer(character, oldX, oldY);
-
-			// Send the move packet
-			baseServer.sendPacket(new ClientMovePacket(baseServer
-					.getServerSessionManager().getInGameSession(
-							character.getName()), character, direction));
-
-			return true;
-		} else {
-			return false;
-		}
-	}
 }

@@ -29,15 +29,15 @@ public class Moveable extends SynchronizeableComponent {
 		this.isMoving = isMoving;
 		this.setMoveProcessed(false);
 	}
-	
+
 	public boolean isMoveProcessed() {
 		return isMoveProcessed;
 	}
-	
+
 	public void setMoveProcessed(boolean isMoveProcessed) {
 		this.isMoveProcessed = isMoveProcessed;
 	}
-	
+
 	@Override
 	public SynchronizeableComponentType getType() {
 		return SynchronizeableComponentType.MOVEABLE;
@@ -60,8 +60,9 @@ public class Moveable extends SynchronizeableComponent {
 			// Make a byte from the direction, and then left shift and add a bit
 			// for the boolean. This is done to put all move data in one byte.
 			Moveable r = (Moveable) obj;
-			byte v = (byte) ((r.getDirection().ordinal() << 1) | (r.isMoving ? 1
-					: 0));
+			byte v = (byte) ((r.getDirection().ordinal() << 2) 
+					| (r.isMoving ? 2 : 0)
+					| (r.isMoveProcessed ? 1 : 0));
 
 			out.putByte(v);
 		}
@@ -70,8 +71,9 @@ public class Moveable extends SynchronizeableComponent {
 		public Moveable get(InputByteBuffer in) {
 			byte v = in.getByte();
 			Moveable moveable = new Moveable();
-			moveable.setMoving((v & 1) == 1);
-			moveable.setDirection(Direction.values()[v >> 1]);
+			moveable.setMoving((v & 2) == 2);
+			moveable.setMoveProcessed((v & 1) == 1);
+			moveable.setDirection(Direction.values()[v >> 2]);
 			return moveable;
 		}
 	}

@@ -4,5 +4,6 @@ public enum SessionType {
 	ANONYMOUS,
 	LOGGED_IN,
 	GAME,
-	EDITOR
+	EDITOR,
+	LOGGED_OUT
 }
