@@ -20,8 +20,8 @@ public class ClientMoveRequestHandler implements ServerPacketHandler {
 				.getWorld()
 				.getSystem(MovementSystem.class)
 				.addEvent(
-						new PlayerRequestMovementEvent(packet.getSession(), Direction
-								.values()[direction]));
+						new PlayerRequestMovementEvent(packet.getSession(),
+								Direction.values()[direction]));
 
 	}
 

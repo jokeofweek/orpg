@@ -65,7 +65,7 @@ public class MovementSystem extends EntityProcessingSystem {
 				position.setX(position.getX() + 1);
 				break;
 			}
-			
+
 			updateEntitySegment(e, oldX, oldY);
 
 			// Animate if necessary
@@ -85,38 +85,42 @@ public class MovementSystem extends EntityProcessingSystem {
 		Position position = positionMapper.getSafe(entity);
 
 		if (position != null) {
-			boolean requiresMapJoin = false;
-			boolean requiresSegmentJoin = false;
+			updateEntitySegment(entity, oldX, oldY, position.getX(),
+					position.getY());
+		}
+	}
 
-			Map map = baseClient.getMap();
+	public void updateEntitySegment(Entity entity, int oldX, int oldY,
+			int newX, int newY) {
+		// Add groups based on components
 
-			if (!groupManager.inInGroup(entity, ClientConstants.GROUP_MAP)) {
-				requiresMapJoin = true;
-				requiresSegmentJoin = true;
-			} else if (map.getSegmentX(oldX) != map
-					.getSegmentX(position.getX())
-					|| map.getSegmentY(oldY) != map
-							.getSegmentY(position.getY())) {
-				requiresSegmentJoin = true;
-				groupManager.remove(
-						entity,
-						String.format(ClientConstants.GROUP_MAP_SEGMENT,
-								map.getSegmentX(oldX), map.getSegmentY(oldY)));
-			}
+		boolean requiresMapJoin = false;
+		boolean requiresSegmentJoin = false;
 
-			// Register the map / segment groups
-			if (requiresMapJoin) {
-				groupManager.add(entity, ClientConstants.GROUP_MAP);
-			}
+		Map map = baseClient.getMap();
 
-			if (requiresSegmentJoin) {
-				groupManager.add(
-						entity,
-						String.format(ClientConstants.GROUP_MAP_SEGMENT,
-								map.getSegmentX(position.getX()),
-								map.getSegmentY(position.getY())));
-			}
+		if (!groupManager.inInGroup(entity, ClientConstants.GROUP_MAP)) {
+			requiresMapJoin = true;
+			requiresSegmentJoin = true;
+		} else if (map.getSegmentX(oldX) != map.getSegmentX(newX)
+				|| map.getSegmentY(oldY) != map.getSegmentY(newY)) {
+			requiresSegmentJoin = true;
+			groupManager.remove(
+					entity,
+					String.format(ClientConstants.GROUP_MAP_SEGMENT,
+							map.getSegmentX(oldX), map.getSegmentY(oldY)));
+		}
 
+		// Register the map / segment groups
+		if (requiresMapJoin) {
+			groupManager.add(entity, ClientConstants.GROUP_MAP);
+		}
+
+		if (requiresSegmentJoin) {
+			groupManager.add(
+					entity,
+					String.format(ClientConstants.GROUP_MAP_SEGMENT,
+							map.getSegmentX(newX), map.getSegmentY(newY)));
 		}
 	}
 

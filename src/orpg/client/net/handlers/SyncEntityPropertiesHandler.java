@@ -6,6 +6,8 @@ import com.badlogic.gdx.Gdx;
 
 import orpg.client.BaseClient;
 import orpg.client.data.ClientReceivedPacket;
+import orpg.client.systems.MovementSystem;
+import orpg.shared.data.component.Position;
 import orpg.shared.data.component.SynchronizeableComponent;
 import orpg.shared.net.serialize.EntitySerializer;
 import orpg.shared.net.serialize.SynchronizeableComponentSerializer;
@@ -16,7 +18,7 @@ public class SyncEntityPropertiesHandler implements ClientPacketHandler {
 	public void handle(ClientReceivedPacket packet, final BaseClient client) {
 		final String entityId = "" + packet.getByteBuffer().getInt();
 		byte count = packet.getByteBuffer().getByte();
-		
+
 		final SynchronizeableComponent[] components = new SynchronizeableComponent[count];
 		for (int i = 0; i < count; i++) {
 			components[i] = packet.getByteBuffer().getValue(
@@ -32,7 +34,19 @@ public class SyncEntityPropertiesHandler implements ClientPacketHandler {
 
 				if (entity != null) {
 					for (SynchronizeableComponent component : components) {
+						// special case for position
+						if (component instanceof Position) {
+							Position old = entity.getComponent(Position.class);
+							Position newer = (Position) component;
+							entity.getWorld()
+									.getSystem(MovementSystem.class)
+									.updateEntitySegment(entity, old.getX(),
+											old.getY(), newer.getX(),
+											newer.getY());
+						}
+
 						entity.addComponent(component);
+
 					}
 					entity.changedInWorld();
 				}
