@@ -1,12 +1,10 @@
+import orpg.client.data.component.Animated;
+import orpg.client.data.component.AnimatedPlayer;
 import orpg.shared.data.component.Position;
-import orpg.shared.data.component.Renderable;
 
-import com.artemis.Component;
+import com.artemis.ComponentType;
 import com.artemis.Entity;
 import com.artemis.World;
-import com.artemis.managers.GroupManager;
-import com.artemis.managers.PlayerManager;
-import com.artemis.utils.Bag;
 
 public class Test {
 
@@ -24,8 +22,9 @@ public class Test {
 		e.addComponent(new Position(10, 10, 1000));
 		world.changedEntity(e);
 		world.process();
-
-		System.out.println(e.getComponent(Position.class).getX());
+		e.addComponent((Animated)new AnimatedPlayer(), ComponentType.getTypeFor(Animated.class));
+		world.changedEntity(e);
+		world.process();
 
 	}
 

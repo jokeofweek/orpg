@@ -44,7 +44,7 @@ public class MovementSystem extends EntityProcessingSystem {
 	public void addEvent(MovementEvent event) {
 		this.events.add(event);
 	}
-
+	
 	public void updateEntitySegment(Entity entity, int oldMapId, int oldX,
 			int oldY) {
 		Position position = positionMapper.getSafe(entity);

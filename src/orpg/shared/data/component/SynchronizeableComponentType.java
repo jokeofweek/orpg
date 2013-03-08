@@ -1,5 +1,6 @@
 package orpg.shared.data.component;
 
+import orpg.server.data.components.Collideable;
 import orpg.shared.net.serialize.ValueSerializer;
 
 public enum SynchronizeableComponentType {
@@ -7,7 +8,8 @@ public enum SynchronizeableComponentType {
 	POSITION(Position.Serializer.getInstance()), RENDERABLE(
 			Renderable.Serializer.getInstance()), NAMED(Named.Serializer
 			.getInstance()), IS_PLAYER(IsPlayer.Serializer.getInstance()), MOVEABLE(
-			Moveable.Serializer.getInstance());
+			Moveable.Serializer.getInstance()), COLLIDEABLE(
+			Collideable.Serializer.getInstance());
 
 	private ValueSerializer<SynchronizeableComponent> serializer;
 

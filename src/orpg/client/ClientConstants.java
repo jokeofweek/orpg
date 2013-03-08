@@ -6,6 +6,7 @@ public final class ClientConstants {
 
 	// Entity groups
 	public static final String GROUP_PLAYERS = "players";
+	public static final String GROUP_COLLIDEABLE = "collideable";
 	public static final String GROUP_MAP = "map";
 	public static final String GROUP_MAP_SEGMENT = "map_%d_%d";
 	

@@ -4,15 +4,19 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Mapper;
+import com.artemis.managers.GroupManager;
 import com.artemis.systems.EntityProcessingSystem;
+import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
 import orpg.client.BaseClient;
+import orpg.client.ClientConstants;
 import orpg.client.data.component.Animated;
 import orpg.client.data.component.AnimatedPlayer;
 import orpg.client.data.component.HandlesInput;
 import orpg.client.net.packets.MoveRequestPacket;
+import orpg.server.data.components.Collideable;
 import orpg.shared.data.Direction;
 import orpg.shared.data.component.Moveable;
 import orpg.shared.data.component.Named;
@@ -45,15 +49,17 @@ public class InputSystem extends EntityProcessingSystem {
 			int y = position.getY();
 
 			if (Gdx.input.isKeyPressed(Input.Keys.LEFT)
-					&& movementSystem.canMove(e, x - 1, y)) {
+					&& movementSystem.canMove(e, x - 1, y)
+					&& !movementSystem.hasBlockingEntities(x - 1, y)) {
 				moveable.setDirection(Direction.LEFT);
 				moveable.setMoving(true);
-				
+
 				baseClient.sendPacket(MoveRequestPacket.LEFT);
 				baseClient.getSegmentRequestManager()
 						.requestSurroundingSegments(x - 1, y);
 			} else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)
-					&& movementSystem.canMove(e, x + 1, y)) {
+					&& movementSystem.canMove(e, x + 1, y)
+					&& !movementSystem.hasBlockingEntities(x + 1, y)) {
 				moveable.setDirection(Direction.RIGHT);
 				moveable.setMoving(true);
 
@@ -61,7 +67,8 @@ public class InputSystem extends EntityProcessingSystem {
 				baseClient.getSegmentRequestManager()
 						.requestSurroundingSegments(x + 1, y);
 			} else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)
-					&& movementSystem.canMove(e, x, y + 1)) {
+					&& movementSystem.canMove(e, x, y + 1)
+					&& !movementSystem.hasBlockingEntities(x, y + 1)) {
 
 				moveable.setDirection(Direction.DOWN);
 				moveable.setMoving(true);
@@ -70,7 +77,8 @@ public class InputSystem extends EntityProcessingSystem {
 				baseClient.getSegmentRequestManager()
 						.requestSurroundingSegments(x, y + 1);
 			} else if (Gdx.input.isKeyPressed(Input.Keys.UP)
-					&& movementSystem.canMove(e, x, y - 1)) {
+					&& movementSystem.canMove(e, x, y - 1)
+					&& !movementSystem.hasBlockingEntities(x, y - 1)) {
 
 				moveable.setDirection(Direction.UP);
 				moveable.setMoving(true);

@@ -8,6 +8,8 @@ import com.artemis.utils.Bag;
 import com.artemis.utils.ImmutableBag;
 
 import orpg.server.BaseServer;
+import orpg.server.data.components.Collideable;
+import orpg.server.handler.EmptyCollisionHandler;
 import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.component.IsPlayer;
@@ -46,6 +48,11 @@ public class EntityFactory {
 		Moveable moveable = new Moveable();
 		moveable.setDirection(character.getDirection());
 		entity.addComponent(moveable);
+		Collideable collideable = new Collideable();
+		collideable.setPassable(false);
+		collideable.setCollisionHandler(EmptyCollisionHandler
+				.getInstance());
+		entity.addComponent(collideable);
 
 		// Add the player to the players group
 		GroupManager groups = world.getManager(GroupManager.class);
@@ -54,7 +61,7 @@ public class EntityFactory {
 				character.getName());
 
 		world.addEntity(entity);
-		
+
 		return entity;
 	}
 
@@ -62,7 +69,7 @@ public class EntityFactory {
 		ImmutableBag<Entity> matchingEntities = world.getManager(
 				PlayerManager.class).getEntitiesOfPlayer(
 				character.getName());
-		
+
 		// If we have a match, remove it from the world
 		for (int i = 0; i < matchingEntities.size(); i++) {
 			removeEntity(matchingEntities.get(i));
@@ -72,5 +79,5 @@ public class EntityFactory {
 	public void removeEntity(Entity entity) {
 		entity.getWorld().deleteEntity(entity);
 	}
-	
+
 }

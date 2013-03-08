@@ -1,18 +1,28 @@
 package orpg.server.event;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.artemis.ComponentMapper;
 import com.artemis.Entity;
+import com.artemis.World;
 import com.artemis.managers.GroupManager;
+import com.artemis.utils.Bag;
+import com.artemis.utils.ImmutableBag;
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 
 import orpg.server.BaseServer;
 import orpg.server.ServerSession;
 import orpg.server.data.SessionType;
+import orpg.server.data.components.Collideable;
+import orpg.server.handler.CollisionHandler;
 import orpg.server.net.packets.ClientMovePacket;
 import orpg.server.net.packets.ClientSyncEntityPropertiesPacket;
 import orpg.server.systems.MovementSystem;
 import orpg.shared.Constants;
 import orpg.shared.data.Direction;
+import orpg.shared.data.Map;
+import orpg.shared.data.Pair;
 import orpg.shared.data.component.Moveable;
 import orpg.shared.data.component.Position;
 
@@ -60,33 +70,69 @@ public class PlayerRequestMovementEvent extends MovementEvent {
 			break;
 		}
 
-		if (baseServer.getMapController().get(position.getMap())
-				.isWalkable(x, y)) {
+		Map map = baseServer.getMapController().get(position.getMap());
 
-			int oldX = position.getX();
-			int oldY = position.getY();
+		if (map.isWalkable(x, y)) {
 
-			position.setX(x);
-			position.setY(y);
-			moveable.setDirection(direction);
+			// Check for any collisions, building a list of
+			// collision handlers to process if we are succesful.
+			ComponentMapper<Collideable> collideableMapper = baseServer
+					.getWorld().getMapper(Collideable.class);
+			ComponentMapper<Position> positionMapper = baseServer
+					.getWorld().getMapper(Position.class);
 
-			if (x == 10 && y == 10) {
-				position.setX(15);
-				position.setY(5);
+			ImmutableBag<Entity> segmentEntities = baseServer
+					.getWorld()
+					.getManager(GroupManager.class)
+					.getEntities(
+							String.format(Constants.GROUP_SEGMENT,
+									map.getId(), map.getSegmentX(x),
+									map.getSegmentY(y)));
 
-				movementSystem.updateEntitySegment(entity,
-						position.getMap(), oldX, oldY);
+			Position otherPosition;
+			Collideable collideable;
+			Entity other;
+			List<Pair<Entity, CollisionHandler>> handlers = new ArrayList<Pair<Entity, CollisionHandler>>();
+			boolean passable = true;
 
-				baseServer
-						.sendPacket(new ClientSyncEntityPropertiesPacket(
-								session, entity, false, Position.class));
-			} else {
+			for (int i = 0; i < segmentEntities.size(); i++) {
+				other = segmentEntities.get(i);
+				collideable = collideableMapper.getSafe(other);
+				if (collideable != null) {
+					otherPosition = positionMapper.getSafe(other);
+					if (otherPosition != null && otherPosition.getX() == x
+							&& otherPosition.getY() == y) {
+						if (!collideable.isPassable()) {
+							passable = false;
+							break;
+						} else {
+							handlers.add(new Pair<Entity, CollisionHandler>(
+									other, collideable
+											.getCollisionHandler()));
+						}
+					}
+				}
+			}
+
+			if (passable) {
+				int oldX = position.getX();
+				int oldY = position.getY();
+
+				position.setX(x);
+				position.setY(y);
+				moveable.setDirection(direction);
 
 				movementSystem.updateEntitySegment(entity,
 						position.getMap(), oldX, oldY);
 
 				baseServer.sendPacket(new ClientMovePacket(session,
 						position.getMap(), entity, direction, true));
+
+				// Iterate through the handlers
+				for (Pair<Entity, CollisionHandler> handler : handlers) {
+					handler.getSecond().onCollision(baseServer,
+							handler.getFirst(), entity);
+				}
 			}
 
 		} else {

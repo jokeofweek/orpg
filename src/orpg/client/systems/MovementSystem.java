@@ -5,6 +5,7 @@ import orpg.client.ClientConstants;
 import orpg.client.data.component.Animated;
 import orpg.client.data.component.AnimatedPlayer;
 import orpg.client.data.component.HandlesInput;
+import orpg.server.data.components.Collideable;
 import orpg.shared.data.Direction;
 import orpg.shared.data.Map;
 import orpg.shared.data.component.IsPlayer;
@@ -18,7 +19,12 @@ import com.artemis.annotations.Mapper;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.PlayerManager;
 import com.artemis.systems.EntityProcessingSystem;
+import com.artemis.utils.ImmutableBag;
 
+/**
+ * @author Dom
+ * 
+ */
 public class MovementSystem extends EntityProcessingSystem {
 
 	@Mapper
@@ -29,6 +35,8 @@ public class MovementSystem extends EntityProcessingSystem {
 	ComponentMapper<AnimatedPlayer> animatedMapper;
 	@Mapper
 	ComponentMapper<IsPlayer> isPlayerMapper;
+	@Mapper
+	ComponentMapper<Collideable> collideableMapper;
 
 	private BaseClient baseClient;
 	private GroupManager groupManager;
@@ -124,4 +132,31 @@ public class MovementSystem extends EntityProcessingSystem {
 		}
 	}
 
+	/**
+	 * This checks whether there are any entities with the {@link Collideable}
+	 * component which has the {@link Collideable#isPassable()} set to false at
+	 * a given position.
+	 * 
+	 * @param x
+	 * @param y
+	 * @return true if there is an entity which is not passable at a given slot.
+	 */
+	public boolean hasBlockingEntities(int x, int y) {
+		ImmutableBag<Entity> entities = groupManager
+				.getEntities(ClientConstants.GROUP_COLLIDEABLE);
+		Entity entity;
+		Position position;
+
+		for (int i = 0; i < entities.size(); i++) {
+			entity = entities.get(i);
+			position = positionMapper.get(entity);
+			if (position.getX() == x && position.getY() == y) {
+				if (!collideableMapper.get(entity).isPassable()) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
 }
