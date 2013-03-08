@@ -83,16 +83,23 @@ public class RenderSystem extends EntityProcessingSystem {
 
 		// Calculate the frame offset
 		int frame = 0;
+		int offsetX = 0;
+		int offsetY = 0;
+		
 		if (animation != null) {
 			frame = animation.getFrame();
+			if (animation.isAnimating()) {
+				offsetX = animation.getXOffset();
+				offsetY = animation.getYOffset();
+			}
 		}
 
 		spriteBatch
 				.draw(spriteSets[spriteSet],
 						((position.getX() - startX) * Constants.TILE_WIDTH)
-								- dX + animation.getXOffset(),
+								- dX + offsetX,
 						((position.getY() - startY) * Constants.TILE_WIDTH)
-								- dY + animation.getYOffset(),
+								- dY + offsetY,
 						Constants.SPRITE_FRAME_WIDTH,
 						Constants.SPRITE_FRAME_HEIGHT,
 						(spriteX * Constants.SPRITE_WIDTH)

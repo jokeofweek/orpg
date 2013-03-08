@@ -21,13 +21,15 @@ public class PlayerRequestMovementEvent extends MovementEvent {
 	private ServerSession session;
 	private Direction direction;
 
-	public PlayerRequestMovementEvent(ServerSession session, Direction direction) {
+	public PlayerRequestMovementEvent(ServerSession session,
+			Direction direction) {
 		this.direction = direction;
 		this.session = session;
 	}
 
 	@Override
-	public void process(BaseServer baseServer, MovementSystem movementSystem) {
+	public void process(BaseServer baseServer,
+			MovementSystem movementSystem) {
 		// Safety test
 		if (session.getSessionType() == SessionType.LOGGED_OUT) {
 			return;
@@ -67,11 +69,25 @@ public class PlayerRequestMovementEvent extends MovementEvent {
 			position.setX(x);
 			position.setY(y);
 			moveable.setDirection(direction);
-			movementSystem.updateEntitySegment(entity, position.getMap(), oldX,
-					oldY);
 
-			baseServer.sendPacket(new ClientMovePacket(session, position
-					.getMap(), entity, direction, true));
+			if (x == 10 && y == 10) {
+				position.setX(15);
+				position.setY(5);
+
+				movementSystem.updateEntitySegment(entity,
+						position.getMap(), oldX, oldY);
+
+				baseServer
+						.sendPacket(new ClientSyncEntityPropertiesPacket(
+								session, entity, false, Position.class));
+			} else {
+
+				movementSystem.updateEntitySegment(entity,
+						position.getMap(), oldX, oldY);
+
+				baseServer.sendPacket(new ClientMovePacket(session,
+						position.getMap(), entity, direction, true));
+			}
 
 		} else {
 			session.preventativeDisconnect("Position modification.");
