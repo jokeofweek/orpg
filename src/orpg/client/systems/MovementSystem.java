@@ -1,9 +1,13 @@
 package orpg.client.systems;
 
 import orpg.client.BaseClient;
+import orpg.client.ClientConstants;
 import orpg.client.data.component.Animated;
 import orpg.client.data.component.AnimatedPlayer;
+import orpg.client.data.component.HandlesInput;
 import orpg.shared.data.Direction;
+import orpg.shared.data.Map;
+import orpg.shared.data.component.IsPlayer;
 import orpg.shared.data.component.Moveable;
 import orpg.shared.data.component.Position;
 
@@ -11,6 +15,8 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Mapper;
+import com.artemis.managers.GroupManager;
+import com.artemis.managers.PlayerManager;
 import com.artemis.systems.EntityProcessingSystem;
 
 public class MovementSystem extends EntityProcessingSystem {
@@ -21,12 +27,17 @@ public class MovementSystem extends EntityProcessingSystem {
 	ComponentMapper<Position> positionMapper;
 	@Mapper
 	ComponentMapper<AnimatedPlayer> animatedMapper;
+	@Mapper
+	ComponentMapper<IsPlayer> isPlayerMapper;
 
 	private BaseClient baseClient;
+	private GroupManager groupManager;
 
 	public MovementSystem(BaseClient baseClient) {
 		super(Aspect.getAspectForAll(Position.class, Moveable.class));
 		this.baseClient = baseClient;
+		this.groupManager = this.baseClient.getWorld().getManager(
+				GroupManager.class);
 	}
 
 	@Override
@@ -36,7 +47,10 @@ public class MovementSystem extends EntityProcessingSystem {
 
 		if (moveable.isMoving() && !moveable.isMoveProcessed()) {
 			moveable.setMoveProcessed(true);
+
 			// Apply the move
+			int oldX = position.getX();
+			int oldY = position.getY();
 			switch (moveable.getDirection()) {
 			case UP:
 				position.setY(position.getY() - 1);
@@ -51,8 +65,8 @@ public class MovementSystem extends EntityProcessingSystem {
 				position.setX(position.getX() + 1);
 				break;
 			}
-
-			// TODO: Update segment here
+			
+			updateEntitySegment(e, oldX, oldY);
 
 			// Animate if necessary
 			if (animatedMapper.getSafe(e) != null) {
@@ -64,6 +78,46 @@ public class MovementSystem extends EntityProcessingSystem {
 
 	public boolean canMove(Entity entity, int x, int y) {
 		return baseClient.getMap().isWalkable(x, y);
+	}
+
+	public void updateEntitySegment(Entity entity, int oldX, int oldY) {
+		// Add groups based on components
+		Position position = positionMapper.getSafe(entity);
+
+		if (position != null) {
+			boolean requiresMapJoin = false;
+			boolean requiresSegmentJoin = false;
+
+			Map map = baseClient.getMap();
+
+			if (!groupManager.inInGroup(entity, ClientConstants.GROUP_MAP)) {
+				requiresMapJoin = true;
+				requiresSegmentJoin = true;
+			} else if (map.getSegmentX(oldX) != map
+					.getSegmentX(position.getX())
+					|| map.getSegmentY(oldY) != map
+							.getSegmentY(position.getY())) {
+				requiresSegmentJoin = true;
+				groupManager.remove(
+						entity,
+						String.format(ClientConstants.GROUP_MAP_SEGMENT,
+								map.getSegmentX(oldX), map.getSegmentY(oldY)));
+			}
+
+			// Register the map / segment groups
+			if (requiresMapJoin) {
+				groupManager.add(entity, ClientConstants.GROUP_MAP);
+			}
+
+			if (requiresSegmentJoin) {
+				groupManager.add(
+						entity,
+						String.format(ClientConstants.GROUP_MAP_SEGMENT,
+								map.getSegmentX(position.getX()),
+								map.getSegmentY(position.getY())));
+			}
+
+		}
 	}
 
 }

@@ -3,9 +3,7 @@ package orpg.client.net.handlers;
 import com.badlogic.gdx.Gdx;
 
 import orpg.client.BaseClient;
-import orpg.client.data.ClientPlayerData;
 import orpg.client.data.ClientReceivedPacket;
-import orpg.shared.data.AccountCharacter;
 import orpg.shared.net.serialize.EntitySerializer;
 
 public class JoinMapHandler implements ClientPacketHandler {

@@ -66,11 +66,7 @@ public class ServerSessionManager implements Runnable {
 		// If the client was in game, remove from in game sessions as well
 		if (session.getSessionType() == SessionType.GAME) {
 			inGameSessions.remove(session.getCharacter().getName());
-		}
 
-		// If the session had an account, remove from the accountSessions
-		// and then check if we can release the account
-		if (session.getAccount() != null) {
 			ImmutableBag<Entity> entities = baseServer.getWorld()
 					.getManager(PlayerManager.class)
 					.getEntitiesOfPlayer(session.getCharacter().getName());
@@ -82,6 +78,11 @@ public class ServerSessionManager implements Runnable {
 					entities.get(i).deleteFromWorld();
 				}
 			}
+		}
+
+		// If the session had an account, remove from the accountSessions
+		// and then check if we can release the account
+		if (session.getAccount() != null) {
 
 			String name = session.getAccount().getName();
 			accountSessions.get(name).remove(session);

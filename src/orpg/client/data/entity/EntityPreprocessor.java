@@ -5,6 +5,7 @@ import orpg.client.ClientConstants;
 import orpg.client.data.component.AnimatedPlayer;
 import orpg.client.data.component.HandlesInput;
 import orpg.client.systems.AnimationSystem;
+import orpg.client.systems.MovementSystem;
 import orpg.shared.data.Direction;
 import orpg.shared.data.component.IsPlayer;
 import orpg.shared.data.component.Named;
@@ -29,47 +30,33 @@ public class EntityPreprocessor extends EntityManager {
 	public EntityPreprocessor(BaseClient baseClient) {
 		this.baseClient = baseClient;
 
-		this.positionMapper = baseClient.getWorld().getMapper(
-				Position.class);
+		this.positionMapper = baseClient.getWorld().getMapper(Position.class);
 		this.namedMapper = baseClient.getWorld().getMapper(Named.class);
-		this.isPlayerMapper = baseClient.getWorld().getMapper(
-				IsPlayer.class);
+		this.isPlayerMapper = baseClient.getWorld().getMapper(IsPlayer.class);
 	}
 
 	@Override
 	public void added(Entity e) {
-		// Add groups based on components
-		Position position = positionMapper.getSafe(e);
+		if (isPlayerMapper.getSafe(e) != null) {
+			baseClient.getWorld().getManager(GroupManager.class)
+					.add(e, ClientConstants.GROUP_PLAYERS);
+			baseClient.getWorld().getManager(PlayerManager.class)
+					.setPlayer(e, namedMapper.get(e).getName());
 
-		if (position != null) {
-			GroupManager groupManager = baseClient.getWorld().getManager(
-					GroupManager.class);
+			e.addComponent(new AnimatedPlayer());
 
-			// Register the map / segment groups
-			groupManager.add(e, ClientConstants.GROUP_MAP);
-			groupManager.add(e, String.format(
-					ClientConstants.GROUP_MAP_SEGMENT, baseClient.getMap()
-							.getSegmentX(position.getX()), baseClient
-							.getMap().getSegmentY(position.getY())));
-
-			if (isPlayerMapper.getSafe(e) != null) {
-				groupManager.add(e, ClientConstants.GROUP_PLAYERS);
-				baseClient.getWorld().getManager(PlayerManager.class)
-						.setPlayer(e, namedMapper.get(e).getName());
-
-				e.addComponent(new AnimatedPlayer());
-				
-				// If the entity is the base client's player, add the input
-				// component
-				if (namedMapper
-						.get(e)
-						.getName()
-						.equals(baseClient.getAccountCharacter().getName())) {
-					e.addComponent(new HandlesInput());
-				}
-				
-				e.changedInWorld();
+			// If the entity is the base client's player, add the input
+			// component
+			if (namedMapper.get(e).getName()
+					.equals(baseClient.getAccountCharacter().getName())) {
+				e.addComponent(new HandlesInput());
 			}
+
+			e.changedInWorld();
 		}
+
+		baseClient.getWorld().getSystem(MovementSystem.class)
+				.updateEntitySegment(e, -1, -1);
+
 	}
 }

@@ -12,7 +12,6 @@ import com.badlogic.gdx.Game;
 import orpg.client.config.ClientConfigurationManager;
 import orpg.client.data.controllers.AutoTileController;
 import orpg.client.data.entity.EntityPreprocessor;
-import orpg.client.data.ClientPlayerData;
 import orpg.client.data.store.DataStore;
 import orpg.client.data.store.FileDataStore;
 import orpg.client.net.SegmentRequestManager;

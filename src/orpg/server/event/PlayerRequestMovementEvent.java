@@ -8,6 +8,7 @@ import com.artemis.managers.GroupManager;
 import orpg.server.BaseServer;
 import orpg.server.ServerSession;
 import orpg.server.data.SessionType;
+import orpg.server.net.packets.ClientMovePacket;
 import orpg.server.net.packets.ClientSyncEntityPropertiesPacket;
 import orpg.server.systems.MovementSystem;
 import orpg.shared.Constants;
@@ -66,13 +67,11 @@ public class PlayerRequestMovementEvent extends MovementEvent {
 			position.setX(x);
 			position.setY(y);
 			moveable.setDirection(direction);
-			moveable.setMoveProcessed(false);
-			moveable.setMoving(true);
 			movementSystem.updateEntitySegment(entity, position.getMap(), oldX,
 					oldY);
 
-			baseServer.sendPacket(new ClientSyncEntityPropertiesPacket(session, entity,
-					true, Moveable.class));
+			baseServer.sendPacket(new ClientMovePacket(session, position
+					.getMap(), entity, direction, true));
 
 		} else {
 			session.preventativeDisconnect("Position modification.");

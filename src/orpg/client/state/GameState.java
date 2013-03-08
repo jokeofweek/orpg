@@ -2,18 +2,14 @@ package orpg.client.state;
 
 import orpg.client.BaseClient;
 import orpg.client.Paths;
-import orpg.client.data.ClientPlayerData;
-import orpg.client.net.packets.MoveRequestPacket;
 import orpg.client.ui.BackgroundTextureActor;
 import orpg.client.ui.MapEntitiesActor;
 import orpg.client.ui.MapLayerActor;
 import orpg.client.ui.ViewBox;
 import orpg.shared.Constants;
-import orpg.shared.data.AccountCharacter;
-import orpg.shared.data.Direction;
 import orpg.shared.data.MapLayer;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;

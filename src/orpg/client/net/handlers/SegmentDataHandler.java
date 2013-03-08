@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.Texture;
 
 import orpg.client.BaseClient;
 import orpg.client.Paths;
-import orpg.client.data.ClientPlayerData;
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.state.GameState;
 import orpg.shared.Constants;
