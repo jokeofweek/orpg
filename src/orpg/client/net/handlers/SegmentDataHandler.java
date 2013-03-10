@@ -2,6 +2,7 @@ package orpg.client.net.handlers;
 
 import java.util.List;
 
+import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.utils.Bag;
 import com.badlogic.gdx.Gdx;
@@ -15,6 +16,8 @@ import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
 import orpg.shared.data.Segment;
+import orpg.shared.data.component.IsPlayer;
+import orpg.shared.data.component.Named;
 import orpg.shared.data.store.DataStoreException;
 
 public class SegmentDataHandler implements ClientPacketHandler {
@@ -54,8 +57,26 @@ public class SegmentDataHandler implements ClientPacketHandler {
 			public void run() {
 				Bag<Entity> entities = packet.getByteBuffer().getEntities(
 						baseClient.getWorld());
+
+				// See if the entity is the current player's
+				ComponentMapper<IsPlayer> isPlayerMapper = baseClient
+						.getWorld().getMapper(IsPlayer.class);
+				ComponentMapper<Named> namedMapper = baseClient.getWorld()
+						.getMapper(Named.class);
+				String name = baseClient.getAccountCharacter().getName();
+				Entity entity;
+
 				for (int i = 0; i < entities.size(); i++) {
-					baseClient.getWorld().addEntity(entities.get(i));
+					entity = entities.get(i);
+					baseClient.getWorld().addEntity(entity);
+
+					// Can assume named if is player
+					if (baseClient.getEntity() != null
+							&& isPlayerMapper.getSafe(entity) != null
+							&& namedMapper.get(entity).getName()
+									.equals(name)) {
+						baseClient.setEntity(entity);
+					}
 				}
 			}
 		});

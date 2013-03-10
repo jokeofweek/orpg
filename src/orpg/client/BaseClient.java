@@ -3,6 +3,7 @@ package orpg.client;
 import java.net.Socket;
 import java.util.HashMap;
 
+import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.PlayerManager;
@@ -37,6 +38,7 @@ public class BaseClient extends AbstractClient {
 	private SegmentRequestManager segmentRequestManager;
 	private AutoTileController autoTileController;
 	private World world;
+	private Entity entity;
 	private boolean isChangingMap = true;
 	
 	public BaseClient(Game game, Socket socket,
@@ -118,6 +120,7 @@ public class BaseClient extends AbstractClient {
 		this.world.setSystem(new AnimationSystem(this));
 		this.world.setSystem(new RenderSystem(this), true);
 		this.world.initialize();
+		this.entity = null;
 	}
 	
 	public boolean isChangingMap() {
@@ -126,6 +129,14 @@ public class BaseClient extends AbstractClient {
 	
 	public void setChangingMap(boolean isChangingMap) {
 		this.isChangingMap = isChangingMap;
+	}
+	
+	public Entity getEntity() {
+		return entity;
+	}
+	
+	public void setEntity(Entity entity) {
+		this.entity = entity;
 	}
 
 }
