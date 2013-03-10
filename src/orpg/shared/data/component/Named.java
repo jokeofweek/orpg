@@ -11,7 +11,7 @@ import orpg.shared.net.serialize.ValueSerializer;
  */
 public class Named extends SynchronizeableComponent {
 
-	public String name;
+	private String name;
 
 	public Named(String name) {
 		this.name = name;
