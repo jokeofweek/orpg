@@ -14,10 +14,13 @@ import com.artemis.utils.ImmutableBag;
 
 import orpg.server.data.Account;
 import orpg.server.data.SessionType;
+import orpg.server.event.EntityLeaveMapEvent;
+import orpg.server.event.EntityWarpToPositionMovementEvent;
 import orpg.server.net.packets.ClientInGamePacket;
 import orpg.server.net.packets.EditorLoginOkPacket;
 import orpg.server.net.packets.ErrorPacket;
 import orpg.server.net.packets.LoginOkPacket;
+import orpg.server.systems.MovementSystem;
 import orpg.shared.ErrorMessage;
 import orpg.shared.data.AccountCharacter;
 
@@ -104,9 +107,11 @@ public class ServerSession {
 			ImmutableBag<Entity> playerEntities = baseServer.getWorld()
 					.getManager(PlayerManager.class)
 					.getEntitiesOfPlayer(getCharacter().getName());
+			MovementSystem movementSystem = baseServer.getWorld()
+					.getSystem(MovementSystem.class);
 			for (int i = 0; i < playerEntities.size(); i++) {
-				baseServer.getMapController().leaveMap(
-						playerEntities.get(i));
+				movementSystem.addEvent(new EntityLeaveMapEvent(
+						playerEntities.get(i)));
 			}
 
 			// Save the account
@@ -142,19 +147,19 @@ public class ServerSession {
 	public World getWorld() {
 		return world;
 	}
-	
+
 	public void setWorld(World world) {
 		this.world = world;
 	}
-	
+
 	public Entity getEntity() {
 		return entity;
 	}
-	
+
 	public void setEntity(Entity entity) {
 		this.entity = entity;
 	}
-	
+
 	public void login(Account account, SessionType sessionType) {
 		if (sessionType != SessionType.EDITOR
 				&& sessionType != SessionType.LOGGED_IN) {
@@ -253,16 +258,22 @@ public class ServerSession {
 					.addAccountCharacterEntity(character);
 			this.setWorld(entity.getWorld());
 			this.setEntity(entity);
-			this.baseServer.getServerSessionManager().registerSessionEntity(this);
+			this.baseServer.getServerSessionManager()
+					.registerSessionEntity(this);
 			this.setWaitingForMap(true);
-			
+
 			// Notify the client that they are now in the game
 			baseServer.sendPacket(new ClientInGamePacket(this, character,
 					baseServer.getAutoTileController()));
 
-			baseServer.getMapController().warpToMap(entity,
-					character.getMap().getId(), character.getX(),
-					character.getY());
+			baseServer
+					.getWorld()
+					.getSystem(MovementSystem.class)
+					.addEvent(
+							new EntityWarpToPositionMovementEvent(entity,
+									character.getMap().getId(), character
+											.getX(), character.getY()));
+			;
 		} else {
 			// Revert the account back to original state
 			this.character = null;
@@ -271,11 +282,11 @@ public class ServerSession {
 					ErrorMessage.CHARACTER_IN_USE));
 		}
 	}
-	
+
 	public boolean isWaitingForMap() {
 		return isWaitingForMap;
 	}
-	
+
 	public void setWaitingForMap(boolean isWaitingForMap) {
 		this.isWaitingForMap = isWaitingForMap;
 	}
