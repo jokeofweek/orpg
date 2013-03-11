@@ -20,6 +20,7 @@ import orpg.client.systems.AnimationSystem;
 import orpg.client.systems.InputSystem;
 import orpg.client.systems.MovementSystem;
 import orpg.client.systems.RenderSystem;
+import orpg.client.ui.CameraSystem;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.AutoTileType;
 import orpg.shared.data.Map;
@@ -39,7 +40,7 @@ public class BaseClient extends AbstractClient {
 	private AutoTileController autoTileController;
 	private World world;
 	private Entity entity;
-	private boolean isChangingMap = true;
+	private boolean isChangingMap;
 	
 	public BaseClient(Game game, Socket socket,
 			PacketProcessThread gameThread, StateManager stateManager,
@@ -50,6 +51,7 @@ public class BaseClient extends AbstractClient {
 		this.dataStore = new FileDataStore(this);
 		this.segmentRequestManager = new SegmentRequestManager(this);
 		this.autoTileController = new AutoTileController(this);
+		this.isChangingMap = true;
 		this.resetWorld();
 
 	}
@@ -118,6 +120,7 @@ public class BaseClient extends AbstractClient {
 		this.world.setSystem(new InputSystem(this));
 		this.world.setSystem(new MovementSystem(this));
 		this.world.setSystem(new AnimationSystem(this));
+		this.world.setSystem(new CameraSystem());
 		this.world.setSystem(new RenderSystem(this), true);
 		this.world.initialize();
 		this.entity = null;

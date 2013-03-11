@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Texture;
 import orpg.client.BaseClient;
 import orpg.client.Paths;
 import orpg.client.data.ClientReceivedPacket;
+import orpg.client.data.component.Camera;
 import orpg.client.state.GameState;
 import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
@@ -18,6 +19,7 @@ import orpg.shared.data.Map;
 import orpg.shared.data.Segment;
 import orpg.shared.data.component.IsPlayer;
 import orpg.shared.data.component.Named;
+import orpg.shared.data.component.Position;
 import orpg.shared.data.store.DataStoreException;
 
 public class SegmentDataHandler implements ClientPacketHandler {
@@ -51,35 +53,6 @@ public class SegmentDataHandler implements ClientPacketHandler {
 
 		final short segmentX = usingLocal ? tmpSegmentX : segment.getX();
 		final short segmentY = usingLocal ? tmpSegmentY : segment.getY();
-
-		Gdx.app.postRunnable(new Runnable() {
-			@Override
-			public void run() {
-				Bag<Entity> entities = packet.getByteBuffer().getEntities(
-						baseClient.getWorld());
-
-				// See if the entity is the current player's
-				ComponentMapper<IsPlayer> isPlayerMapper = baseClient
-						.getWorld().getMapper(IsPlayer.class);
-				ComponentMapper<Named> namedMapper = baseClient.getWorld()
-						.getMapper(Named.class);
-				String name = baseClient.getAccountCharacter().getName();
-				Entity entity;
-
-				for (int i = 0; i < entities.size(); i++) {
-					entity = entities.get(i);
-					baseClient.getWorld().addEntity(entity);
-
-					// Can assume named if is player
-					if (baseClient.getEntity() != null
-							&& isPlayerMapper.getSafe(entity) != null
-							&& namedMapper.get(entity).getName()
-									.equals(name)) {
-						baseClient.setEntity(entity);
-					}
-				}
-			}
-		});
 
 		// No more data should be withdrawn from the byte buffer at this time!!
 		baseClient.getMap().updateSegment(segment, false);
@@ -133,10 +106,44 @@ public class SegmentDataHandler implements ClientPacketHandler {
 
 			@Override
 			public void run() {
+				Bag<Entity> entities = packet.getByteBuffer().getEntities(
+						baseClient.getWorld());
 
-				// Update the view
-				((GameState) baseClient.getStateManager()
-						.getCurrentState()).centerOnPlayer();
+				// See if the entity is the current player's
+				ComponentMapper<IsPlayer> isPlayerMapper = baseClient
+						.getWorld().getMapper(IsPlayer.class);
+				ComponentMapper<Named> namedMapper = baseClient.getWorld()
+						.getMapper(Named.class);
+				ComponentMapper<Position> positionMapper = baseClient
+						.getWorld().getMapper(Position.class);
+				String name = baseClient.getAccountCharacter().getName();
+				Entity entity;
+
+				for (int i = 0; i < entities.size(); i++) {
+					entity = entities.get(i);
+
+					// Can assume named if is player
+					if (baseClient.getEntity() == null
+							&& isPlayerMapper.getSafe(entity) != null
+							&& namedMapper.get(entity).getName()
+									.equals(name)) {
+						baseClient.setEntity(entity);
+
+						// If it is the player, add the camera if it is not
+						// already present
+						Position position = positionMapper.get(entity);
+						entity.addComponent(new Camera(800, 446,
+								baseClient.getMap().getWidth()
+										* Constants.TILE_WIDTH, baseClient
+										.getMap().getHeight()
+										* Constants.TILE_HEIGHT, position
+										.getX() * Constants.TILE_WIDTH,
+								position.getY() * Constants.TILE_HEIGHT));
+
+					}
+
+					baseClient.getWorld().addEntity(entity);
+				}
 
 				// If we were presently changing maps, we are done now
 				baseClient.setChangingMap(false);

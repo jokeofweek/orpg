@@ -15,13 +15,11 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 public class MapEntitiesActor extends Actor {
 
 	private BaseClient baseClient;
-	private ViewBox viewBox;
 	private Texture[] spriteSets;
 	
-	public MapEntitiesActor(BaseClient baseClient, ViewBox viewBox,
+	public MapEntitiesActor(BaseClient baseClient,
 			Texture[] spriteSets) {
 		this.baseClient = baseClient;
-		this.viewBox = viewBox;
 		this.spriteSets = spriteSets;
 	}
 
@@ -34,7 +32,7 @@ public class MapEntitiesActor extends Actor {
 		}
 
 		RenderSystem system = baseClient.getWorld().getSystem(RenderSystem.class);
-		system.prepare(viewBox, spriteSets, batch);
+		system.prepare(spriteSets, batch);
 		system.process();
 	}
 

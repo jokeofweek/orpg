@@ -3,9 +3,11 @@ package orpg.client.data.entity;
 import orpg.client.BaseClient;
 import orpg.client.ClientConstants;
 import orpg.client.data.component.AnimatedPlayer;
+import orpg.client.data.component.Camera;
 import orpg.client.data.component.HandlesInput;
 import orpg.client.systems.AnimationSystem;
 import orpg.client.systems.MovementSystem;
+import orpg.shared.Constants;
 import orpg.shared.data.Direction;
 import orpg.shared.data.component.Collideable;
 import orpg.shared.data.component.IsPlayer;
@@ -29,6 +31,7 @@ public class EntityPreprocessor extends EntityManager {
 	private ComponentMapper<Named> namedMapper;
 	private ComponentMapper<IsPlayer> isPlayerMapper;
 	private ComponentMapper<Collideable> collideableMapper;
+	private ComponentMapper<Camera> cameraMapper;
 
 	private GroupManager groupManager;
 	private PlayerManager playerManager;
@@ -42,6 +45,7 @@ public class EntityPreprocessor extends EntityManager {
 		this.namedMapper = world.getMapper(Named.class);
 		this.isPlayerMapper = world.getMapper(IsPlayer.class);
 		this.collideableMapper = world.getMapper(Collideable.class);
+		this.cameraMapper = world.getMapper(Camera.class);
 
 		this.groupManager = world.getManager(GroupManager.class);
 		this.playerManager = world.getManager(PlayerManager.class);
@@ -73,5 +77,4 @@ public class EntityPreprocessor extends EntityManager {
 				.updateEntitySegment(e, -1, -1);
 
 	}
-
 }

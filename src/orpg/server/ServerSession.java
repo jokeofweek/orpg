@@ -14,6 +14,7 @@ import com.artemis.utils.ImmutableBag;
 
 import orpg.server.data.Account;
 import orpg.server.data.SessionType;
+import orpg.server.event.EntityLeaveGameEvent;
 import orpg.server.event.EntityLeaveMapEvent;
 import orpg.server.event.EntityWarpToPositionMovementEvent;
 import orpg.server.net.packets.ClientInGamePacket;
@@ -94,7 +95,8 @@ public class ServerSession {
 				.getConfigManager()
 				.getErrorLogger()
 				.log(Level.WARNING,
-						"Session " + getId()
+						"Session "
+								+ getId()
 								+ " preventatively disconnected for reason "
 								+ reason + ".");
 		disconnect("Preventative disconnect.");
@@ -106,11 +108,11 @@ public class ServerSession {
 			ImmutableBag<Entity> playerEntities = baseServer.getWorld()
 					.getManager(PlayerManager.class)
 					.getEntitiesOfPlayer(getCharacter().getName());
-			MovementSystem movementSystem = baseServer.getWorld().getSystem(
-					MovementSystem.class);
+			MovementSystem movementSystem = baseServer.getWorld()
+					.getSystem(MovementSystem.class);
 			for (int i = 0; i < playerEntities.size(); i++) {
 				if (playerEntities.get(i) != null) {
-					movementSystem.addEvent(new EntityLeaveMapEvent(
+					movementSystem.addEvent(new EntityLeaveGameEvent(
 							playerEntities.get(i)));
 				}
 			}
@@ -123,7 +125,8 @@ public class ServerSession {
 				.getConfigManager()
 				.getSessionLogger()
 				.log(Level.INFO,
-						String.format("Session %s disconnected for reason %s.",
+						String.format(
+								"Session %s disconnected for reason %s.",
 								getId(), reason));
 		baseServer.getServerSessionManager().removeSession(this);
 
@@ -167,7 +170,8 @@ public class ServerSession {
 					.getConfigManager()
 					.getErrorLogger()
 					.log(Level.SEVERE,
-							"Session " + getId() + " attempted to login to "
+							"Session " + getId()
+									+ " attempted to login to "
 									+ account.getName()
 									+ " while not in the correct state.");
 			return;
@@ -238,7 +242,8 @@ public class ServerSession {
 		// Now we register the in-game session.
 		this.character = character;
 		this.sessionType = SessionType.GAME;
-		if (baseServer.getServerSessionManager().registerInGameSession(this)) {
+		if (baseServer.getServerSessionManager().registerInGameSession(
+				this)) {
 			// Update the id to include character name
 			this.id = this.originalId + "(" + account.getName() + ":"
 					+ character.getName() + ")";
@@ -256,8 +261,8 @@ public class ServerSession {
 					.addAccountCharacterEntity(character);
 			this.setWorld(entity.getWorld());
 			this.setEntity(entity);
-			this.baseServer.getServerSessionManager().registerSessionEntity(
-					this);
+			this.baseServer.getServerSessionManager()
+					.registerSessionEntity(this);
 			this.setWaitingForMap(true);
 
 			// Notify the client that they are now in the game

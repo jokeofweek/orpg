@@ -2,6 +2,7 @@ package orpg.client.systems;
 
 import orpg.client.BaseClient;
 import orpg.client.data.component.AnimatedPlayer;
+import orpg.client.data.component.Camera;
 import orpg.client.ui.ViewBox;
 import orpg.shared.Constants;
 import orpg.shared.data.component.Moveable;
@@ -30,7 +31,6 @@ public class RenderSystem extends EntityProcessingSystem {
 
 	private BaseClient baseClient;
 
-	private ViewBox viewBox;
 	private Texture[] spriteSets;
 	private SpriteBatch spriteBatch;
 
@@ -46,18 +46,19 @@ public class RenderSystem extends EntityProcessingSystem {
 		this.baseClient = baseClient;
 	}
 
-	public void prepare(ViewBox viewBox, Texture[] spriteSets,
+	public void prepare(Texture[] spriteSets,
 			SpriteBatch spriteBatch) {
-		this.viewBox = viewBox;
 		this.spriteSets = spriteSets;
 		this.spriteBatch = spriteBatch;
+		
+		Camera camera = world.getMapper(Camera.class).get(baseClient.getEntity());
 
-		startX = viewBox.getStartX();
-		startY = viewBox.getStartY();
-		endX = viewBox.getEndX();
-		endY = viewBox.getEndY();
-		dX = viewBox.getOffsetX() % Constants.TILE_WIDTH;
-		dY = viewBox.getOffsetY() % Constants.TILE_HEIGHT;
+		startX = camera.getStartX();
+		startY = camera.getStartY();
+		endX = camera.getEndX();
+		endY = camera.getEndY();
+		dX = camera.getOffsetX() % Constants.TILE_WIDTH;
+		dY = camera.getOffsetY() % Constants.TILE_HEIGHT;
 
 	}
 
@@ -85,7 +86,7 @@ public class RenderSystem extends EntityProcessingSystem {
 		int frame = 0;
 		int offsetX = 0;
 		int offsetY = 0;
-		
+
 		if (animation != null) {
 			frame = animation.getFrame();
 			if (animation.isAnimating()) {

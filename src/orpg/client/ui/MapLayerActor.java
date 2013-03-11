@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import orpg.client.BaseClient;
+import orpg.client.data.component.Camera;
 import orpg.client.ui.autotile.AutoTileRenderer;
 import orpg.client.ui.autotile.TwoByThreeAutoTileRenderer;
 import orpg.client.ui.autotile.TwoByTwoAutoTileRenderer;
@@ -27,20 +28,17 @@ public class MapLayerActor extends Actor {
 	private int tilesWide;
 	private int tilesHigh;
 
-	private ViewBox viewbox;
-
 	private Texture[] tilesets;
 	private Texture loadingTileTexture;
 
 	private java.util.Map<Short, AutoTileType> autotiles;
 	private java.util.Map<AutoTileType, AutoTileRenderer> autotileRenderers;
 
-	public MapLayerActor(BaseClient baseClient, ViewBox viewbox,
-			Texture[] tilesets, Texture loadingTileTexture, int[] layers,
-			int leftX, int rightX, int upY, int downY) {
+	public MapLayerActor(BaseClient baseClient, Texture[] tilesets,
+			Texture loadingTileTexture, int[] layers, int leftX,
+			int rightX, int upY, int downY) {
 		this.baseClient = baseClient;
 		this.layers = layers;
-		this.viewbox = viewbox;
 		this.leftX = leftX;
 		this.rightX = rightX;
 		this.upY = upY;
@@ -75,18 +73,20 @@ public class MapLayerActor extends Actor {
 
 		Map map = baseClient.getMap();
 
+		Camera camera = baseClient.getWorld().getMapper(Camera.class).get(baseClient.getEntity());
+		
 		// Calculate starting position of tile
-		int tileOffsetX = viewbox.getOffsetX() / Constants.TILE_WIDTH;
-		int tileOffsetY = viewbox.getOffsetY() / Constants.TILE_HEIGHT;
+		int tileOffsetX = camera.getOffsetX() / Constants.TILE_WIDTH;
+		int tileOffsetY = camera.getOffsetY() / Constants.TILE_HEIGHT;
 		int layer;
 		int dY;
 		int dX;
 
 		for (int z = 0; z < layers.length; z++) {
 			layer = layers[z];
-			dY = -(viewbox.getOffsetY() % Constants.TILE_HEIGHT);
+			dY = -(camera.getOffsetY() % Constants.TILE_HEIGHT);
 			for (y = 0; y < tilesHigh; y++) {
-				dX = -(viewbox.getOffsetX() % Constants.TILE_WIDTH);
+				dX = -(camera.getOffsetX() % Constants.TILE_WIDTH);
 				for (x = 0; x < tilesWide; x++) {
 					if ((x + tileOffsetX) >= map.getWidth()
 							|| (y + tileOffsetY) >= map.getHeight())
