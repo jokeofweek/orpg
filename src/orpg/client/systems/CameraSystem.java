@@ -1,4 +1,4 @@
-package orpg.client.ui;
+package orpg.client.systems;
 
 import orpg.client.ClientConstants;
 import orpg.client.data.component.AnimatedPlayer;
@@ -37,22 +37,21 @@ public class CameraSystem extends EntityProcessingSystem {
 		if (animation.isAnimating()) {
 			switch (animation.getAnimationDirection()) {
 			case UP:
-				dY = (int) (-world.delta * 2 * ClientConstants.WALK_SPEED);
+				dY = (int) (-world.delta * ClientConstants.WALK_SPEED);
 				break;
 			case DOWN:
-				dY = (int) (world.delta * 2 * ClientConstants.WALK_SPEED);
+				dY = (int) (world.delta * ClientConstants.WALK_SPEED);
 				break;
 			case LEFT:
-				dX = (int) (-world.delta * 2 * ClientConstants.WALK_SPEED);
+				dX = (int) (-world.delta * ClientConstants.WALK_SPEED);
 				break;
 			case RIGHT:
-				dX = (int) (world.delta * 2 * ClientConstants.WALK_SPEED);
+				dX = (int) (world.delta * ClientConstants.WALK_SPEED);
 				break;
 			}
 		}
 
-		camera.setOffsetX(camera.getOffsetX() + dX);
-		camera.setOffsetY(camera.getOffsetY() + dY);
+		camera.scroll(dX, dY);
 	}
 
 }

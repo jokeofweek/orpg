@@ -10,14 +10,6 @@ public class AnimatedPlayer extends Animated {
 	private int yOffset;
 	private Direction animationDirection;
 
-	public AnimatedPlayer() {
-		super();
-		this.xOffset = xOffset;
-		this.yOffset = yOffset;
-		this.animationDirection = animationDirection;
-
-	}
-
 	public int getXOffset() {
 		return xOffset;
 	}

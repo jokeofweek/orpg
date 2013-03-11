@@ -55,46 +55,47 @@ public class AnimationSystem extends EntityProcessingSystem {
 			animation.setYOffset(0);
 			break;
 		}
-		
+
 		animation.setAnimationDirection(direction);
 		animation.setAnimating(true);
 	}
 
 	@Override
 	protected void process(Entity e) {
+		System.out.println("Animating " + e);
 		Position position = positionMapper.get(e);
 		AnimatedPlayer animation = animationMapper.get(e);
-		
+
 		if (animation.isAnimating()) {
 			switch (animation.getAnimationDirection()) {
 			case UP:
 				animation
-						.setYOffset((int) (animation.getYOffset() - (world
-								.getDelta() * ClientConstants.WALK_SPEED)));
+						.setYOffset(animation.getYOffset()
+								- (int) ((world.getDelta() * ClientConstants.WALK_SPEED)));
 				if (animation.getYOffset() < 0) {
 					animation.setYOffset(0);
 				}
 				break;
 			case DOWN:
 				animation
-						.setYOffset((int) (animation.getYOffset() + (world
-								.getDelta() * ClientConstants.WALK_SPEED)));
+						.setYOffset(animation.getYOffset()
+								+ (int) ((world.getDelta() * ClientConstants.WALK_SPEED)));
 				if (animation.getYOffset() > 0) {
 					animation.setYOffset(0);
 				}
 				break;
 			case LEFT:
 				animation
-						.setXOffset((int) (animation.getXOffset() - (world
-								.getDelta() * ClientConstants.WALK_SPEED)));
+						.setXOffset(animation.getXOffset()
+								- (int) ((world.getDelta() * ClientConstants.WALK_SPEED)));
 				if (animation.getXOffset() < 0) {
 					animation.setXOffset(0);
 				}
 				break;
 			case RIGHT:
 				animation
-						.setXOffset((int) (animation.getXOffset() + (world
-								.getDelta() * ClientConstants.WALK_SPEED)));
+						.setXOffset(animation.getXOffset()
+								+ (int) ((world.getDelta() * ClientConstants.WALK_SPEED)));
 				if (animation.getXOffset() > 0) {
 					animation.setXOffset(0);
 				}
@@ -103,7 +104,6 @@ public class AnimationSystem extends EntityProcessingSystem {
 
 			if (animation.getXOffset() == 0 && animation.getYOffset() == 0) {
 				animation.setAnimating(false);
-				
 				moveableMapper.get(e).setMoving(false);
 			}
 		}

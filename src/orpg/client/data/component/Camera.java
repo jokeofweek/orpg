@@ -60,14 +60,10 @@ public class Camera extends Component {
 	public int getOffsetY() {
 		return boundedOffsetY;
 	}
-
-	public void setOffsetX(int offsetX) {
-		this.offsetX = offsetX;
-		updateBoundedOffsets();
-	}
-
-	public void setOffsetY(int offsetY) {
-		this.offsetY = offsetY;
+	
+	public void scroll(int dX, int dY) {
+		this.offsetX += dX;
+		this.offsetY += dY;
 		updateBoundedOffsets();
 	}
 
