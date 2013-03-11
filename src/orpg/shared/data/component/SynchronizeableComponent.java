@@ -1,7 +1,7 @@
 package orpg.shared.data.component;
 
 import orpg.server.net.packets.ClientSyncEntityPropertiesPacket;
-import orpg.shared.net.serialize.SerializableValue;
+import orpg.shared.net.serialize.SerializeableValue;
 import orpg.shared.net.serialize.ValueSerializer;
 
 import com.artemis.Component;

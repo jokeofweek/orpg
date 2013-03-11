@@ -265,7 +265,7 @@ public class OutputByteBuffer {
 		}
 	}
 
-	public <K extends SerializableValue> void putValue(K value) {
+	public <K extends SerializeableValue> void putValue(K value) {
 		value.getSerializer().put(this, value);
 	}
 

@@ -25,7 +25,7 @@ public class Test {
 		e.addComponent((Animated)new AnimatedPlayer(), ComponentType.getTypeFor(Animated.class));
 		world.changedEntity(e);
 		world.process();
-
+		
 	}
 
 }

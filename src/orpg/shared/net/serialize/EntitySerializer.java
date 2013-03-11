@@ -2,6 +2,7 @@ package orpg.shared.net.serialize;
 
 import java.util.HashMap;
 
+import orpg.shared.data.component.SerializeableComponent;
 import orpg.shared.data.component.SynchronizeableComponent;
 
 import com.artemis.Component;
@@ -10,7 +11,8 @@ import com.artemis.World;
 import com.artemis.managers.TagManager;
 import com.artemis.utils.Bag;
 
-public class EntitySerializer extends Object implements ValueSerializer<Entity> {
+public class EntitySerializer extends Object implements
+		ValueSerializer<Entity> {
 
 	private static HashMap<World, EntitySerializer> instances = new HashMap<World, EntitySerializer>(
 			1);
@@ -72,12 +74,14 @@ public class EntitySerializer extends Object implements ValueSerializer<Entity> 
 	@Override
 	public Entity get(InputByteBuffer in) {
 		Entity entity = world.createEntity();
-		world.getManager(TagManager.class).register(in.getInt() + "", entity);
+		world.getManager(TagManager.class).register(in.getInt() + "",
+				entity);
 
 		int count = in.getInt();
 		for (int i = 0; i < count; i++) {
-			entity.addComponent(in.getValue(SerializeableComponentSerializer
-					.getInstance()));
+			entity.addComponent(in
+					.getValue(SerializeableComponent.Serializer
+							.getInstance()));
 		}
 
 		return entity;
