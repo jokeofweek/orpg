@@ -1,8 +1,6 @@
-package orpg.server.data.components;
+package orpg.shared.data.component;
 
 import orpg.server.handler.CollisionHandler;
-import orpg.shared.data.component.SynchronizeableComponent;
-import orpg.shared.data.component.SynchronizeableComponentType;
 import orpg.shared.net.serialize.InputByteBuffer;
 import orpg.shared.net.serialize.OutputByteBuffer;
 import orpg.shared.net.serialize.ValueSerializer;
@@ -32,12 +30,12 @@ public class Collideable extends SynchronizeableComponent {
 	}
 
 	@Override
-	public SynchronizeableComponentType getType() {
-		return SynchronizeableComponentType.COLLIDEABLE;
+	public SerializeableComponentType getType() {
+		return SerializeableComponentType.COLLIDEABLE;
 	}
 
 	public static class Serializer implements
-			ValueSerializer<SynchronizeableComponent> {
+			ValueSerializer<SerializeableComponent> {
 
 		private static Serializer instance = new Serializer();
 
@@ -49,7 +47,7 @@ public class Collideable extends SynchronizeableComponent {
 		}
 
 		@Override
-		public void put(OutputByteBuffer out, SynchronizeableComponent obj) {
+		public void put(OutputByteBuffer out, SerializeableComponent obj) {
 			// Only put the passable value
 			out.putBoolean(((Collideable) obj).isPassable());
 		}

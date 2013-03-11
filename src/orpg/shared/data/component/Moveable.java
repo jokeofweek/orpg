@@ -39,12 +39,12 @@ public class Moveable extends SynchronizeableComponent {
 	}
 
 	@Override
-	public SynchronizeableComponentType getType() {
-		return SynchronizeableComponentType.MOVEABLE;
+	public SerializeableComponentType getType() {
+		return SerializeableComponentType.MOVEABLE;
 	}
 
 	public static class Serializer implements
-			ValueSerializer<SynchronizeableComponent> {
+			ValueSerializer<SerializeableComponent> {
 
 		private static Serializer instance = new Serializer();
 
@@ -56,7 +56,7 @@ public class Moveable extends SynchronizeableComponent {
 		}
 
 		@Override
-		public void put(OutputByteBuffer out, SynchronizeableComponent obj) {
+		public void put(OutputByteBuffer out, SerializeableComponent obj) {
 			// Make a byte from the direction, and then left shift and add a bit
 			// for the boolean. This is done to put all move data in one byte.
 			Moveable r = (Moveable) obj;

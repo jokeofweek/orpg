@@ -46,12 +46,12 @@ public class Position extends SynchronizeableComponent {
 	}
 
 	@Override
-	public SynchronizeableComponentType getType() {
-		return SynchronizeableComponentType.POSITION;
+	public SerializeableComponentType getType() {
+		return SerializeableComponentType.POSITION;
 	}
 
 	public static class Serializer implements
-			ValueSerializer<SynchronizeableComponent> {
+			ValueSerializer<SerializeableComponent> {
 
 		private static Serializer instance = new Serializer();
 
@@ -63,7 +63,7 @@ public class Position extends SynchronizeableComponent {
 		}
 
 		@Override
-		public void put(OutputByteBuffer out, SynchronizeableComponent obj) {
+		public void put(OutputByteBuffer out, SerializeableComponent obj) {
 			Position pos = (Position) obj;
 			out.putInt(pos.getMap());
 			out.putInt(pos.getX());

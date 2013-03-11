@@ -22,12 +22,12 @@ public class Named extends SynchronizeableComponent {
 	}
 
 	@Override
-	public SynchronizeableComponentType getType() {
-		return SynchronizeableComponentType.NAMED;
+	public SerializeableComponentType getType() {
+		return SerializeableComponentType.NAMED;
 	}
 
 	public static class Serializer implements
-			ValueSerializer<SynchronizeableComponent> {
+			ValueSerializer<SerializeableComponent> {
 
 		private static Serializer instance = new Serializer();
 
@@ -39,7 +39,7 @@ public class Named extends SynchronizeableComponent {
 		}
 
 		@Override
-		public void put(OutputByteBuffer out, SynchronizeableComponent obj) {
+		public void put(OutputByteBuffer out, SerializeableComponent obj) {
 			Named r = (Named) obj;
 			out.putString(r.getName());
 		}

@@ -28,12 +28,12 @@ public class Renderable extends SynchronizeableComponent {
 	}
 
 	@Override
-	public SynchronizeableComponentType getType() {
-		return SynchronizeableComponentType.RENDERABLE;
+	public SerializeableComponentType getType() {
+		return SerializeableComponentType.RENDERABLE;
 	}
 
 	public static class Serializer implements
-			ValueSerializer<SynchronizeableComponent> {
+			ValueSerializer<SerializeableComponent> {
 
 		private static Serializer instance = new Serializer();
 
@@ -45,7 +45,7 @@ public class Renderable extends SynchronizeableComponent {
 		}
 
 		@Override
-		public void put(OutputByteBuffer out, SynchronizeableComponent obj) {
+		public void put(OutputByteBuffer out, SerializeableComponent obj) {
 			Renderable r = (Renderable) obj;
 			out.putShort(r.getRenderReference());
 		}

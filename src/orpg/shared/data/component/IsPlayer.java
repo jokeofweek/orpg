@@ -21,12 +21,12 @@ public class IsPlayer extends SynchronizeableComponent {
 	}
 
 	@Override
-	public SynchronizeableComponentType getType() {
-		return SynchronizeableComponentType.IS_PLAYER;
+	public SerializeableComponentType getType() {
+		return SerializeableComponentType.IS_PLAYER;
 	}
 
 	public static class Serializer implements
-			ValueSerializer<SynchronizeableComponent> {
+			ValueSerializer<SerializeableComponent> {
 
 		private static Serializer instance = new Serializer();
 
@@ -38,7 +38,7 @@ public class IsPlayer extends SynchronizeableComponent {
 		}
 
 		@Override
-		public void put(OutputByteBuffer out, SynchronizeableComponent obj) {
+		public void put(OutputByteBuffer out, SerializeableComponent obj) {
 		}
 
 		@Override

@@ -6,9 +6,9 @@ import orpg.client.data.component.Animated;
 import orpg.client.data.component.AnimatedPlayer;
 import orpg.client.data.component.HandlesInput;
 import orpg.client.ui.ViewBox;
-import orpg.server.data.components.Collideable;
 import orpg.shared.data.Direction;
 import orpg.shared.data.Map;
+import orpg.shared.data.component.Collideable;
 import orpg.shared.data.component.IsPlayer;
 import orpg.shared.data.component.Moveable;
 import orpg.shared.data.component.Position;
@@ -42,7 +42,7 @@ public class MovementSystem extends EntityProcessingSystem {
 	private BaseClient baseClient;
 	private GroupManager groupManager;
 
-	public MovementSystem(BaseClient baseClient, ViewBox viewBox) {
+	public MovementSystem(BaseClient baseClient) {
 		super(Aspect.getAspectForAll(Position.class, Moveable.class));
 		this.baseClient = baseClient;
 		this.groupManager = this.baseClient.getWorld().getManager(

@@ -14,7 +14,6 @@ import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import orpg.server.BaseServer;
 import orpg.server.ServerSession;
 import orpg.server.data.SessionType;
-import orpg.server.data.components.Collideable;
 import orpg.server.handler.CollisionHandler;
 import orpg.server.net.packets.ClientMovePacket;
 import orpg.server.net.packets.ClientSyncEntityPropertiesPacket;
@@ -23,6 +22,7 @@ import orpg.shared.Constants;
 import orpg.shared.data.Direction;
 import orpg.shared.data.Map;
 import orpg.shared.data.Pair;
+import orpg.shared.data.component.Collideable;
 import orpg.shared.data.component.Moveable;
 import orpg.shared.data.component.Position;
 

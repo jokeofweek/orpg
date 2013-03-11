@@ -8,10 +8,10 @@ import com.artemis.utils.Bag;
 import com.artemis.utils.ImmutableBag;
 
 import orpg.server.BaseServer;
-import orpg.server.data.components.Collideable;
 import orpg.server.handler.EmptyCollisionHandler;
 import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
+import orpg.shared.data.component.Collideable;
 import orpg.shared.data.component.IsPlayer;
 import orpg.shared.data.component.Moveable;
 import orpg.shared.data.component.Named;

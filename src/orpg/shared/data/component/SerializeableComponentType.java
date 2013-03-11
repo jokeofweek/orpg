@@ -1,9 +1,10 @@
 package orpg.shared.data.component;
 
-import orpg.server.data.components.Collideable;
+import com.sun.corba.se.spi.ior.Writeable;
+
 import orpg.shared.net.serialize.ValueSerializer;
 
-public enum SynchronizeableComponentType {
+public enum SerializeableComponentType {
 
 	POSITION(Position.Serializer.getInstance()), RENDERABLE(
 			Renderable.Serializer.getInstance()), NAMED(Named.Serializer
@@ -11,14 +12,14 @@ public enum SynchronizeableComponentType {
 			Moveable.Serializer.getInstance()), COLLIDEABLE(
 			Collideable.Serializer.getInstance());
 
-	private ValueSerializer<SynchronizeableComponent> serializer;
+	private ValueSerializer<SerializeableComponent> serializer;
 
-	private SynchronizeableComponentType(
-			ValueSerializer<SynchronizeableComponent> serializer) {
+	private SerializeableComponentType(
+			ValueSerializer<SerializeableComponent> serializer) {
 		this.serializer = serializer;
 	}
 
-	public ValueSerializer<SynchronizeableComponent> getSerializer() {
+	public ValueSerializer<SerializeableComponent> getSerializer() {
 		return serializer;
 	}
 
