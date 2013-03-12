@@ -48,7 +48,7 @@ public class MovementSystem extends EntityProcessingSystem {
 		this.groupManager = this.baseClient.getWorld().getManager(
 				GroupManager.class);
 	}
-	
+
 	@Override
 	protected void process(Entity e) {
 		Position position = positionMapper.get(e);
@@ -82,7 +82,7 @@ public class MovementSystem extends EntityProcessingSystem {
 				world.getSystem(AnimationSystem.class).animate(e,
 						moveable.getDirection());
 			}
-			
+
 		}
 	}
 
@@ -153,7 +153,7 @@ public class MovementSystem extends EntityProcessingSystem {
 			entity = entities.get(i);
 			position = positionMapper.get(entity);
 			if (position.getX() == x && position.getY() == y) {
-				if (!collideableMapper.get(entity).isPassable()) {
+				if (!collideableMapper.get(entity).isPassable(entity)) {
 					return true;
 				}
 			}

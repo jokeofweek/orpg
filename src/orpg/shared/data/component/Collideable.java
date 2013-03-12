@@ -1,6 +1,6 @@
 package orpg.shared.data.component;
 
-import orpg.server.handler.CollisionHandler;
+import orpg.server.BaseServer;
 import orpg.shared.data.annotations.Editable;
 import orpg.shared.net.serialize.InputByteBuffer;
 import orpg.shared.net.serialize.OutputByteBuffer;
@@ -8,60 +8,12 @@ import orpg.shared.net.serialize.ValueSerializer;
 
 import com.artemis.Component;
 import com.artemis.ComponentType;
+import com.artemis.Entity;
 
-public class Collideable extends SynchronizeableComponent {
+public abstract class Collideable extends SynchronizeableComponent {
+	
+	public abstract void onCollision(BaseServer baseServer, Entity componentOwner, Entity collidingEntity);
 
-	@Editable(name = "Passable?", description = "Whether an entity can pass through this entity.")
-	private boolean passable;
-
-	private CollisionHandler collisionHandler;
-
-	public void setCollisionHandler(CollisionHandler collisionHandler) {
-		this.collisionHandler = collisionHandler;
-	}
-
-	public CollisionHandler getCollisionHandler() {
-		return collisionHandler;
-	}
-
-	public void setPassable(boolean passable) {
-		this.passable = passable;
-	}
-
-	public boolean isPassable() {
-		return passable;
-	}
-
-	@Override
-	public SerializeableComponentType getType() {
-		return SerializeableComponentType.COLLIDEABLE;
-	}
-
-	public static class Serializer implements
-			ValueSerializer<SerializeableComponent> {
-
-		private static Serializer instance = new Serializer();
-
-		public static Serializer getInstance() {
-			return instance;
-		}
-
-		private Serializer() {
-		}
-
-		@Override
-		public void put(OutputByteBuffer out, SerializeableComponent obj) {
-			// Only put the passable value
-			out.putBoolean(((Collideable) obj).isPassable());
-		}
-
-		@Override
-		public Collideable get(InputByteBuffer in) {
-			Collideable collideable = new Collideable();
-			collideable.setPassable(in.getBoolean());
-			return collideable;
-		}
-
-	}
+	public abstract boolean isPassable(Entity entity);
 
 }

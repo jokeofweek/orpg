@@ -14,7 +14,9 @@ import orpg.shared.data.component.IsPlayer;
 import orpg.shared.data.component.Named;
 import orpg.shared.data.component.Position;
 
+import com.artemis.Component;
 import com.artemis.ComponentMapper;
+import com.artemis.ComponentType;
 import com.artemis.Entity;
 import com.artemis.EntityManager;
 import com.artemis.EntityObserver;
@@ -22,6 +24,7 @@ import com.artemis.World;
 import com.artemis.annotations.Mapper;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.PlayerManager;
+import com.artemis.utils.Bag;
 
 public class EntityPreprocessor extends EntityManager {
 
@@ -32,6 +35,7 @@ public class EntityPreprocessor extends EntityManager {
 	private ComponentMapper<IsPlayer> isPlayerMapper;
 	private ComponentMapper<Collideable> collideableMapper;
 	private ComponentMapper<Camera> cameraMapper;
+	private ComponentType collideableType;
 
 	private GroupManager groupManager;
 	private PlayerManager playerManager;
@@ -46,6 +50,8 @@ public class EntityPreprocessor extends EntityManager {
 		this.isPlayerMapper = world.getMapper(IsPlayer.class);
 		this.collideableMapper = world.getMapper(Collideable.class);
 		this.cameraMapper = world.getMapper(Camera.class);
+
+		this.collideableType = ComponentType.getTypeFor(Collideable.class);
 
 		this.groupManager = world.getManager(GroupManager.class);
 		this.playerManager = world.getManager(PlayerManager.class);
@@ -64,6 +70,18 @@ public class EntityPreprocessor extends EntityManager {
 			if (namedMapper.get(e).getName()
 					.equals(baseClient.getAccountCharacter().getName())) {
 				e.addComponent(new HandlesInput());
+			}
+
+			// If there was a collideable component, register it as a
+			// collideable
+			// as well
+			Bag<Component> components = new Bag<Component>();
+			e.getComponents(components);
+			for (int i = 0; i < components.size(); i++) {
+				if (components.get(i) instanceof Collideable
+						&& collideableMapper.getSafe(e) == null) {
+					e.addComponent(components.get(i), collideableType);
+				}
 			}
 
 			e.changedInWorld();

@@ -9,8 +9,8 @@ public enum SerializeableComponentType {
 	POSITION(Position.Serializer.getInstance()), RENDERABLE(
 			Renderable.Serializer.getInstance()), NAMED(Named.Serializer
 			.getInstance()), IS_PLAYER(IsPlayer.Serializer.getInstance()), MOVEABLE(
-			Moveable.Serializer.getInstance()), COLLIDEABLE(
-			Collideable.Serializer.getInstance());
+			Moveable.Serializer.getInstance()), BASIC_COLLIDEABLE(
+			BasicCollideable.Serializer.getInstance());
 
 	private ValueSerializer<SerializeableComponent> serializer;
 

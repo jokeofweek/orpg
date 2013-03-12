@@ -14,7 +14,6 @@ import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import orpg.server.BaseServer;
 import orpg.server.ServerSession;
 import orpg.server.data.SessionType;
-import orpg.server.handler.CollisionHandler;
 import orpg.server.net.packets.ClientMovePacket;
 import orpg.server.net.packets.ClientSyncEntityPropertiesPacket;
 import orpg.server.systems.MovementSystem;
@@ -92,7 +91,7 @@ public class PlayerRequestMovementEvent extends MovementEvent {
 			Position otherPosition;
 			Collideable collideable;
 			Entity other;
-			List<Pair<Entity, CollisionHandler>> handlers = new ArrayList<Pair<Entity, CollisionHandler>>();
+			List<Pair<Entity, Collideable>> handlers = new ArrayList<Pair<Entity, Collideable>>();
 			boolean passable = true;
 
 			for (int i = 0; i < segmentEntities.size(); i++) {
@@ -102,13 +101,12 @@ public class PlayerRequestMovementEvent extends MovementEvent {
 					otherPosition = positionMapper.getSafe(other);
 					if (otherPosition != null && otherPosition.getX() == x
 							&& otherPosition.getY() == y) {
-						if (!collideable.isPassable()) {
+						if (!collideable.isPassable(entity)) {
 							passable = false;
 							break;
 						} else {
-							handlers.add(new Pair<Entity, CollisionHandler>(
-									other, collideable
-											.getCollisionHandler()));
+							handlers.add(new Pair<Entity, Collideable>(
+									other, collideable));
 						}
 					}
 				}
@@ -129,7 +127,7 @@ public class PlayerRequestMovementEvent extends MovementEvent {
 						position.getMap(), entity, direction, true));
 
 				// Iterate through the handlers
-				for (Pair<Entity, CollisionHandler> handler : handlers) {
+				for (Pair<Entity, Collideable> handler : handlers) {
 					handler.getSecond().onCollision(baseServer,
 							handler.getFirst(), entity);
 				}
