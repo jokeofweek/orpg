@@ -62,7 +62,6 @@ public class AnimationSystem extends EntityProcessingSystem {
 
 	@Override
 	protected void process(Entity e) {
-		System.out.println("Animating " + e);
 		Position position = positionMapper.get(e);
 		AnimatedPlayer animation = animationMapper.get(e);
 
