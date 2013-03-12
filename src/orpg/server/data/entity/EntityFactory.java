@@ -53,7 +53,7 @@ public class EntityFactory {
 		moveable.setDirection(character.getDirection());
 		entity.addComponent(moveable);
 		entity.addComponent(BasicCollidable.BLOCKING, collideableType);
-
+		
 		// Add the player to the players group
 		GroupManager groups = world.getManager(GroupManager.class);
 		groups.add(entity, Constants.GROUP_PLAYERS);

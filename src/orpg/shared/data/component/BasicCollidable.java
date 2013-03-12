@@ -42,7 +42,7 @@ public class BasicCollidable extends Collidable {
 
 	@Override
 	public SerializeableComponentType getType() {
-		return SerializeableComponentType.BASIC_COLLIDEABLE;
+		return SerializeableComponentType.BASIC_COLLIDABLE;
 	}
 
 	public static class Serializer implements
@@ -63,7 +63,7 @@ public class BasicCollidable extends Collidable {
 		}
 
 		@Override
-		public Collidable get(InputByteBuffer in) {
+		public BasicCollidable get(InputByteBuffer in) {
 			boolean passable = in.getBoolean();
 			if (!passable) {
 				return BLOCKING;
