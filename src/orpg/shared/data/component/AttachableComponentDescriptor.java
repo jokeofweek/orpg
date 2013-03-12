@@ -2,16 +2,18 @@ package orpg.shared.data.component;
 
 import java.lang.reflect.Constructor;
 
+import orpg.shared.data.annotations.Attachable;
+
 import com.artemis.Component;
 
-public class EditableComponentDescriptor implements
-		Comparable<EditableComponentDescriptor> {
+public class AttachableComponentDescriptor implements
+		Comparable<AttachableComponentDescriptor> {
 
 	private String name;
 	private String description;
 	private Class<? extends Component> componentClass;
 
-	public EditableComponentDescriptor(String name, String description,
+	public AttachableComponentDescriptor(Attachable attachable,
 			Class<? extends Component> componentClass) {
 		// Ensure class has an empty constructor.
 		boolean found = false;
@@ -29,8 +31,8 @@ public class EditableComponentDescriptor implements
 							+ " cannot be editable as it does not have an empty constructor.");
 		}
 
-		this.name = name;
-		this.description = description;
+		this.name = attachable.name();
+		this.description = attachable.description();
 		this.componentClass = componentClass;
 	}
 
@@ -51,7 +53,7 @@ public class EditableComponentDescriptor implements
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof EditableComponentDescriptor)) {
+		if (!(obj instanceof AttachableComponentDescriptor)) {
 			return false;
 		}
 		if (obj == this) {
@@ -60,7 +62,7 @@ public class EditableComponentDescriptor implements
 
 		// Two descriptors are equal if they point to the same class
 		return this.componentClass
-				.equals(((EditableComponentDescriptor) obj)
+				.equals(((AttachableComponentDescriptor) obj)
 						.getComponentClass());
 	}
 
@@ -68,9 +70,9 @@ public class EditableComponentDescriptor implements
 	public String toString() {
 		return getName();
 	}
-	
+
 	@Override
-	public int compareTo(EditableComponentDescriptor o) {
+	public int compareTo(AttachableComponentDescriptor o) {
 		return this.name.compareTo(o.getName());
 	}
 }

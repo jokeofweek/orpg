@@ -1,5 +1,6 @@
 package orpg.shared.data.component;
 
+import orpg.shared.data.annotations.Attachable;
 import orpg.shared.data.annotations.Editable;
 import orpg.shared.net.serialize.InputByteBuffer;
 import orpg.shared.net.serialize.OutputByteBuffer;
@@ -12,6 +13,7 @@ import orpg.shared.net.serialize.ValueSerializer;
  * 
  * @author Dominic Charley-Roy
  */
+@Attachable(name="Renderable", description="This entity will be rendered to the screen.")
 public class Renderable extends SynchronizebleComponent {
 
 	@Editable(name = "Render Reference")

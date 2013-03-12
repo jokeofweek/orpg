@@ -1,6 +1,7 @@
 package orpg.shared.data.component;
 
 import orpg.server.BaseServer;
+import orpg.shared.data.annotations.Attachable;
 import orpg.shared.data.annotations.Editable;
 import orpg.shared.data.component.SerializableComponent.Serializer;
 import orpg.shared.net.serialize.InputByteBuffer;
@@ -9,6 +10,7 @@ import orpg.shared.net.serialize.ValueSerializer;
 
 import com.artemis.Entity;
 
+@Attachable(name="Simple Collidable", description="A simple collision handler.")
 public class BasicCollidable extends Collidable {
 
 	@Editable(name = "Passable?", description = "Can entities pass through this?")

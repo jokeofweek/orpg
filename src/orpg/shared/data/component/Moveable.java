@@ -3,14 +3,19 @@ package orpg.shared.data.component;
 import java.util.HashMap;
 
 import orpg.shared.data.Direction;
+import orpg.shared.data.annotations.Attachable;
+import orpg.shared.data.annotations.Editable;
 import orpg.shared.net.serialize.InputByteBuffer;
 import orpg.shared.net.serialize.OutputByteBuffer;
 import orpg.shared.net.serialize.ValueSerializer;
 
+@Attachable(name = "Direction", description = "This give the entity a notion of direction.")
 public class Moveable extends SynchronizebleComponent {
 
 	private boolean isMoving;
 	private boolean isMoveProcessed;
+
+	@Editable(name = "Direction", description = "The direction the entity is facing.")
 	private Direction direction;
 
 	public Direction getDirection() {
@@ -60,9 +65,8 @@ public class Moveable extends SynchronizebleComponent {
 			// Make a byte from the direction, and then left shift and add a bit
 			// for the boolean. This is done to put all move data in one byte.
 			Moveable r = (Moveable) obj;
-			byte v = (byte) ((r.getDirection().ordinal() << 2) 
-					| (r.isMoving ? 2 : 0)
-					| (r.isMoveProcessed ? 1 : 0));
+			byte v = (byte) ((r.getDirection().ordinal() << 2)
+					| (r.isMoving ? 2 : 0) | (r.isMoveProcessed ? 1 : 0));
 
 			out.putByte(v);
 		}

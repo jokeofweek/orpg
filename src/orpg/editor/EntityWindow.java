@@ -3,6 +3,8 @@ package orpg.editor;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
@@ -10,17 +12,24 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Set;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
+import orpg.editor.controller.EditorController;
 import orpg.editor.controller.EntityController;
 import orpg.shared.Strings;
 import orpg.shared.data.ComponentList;
 import orpg.shared.data.annotations.Editable;
-import orpg.shared.data.component.EditableComponentManager;
+import orpg.shared.data.component.AttachableComponentDescriptor;
 import orpg.shared.data.component.Named;
 import orpg.shared.data.component.Position;
 import orpg.shared.data.component.Renderable;
@@ -31,13 +40,18 @@ import com.l2fprod.common.beans.ExtendedPropertyDescriptor;
 import com.l2fprod.common.propertysheet.DefaultProperty;
 import com.l2fprod.common.propertysheet.Property;
 import com.l2fprod.common.propertysheet.PropertySheetPanel;
+import com.sun.jmx.interceptor.DefaultMBeanServerInterceptor;
 
-public class EntityWindow extends JFrame implements EditorWindow<ComponentList> {
+public class EntityWindow extends JFrame implements
+		EditorWindow<ComponentList>, Observer {
 
 	private EntityController controller;
 
+	private JList availableComponentList;
+
 	public EntityWindow() {
 		this.controller = new EntityController(null, this);
+		this.controller.addObserver(this);
 
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setTitle(Strings.ENGINE_NAME);
@@ -52,10 +66,6 @@ public class EntityWindow extends JFrame implements EditorWindow<ComponentList> 
 	}
 
 	public void setupContent() {
-		// JList availableComponents = new JList(EditableComponentManager
-		// .getInstance().getDescriptors().toArray());
-		// this.add(availableComponents);
-
 		List<DefaultProperty> properties = new ArrayList<DefaultProperty>();
 
 		final PropertySheetPanel panel = new PropertySheetPanel();
@@ -75,11 +85,11 @@ public class EntityWindow extends JFrame implements EditorWindow<ComponentList> 
 						descriptor = new ExtendedPropertyDescriptor(
 								field.getName(), clazz);
 						descriptor.setCategory(clazz.getSimpleName());
-						fieldBeanClasses.put(descriptor.getCategory() + "_"
-								+ descriptor.getName(), clazz);
+						fieldBeanClasses.put(descriptor.getCategory()
+								+ "_" + descriptor.getName(), clazz);
 						descriptor.setDisplayName(annotation.name());
-						descriptor
-								.setShortDescription(annotation.description());
+						descriptor.setShortDescription(annotation
+								.description());
 						descriptors.add(descriptor);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -92,7 +102,7 @@ public class EntityWindow extends JFrame implements EditorWindow<ComponentList> 
 				.size()];
 		panel.setProperties(descriptors.toArray(convertedDescriptors));
 		panel.setMode(PropertySheetPanel.VIEW_AS_CATEGORIES);
-		
+
 		JPanel content = new JPanel(new BorderLayout());
 		content.add(panel);
 
@@ -122,12 +132,33 @@ public class EntityWindow extends JFrame implements EditorWindow<ComponentList> 
 					property.writeToObject(component);
 
 				}
-				
+
 				System.out.println(":D");
 			}
 		});
 
+		availableComponentList = new JList(new DefaultListModel());
+		populateAvailableComponentList();
+		panel.add(availableComponentList, BorderLayout.WEST);
+		availableComponentList
+				.addMouseListener(new ComponentListMouseListener(
+						controller));
+
 		add(content);
+	}
+
+	private void populateAvailableComponentList() {
+		// Remove all list items
+		DefaultListModel model = (DefaultListModel) (availableComponentList
+				.getModel());
+		model.removeAllElements();
+
+		// Iterate through the descriptors, adding them to the list
+		Set<AttachableComponentDescriptor> availableDescriptors = controller
+				.getAvailableComponents();
+		for (AttachableComponentDescriptor descriptor : availableDescriptors) {
+			model.addElement(descriptor);
+		}
 	}
 
 	@Override
@@ -148,4 +179,53 @@ public class EntityWindow extends JFrame implements EditorWindow<ComponentList> 
 
 	}
 
+	@Override
+	public void update(Observable o, Object arg) {
+		populateAvailableComponentList();
+		
+		// If it is a list of property descriptors, add them
+		if (arg instanceof PropertyDescriptor[]) {
+			System.out.println("!");
+		}
+	}
+
+	private static class ComponentListMouseListener implements
+			MouseListener {
+
+		private EntityController controller;
+
+		public ComponentListMouseListener(EntityController controller) {
+			this.controller = controller;
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (e.getClickCount() == 2) {
+				Object selection = ((JList) (e.getSource()))
+						.getSelectedValue();
+				if (selection != null) {
+					controller
+							.attachComponent((AttachableComponentDescriptor) selection);
+				}
+				e.consume();
+			}
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+		}
+
+	}
 }

@@ -1,5 +1,6 @@
 package orpg.shared.data.component;
 
+import orpg.shared.data.annotations.Attachable;
 import orpg.shared.data.annotations.Editable;
 import orpg.shared.net.serialize.InputByteBuffer;
 import orpg.shared.net.serialize.OutputByteBuffer;
@@ -10,6 +11,7 @@ import orpg.shared.net.serialize.ValueSerializer;
  * 
  * @author Dominic Charley-Roy
  */
+@Attachable(name="Named", description="This component assigns a name to an entity.")
 public class Named extends SynchronizebleComponent {
 
 	@Editable(name = "Name", description = "The name of the entity.")
