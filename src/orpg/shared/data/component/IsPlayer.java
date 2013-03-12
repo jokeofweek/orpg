@@ -9,7 +9,7 @@ import orpg.shared.net.serialize.ValueSerializer;
  * 
  * @author Dominic Charley-Roy
  */
-public class IsPlayer extends SynchronizeableComponent {
+public class IsPlayer extends SynchronizebleComponent {
 
 	private static IsPlayer instance = new IsPlayer();
 
@@ -26,7 +26,7 @@ public class IsPlayer extends SynchronizeableComponent {
 	}
 
 	public static class Serializer implements
-			ValueSerializer<SerializeableComponent> {
+			ValueSerializer<SerializableComponent> {
 
 		private static Serializer instance = new Serializer();
 
@@ -38,7 +38,7 @@ public class IsPlayer extends SynchronizeableComponent {
 		}
 
 		@Override
-		public void put(OutputByteBuffer out, SerializeableComponent obj) {
+		public void put(OutputByteBuffer out, SerializableComponent obj) {
 		}
 
 		@Override

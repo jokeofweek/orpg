@@ -8,7 +8,7 @@ import orpg.client.data.component.HandlesInput;
 import orpg.client.ui.ViewBox;
 import orpg.shared.data.Direction;
 import orpg.shared.data.Map;
-import orpg.shared.data.component.Collideable;
+import orpg.shared.data.component.Collidable;
 import orpg.shared.data.component.IsPlayer;
 import orpg.shared.data.component.Moveable;
 import orpg.shared.data.component.Position;
@@ -37,7 +37,7 @@ public class MovementSystem extends EntityProcessingSystem {
 	@Mapper
 	ComponentMapper<IsPlayer> isPlayerMapper;
 	@Mapper
-	ComponentMapper<Collideable> collideableMapper;
+	ComponentMapper<Collidable> collideableMapper;
 
 	private BaseClient baseClient;
 	private GroupManager groupManager;
@@ -135,8 +135,8 @@ public class MovementSystem extends EntityProcessingSystem {
 	}
 
 	/**
-	 * This checks whether there are any entities with the {@link Collideable}
-	 * component which has the {@link Collideable#isPassable()} set to false at
+	 * This checks whether there are any entities with the {@link Collidable}
+	 * component which has the {@link Collidable#isPassable()} set to false at
 	 * a given position.
 	 * 
 	 * @param x

@@ -1,6 +1,6 @@
 package orpg.shared.net.serialize;
 
-public interface SerializeableValue<K extends SerializeableValue> {
+public interface SerializableValue<K extends SerializableValue> {
 
 	public ValueSerializer<K> getSerializer();
 	

@@ -9,7 +9,7 @@ import orpg.client.systems.AnimationSystem;
 import orpg.client.systems.MovementSystem;
 import orpg.shared.Constants;
 import orpg.shared.data.Direction;
-import orpg.shared.data.component.Collideable;
+import orpg.shared.data.component.Collidable;
 import orpg.shared.data.component.IsPlayer;
 import orpg.shared.data.component.Named;
 import orpg.shared.data.component.Position;
@@ -33,7 +33,7 @@ public class EntityPreprocessor extends EntityManager {
 	private ComponentMapper<Position> positionMapper;
 	private ComponentMapper<Named> namedMapper;
 	private ComponentMapper<IsPlayer> isPlayerMapper;
-	private ComponentMapper<Collideable> collideableMapper;
+	private ComponentMapper<Collidable> collideableMapper;
 	private ComponentMapper<Camera> cameraMapper;
 	private ComponentType collideableType;
 
@@ -48,10 +48,10 @@ public class EntityPreprocessor extends EntityManager {
 		this.positionMapper = world.getMapper(Position.class);
 		this.namedMapper = world.getMapper(Named.class);
 		this.isPlayerMapper = world.getMapper(IsPlayer.class);
-		this.collideableMapper = world.getMapper(Collideable.class);
+		this.collideableMapper = world.getMapper(Collidable.class);
 		this.cameraMapper = world.getMapper(Camera.class);
 
-		this.collideableType = ComponentType.getTypeFor(Collideable.class);
+		this.collideableType = ComponentType.getTypeFor(Collidable.class);
 
 		this.groupManager = world.getManager(GroupManager.class);
 		this.playerManager = world.getManager(PlayerManager.class);
@@ -78,7 +78,7 @@ public class EntityPreprocessor extends EntityManager {
 			Bag<Component> components = new Bag<Component>();
 			e.getComponents(components);
 			for (int i = 0; i < components.size(); i++) {
-				if (components.get(i) instanceof Collideable
+				if (components.get(i) instanceof Collidable
 						&& collideableMapper.getSafe(e) == null) {
 					e.addComponent(components.get(i), collideableType);
 				}

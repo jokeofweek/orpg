@@ -7,7 +7,7 @@ import orpg.shared.net.serialize.InputByteBuffer;
 import orpg.shared.net.serialize.OutputByteBuffer;
 import orpg.shared.net.serialize.ValueSerializer;
 
-public class Moveable extends SynchronizeableComponent {
+public class Moveable extends SynchronizebleComponent {
 
 	private boolean isMoving;
 	private boolean isMoveProcessed;
@@ -44,7 +44,7 @@ public class Moveable extends SynchronizeableComponent {
 	}
 
 	public static class Serializer implements
-			ValueSerializer<SerializeableComponent> {
+			ValueSerializer<SerializableComponent> {
 
 		private static Serializer instance = new Serializer();
 
@@ -56,7 +56,7 @@ public class Moveable extends SynchronizeableComponent {
 		}
 
 		@Override
-		public void put(OutputByteBuffer out, SerializeableComponent obj) {
+		public void put(OutputByteBuffer out, SerializableComponent obj) {
 			// Make a byte from the direction, and then left shift and add a bit
 			// for the boolean. This is done to put all move data in one byte.
 			Moveable r = (Moveable) obj;

@@ -21,7 +21,7 @@ import orpg.shared.Constants;
 import orpg.shared.data.Direction;
 import orpg.shared.data.Map;
 import orpg.shared.data.Pair;
-import orpg.shared.data.component.Collideable;
+import orpg.shared.data.component.Collidable;
 import orpg.shared.data.component.Moveable;
 import orpg.shared.data.component.Position;
 
@@ -75,8 +75,8 @@ public class PlayerRequestMovementEvent extends MovementEvent {
 
 			// Check for any collisions, building a list of
 			// collision handlers to process if we are succesful.
-			ComponentMapper<Collideable> collideableMapper = baseServer
-					.getWorld().getMapper(Collideable.class);
+			ComponentMapper<Collidable> collideableMapper = baseServer
+					.getWorld().getMapper(Collidable.class);
 			ComponentMapper<Position> positionMapper = baseServer
 					.getWorld().getMapper(Position.class);
 
@@ -89,9 +89,9 @@ public class PlayerRequestMovementEvent extends MovementEvent {
 									map.getSegmentY(y)));
 
 			Position otherPosition;
-			Collideable collideable;
+			Collidable collideable;
 			Entity other;
-			List<Pair<Entity, Collideable>> handlers = new ArrayList<Pair<Entity, Collideable>>();
+			List<Pair<Entity, Collidable>> handlers = new ArrayList<Pair<Entity, Collidable>>();
 			boolean passable = true;
 
 			for (int i = 0; i < segmentEntities.size(); i++) {
@@ -105,7 +105,7 @@ public class PlayerRequestMovementEvent extends MovementEvent {
 							passable = false;
 							break;
 						} else {
-							handlers.add(new Pair<Entity, Collideable>(
+							handlers.add(new Pair<Entity, Collidable>(
 									other, collideable));
 						}
 					}
@@ -127,7 +127,7 @@ public class PlayerRequestMovementEvent extends MovementEvent {
 						position.getMap(), entity, direction, true));
 
 				// Iterate through the handlers
-				for (Pair<Entity, Collideable> handler : handlers) {
+				for (Pair<Entity, Collidable> handler : handlers) {
 					handler.getSecond().onCollision(baseServer,
 							handler.getFirst(), entity);
 				}

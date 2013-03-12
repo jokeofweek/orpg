@@ -12,7 +12,7 @@ import orpg.shared.net.serialize.ValueSerializer;
  * 
  * @author Dominic Charley-Roy
  */
-public class Renderable extends SynchronizeableComponent {
+public class Renderable extends SynchronizebleComponent {
 
 	@Editable(name = "Render Reference")
 	public short renderReference;
@@ -38,7 +38,7 @@ public class Renderable extends SynchronizeableComponent {
 	}
 
 	public static class Serializer implements
-			ValueSerializer<SerializeableComponent> {
+			ValueSerializer<SerializableComponent> {
 
 		private static Serializer instance = new Serializer();
 
@@ -50,7 +50,7 @@ public class Renderable extends SynchronizeableComponent {
 		}
 
 		@Override
-		public void put(OutputByteBuffer out, SerializeableComponent obj) {
+		public void put(OutputByteBuffer out, SerializableComponent obj) {
 			Renderable r = (Renderable) obj;
 			out.putShort(r.getRenderReference());
 		}

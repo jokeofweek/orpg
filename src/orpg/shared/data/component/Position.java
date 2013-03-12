@@ -9,7 +9,7 @@ import orpg.shared.net.serialize.ValueSerializer;
  * 
  * @author Dominic Charley-Roy
  */
-public class Position extends SynchronizeableComponent {
+public class Position extends SynchronizebleComponent {
 
 	private int map;
 	private int x;
@@ -51,7 +51,7 @@ public class Position extends SynchronizeableComponent {
 	}
 
 	public static class Serializer implements
-			ValueSerializer<SerializeableComponent> {
+			ValueSerializer<SerializableComponent> {
 
 		private static Serializer instance = new Serializer();
 
@@ -63,7 +63,7 @@ public class Position extends SynchronizeableComponent {
 		}
 
 		@Override
-		public void put(OutputByteBuffer out, SerializeableComponent obj) {
+		public void put(OutputByteBuffer out, SerializableComponent obj) {
 			Position pos = (Position) obj;
 			out.putInt(pos.getMap());
 			out.putInt(pos.getX());

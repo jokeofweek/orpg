@@ -3,7 +3,7 @@ package orpg.shared.data.component;
 import orpg.server.net.packets.ClientSyncEntityPropertiesPacket;
 import orpg.shared.net.serialize.InputByteBuffer;
 import orpg.shared.net.serialize.OutputByteBuffer;
-import orpg.shared.net.serialize.SerializeableValue;
+import orpg.shared.net.serialize.SerializableValue;
 import orpg.shared.net.serialize.ValueSerializer;
 
 import com.artemis.Component;
@@ -14,18 +14,18 @@ import com.artemis.Component;
  * 
  * @author Dominic Charley-Roy
  */
-public abstract class SerializeableComponent extends Component implements
-		SerializeableValue<SerializeableComponent> {
+public abstract class SerializableComponent extends Component implements
+		SerializableValue<SerializableComponent> {
 
 	public abstract SerializeableComponentType getType();
 
 	@Override
-	public final ValueSerializer<SerializeableComponent> getSerializer() {
+	public final ValueSerializer<SerializableComponent> getSerializer() {
 		return Serializer.getInstance();
 	}
 
 	public static class Serializer implements
-			ValueSerializer<SerializeableComponent> {
+			ValueSerializer<SerializableComponent> {
 
 		private static Serializer instance = new Serializer();
 
@@ -37,13 +37,13 @@ public abstract class SerializeableComponent extends Component implements
 		}
 
 		@Override
-		public void put(OutputByteBuffer out, SerializeableComponent obj) {
+		public void put(OutputByteBuffer out, SerializableComponent obj) {
 			out.putByte((byte) obj.getType().ordinal());
 			obj.getType().getSerializer().put(out, obj);
 		}
 
 		@Override
-		public SerializeableComponent get(InputByteBuffer in) {
+		public SerializableComponent get(InputByteBuffer in) {
 			SerializeableComponentType type = SerializeableComponentType
 					.values()[in.getByte()];
 			return type.getSerializer().get(in);

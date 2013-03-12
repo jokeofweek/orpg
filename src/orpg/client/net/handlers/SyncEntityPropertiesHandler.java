@@ -10,8 +10,8 @@ import orpg.client.data.component.AnimatedPlayer;
 import orpg.client.systems.MovementSystem;
 import orpg.shared.data.component.Moveable;
 import orpg.shared.data.component.Position;
-import orpg.shared.data.component.SerializeableComponent;
-import orpg.shared.data.component.SynchronizeableComponent;
+import orpg.shared.data.component.SerializableComponent;
+import orpg.shared.data.component.SynchronizebleComponent;
 import orpg.shared.net.serialize.EntitySerializer;
 
 public class SyncEntityPropertiesHandler implements ClientPacketHandler {
@@ -21,10 +21,10 @@ public class SyncEntityPropertiesHandler implements ClientPacketHandler {
 		final String entityId = "" + packet.getByteBuffer().getInt();
 		byte count = packet.getByteBuffer().getByte();
 
-		final SerializeableComponent[] components = new SerializeableComponent[count];
+		final SerializableComponent[] components = new SerializableComponent[count];
 		for (int i = 0; i < count; i++) {
 			components[i] = packet.getByteBuffer().getValue(
-					SerializeableComponent.Serializer.getInstance());
+					SerializableComponent.Serializer.getInstance());
 		}
 
 		Gdx.app.postRunnable(new Runnable() {
@@ -37,7 +37,7 @@ public class SyncEntityPropertiesHandler implements ClientPacketHandler {
 				boolean stopMovement = false;
 
 				if (entity != null) {
-					for (SerializeableComponent component : components) {
+					for (SerializableComponent component : components) {
 						// special case for position
 						if (component instanceof Position) {
 							Position old = entity.getComponent(Position.class);

@@ -17,7 +17,7 @@ import orpg.client.data.component.AnimatedPlayer;
 import orpg.client.data.component.HandlesInput;
 import orpg.client.net.packets.MoveRequestPacket;
 import orpg.shared.data.Direction;
-import orpg.shared.data.component.Collideable;
+import orpg.shared.data.component.Collidable;
 import orpg.shared.data.component.Moveable;
 import orpg.shared.data.component.Named;
 import orpg.shared.data.component.Position;

@@ -2,8 +2,8 @@ package orpg.shared.net.serialize;
 
 import java.util.HashMap;
 
-import orpg.shared.data.component.SerializeableComponent;
-import orpg.shared.data.component.SynchronizeableComponent;
+import orpg.shared.data.component.SerializableComponent;
+import orpg.shared.data.component.SynchronizebleComponent;
 
 import com.artemis.Component;
 import com.artemis.Entity;
@@ -48,17 +48,17 @@ public class EntitySerializer extends Object implements
 		// Get count of syncable components
 		int count = 0;
 		for (int i = 0; i < bag.size(); i++) {
-			if (bag.get(i) instanceof SynchronizeableComponent) {
+			if (bag.get(i) instanceof SynchronizebleComponent) {
 				count++;
 			}
 		}
 
 		out.putInt(count);
 
-		SynchronizeableComponent component;
+		SynchronizebleComponent component;
 		for (int i = 0; i < bag.size(); i++) {
-			if (bag.get(i) instanceof SynchronizeableComponent) {
-				component = (SynchronizeableComponent) bag.get(i);
+			if (bag.get(i) instanceof SynchronizebleComponent) {
+				component = (SynchronizebleComponent) bag.get(i);
 				out.putValue(component);
 			}
 		}
@@ -80,7 +80,7 @@ public class EntitySerializer extends Object implements
 		int count = in.getInt();
 		for (int i = 0; i < count; i++) {
 			entity.addComponent(in
-					.getValue(SerializeableComponent.Serializer
+					.getValue(SerializableComponent.Serializer
 							.getInstance()));
 		}
 

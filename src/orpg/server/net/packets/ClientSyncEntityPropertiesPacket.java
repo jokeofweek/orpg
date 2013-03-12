@@ -8,7 +8,7 @@ import com.artemis.Entity;
 import orpg.server.ServerSession;
 import orpg.server.data.DestinationType;
 import orpg.shared.data.component.Position;
-import orpg.shared.data.component.SynchronizeableComponent;
+import orpg.shared.data.component.SynchronizebleComponent;
 import orpg.shared.net.ServerPacketType;
 import orpg.shared.net.serialize.OutputByteBuffer;
 import sun.security.krb5.internal.crypto.Des;
@@ -19,7 +19,7 @@ public class ClientSyncEntityPropertiesPacket extends MapExceptForPacket {
 
 	public ClientSyncEntityPropertiesPacket(ServerSession session, Entity entity,
 			boolean ignoreSession,
-			Class<? extends SynchronizeableComponent>... components) {
+			Class<? extends SynchronizebleComponent>... components) {
 		super(ignoreSession ? session : null, entity.getComponent(
 				Position.class).getMap());
 
@@ -27,8 +27,8 @@ public class ClientSyncEntityPropertiesPacket extends MapExceptForPacket {
 		out.putInt(entity.getId());
 		out.putByte((byte) components.length);
 
-		for (Class<? extends SynchronizeableComponent> component : components) {
-			out.putValue((SynchronizeableComponent) entity
+		for (Class<? extends SynchronizebleComponent> component : components) {
+			out.putValue((SynchronizebleComponent) entity
 					.getComponent(ComponentType.getTypeFor(component)));
 		}
 

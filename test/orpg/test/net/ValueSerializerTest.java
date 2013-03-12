@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import orpg.shared.net.serialize.InputByteBuffer;
 import orpg.shared.net.serialize.OutputByteBuffer;
-import orpg.shared.net.serialize.SerializeableValue;
+import orpg.shared.net.serialize.SerializableValue;
 import orpg.shared.net.serialize.ValueSerializer;
 
 public class ValueSerializerTest {
@@ -32,7 +32,7 @@ public class ValueSerializerTest {
 	}
 
 	private static class ValueContainer implements
-			SerializeableValue<ValueContainer> {
+			SerializableValue<ValueContainer> {
 
 		private int value;
 

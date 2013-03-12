@@ -2,27 +2,27 @@ package orpg.shared.data.component;
 
 import orpg.server.BaseServer;
 import orpg.shared.data.annotations.Editable;
-import orpg.shared.data.component.SerializeableComponent.Serializer;
+import orpg.shared.data.component.SerializableComponent.Serializer;
 import orpg.shared.net.serialize.InputByteBuffer;
 import orpg.shared.net.serialize.OutputByteBuffer;
 import orpg.shared.net.serialize.ValueSerializer;
 
 import com.artemis.Entity;
 
-public class BasicCollideable extends Collideable {
+public class BasicCollidable extends Collidable {
 
 	@Editable(name = "Passable?", description = "Can entities pass through this?")
 	public boolean passable;
 
-	public static final BasicCollideable BLOCKING = new BasicCollideable(
+	public static final BasicCollidable BLOCKING = new BasicCollidable(
 			false);
-	public static final BasicCollideable NONBLOCKING = new BasicCollideable(
+	public static final BasicCollidable NONBLOCKING = new BasicCollidable(
 			true);
 
-	public BasicCollideable() {
+	public BasicCollidable() {
 	}
 
-	public BasicCollideable(boolean passable) {
+	public BasicCollidable(boolean passable) {
 		this.passable = passable;
 	}
 
@@ -45,7 +45,8 @@ public class BasicCollideable extends Collideable {
 		return SerializeableComponentType.BASIC_COLLIDEABLE;
 	}
 
-	public static class Serializer implements ValueSerializer<SerializeableComponent> {
+	public static class Serializer implements
+			ValueSerializer<SerializableComponent> {
 
 		private static Serializer instance = new Serializer();
 
@@ -55,14 +56,14 @@ public class BasicCollideable extends Collideable {
 		public static Serializer getInstance() {
 			return instance;
 		}
-		
+
 		@Override
-		public void put(OutputByteBuffer out, SerializeableComponent obj) {
-			out.putBoolean(((BasicCollideable) obj).passable);
+		public void put(OutputByteBuffer out, SerializableComponent obj) {
+			out.putBoolean(((BasicCollidable) obj).passable);
 		}
 
 		@Override
-		public Collideable get(InputByteBuffer in) {
+		public Collidable get(InputByteBuffer in) {
 			boolean passable = in.getBoolean();
 			if (!passable) {
 				return BLOCKING;

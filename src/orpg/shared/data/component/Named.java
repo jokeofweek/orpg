@@ -10,7 +10,7 @@ import orpg.shared.net.serialize.ValueSerializer;
  * 
  * @author Dominic Charley-Roy
  */
-public class Named extends SynchronizeableComponent {
+public class Named extends SynchronizebleComponent {
 
 	@Editable(name = "Name", description = "The name of the entity.")
 	public String name;
@@ -36,7 +36,7 @@ public class Named extends SynchronizeableComponent {
 	}
 
 	public static class Serializer implements
-			ValueSerializer<SerializeableComponent> {
+			ValueSerializer<SerializableComponent> {
 
 		private static Serializer instance = new Serializer();
 
@@ -48,7 +48,7 @@ public class Named extends SynchronizeableComponent {
 		}
 
 		@Override
-		public void put(OutputByteBuffer out, SerializeableComponent obj) {
+		public void put(OutputByteBuffer out, SerializableComponent obj) {
 			Named r = (Named) obj;
 			out.putString(r.getName());
 		}

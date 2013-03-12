@@ -11,8 +11,8 @@ import com.artemis.utils.ImmutableBag;
 import orpg.server.BaseServer;
 import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
-import orpg.shared.data.component.BasicCollideable;
-import orpg.shared.data.component.Collideable;
+import orpg.shared.data.component.BasicCollidable;
+import orpg.shared.data.component.Collidable;
 import orpg.shared.data.component.IsPlayer;
 import orpg.shared.data.component.Moveable;
 import orpg.shared.data.component.Named;
@@ -30,7 +30,7 @@ public class EntityFactory {
 	public EntityFactory(BaseServer baseServer, World world) {
 		this.baseServer = baseServer;
 		this.world = world;
-		this.collideableType = ComponentType.getTypeFor(Collideable.class);
+		this.collideableType = ComponentType.getTypeFor(Collidable.class);
 	}
 
 	public Entity addAccountCharacterEntity(AccountCharacter character) {
@@ -52,7 +52,7 @@ public class EntityFactory {
 		Moveable moveable = new Moveable();
 		moveable.setDirection(character.getDirection());
 		entity.addComponent(moveable);
-		entity.addComponent(BasicCollideable.BLOCKING, collideableType);
+		entity.addComponent(BasicCollidable.BLOCKING, collideableType);
 
 		// Add the player to the players group
 		GroupManager groups = world.getManager(GroupManager.class);

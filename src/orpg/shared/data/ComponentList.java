@@ -3,15 +3,15 @@ package orpg.shared.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import orpg.shared.data.component.SerializeableComponent;
+import orpg.shared.data.component.SerializableComponent;
 import orpg.shared.net.serialize.InputByteBuffer;
 import orpg.shared.net.serialize.OutputByteBuffer;
-import orpg.shared.net.serialize.SerializeableValue;
+import orpg.shared.net.serialize.SerializableValue;
 import orpg.shared.net.serialize.ValueSerializer;
 
 import com.artemis.Component;
 
-public class ComponentList implements SerializeableValue<ComponentList> {
+public class ComponentList implements SerializableValue<ComponentList> {
 
 	private List<Component> components;
 
@@ -54,7 +54,7 @@ public class ComponentList implements SerializeableValue<ComponentList> {
 			List<Component> components = obj.components;
 
 			for (Component component : components) {
-				if (component instanceof SerializeableValue) {
+				if (component instanceof SerializableValue) {
 					count++;
 				}
 			}
@@ -62,8 +62,8 @@ public class ComponentList implements SerializeableValue<ComponentList> {
 			out.putShort(count);
 
 			for (Component component : components) {
-				if (component instanceof SerializeableValue) {
-					out.putValue((SerializeableValue) component);
+				if (component instanceof SerializableValue) {
+					out.putValue((SerializableValue) component);
 				}
 			}
 		}
@@ -76,7 +76,7 @@ public class ComponentList implements SerializeableValue<ComponentList> {
 
 			for (int i = 0; i < count; i++) {
 				components.add(in
-						.getValue(SerializeableComponent.Serializer
+						.getValue(SerializableComponent.Serializer
 								.getInstance()));
 			}
 

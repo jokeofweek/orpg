@@ -20,7 +20,7 @@ public class EditableComponentManager {
 		register(new EditableComponentDescriptor(
 				"Collision Handler",
 				"This component allows you to execute certain actions upon collision.",
-				Collideable.class));
+				Collidable.class));
 
 		register(new EditableComponentDescriptor(
 				"Named",
