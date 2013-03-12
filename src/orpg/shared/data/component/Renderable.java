@@ -1,5 +1,6 @@
 package orpg.shared.data.component;
 
+import orpg.shared.data.annotations.Editable;
 import orpg.shared.net.serialize.InputByteBuffer;
 import orpg.shared.net.serialize.OutputByteBuffer;
 import orpg.shared.net.serialize.ValueSerializer;
@@ -13,7 +14,11 @@ import orpg.shared.net.serialize.ValueSerializer;
  */
 public class Renderable extends SynchronizeableComponent {
 
+	@Editable(name = "Render Reference")
 	public short renderReference;
+
+	public Renderable() {
+	}
 
 	public Renderable(short renderReference) {
 		this.renderReference = renderReference;

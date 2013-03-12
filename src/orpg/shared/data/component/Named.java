@@ -13,7 +13,7 @@ import orpg.shared.net.serialize.ValueSerializer;
 public class Named extends SynchronizeableComponent {
 
 	@Editable(name = "Name", description = "The name of the entity.")
-	private String name;
+	public String name;
 
 	public Named() {
 	}
@@ -26,6 +26,10 @@ public class Named extends SynchronizeableComponent {
 		return name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 	@Override
 	public SerializeableComponentType getType() {
 		return SerializeableComponentType.NAMED;
