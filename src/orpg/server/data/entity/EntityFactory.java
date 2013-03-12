@@ -1,13 +1,5 @@
 package orpg.server.data.entity;
 
-import com.artemis.ComponentType;
-import com.artemis.Entity;
-import com.artemis.World;
-import com.artemis.managers.GroupManager;
-import com.artemis.managers.PlayerManager;
-import com.artemis.utils.Bag;
-import com.artemis.utils.ImmutableBag;
-
 import orpg.server.BaseServer;
 import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
@@ -18,7 +10,13 @@ import orpg.shared.data.component.Moveable;
 import orpg.shared.data.component.Named;
 import orpg.shared.data.component.Position;
 import orpg.shared.data.component.Renderable;
-import sun.awt.CausedFocusEvent.Cause;
+
+import com.artemis.ComponentType;
+import com.artemis.Entity;
+import com.artemis.World;
+import com.artemis.managers.GroupManager;
+import com.artemis.managers.PlayerManager;
+import com.artemis.utils.ImmutableBag;
 
 public class EntityFactory {
 
