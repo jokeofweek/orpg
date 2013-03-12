@@ -11,16 +11,12 @@ import orpg.shared.net.serialize.ValueSerializer;
  * @author Dominic Charley-Roy
  */
 public class Named extends SynchronizeableComponent {
-	static {
-		EditableComponentDescriptor descriptor = new EditableComponentDescriptor(
-				"Named",
-				"This component allows you to assign a name to an entity.",
-				Named.class);
-		EditableComponentManager.getInstance().register(descriptor);
-	}
 
 	@Editable(name = "Name", description = "The name of the entity.")
 	private String name;
+
+	public Named() {
+	}
 
 	public Named(String name) {
 		this.name = name;

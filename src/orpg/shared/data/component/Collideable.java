@@ -11,14 +11,6 @@ import com.artemis.ComponentType;
 
 public class Collideable extends SynchronizeableComponent {
 
-	static {
-		EditableComponentDescriptor descriptor = new EditableComponentDescriptor(
-				"Collision Handler",
-				"This component allows you to execute certain actions upon collision.",
-				Collideable.class);
-		EditableComponentManager.getInstance().register(descriptor);
-	}
-
 	@Editable(name = "Passable?", description = "Whether an entity can pass through this entity.")
 	private boolean passable;
 

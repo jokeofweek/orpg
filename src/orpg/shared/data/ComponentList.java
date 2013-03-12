@@ -6,7 +6,6 @@ import java.util.List;
 import orpg.shared.data.component.SerializeableComponent;
 import orpg.shared.net.serialize.InputByteBuffer;
 import orpg.shared.net.serialize.OutputByteBuffer;
-import orpg.shared.net.serialize.SerializeableComponentSerializer;
 import orpg.shared.net.serialize.SerializeableValue;
 import orpg.shared.net.serialize.ValueSerializer;
 
@@ -34,8 +33,7 @@ public class ComponentList implements SerializeableValue<ComponentList> {
 
 	@Override
 	public ValueSerializer<ComponentList> getSerializer() {
-		// TODO Auto-generated method stub
-		return null;
+		return Serializer.getInstance();
 	}
 
 	public static class Serializer implements

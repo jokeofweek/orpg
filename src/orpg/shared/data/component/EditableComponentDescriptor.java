@@ -65,6 +65,11 @@ public class EditableComponentDescriptor implements
 	}
 
 	@Override
+	public String toString() {
+		return getName();
+	}
+	
+	@Override
 	public int compareTo(EditableComponentDescriptor o) {
 		return this.name.compareTo(o.getName());
 	}

@@ -34,6 +34,8 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import orpg.editor.controller.EditorController;
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
 import orpg.editor.data.MapEditorTab;
@@ -435,7 +437,7 @@ public class MapEditorWindow extends JFrame implements Observer,
 	public void load(BaseEditor baseEditor) {
 		mapNameTextField.setText(mapController.getMapName());
 	}
-
+	
 	@Override
 	public void save(BaseEditor baseEditor) {
 		mapController.setMapName(mapNameTextField.getText());

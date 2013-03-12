@@ -13,7 +13,6 @@ import orpg.shared.data.component.Position;
 import orpg.shared.data.component.SerializeableComponent;
 import orpg.shared.data.component.SynchronizeableComponent;
 import orpg.shared.net.serialize.EntitySerializer;
-import orpg.shared.net.serialize.SerializeableComponentSerializer;
 
 public class SyncEntityPropertiesHandler implements ClientPacketHandler {
 
@@ -25,7 +24,7 @@ public class SyncEntityPropertiesHandler implements ClientPacketHandler {
 		final SerializeableComponent[] components = new SerializeableComponent[count];
 		for (int i = 0; i < count; i++) {
 			components[i] = packet.getByteBuffer().getValue(
-					SerializeableComponentSerializer.getInstance());
+					SerializeableComponent.Serializer.getInstance());
 		}
 
 		Gdx.app.postRunnable(new Runnable() {
