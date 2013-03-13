@@ -3,11 +3,15 @@ package orpg.editor.controller;
 import java.util.Observable;
 import java.util.Observer;
 
+import com.artemis.Component;
+
 import orpg.editor.BaseEditor;
+import orpg.shared.data.ComponentList;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
 import orpg.shared.data.Segment;
 import orpg.shared.data.TileFlag;
+import orpg.shared.data.component.Position;
 
 public class MapController extends Observable implements Observer {
 
@@ -20,9 +24,9 @@ public class MapController extends Observable implements Observer {
 		this.requestManager.addObserver(this);
 
 		// Make requests for outer segments
-		this.requestManager.requestSegment((short)1, (short)0);
-		this.requestManager.requestSegment((short)0, (short)1);
-		this.requestManager.requestSegment((short)1, (short)1);
+		this.requestManager.requestSegment((short) 1, (short) 0);
+		this.requestManager.requestSegment((short) 0, (short) 1);
+		this.requestManager.requestSegment((short) 1, (short) 1);
 	}
 
 	public Map getMap() {
@@ -183,11 +187,53 @@ public class MapController extends Observable implements Observer {
 	}
 
 	public void setFlag(int x, int y, TileFlag flag, boolean value) {
-		if (map.hasFlag(x, y, flag)!= value) {
+		if (map.hasFlag(x, y, flag) != value) {
 			setChanged();
 		}
 		map.setFlag(x, y, flag, value);
 		notifyObservers();
+	}
+
+	public ComponentList findEntity(int x, int y) {
+		Segment segment = getPositionSegment(x, y);
+		Position position;
+
+		for (ComponentList entity : segment.getEntities()) {
+			if ((position = entity.getPosition()) != null) {
+				if (position.getX() == x && position.getY() == y) {
+					return entity;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	public void addEntity(ComponentList entity) {
+		// Add the entity based on the position component
+		Position position = entity.getPosition();
+		if (position != null) {
+			getPositionSegment(position.getX(), position.getY()).getEntities()
+					.add(entity);
+			setChanged();
+			notifyObservers();
+		}
+	}
+
+	public boolean removeEntity(ComponentList entity) {
+
+		// Remove the entity based on the position component
+		Position position = entity.getPosition();
+		boolean found = false;
+		if (position != null) {
+			found = getPositionSegment(position.getX(), position.getY())
+					.getEntities().remove(entity);
+			setChanged();
+			notifyObservers();
+
+		}
+
+		return found;
 	}
 
 	/*

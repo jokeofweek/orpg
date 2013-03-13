@@ -1,8 +1,10 @@
 package orpg.shared.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import orpg.shared.data.component.Position;
 import orpg.shared.data.component.SerializableComponent;
 import orpg.shared.net.serialize.InputByteBuffer;
 import orpg.shared.net.serialize.OutputByteBuffer;
@@ -13,22 +15,26 @@ import com.artemis.Component;
 
 public class ComponentList implements SerializableValue<ComponentList> {
 
-	private List<Component> components;
+	private final List<Component> components;
+	private Position position;
 
-	public ComponentList(int count) {
-		this.components = new ArrayList<Component>(count);
-	}
+	public ComponentList(List<Component> components) {
+		this.components = components;
 
-	public ComponentList() {
-		this(10);
+		// Find the position
+		for (Component component : components) {
+			if (component instanceof Position) {
+				this.position = (Position) component;
+			}
+		}
 	}
 
 	public List<Component> getComponents() {
 		return this.components;
 	}
 
-	public void setComponents(List<Component> components) {
-		this.components = components;
+	public Position getPosition() {
+		return position;
 	}
 
 	@Override
@@ -36,8 +42,7 @@ public class ComponentList implements SerializableValue<ComponentList> {
 		return Serializer.getInstance();
 	}
 
-	public static class Serializer implements
-			ValueSerializer<ComponentList> {
+	public static class Serializer implements ValueSerializer<ComponentList> {
 
 		private static Serializer instance = new Serializer();
 
@@ -70,16 +75,15 @@ public class ComponentList implements SerializableValue<ComponentList> {
 
 		@Override
 		public ComponentList get(InputByteBuffer in) {
-			int count = in.getInt();
-			ComponentList list = new ComponentList(count);
-			List<Component> components = list.getComponents();
+			short count = in.getShort();
+			List<Component> components = new ArrayList<Component>(count);
 
 			for (int i = 0; i < count; i++) {
-				components.add(in
-						.getValue(SerializableComponent.Serializer
-								.getInstance()));
+				components.add(in.getValue(SerializableComponent.Serializer
+						.getInstance()));
 			}
 
+			ComponentList list = new ComponentList(components);
 			return list;
 		}
 

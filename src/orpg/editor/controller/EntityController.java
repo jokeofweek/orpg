@@ -11,13 +11,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
 
 import org.lwjgl.opencl.CL;
 
 import orpg.editor.BaseEditor;
 import orpg.editor.EditorWindow;
+import orpg.editor.data.EditorUpdateMessage;
 import orpg.editor.util.PropertyDescriptorAdapter;
 import orpg.editor.util.Reflection;
+import orpg.shared.Callback;
 import orpg.shared.data.ComponentList;
 import orpg.shared.data.annotations.Attachable;
 import orpg.shared.data.annotations.Editable;
@@ -53,21 +56,22 @@ public class EntityController extends EditorController<ComponentList> implements
 	private HashMap<Class<? extends Component>, List<Property>> classProperties;
 	private HashMap<Class<? extends Component>, Component> componentInstances;
 
-	public EntityController(BaseEditor baseEditor, ComponentList componentList) {
+	private Callback<ComponentList> saveCallback;
+
+	public EntityController(BaseEditor baseEditor, ComponentList componentList,
+			Callback<ComponentList> saveCallback) {
 		super(baseEditor);
+
 		this.availableComponents = new TreeSet<AttachableComponentDescriptor>(
 				ATTACHABLE_COMPONENTS);
 		this.classProperties = new HashMap<Class<? extends Component>, List<Property>>();
 		this.classesByPropertyTag = new HashMap<String, Class<? extends Component>>();
 		this.componentInstances = new HashMap<Class<? extends Component>, Component>();
+		this.saveCallback = saveCallback;
 
 		if (componentList != null) {
 			loadComponentList(componentList);
 		}
-	}
-
-	public EntityController(BaseEditor baseEditor) {
-		this(baseEditor, null);
 	}
 
 	private String getPropertyTag(Property property) {
@@ -224,6 +228,22 @@ public class EntityController extends EditorController<ComponentList> implements
 
 	@Override
 	public void save() {
+		// Create a component list using the components
+		List<Component> components = new ArrayList<Component>(
+				componentInstances.values().size());
+		for (Component component : componentInstances.values()) {
+			components.add(component);
+		}
+
+		ComponentList entity = new ComponentList(components);
+
+		if (saveCallback != null) {
+			saveCallback.invoke(entity);
+		}
+
+		// Notify observers we've saved
+		setChanged();
+		notifyObservers(EditorUpdateMessage.SAVE);
 
 	}
 

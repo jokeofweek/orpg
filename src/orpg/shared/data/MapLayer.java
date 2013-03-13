@@ -17,6 +17,10 @@ public enum MapLayer {
 	public String getName() {
 		return this.name;
 	}
+	
+	public static MapLayer getEntityLayer() {
+		return MASK_2;
+	}
 
 
 }

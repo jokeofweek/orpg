@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -29,9 +30,11 @@ import orpg.editor.map.tool.PencilTool;
 import orpg.editor.ui.autotile.TwoByThreeAutoTileRenderer;
 import orpg.shared.Constants;
 import orpg.shared.data.AutoTileType;
+import orpg.shared.data.ComponentList;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
 import orpg.shared.data.TileFlag;
+import orpg.shared.data.component.Position;
 
 public class MapView extends JComponent implements Observer, MouseListener,
 		MouseMotionListener {
@@ -42,6 +45,9 @@ public class MapView extends JComponent implements Observer, MouseListener,
 	private static final AlphaComposite GRID_COMPOSITE = AlphaComposite
 			.getInstance(AlphaComposite.SRC_OVER,
 					EditorConstants.MAP_EDITOR_GRID_TRANSPARENCY);
+	private static final AlphaComposite ENTITY_COMPOSITE = AlphaComposite
+			.getInstance(AlphaComposite.SRC_OVER,
+					EditorConstants.MAP_EDITOR_ENTITY_TRANSPARENCY);
 	private static final AlphaComposite MOUSE_OVERLAY_COMPOSITE = AlphaComposite
 			.getInstance(AlphaComposite.SRC_OVER,
 					EditorConstants.MAP_EDITOR_TILE_OVERLAY_TRANSPARENCY);
@@ -171,6 +177,8 @@ public class MapView extends JComponent implements Observer, MouseListener,
 		java.util.Map<Short, AutoTileType> autoTiles = baseEditor
 				.getAutoTiles();
 
+		int entityLayer = MapLayer.getEntityLayer().ordinal();
+
 		for (int z = 0; z < l; z++) {
 			dY = startY * tileHeight;
 			for (int y = startY; y < endY; y++) {
@@ -204,6 +212,12 @@ public class MapView extends JComponent implements Observer, MouseListener,
 					dX += tileWidth;
 				}
 				dY += tileHeight;
+			}
+
+			// If we are at the entity layer, render entities
+			if (z == entityLayer) {
+				renderEntities(graphics, regularComposite, startX, startY,
+						endX, endY);
 			}
 
 			// If we are hovering over the map, render overlay after.
@@ -280,6 +294,49 @@ public class MapView extends JComponent implements Observer, MouseListener,
 						tileHeight);
 			}
 		}
+		graphics.setComposite(regularComposite);
+	}
+
+	/**
+	 * This renders squares denoting the position of map entities.
+	 * 
+	 * @param graphics
+	 * @param regularComposite
+	 * @param startX
+	 * @param startY
+	 * @param endX
+	 * @param endY
+	 */
+	private void renderEntities(Graphics2D graphics,
+			AlphaComposite regularComposite, int startX, int startY, int endX,
+			int endY) {
+		graphics.setComposite(ENTITY_COMPOSITE);
+		graphics.setColor(Color.black.darker().darker());
+
+		int startSegmentX = mapController.getSegmentX(startX);
+		int endSegmentX = mapController.getSegmentX(endX);
+		int startSegmentY = mapController.getSegmentY(startY);
+		int endSegmentY = mapController.getSegmentY(endY);
+
+		List<ComponentList> entities;
+		Position position;
+		for (int sX = startSegmentX; sX <= endSegmentX; sX++) {
+			for (int sY = startSegmentY; sY <= endSegmentY; sY++) {
+				entities = mapController.getSegments()[sX][sY].getEntities();
+				for (ComponentList entity : entities) {
+					if ((position = entity.getPosition()) != null) {
+						if (position.getX() >= startX && position.getX() < endX
+								&& position.getY() >= startY
+								&& position.getY() < endY) {
+							graphics.fillRect(position.getX() * tileWidth,
+									position.getY() * tileHeight, tileWidth,
+									tileHeight);
+						}
+					}
+				}
+			}
+		}
+
 		graphics.setComposite(regularComposite);
 	}
 

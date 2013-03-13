@@ -40,6 +40,7 @@ import orpg.editor.controller.EditorController;
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
 import orpg.editor.data.MapEditorTab;
+import orpg.editor.map.tool.EntityPencilTool;
 import orpg.editor.map.tool.FillTool;
 import orpg.editor.map.tool.PencilTool;
 import orpg.editor.ui.MapView;
@@ -283,6 +284,10 @@ public class MapEditorWindow extends JFrame implements Observer,
 								.getInstance());
 					} else if (button.getActionCommand().equals("fill")) {
 						editorController.setCurrentTool(FillTool.getInstance());
+					} else if (button.getActionCommand()
+							.equals("entity-pencil")) {
+						editorController.setCurrentTool(EntityPencilTool
+								.getInstance());
 					}
 				}
 			}
@@ -302,6 +307,13 @@ public class MapEditorWindow extends JFrame implements Observer,
 		// Fill tool
 		toolButton = new JRadioButton("Fill");
 		toolButton.setActionCommand("fill");
+		toolButton.addItemListener(itemListener);
+		toolGroup.add(toolButton);
+		optionsPanel.add(toolButton);
+		
+		// Entity pencil tool
+		toolButton = new JRadioButton("Entity Pencil");
+		toolButton.setActionCommand("entity-pencil");
 		toolButton.addItemListener(itemListener);
 		toolGroup.add(toolButton);
 		optionsPanel.add(toolButton);
@@ -438,7 +450,7 @@ public class MapEditorWindow extends JFrame implements Observer,
 	public void load(BaseEditor baseEditor) {
 		mapNameTextField.setText(mapController.getMapName());
 	}
-	
+
 	@Override
 	public void beforeSave(BaseEditor baseEditor) {
 		mapController.setMapName(mapNameTextField.getText());

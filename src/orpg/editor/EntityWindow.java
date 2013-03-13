@@ -28,6 +28,7 @@ import javax.swing.event.ListSelectionListener;
 
 import orpg.editor.controller.EditorController;
 import orpg.editor.controller.EntityController;
+import orpg.editor.data.EditorUpdateMessage;
 import orpg.editor.util.EnumPropertyEditor;
 import orpg.editor.util.PropertyDescriptorAdapter;
 import orpg.shared.Strings;
@@ -68,12 +69,12 @@ public class EntityWindow extends JFrame implements
 				.registerEditor(Direction.class, new EnumPropertyEditor(
 						Direction.class));
 
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setTitle(Strings.ENGINE_NAME);
 		this.setupContent();
 		this.pack();
 		this.setVisible(true);
-		this.setSize(800, 600);
+		this.setSize(300, 200);
 		this.setLocationRelativeTo(null);
 		this.requestFocusInWindow();
 
@@ -151,6 +152,12 @@ public class EntityWindow extends JFrame implements
 						propertySheet.addProperty(property);
 					}
 				}
+			}
+		} else if (arg instanceof EditorUpdateMessage) {
+			if (((EditorUpdateMessage) arg) == EditorUpdateMessage.SAVE) {
+				// If it is a save, close the window!
+				setVisible(false);
+				dispose();
 			}
 		}
 	}
