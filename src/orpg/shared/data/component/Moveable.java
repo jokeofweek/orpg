@@ -16,7 +16,7 @@ public class Moveable extends SynchronizebleComponent {
 	private boolean isMoveProcessed;
 
 	@Editable(name = "Direction", description = "The direction the entity is facing.")
-	private Direction direction;
+	public Direction direction;
 
 	public Direction getDirection() {
 		return direction;

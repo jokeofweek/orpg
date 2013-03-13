@@ -9,6 +9,6 @@ public abstract class Collidable extends SynchronizebleComponent {
 	
 	public abstract void onCollision(BaseServer baseServer, Entity componentOwner, Entity collidingEntity);
 
-	public abstract boolean isPassable(Entity entity);
-
+	public abstract boolean isPassable();
+	
 }

@@ -2,6 +2,7 @@ package orpg.shared.data.component;
 
 import orpg.shared.data.annotations.Attachable;
 import orpg.shared.data.annotations.Editable;
+import orpg.shared.data.annotations.Requires;
 import orpg.shared.net.serialize.InputByteBuffer;
 import orpg.shared.net.serialize.OutputByteBuffer;
 import orpg.shared.net.serialize.ValueSerializer;

@@ -136,8 +136,8 @@ public class MovementSystem extends EntityProcessingSystem {
 
 	/**
 	 * This checks whether there are any entities with the {@link Collidable}
-	 * component which has the {@link Collidable#isPassable()} set to false at
-	 * a given position.
+	 * component which has the {@link Collidable#isPassable()} set to false at a
+	 * given position.
 	 * 
 	 * @param x
 	 * @param y
@@ -153,7 +153,7 @@ public class MovementSystem extends EntityProcessingSystem {
 			entity = entities.get(i);
 			position = positionMapper.get(entity);
 			if (position.getX() == x && position.getY() == y) {
-				if (!collideableMapper.get(entity).isPassable(entity)) {
+				if (!collideableMapper.get(entity).isPassable()) {
 					return true;
 				}
 			}

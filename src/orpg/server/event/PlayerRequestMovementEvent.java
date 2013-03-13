@@ -101,7 +101,7 @@ public class PlayerRequestMovementEvent extends MovementEvent {
 					otherPosition = positionMapper.getSafe(other);
 					if (otherPosition != null && otherPosition.getX() == x
 							&& otherPosition.getY() == y) {
-						if (!collideable.isPassable(entity)) {
+						if (!collideable.isPassable()) {
 							passable = false;
 							break;
 						} else {

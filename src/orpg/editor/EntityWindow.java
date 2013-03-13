@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.IntrospectionException;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -26,8 +28,11 @@ import javax.swing.event.ListSelectionListener;
 
 import orpg.editor.controller.EditorController;
 import orpg.editor.controller.EntityController;
+import orpg.editor.util.EnumPropertyEditor;
+import orpg.editor.util.PropertyDescriptorAdapter;
 import orpg.shared.Strings;
 import orpg.shared.data.ComponentList;
+import orpg.shared.data.Direction;
 import orpg.shared.data.annotations.Editable;
 import orpg.shared.data.component.AttachableComponentDescriptor;
 import orpg.shared.data.component.Named;
@@ -39,7 +44,10 @@ import com.artemis.Entity;
 import com.l2fprod.common.beans.ExtendedPropertyDescriptor;
 import com.l2fprod.common.propertysheet.DefaultProperty;
 import com.l2fprod.common.propertysheet.Property;
+import com.l2fprod.common.propertysheet.PropertyEditorRegistry;
 import com.l2fprod.common.propertysheet.PropertySheetPanel;
+import com.sun.beans.editors.EnumEditor;
+import com.sun.beans.finder.PropertyEditorFinder;
 import com.sun.jmx.interceptor.DefaultMBeanServerInterceptor;
 
 public class EntityWindow extends JFrame implements
@@ -47,11 +55,18 @@ public class EntityWindow extends JFrame implements
 
 	private EntityController controller;
 
+	private final PropertySheetPanel propertySheet;
 	private JList availableComponentList;
 
-	public EntityWindow() {
-		this.controller = new EntityController(null, this);
+	public EntityWindow(EntityController controller) {
+		this.controller = controller;
 		this.controller.addObserver(this);
+
+		// Set up the property sheet
+		propertySheet = new PropertySheetPanel();
+		((PropertyEditorRegistry) (propertySheet.getEditorFactory()))
+				.registerEditor(Direction.class, new EnumPropertyEditor(
+						Direction.class));
 
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setTitle(Strings.ENGINE_NAME);
@@ -66,83 +81,28 @@ public class EntityWindow extends JFrame implements
 	}
 
 	public void setupContent() {
-		List<DefaultProperty> properties = new ArrayList<DefaultProperty>();
 
-		final PropertySheetPanel panel = new PropertySheetPanel();
-		List<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>();
-
-		Class[] classes = new Class[] { TestComponent.class, Named.class,
-				Renderable.class };
-		final HashMap<String, Class> fieldBeanClasses = new HashMap<String, Class>();
-
-		ExtendedPropertyDescriptor descriptor;
-		Editable annotation;
-
-		for (Class clazz : classes) {
-			for (Field field : clazz.getFields()) {
-				if ((annotation = field.getAnnotation(Editable.class)) != null) {
-					try {
-						descriptor = new ExtendedPropertyDescriptor(
-								field.getName(), clazz);
-						descriptor.setCategory(clazz.getSimpleName());
-						fieldBeanClasses.put(descriptor.getCategory()
-								+ "_" + descriptor.getName(), clazz);
-						descriptor.setDisplayName(annotation.name());
-						descriptor.setShortDescription(annotation
-								.description());
-						descriptors.add(descriptor);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-
-		PropertyDescriptor[] convertedDescriptors = new PropertyDescriptor[descriptors
-				.size()];
-		panel.setProperties(descriptors.toArray(convertedDescriptors));
-		panel.setMode(PropertySheetPanel.VIEW_AS_CATEGORIES);
+		propertySheet.setMode(PropertySheetPanel.VIEW_AS_CATEGORIES);
 
 		JPanel content = new JPanel(new BorderLayout());
-		content.add(panel);
+		content.add(propertySheet);
+		propertySheet.addPropertySheetChangeListener(controller);
+
+		// Add any properties already loaded in the controller
+		List<Property> properties = controller.getCurrentProperties();
+		for (Property property : properties) {
+			propertySheet.addProperty(property);
+		}
 
 		JButton saveButton = new JButton("Save");
+		saveButton.setAction(controller.getSaveAction());
 		content.add(saveButton, BorderLayout.SOUTH);
-
-		saveButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				HashMap<Class, Object> instances = new HashMap<Class, Object>();
-				Class componentClass;
-				Object component;
-
-				for (Property property : panel.getProperties()) {
-					componentClass = fieldBeanClasses.get(property
-							.getCategory() + "_" + property.getName());
-					if ((component = instances.get(componentClass)) == null) {
-						try {
-							component = componentClass.newInstance();
-							instances.put(componentClass, component);
-						} catch (InstantiationException e1) {
-						} catch (IllegalAccessException e1) {
-						}
-					}
-
-					property.writeToObject(component);
-
-				}
-
-				System.out.println(":D");
-			}
-		});
 
 		availableComponentList = new JList(new DefaultListModel());
 		populateAvailableComponentList();
-		panel.add(availableComponentList, BorderLayout.WEST);
-		availableComponentList
-				.addMouseListener(new ComponentListMouseListener(
-						controller));
+		content.add(availableComponentList, BorderLayout.WEST);
+		availableComponentList.addMouseListener(new ComponentListMouseListener(
+				controller));
 
 		add(content);
 	}
@@ -163,18 +123,17 @@ public class EntityWindow extends JFrame implements
 
 	@Override
 	public void load(BaseEditor baseEditor) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public String[] validate(BaseEditor baseEditor) {
+	public List<String> validate(BaseEditor baseEditor) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void save(BaseEditor baseEditor) {
+	public void beforeSave(BaseEditor baseEditor) {
 		// TODO Auto-generated method stub
 
 	}
@@ -182,15 +141,21 @@ public class EntityWindow extends JFrame implements
 	@Override
 	public void update(Observable o, Object arg) {
 		populateAvailableComponentList();
-		
+
 		// If it is a list of property descriptors, add them
-		if (arg instanceof PropertyDescriptor[]) {
-			System.out.println("!");
+		if (arg instanceof List<?>) {
+			if (((List<?>) arg).size() != 0) {
+				// Make sure it's a property list, and if so add them all
+				if (((List<?>) arg).get(0) instanceof Property) {
+					for (Property property : (List<Property>) arg) {
+						propertySheet.addProperty(property);
+					}
+				}
+			}
 		}
 	}
 
-	private static class ComponentListMouseListener implements
-			MouseListener {
+	private static class ComponentListMouseListener implements MouseListener {
 
 		private EntityController controller;
 
@@ -201,8 +166,7 @@ public class EntityWindow extends JFrame implements
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() == 2) {
-				Object selection = ((JList) (e.getSource()))
-						.getSelectedValue();
+				Object selection = ((JList) (e.getSource())).getSelectedValue();
 				if (selection != null) {
 					controller
 							.attachComponent((AttachableComponentDescriptor) selection);

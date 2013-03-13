@@ -1,6 +1,8 @@
 package orpg.editor.controller;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 
 import javax.swing.AbstractAction;
@@ -12,23 +14,21 @@ import orpg.editor.EditorWindow;
 
 public abstract class EditorController<K> extends Observable {
 
-	private EditorWindow<K> editorWindow;
-	private BaseEditor baseEditor;
-	private K editingObject;
+	protected BaseEditor baseEditor;
+
+	private List<EditorWindow<K>> editorWindows;
 
 	private Action saveAction;
 
-	public EditorController(final BaseEditor baseEditor,
-			final EditorWindow<K> editorWindow) {
+	public EditorController(final BaseEditor baseEditor) {
 		this.baseEditor = baseEditor;
-		this.editorWindow = editorWindow;
-
+		this.editorWindows = new ArrayList<EditorWindow<K>>();
 		this.saveAction = new AbstractAction("Save") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// First we validate to check.
-				String[] errors = editorWindow.validate(baseEditor);
-				if (errors != null && errors.length > 0) {
+				List<String> errors = validate();
+				if (errors != null && errors.size() > 0) {
 					// Errors occurred!
 					String errorMessages = "";
 					for (String error : errors) {
@@ -37,14 +37,18 @@ public abstract class EditorController<K> extends Observable {
 					JOptionPane.showMessageDialog(null, errorMessages);
 				} else {
 					// First trigger the window save
-					editorWindow.save(baseEditor);
+					beforeSave();
 					// Then do the controller save
 					save();
 				}
 			}
 		};
 	}
-	
+
+	public abstract List<String> validate();
+
+	public abstract void beforeSave();
+
 	public abstract void save();
 
 	public Action getSaveAction() {

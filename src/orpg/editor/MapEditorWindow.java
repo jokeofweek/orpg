@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -439,12 +440,12 @@ public class MapEditorWindow extends JFrame implements Observer,
 	}
 	
 	@Override
-	public void save(BaseEditor baseEditor) {
+	public void beforeSave(BaseEditor baseEditor) {
 		mapController.setMapName(mapNameTextField.getText());
 	}
 
 	@Override
-	public String[] validate(BaseEditor baseEditor) {
+	public List<String> validate(BaseEditor baseEditor) {
 		return null;
 	}
 

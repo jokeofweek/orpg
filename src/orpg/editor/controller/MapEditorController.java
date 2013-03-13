@@ -2,6 +2,7 @@ package orpg.editor.controller;
 
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -45,10 +46,13 @@ public class MapEditorController extends EditorController<Map> implements
 
 	private static final int SCALE_FACTORS[] = new int[] { 1, 2, 4, 8 };
 	private int scaleFactorPosition;
+	private EditorWindow<Map> editorWindow;
 
 	public MapEditorController(BaseEditor baseEditor,
 			EditorWindow<Map> editorWindow, MapController mapController) {
-		super(baseEditor, editorWindow);
+		super(baseEditor);
+
+		this.editorWindow = editorWindow;
 		this.tileRange = new TileRange();
 		this.changeManager = new EditorChangeManager();
 		this.changeManager.addObserver(this);
@@ -301,5 +305,15 @@ public class MapEditorController extends EditorController<Map> implements
 
 	public void save() {
 		this.getBaseEditor().saveMap(mapController.getMap(), segmentChanged);
+	}
+
+	@Override
+	public List<String> validate() {
+		return editorWindow.validate(baseEditor);
+	}
+
+	@Override
+	public void beforeSave() {
+		editorWindow.beforeSave(baseEditor);
 	}
 }

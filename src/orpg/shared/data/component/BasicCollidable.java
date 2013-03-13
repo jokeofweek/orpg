@@ -38,7 +38,7 @@ public class BasicCollidable extends Collidable {
 	}
 
 	@Override
-	public boolean isPassable(Entity entity) {
+	public boolean isPassable() {
 		return this.passable;
 	}
 
