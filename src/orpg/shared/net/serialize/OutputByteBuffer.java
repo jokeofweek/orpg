@@ -2,6 +2,7 @@ package orpg.shared.net.serialize;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import com.artemis.Entity;
 import com.artemis.utils.Bag;
@@ -13,6 +14,7 @@ import net.jpountz.lz4.LZ4Factory;
 import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.AutoTileType;
+import orpg.shared.data.ComponentList;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
 import orpg.shared.data.Segment;
@@ -67,8 +69,8 @@ public class OutputByteBuffer {
 		if (this.bytes.length < pos + extraCapacity) {
 			// If necessary, expand the byte array. Note we also shift new
 			// capacity by 1 to have extra space for later.
-			this.bytes = Arrays.copyOfRange(this.bytes, 0,
-					this.bytes.length + (extraCapacity << 1));
+			this.bytes = Arrays.copyOfRange(this.bytes, 0, this.bytes.length
+					+ (extraCapacity << 1));
 		}
 	}
 
@@ -164,8 +166,8 @@ public class OutputByteBuffer {
 		// test for extra capacity right away to pre-allocate
 		short[][][] tiles = segment.getTiles();
 		byte[][] flags = segment.getFlags();
-		testForExtraCapacity(MapLayer.values().length
-				* segment.getHeight() * segment.getWidth() * 3);
+		testForExtraCapacity(MapLayer.values().length * segment.getHeight()
+				* segment.getWidth() * 3);
 
 		int z, y, x;
 		for (x = 0; x < width; x++) {
@@ -176,8 +178,15 @@ public class OutputByteBuffer {
 				}
 			}
 		}
-	}
 
+		// store entities
+		List<ComponentList> entities = segment.getEntities();
+		testForExtraCapacity(2 + entities.size());
+		putShort((short) entities.size());
+		for (ComponentList entity : entities) {
+			putValue(entity);
+		}
+	}
 
 	/**
 	 * This puts a bag of entities into the byte buffer. <b>Note this assumes
@@ -298,8 +307,8 @@ public class OutputByteBuffer {
 		byte[] originalBytes = this.bytes;
 
 		// Copy all bytes over into our new bytes
-		this.bytes = new byte[this.pos - decompressedLength
-				+ maxRequiredLength + 8];
+		this.bytes = new byte[this.pos - decompressedLength + maxRequiredLength
+				+ 8];
 		System.arraycopy(originalBytes, 0, this.bytes, 0,
 				this.compressionMarker);
 		this.pos = this.compressionMarker;

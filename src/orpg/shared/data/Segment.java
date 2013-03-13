@@ -1,6 +1,11 @@
 package orpg.shared.data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
+import orpg.shared.net.serialize.SerializableValue;
+import orpg.shared.net.serialize.ValueSerializer;
 
 public class Segment {
 
@@ -12,6 +17,7 @@ public class Segment {
 	private short width;
 	private short height;
 	private byte flags[][];
+	private List<ComponentList> entities;
 
 	// Transient data
 	private Object revisionLock;
@@ -20,12 +26,13 @@ public class Segment {
 	public Segment(short x, short y, short width, short height) {
 		this(x, y, width, height,
 				new short[MapLayer.values().length][width][height],
-				new byte[width][height], 0, System.currentTimeMillis());
+				new byte[width][height], 0, System.currentTimeMillis(),
+				new ArrayList<ComponentList>());
 	}
 
 	public Segment(short x, short y, short width, short height,
-			short[][][] tiles, byte[][] flags, int revision,
-			long revisionTime) {
+			short[][][] tiles, byte[][] flags, int revision, long revisionTime,
+			List<ComponentList> entities) {
 		// Ensure tiles has right amount of layers
 		if (tiles.length != MapLayer.values().length) {
 			throw new IllegalArgumentException(
@@ -36,6 +43,7 @@ public class Segment {
 			throw new IllegalArgumentException(
 					"Segment width and height do not match passed tiles.");
 		}
+
 		if (flags.length != width || flags[0].length != height) {
 			throw new IllegalArgumentException(
 					"Segment width and height do not match passed flags.");
@@ -50,6 +58,7 @@ public class Segment {
 		this.height = height;
 		this.width = width;
 		this.revisionLock = new Object();
+		this.entities = entities;
 	}
 
 	public short getWidth() {
@@ -58,6 +67,10 @@ public class Segment {
 
 	public short getHeight() {
 		return height;
+	}
+
+	public List<ComponentList> getEntities() {
+		return entities;
 	}
 
 	public int getRevision() {

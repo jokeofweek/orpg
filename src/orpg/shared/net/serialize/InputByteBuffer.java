@@ -18,6 +18,7 @@ import net.jpountz.lz4.LZ4Factory;
 import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.AutoTileType;
+import orpg.shared.data.ComponentList;
 import orpg.shared.data.Direction;
 import orpg.shared.data.Map;
 import orpg.shared.data.MapLayer;
@@ -50,8 +51,7 @@ public class InputByteBuffer {
 		try {
 			in = new FileInputStream(file);
 			while (offset < this.bytes.length) {
-				read = in.read(this.bytes, offset, this.bytes.length
-						- offset);
+				read = in.read(this.bytes, offset, this.bytes.length - offset);
 				if (read == -1) {
 					throw new IOException(
 							"Could could not read any bytes. End of stream.");
@@ -179,8 +179,17 @@ public class InputByteBuffer {
 			}
 		}
 
-		Segment segment = new Segment(segmentX, segmentY, width, height,
-				tiles, flags, revision, revisionTime);
+		// Load the entities
+		short entityCount = getShort();
+		hasEnoughCapacity(entityCount);
+		List<ComponentList> entities = new ArrayList<ComponentList>(entityCount);
+		ValueSerializer<ComponentList> serializer = ComponentList.Serializer.getInstance();
+		for (int i = 0; i < entityCount; i++) {
+			entities.add(getValue(serializer));
+		}
+
+		Segment segment = new Segment(segmentX, segmentY, width, height, tiles,
+				flags, revision, revisionTime, entities);
 
 		return segment;
 	}
@@ -311,8 +320,8 @@ public class InputByteBuffer {
 		// array. This permits us to have only partially compressed data in a
 		// buffer.
 		System.arraycopy(this.bytes, 0, newBytes, 0, this.pos);
-		System.arraycopy(this.bytes, this.pos + compressedLength,
-				newBytes, this.pos + decompressedLength, this.bytes.length
+		System.arraycopy(this.bytes, this.pos + compressedLength, newBytes,
+				this.pos + decompressedLength, this.bytes.length
 						- (this.pos + compressedLength));
 
 		// Now inject the decompressed bytes
