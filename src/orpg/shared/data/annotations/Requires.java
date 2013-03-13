@@ -7,5 +7,5 @@ import com.artemis.Component;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Requires {
-	Class<? extends Component> dependency();
+	Class<? extends Component>[] dependencies();
 }
