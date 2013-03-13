@@ -47,8 +47,6 @@ import com.l2fprod.common.propertysheet.DefaultProperty;
 import com.l2fprod.common.propertysheet.Property;
 import com.l2fprod.common.propertysheet.PropertyEditorRegistry;
 import com.l2fprod.common.propertysheet.PropertySheetPanel;
-import com.sun.beans.editors.EnumEditor;
-import com.sun.beans.finder.PropertyEditorFinder;
 import com.sun.jmx.interceptor.DefaultMBeanServerInterceptor;
 
 public class EntityWindow extends JFrame implements
