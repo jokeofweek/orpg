@@ -12,6 +12,8 @@ import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
 import orpg.editor.data.change.map.MapEditorAddEntityChange;
 import orpg.editor.data.change.map.MapEditorEraseEntityChange;
+import orpg.editor.data.change.map.MapEditorReplaceEntityChange;
+import orpg.shared.Callback;
 import orpg.shared.data.ComponentList;
 import orpg.shared.data.component.Position;
 
@@ -30,8 +32,7 @@ public class EntityPencilTool implements Tool {
 	}
 
 	@Override
-	public void leftClick(MouseEvent e,
-			MapEditorController editorController,
+	public void leftClick(MouseEvent e, MapEditorController editorController,
 			MapController mapController, int x, int y) {
 
 		ComponentList entity = mapController.findEntity(x, y);
@@ -47,13 +48,14 @@ public class EntityPencilTool implements Tool {
 		} else {
 			// If we double clicked and last click was same tile, edit the
 			// entity
-			if (e.getClickCount() == 2 && lastSearchX == x
-					&& lastSearchY == y) {
+			if (e.getClickCount() == 2 && lastSearchX == x && lastSearchY == y) {
 				EntityController controller = new EntityController(
-						editorController.getBaseEditor(), entity, null);
+						editorController.getBaseEditor(), entity,
+						new EntitySaveCallback(editorController, mapController,
+								entity));
 				new EntityWindow(controller);
 			}
-			
+
 			this.lastSearchX = x;
 			this.lastSearchY = y;
 		}
@@ -61,8 +63,7 @@ public class EntityPencilTool implements Tool {
 	}
 
 	@Override
-	public void rightClick(MouseEvent e,
-			MapEditorController editorController,
+	public void rightClick(MouseEvent e, MapEditorController editorController,
 			MapController mapController, int x, int y) {
 		// If there was an entity at this position, delete it
 		ComponentList entity = mapController.findEntity(x, y);
@@ -74,4 +75,24 @@ public class EntityPencilTool implements Tool {
 		}
 	}
 
+	private static class EntitySaveCallback implements Callback<ComponentList> {
+		private ComponentList oldEntity;
+		private MapEditorController editorController;
+		private MapController mapController;
+
+		public EntitySaveCallback(MapEditorController editorController,
+				MapController mapController, ComponentList oldEntity) {
+			this.editorController = editorController;
+			this.mapController = mapController;
+			this.oldEntity = oldEntity;
+		}
+
+		@Override
+		public void invoke(ComponentList obj) {
+			this.editorController.getChangeManager().addChange(
+					new MapEditorReplaceEntityChange(editorController,
+							mapController, oldEntity, obj));
+
+		}
+	}
 }

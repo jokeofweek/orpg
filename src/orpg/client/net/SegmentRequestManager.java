@@ -8,6 +8,7 @@ import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
 import orpg.shared.data.Segment;
 import orpg.shared.data.store.DataStoreException;
+import orpg.shared.net.serialize.InputByteBuffer.ByteBufferOutOfBoundsException;
 
 public class SegmentRequestManager {
 
@@ -29,8 +30,7 @@ public class SegmentRequestManager {
 		}
 
 		// If we've already requested the segment, don't do anything
-		String requestKey = dataToRequestKey(baseClient.getMap().getId(),
-				x, y);
+		String requestKey = dataToRequestKey(baseClient.getMap().getId(), x, y);
 		if (!this.pendingRequests.contains(requestKey)) {
 			// Make sure we don't already have the segment
 			if (baseClient.getMap().getSegment(x, y) == null) {
@@ -39,23 +39,22 @@ public class SegmentRequestManager {
 				int revision = 0;
 				long revisionTime = 0l;
 				try {
-					Segment segment = baseClient
-							.getDataStore()
-							.loadSegment(baseClient.getMap().getId(), x, y);
+					Segment segment = baseClient.getDataStore().loadSegment(
+							baseClient.getMap().getId(), x, y);
 					if (segment != null) {
-						baseClient.getLocalMap().updateSegment(segment,
-								false);
+						baseClient.getLocalMap().updateSegment(segment, false);
 						revision = segment.getRevision();
 						revisionTime = segment.getRevisionTime();
 					}
 				} catch (DataStoreException e) {
+				} catch (ByteBufferOutOfBoundsException e) {
+
 				}
 
 				synchronized (handlingRequestLock) {
 					this.pendingRequests.add(requestKey);
-					this.baseClient.sendPacket(new NeedSegmentPacket(
-							baseClient.getMap().getId(), x, y, revision,
-							revisionTime));
+					this.baseClient.sendPacket(new NeedSegmentPacket(baseClient
+							.getMap().getId(), x, y, revision, revisionTime));
 				}
 			}
 		}
