@@ -109,16 +109,18 @@ public class MovementSystem extends EntityProcessingSystem {
 
 		Map map = baseClient.getMap();
 
-		if (!groupManager.inInGroup(entity, ClientConstants.GROUP_MAP)) {
-			requiresMapJoin = true;
-			requiresSegmentJoin = true;
-		} else if (map.getSegmentX(oldX) != map.getSegmentX(newX)
-				|| map.getSegmentY(oldY) != map.getSegmentY(newY)) {
-			requiresSegmentJoin = true;
-			groupManager.remove(
-					entity,
-					String.format(ClientConstants.GROUP_MAP_SEGMENT,
-							map.getSegmentX(oldX), map.getSegmentY(oldY)));
+		if (groupManager.getGroups(entity) != null) {
+			if (!groupManager.inInGroup(entity, ClientConstants.GROUP_MAP)) {
+				requiresMapJoin = true;
+				requiresSegmentJoin = true;
+			} else if (map.getSegmentX(oldX) != map.getSegmentX(newX)
+					|| map.getSegmentY(oldY) != map.getSegmentY(newY)) {
+				requiresSegmentJoin = true;
+				groupManager.remove(
+						entity,
+						String.format(ClientConstants.GROUP_MAP_SEGMENT,
+								map.getSegmentX(oldX), map.getSegmentY(oldY)));
+			}
 		}
 
 		// Register the map / segment groups

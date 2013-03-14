@@ -17,9 +17,11 @@ import orpg.server.data.controllers.AccountController;
 import orpg.server.data.controllers.AutoTileController;
 import orpg.server.data.controllers.MapController;
 import orpg.server.data.entity.EntityFactory;
+import orpg.server.data.entity.EntityPreprocessor;
 import orpg.server.data.store.DataStore;
 import orpg.server.data.store.FileDataStore;
 import orpg.server.net.packets.ServerPacket;
+import orpg.server.systems.MapProcessSystem;
 import orpg.server.systems.MovementSystem;
 
 public class BaseServer {
@@ -35,7 +37,7 @@ public class BaseServer {
 	private AccountController accountController;
 	private AutoTileController autoTileController;
 	private DataStore dataStore;
-	
+
 	// World and entity datas
 	private ServerWorldThread serverWorldThread;
 	private World world;
@@ -50,22 +52,24 @@ public class BaseServer {
 		// Set up our queues
 		this.inputQueue = new LinkedBlockingQueue<ServerReceivedPacket>();
 		this.outputQueue = new LinkedBlockingQueue<ServerPacket>();
-		
+
 		// Initialize the world
 		console.out().println("Creating world...");
 		this.world = new World();
 		world.setManager(new GroupManager());
 		world.setManager(new PlayerManager());
+		world.setManager(new EntityPreprocessor());
+		world.setSystem(new MapProcessSystem(this, 100));
 		world.setSystem(new MovementSystem(this));
 		world.initialize();
 		this.entityFactory = new EntityFactory(this, this.world);
 		this.serverWorldThread = new ServerWorldThread(this);
-		
+
 		// Create an event processor entity to be used by the aspects
 		Entity entity = world.createEntity();
 		entity.addComponent(new EventProcessor());
 		world.addEntity(entity);
-		
+
 		// Set up the various threads
 		this.serverSessionManager = new ServerSessionManager(this, outputQueue);
 		this.serverGameThread = new ServerGameThread(this, inputQueue,
@@ -142,11 +146,11 @@ public class BaseServer {
 	public AutoTileController getAutoTileController() {
 		return autoTileController;
 	}
-	
+
 	public World getWorld() {
 		return world;
 	}
-	
+
 	public EntityFactory getEntityFactory() {
 		return entityFactory;
 	}

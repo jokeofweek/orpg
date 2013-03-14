@@ -72,19 +72,20 @@ public class EntityPreprocessor extends EntityManager {
 				e.addComponent(new HandlesInput());
 			}
 
-			// If there was a collideable component, register it as a
-			// collideable
-			// as well
-			Bag<Component> components = new Bag<Component>();
-			e.getComponents(components);
-			for (int i = 0; i < components.size(); i++) {
-				if (components.get(i) instanceof Collidable
-						&& collideableMapper.getSafe(e) == null) {
-					e.addComponent(components.get(i), collideableType);
-				}
-			}
-
 			e.changedInWorld();
+
+		}
+		// If there was a collideable component, register it as a
+		// collideable as well
+		Bag<Component> components = new Bag<Component>();
+		e.getComponents(components);
+		for (int i = 0; i < components.size(); i++) {
+			if (components.get(i) instanceof Collidable
+					&& collideableMapper.getSafe(e) == null) {
+				e.addComponent(components.get(i), collideableType);
+				e.changedInWorld();
+				break;
+			}
 		}
 
 		if (collideableMapper.getSafe(e) != null) {

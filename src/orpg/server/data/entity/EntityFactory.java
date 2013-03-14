@@ -36,22 +36,21 @@ public class EntityFactory {
 		if (world.getManager(PlayerManager.class)
 				.getEntitiesOfPlayer(character.getName()).size() > 0) {
 			throw new IllegalArgumentException("The character "
-					+ character.getName()
-					+ " already exists in the world.");
+					+ character.getName() + " already exists in the world.");
 		}
 
 		// Create the entity
 		Entity entity = world.createEntity();
-		entity.addComponent(new Position(character.getId(), character
-				.getX(), character.getY()));
+		entity.addComponent(new Position(character.getId(), character.getX(),
+				character.getY()));
 		entity.addComponent(new Renderable(character.getSprite()));
 		entity.addComponent(new Named(character.getName()));
 		entity.addComponent(IsPlayer.getInstance());
 		Moveable moveable = new Moveable();
 		moveable.setDirection(character.getDirection());
 		entity.addComponent(moveable);
-		entity.addComponent(BasicCollidable.BLOCKING, collideableType);
-		
+		entity.addComponent(BasicCollidable.BLOCKING);
+
 		// Add the player to the players group
 		GroupManager groups = world.getManager(GroupManager.class);
 		groups.add(entity, Constants.GROUP_PLAYERS);
@@ -65,8 +64,7 @@ public class EntityFactory {
 
 	public void removeAccountCharacterEntity(AccountCharacter character) {
 		ImmutableBag<Entity> matchingEntities = world.getManager(
-				PlayerManager.class).getEntitiesOfPlayer(
-				character.getName());
+				PlayerManager.class).getEntitiesOfPlayer(character.getName());
 
 		// If we have a match, remove it from the world
 		for (int i = 0; i < matchingEntities.size(); i++) {
