@@ -5,7 +5,7 @@ import com.artemis.Entity;
 import orpg.server.BaseServer;
 import orpg.server.systems.MovementSystem;
 
-public class EntityLeaveMapEvent extends MovementEvent {
+public class EntityLeaveMapEvent implements MovementEvent {
 
 	private Entity entity;
 

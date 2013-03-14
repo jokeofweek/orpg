@@ -5,7 +5,7 @@ import com.artemis.Entity;
 import orpg.server.BaseServer;
 import orpg.server.systems.MovementSystem;
 
-public class EntityWarpToPositionMovementEvent extends MovementEvent {
+public class EntityWarpToPositionMovementEvent implements MovementEvent {
 
 	private Entity entity;
 	private int mapId;

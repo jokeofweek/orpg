@@ -7,7 +7,8 @@ import orpg.client.BaseClient;
 import orpg.client.net.packets.MoveRequestPacket;
 import orpg.server.BaseServer;
 import orpg.server.ServerSession;
-import orpg.server.data.components.EventProcessor;
+import orpg.server.data.components.SystemEventProcessor;
+import orpg.server.event.EventProcessor;
 import orpg.server.event.MovementEvent;
 import orpg.server.net.packets.ClientJoinMapPacket;
 import orpg.server.net.packets.ClientLeftMapPacket;
@@ -27,7 +28,7 @@ import com.artemis.managers.GroupManager;
 import com.artemis.systems.EntityProcessingSystem;
 import com.artemis.utils.ImmutableBag;
 
-public class MovementSystem extends EntityProcessingSystem {
+public class MovementSystem extends EntityProcessingSystem implements EventProcessor<MovementEvent> {
 
 	private static final int EVENTS_PER_CYCLE = 20;
 
@@ -37,7 +38,7 @@ public class MovementSystem extends EntityProcessingSystem {
 	private ComponentMapper<Position> positionMapper;
 
 	public MovementSystem(BaseServer baseServer) {
-		super(Aspect.getAspectForAll(EventProcessor.class));
+		super(Aspect.getAspectForAll(SystemEventProcessor.class));
 		this.baseServer = baseServer;
 		this.groupManager = baseServer.getWorld()
 				.getManager(GroupManager.class);
@@ -48,6 +49,17 @@ public class MovementSystem extends EntityProcessingSystem {
 	public void addEvent(MovementEvent event) {
 		this.events.add(event);
 	}
+
+	@Override
+	protected void process(Entity e) {
+		int remaining = EVENTS_PER_CYCLE;
+		MovementEvent event;
+		while (remaining >= 0 && (event = events.poll()) != null) {
+			event.process(baseServer, this);
+			remaining--;
+		}
+	}
+
 
 	/**
 	 * 
@@ -269,15 +281,4 @@ public class MovementSystem extends EntityProcessingSystem {
 							map.getSegmentY(position.getY())));
 		}
 	}
-
-	@Override
-	protected void process(Entity e) {
-		int remaining = EVENTS_PER_CYCLE;
-		MovementEvent event;
-		while (remaining >= 0 && (event = events.poll()) != null) {
-			event.process(baseServer, this);
-			remaining--;
-		}
-	}
-
 }

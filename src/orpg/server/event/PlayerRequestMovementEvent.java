@@ -25,7 +25,7 @@ import orpg.shared.data.component.Collidable;
 import orpg.shared.data.component.Moveable;
 import orpg.shared.data.component.Position;
 
-public class PlayerRequestMovementEvent extends MovementEvent {
+public class PlayerRequestMovementEvent implements MovementEvent {
 
 	private ServerSession session;
 	private Direction direction;

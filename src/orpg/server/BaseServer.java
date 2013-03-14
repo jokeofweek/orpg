@@ -12,7 +12,7 @@ import com.artemis.managers.PlayerManager;
 import orpg.server.config.ServerConfigurationManager;
 import orpg.server.console.ServerConsole;
 import orpg.server.data.ServerReceivedPacket;
-import orpg.server.data.components.EventProcessor;
+import orpg.server.data.components.SystemEventProcessor;
 import orpg.server.data.controllers.AccountController;
 import orpg.server.data.controllers.AutoTileController;
 import orpg.server.data.controllers.MapController;
@@ -67,7 +67,7 @@ public class BaseServer {
 
 		// Create an event processor entity to be used by the aspects
 		Entity entity = world.createEntity();
-		entity.addComponent(new EventProcessor());
+		entity.addComponent(new SystemEventProcessor());
 		world.addEntity(entity);
 
 		// Set up the various threads

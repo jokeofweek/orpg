@@ -4,8 +4,9 @@ import orpg.server.BaseServer;
 import orpg.server.ServerSessionManager;
 import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.controllers.MapController;
-import orpg.server.event.RefreshMapPlayersEvent;
+import orpg.server.event.RefreshMapEvent;
 import orpg.server.net.packets.ErrorPacket;
+import orpg.server.systems.MapProcessSystem;
 import orpg.server.systems.MovementSystem;
 import orpg.shared.ErrorMessage;
 import orpg.shared.data.AccountCharacter;
@@ -27,8 +28,8 @@ public class EditorSaveMapHandler implements ServerPacketHandler {
 		}
 
 		// Re-warp all players on map
-		baseServer.getWorld().getSystem(MovementSystem.class)
-				.addEvent(new RefreshMapPlayersEvent(descriptor.getId()));
+		baseServer.getWorld().getSystem(MapProcessSystem.class)
+				.addEvent(new RefreshMapEvent(descriptor.getId()));
 
 		if (!baseServer.getMapController().save(map)) {
 			baseServer.sendPacket(new ErrorPacket(packet.getSession(),

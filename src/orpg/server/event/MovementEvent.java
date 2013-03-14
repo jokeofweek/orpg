@@ -7,8 +7,9 @@ import orpg.shared.data.Direction;
 import com.artemis.Entity;
 import com.artemis.World;
 
-public abstract class MovementEvent {
-	
-	public abstract void process(BaseServer baseServer, MovementSystem movementSystem);
+public interface MovementEvent {
+
+	public void process(BaseServer baseServer,
+			MovementSystem movementSystem);
 
 }
