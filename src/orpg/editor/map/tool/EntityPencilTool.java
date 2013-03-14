@@ -1,5 +1,6 @@
 package orpg.editor.map.tool;
 
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,9 @@ public class EntityPencilTool implements Tool {
 
 	private static EntityPencilTool instance = new EntityPencilTool();
 
+	private int lastSearchX;
+	private int lastSearchY;
+
 	private EntityPencilTool() {
 	}
 
@@ -26,27 +30,39 @@ public class EntityPencilTool implements Tool {
 	}
 
 	@Override
-	public void leftClick(MapEditorController editorController,
+	public void leftClick(MouseEvent e,
+			MapEditorController editorController,
 			MapController mapController, int x, int y) {
+
 		ComponentList entity = mapController.findEntity(x, y);
 		if (entity == null) {
 			Position position = new Position(0, x, y);
 			List<Component> components = new ArrayList<Component>(1);
 			components.add(position);
-
+			this.lastSearchX = x;
+			this.lastSearchX = y;
 			editorController.getChangeManager().addChange(
 					new MapEditorAddEntityChange(editorController,
 							mapController, new ComponentList(components)));
 		} else {
-			EntityController controller = new EntityController(
-					editorController.getBaseEditor(), entity, null);
-			new EntityWindow(controller);
+			// If we double clicked and last click was same tile, edit the
+			// entity
+			if (e.getClickCount() == 2 && lastSearchX == x
+					&& lastSearchY == y) {
+				EntityController controller = new EntityController(
+						editorController.getBaseEditor(), entity, null);
+				new EntityWindow(controller);
+			}
+			
+			this.lastSearchX = x;
+			this.lastSearchY = y;
 		}
 
 	}
 
 	@Override
-	public void rightClick(MapEditorController editorController,
+	public void rightClick(MouseEvent e,
+			MapEditorController editorController,
 			MapController mapController, int x, int y) {
 		// If there was an entity at this position, delete it
 		ComponentList entity = mapController.findEntity(x, y);

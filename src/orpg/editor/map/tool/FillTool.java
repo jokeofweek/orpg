@@ -1,5 +1,7 @@
 package orpg.editor.map.tool;
 
+import java.awt.event.MouseEvent;
+
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
 import orpg.editor.data.change.map.MapEditorFillSegmentChange;
@@ -15,7 +17,7 @@ public class FillTool implements Tool {
 	}
 	
 	@Override
-	public void leftClick(MapEditorController editorController,
+	public void leftClick(MouseEvent e, MapEditorController editorController,
 			MapController mapController, int x, int y) {
 		editorController.getChangeManager().addChange(
 				new MapEditorFillSegmentChange(editorController, mapController,
@@ -25,10 +27,10 @@ public class FillTool implements Tool {
 	}
 
 	@Override
-	public void rightClick(MapEditorController editorController,
+	public void rightClick(MouseEvent e, MapEditorController editorController,
 			MapController mapController, int x, int y) {
 		// For now just proxy to pencil right click
-		PencilTool.getInstance().rightClick(editorController, mapController, x,
+		PencilTool.getInstance().rightClick(e, editorController, mapController, x,
 				y);
 	}
 

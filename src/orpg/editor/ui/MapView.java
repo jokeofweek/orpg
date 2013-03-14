@@ -311,7 +311,8 @@ public class MapView extends JComponent implements Observer, MouseListener,
 			AlphaComposite regularComposite, int startX, int startY, int endX,
 			int endY) {
 		graphics.setComposite(ENTITY_COMPOSITE);
-		graphics.setColor(Color.black.darker().darker());
+		Color fillColor = Color.blue.brighter();
+		Color borderColor = Color.gray.darker();
 
 		int startSegmentX = mapController.getSegmentX(startX);
 		int endSegmentX = mapController.getSegmentX(endX);
@@ -328,7 +329,12 @@ public class MapView extends JComponent implements Observer, MouseListener,
 						if (position.getX() >= startX && position.getX() < endX
 								&& position.getY() >= startY
 								&& position.getY() < endY) {
+							graphics.setColor(fillColor);
 							graphics.fillRect(position.getX() * tileWidth,
+									position.getY() * tileHeight, tileWidth,
+									tileHeight);
+							graphics.setColor(borderColor);
+							graphics.drawRect(position.getX() * tileWidth,
 									position.getY() * tileHeight, tileWidth,
 									tileHeight);
 						}
@@ -416,7 +422,7 @@ public class MapView extends JComponent implements Observer, MouseListener,
 					return;
 				}
 
-				editorController.getCurrentTool().leftClick(editorController,
+				editorController.getCurrentTool().leftClick(e, editorController,
 						mapController, x / tileWidth, y / tileHeight);
 
 			} else if (rightDown) {
@@ -428,7 +434,7 @@ public class MapView extends JComponent implements Observer, MouseListener,
 					return;
 				}
 
-				editorController.getCurrentTool().rightClick(editorController,
+				editorController.getCurrentTool().rightClick(e, editorController,
 						mapController, x / tileWidth, y / tileHeight);
 			}
 		}

@@ -1,5 +1,7 @@
 package orpg.editor.map.tool;
 
+import java.awt.event.MouseEvent;
+
 import orpg.editor.controller.MapController;
 import orpg.editor.controller.MapEditorController;
 import orpg.editor.data.change.map.MapEditorTileEraseChange;
@@ -19,7 +21,7 @@ public class PencilTool implements Tool {
 	}
 
 	@Override
-	public void leftClick(MapEditorController editorController,
+	public void leftClick(MouseEvent e, MapEditorController editorController,
 			MapController mapController, int x, int y) {
 		// Make sure there is a change:
 		int startX = editorController.getTileRange().getStartX();
@@ -60,7 +62,7 @@ public class PencilTool implements Tool {
 	}
 
 	@Override
-	public void rightClick(MapEditorController editorController,
+	public void rightClick(MouseEvent e, MapEditorController editorController,
 			MapController mapController, int x, int y) {
 
 		// If a right-click, then erase the tile if not already empty.
