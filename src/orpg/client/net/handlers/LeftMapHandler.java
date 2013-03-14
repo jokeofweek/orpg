@@ -27,6 +27,7 @@ public class LeftMapHandler implements ClientPacketHandler {
 							.getManager(TagManager.class)
 							.getEntity(entityToRemove + "");
 					if (entity != null) {
+						client.getWorld().getManager(TagManager.class).unregister(entityToRemove + "");
 						client.getWorld().deleteEntity(entity);
 					}
 				}

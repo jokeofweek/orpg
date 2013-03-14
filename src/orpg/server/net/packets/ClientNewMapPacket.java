@@ -1,6 +1,9 @@
 package orpg.server.net.packets;
 
+import javax.swing.text.Position;
+
 import orpg.server.ServerSession;
+import orpg.shared.data.Map;
 import orpg.shared.net.ServerPacketType;
 import orpg.shared.net.serialize.OutputByteBuffer;
 
@@ -8,15 +11,15 @@ public class ClientNewMapPacket extends SessionPacket {
 
 	private byte[] bytes;
 
-	public ClientNewMapPacket(ServerSession session) {
+	public ClientNewMapPacket(ServerSession session, Map map, int x, int y) {
 		super(session);
 
 		OutputByteBuffer out = new OutputByteBuffer();
-		out.putMapDescriptor(session.getCharacter().getMap());
+		out.putMapDescriptor(map);
 
 		// Need to put in client x and y to determine the segment we need
-		out.putInt(session.getCharacter().getX());
-		out.putInt(session.getCharacter().getY());
+		out.putInt(x);
+		out.putInt(y);
 
 		this.bytes = out.getBytes();
 	}

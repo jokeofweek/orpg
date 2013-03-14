@@ -27,7 +27,7 @@ public class MapEntitiesActor extends Actor {
 	public void draw(SpriteBatch batch, float parentAlpha) {
 		super.draw(batch, 0);
 
-		if (baseClient.isChangingMap()) {
+		if (!baseClient.canRender()) {
 			return;
 		}
 
@@ -40,7 +40,7 @@ public class MapEntitiesActor extends Actor {
 	public void act(float delta) {
 		super.act(delta);
 
-		if (baseClient.isChangingMap()) {
+		if (!baseClient.canRender()) {
 			return;
 		}
 		/*

@@ -7,6 +7,7 @@
 - Fix seamless scroll to request segments in order of need.
 - On changing a map, the viewbox needs to be rebuilt with the right content width /content height
 - Allow for editing of autotiles via editor application. 
+- Fix up the remnants of account character classes to support saving and updating the entity appropriately.
 
 ## DONE
 

@@ -129,6 +129,9 @@ public class SegmentDataHandler implements ClientPacketHandler {
 									.equals(name)) {
 						baseClient.setEntity(entity);
 
+						// If we were presently changing maps, we are done now
+						baseClient.setChangingMap(false);
+
 						// If it is the player, add the camera if it is not
 						// already present
 						Position position = positionMapper.get(entity);
@@ -144,9 +147,6 @@ public class SegmentDataHandler implements ClientPacketHandler {
 
 					baseClient.getWorld().addEntity(entity);
 				}
-
-				// If we were presently changing maps, we are done now
-				baseClient.setChangingMap(false);
 
 				// If we are joining a map, request surrounding segments
 				if (wasChangingMaps) {

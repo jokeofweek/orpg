@@ -141,5 +141,9 @@ public class BaseClient extends AbstractClient {
 	public void setEntity(Entity entity) {
 		this.entity = entity;
 	}
+	
+	public boolean canRender() {
+		return !isChangingMap && entity != null;
+	}
 
 }
