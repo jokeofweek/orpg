@@ -7,7 +7,7 @@
 - Fix seamless scroll to request segments in order of need.
 - On changing a map, the viewbox needs to be rebuilt with the right content width /content height
 - Allow for editing of autotiles via editor application. 
-- Fix up the remnants of account character classes to support saving and updating the entity appropriately.
+- Fix up the 2x2 autotiler to be more smart and use the cache.
 
 ## DONE
 
@@ -17,3 +17,4 @@
 - "Modify the NEED_SEGMENT packets to send over local revision." - The local segments are now loaded on a local Map object and the revision/revisionTime are sent along with the need segment. The ClientNeedSegmentHandler then checks with the server revision data, and passes it to the ClientSegmentDataPacket. A boolean is sent in the segment data packet stating whether the revisions match. If the revisions do not match, then it sends the segment data. Finally it sends the players in both cases.
 - Implement autotiling.
 - Create a 2x2 autotiler.
+- "Fix up the remnants of account character classes to support saving and updating the entity appropriately." - The EntityFactory class now has an updateEntityAccountCharacter method which will update the associated account character for an entity. Also, for the moment, saving is done when a player leaves the game.
