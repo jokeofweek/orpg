@@ -36,7 +36,7 @@ public class ServerSession {
 	private World world;
 
 	private Account account;
-	private AccountCharacter character;
+	private String characterName;
 	private Entity entity;
 	private boolean isWaitingForMap;
 
@@ -107,7 +107,7 @@ public class ServerSession {
 		if (getSessionType() == SessionType.GAME) {
 			ImmutableBag<Entity> playerEntities = baseServer.getWorld()
 					.getManager(PlayerManager.class)
-					.getEntitiesOfPlayer(getCharacter().getName());
+					.getEntitiesOfPlayer(getCharacterName());
 			MovementSystem movementSystem = baseServer.getWorld()
 					.getSystem(MovementSystem.class);
 			for (int i = 0; i < playerEntities.size(); i++) {
@@ -143,8 +143,8 @@ public class ServerSession {
 		return account;
 	}
 
-	public AccountCharacter getCharacter() {
-		return character;
+	public String getCharacterName() {
+		return characterName;
 	}
 
 	public World getWorld() {
@@ -201,7 +201,7 @@ public class ServerSession {
 
 	}
 
-	public void useCharacter(AccountCharacter character) {
+	public void useCharacter(String characterName) {
 		if (sessionType != SessionType.LOGGED_IN) {
 			baseServer
 					.getConfigManager()
@@ -209,7 +209,7 @@ public class ServerSession {
 					.log(Level.SEVERE,
 							"Session " + getId()
 									+ " attempted to select character "
-									+ character.getName()
+									+ characterName
 									+ " while not in the correct state.");
 			return;
 		}
@@ -217,12 +217,15 @@ public class ServerSession {
 		// Just a sanity test, make sure this character is in the account's
 		// characters
 		boolean found = false;
+		AccountCharacter selectedCharacter = null;
 		for (AccountCharacter accountCharacter : account.getCharacters()) {
-			if (character == accountCharacter) {
+			if (accountCharacter.getName().equals(characterName)) {
 				found = true;
+				selectedCharacter = accountCharacter;
 				break;
 			}
 		}
+
 		if (!found) {
 			baseServer
 					.getConfigManager()
@@ -231,7 +234,7 @@ public class ServerSession {
 							"Session "
 									+ getId()
 									+ " attempted to select character "
-									+ character.getName()
+									+ characterName
 									+ " while logged into a non-owning account "
 									+ getAccount().getName() + ".");
 			baseServer.sendPacket(new ErrorPacket(this,
@@ -240,13 +243,13 @@ public class ServerSession {
 		}
 
 		// Now we register the in-game session.
-		this.character = character;
+		this.characterName = characterName;
 		this.sessionType = SessionType.GAME;
 		if (baseServer.getServerSessionManager().registerInGameSession(
 				this)) {
 			// Update the id to include character name
 			this.id = this.originalId + "(" + account.getName() + ":"
-					+ character.getName() + ")";
+					+ characterName + ")";
 
 			baseServer
 					.getConfigManager()
@@ -258,7 +261,7 @@ public class ServerSession {
 
 			// Create the entity
 			Entity entity = baseServer.getEntityFactory()
-					.addAccountCharacterEntity(character);
+					.addAccountCharacterEntity(selectedCharacter);
 			this.setWorld(entity.getWorld());
 			this.setEntity(entity);
 			this.baseServer.getServerSessionManager()
@@ -266,20 +269,23 @@ public class ServerSession {
 			this.setWaitingForMap(true);
 
 			// Notify the client that they are now in the game
-			baseServer.sendPacket(new ClientInGamePacket(this, character,
-					baseServer.getAutoTileController()));
+			baseServer
+					.sendPacket(new ClientInGamePacket(this,
+							selectedCharacter, baseServer
+									.getAutoTileController()));
 
 			baseServer
 					.getWorld()
 					.getSystem(MovementSystem.class)
 					.addEvent(
 							new EntityWarpToPositionMovementEvent(entity,
-									character.getMap().getId(), character
-											.getX(), character.getY()));
+									selectedCharacter.getMap().getId(),
+									selectedCharacter.getX(),
+									selectedCharacter.getY()));
 			;
 		} else {
 			// Revert the account back to original state
-			this.character = null;
+			this.characterName = null;
 			this.sessionType = SessionType.LOGGED_IN;
 			baseServer.sendPacket(new ErrorPacket(this,
 					ErrorMessage.CHARACTER_IN_USE));

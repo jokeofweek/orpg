@@ -16,7 +16,7 @@ public class UseCharacterHandler implements ServerPacketHandler {
 		for (AccountCharacter character : packet.getSession().getAccount()
 				.getCharacters()) {
 			if (character.getName().equals(characterName)) {
-				packet.getSession().useCharacter(character);
+				packet.getSession().useCharacter(characterName);
 				return;
 			}
 		}

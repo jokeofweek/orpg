@@ -121,13 +121,7 @@ public class MovementSystem extends EntityProcessingSystem implements
 
 			session = baseServer.getServerSessionManager()
 					.getEntitySession(entity);
-
-			// Update the account character
-			// TODO: Remove this, this is just a cheap hack for now..
-			session.getCharacter().setMap(map);
-			session.getCharacter().setX(x);
-			session.getCharacter().setY(y);
-			
+						
 			if (session != null) {
 				refreshMap(session);
 			}

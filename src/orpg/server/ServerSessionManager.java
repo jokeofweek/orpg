@@ -65,7 +65,7 @@ public class ServerSessionManager implements Runnable {
 	public void removeSession(ServerSession session) {
 		// If the client was in game, remove from in game sessions as well
 		if (session.getSessionType() == SessionType.GAME) {
-			inGameSessions.remove(session.getCharacter().getName());
+			inGameSessions.remove(session.getCharacterName());
 		}
 
 		// If the session had an account, remove from the accountSessions
@@ -112,7 +112,8 @@ public class ServerSessionManager implements Runnable {
 		// there is at least one other session with that account, else
 		// create a new list.
 		if (accountSessions.containsKey(session.getAccount().getName())) {
-			accountSessions.get(session.getAccount().getName()).add(session);
+			accountSessions.get(session.getAccount().getName()).add(
+					session);
 		} else {
 			List<ServerSession> sessions = new ArrayList<ServerSession>(1);
 			sessions.add(session);
@@ -124,7 +125,7 @@ public class ServerSessionManager implements Runnable {
 			throws IllegalStateException {
 		if (session.getSessionType() != SessionType.GAME
 				|| session.getAccount() == null
-				|| session.getCharacter() == null) {
+				|| session.getCharacterName() == null) {
 			this.baseServer
 					.getConfigManager()
 					.getErrorLogger()
@@ -135,11 +136,11 @@ public class ServerSessionManager implements Runnable {
 					"Cannot register ingame session. Not a valid session.");
 		}
 
-		if (getInGameSession(session.getCharacter().getName()) != null) {
+		if (getInGameSession(session.getCharacterName()) != null) {
 			return false;
 		}
 
-		inGameSessions.put(session.getCharacter().getName(), session);
+		inGameSessions.put(session.getCharacterName(), session);
 		return true;
 	}
 
@@ -154,7 +155,7 @@ public class ServerSessionManager implements Runnable {
 			entitySessions.remove(entity);
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void run() {
@@ -194,12 +195,13 @@ public class ServerSessionManager implements Runnable {
 							.getWorld()
 							.getManager(GroupManager.class)
 							.getEntities(
-									String.format(Constants.GROUP_MAP_PLAYERS,
+									String.format(
+											Constants.GROUP_MAP_PLAYERS,
 											id));
 
 					for (int i = 0; i < entities.size(); i++) {
-						getEntitySession(entities.get(i)).getOutputQueue().add(
-								rawBytes);
+						getEntitySession(entities.get(i)).getOutputQueue()
+								.add(rawBytes);
 					}
 
 					break;
@@ -213,7 +215,8 @@ public class ServerSessionManager implements Runnable {
 							.getWorld()
 							.getManager(GroupManager.class)
 							.getEntities(
-									String.format(Constants.GROUP_MAP_PLAYERS,
+									String.format(
+											Constants.GROUP_MAP_PLAYERS,
 											destinationObject.getSecond()));
 
 					for (int i = 0; i < entities.size(); i++) {
