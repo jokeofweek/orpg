@@ -5,7 +5,6 @@
 - Clean up API to make it more clear when requesting a segment X/Y and a map-wide X/Y
 - Fix up the account ID system and then replace all the packets that use the name of the character is the ID.
 - Fix seamless scroll to request segments in order of need.
-- On changing a map, the viewbox needs to be rebuilt with the right content width /content height
 - Allow for editing of autotiles via editor application. 
 - Fix up the 2x2 autotiler to be more smart and use the cache.
 
@@ -18,3 +17,4 @@
 - Implement autotiling.
 - Create a 2x2 autotiler.
 - "Fix up the remnants of account character classes to support saving and updating the entity appropriately." - The EntityFactory class now has an updateEntityAccountCharacter method which will update the associated account character for an entity. Also, for the moment, saving is done when a player leaves the game.
+- "On changing a map, the viewbox needs to be rebuilt with the right content width /content height" - Fixed by recreating the camera every time we get a new map.
