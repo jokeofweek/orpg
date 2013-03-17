@@ -1,5 +1,6 @@
 package orpg.server.data.controllers;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -25,7 +26,8 @@ public class ChatController {
 		}
 	}
 
-	public void addSession(ServerSession session, List<ChatChannel> channels) {
+	public void addSession(ServerSession session,
+			Collection<ChatChannel> channels) {
 		synchronized (channelSessions) {
 			for (ChatChannel channel : channels) {
 				channelSessions.get(channel).add(session);

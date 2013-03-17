@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -21,6 +22,7 @@ import org.ini4j.Wini;
 
 import orpg.server.BaseServer;
 import orpg.server.data.Account;
+import orpg.shared.ChatChannel;
 import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.AutoTileType;
@@ -357,6 +359,14 @@ public class FileDataStore implements DataStore {
 		ini.put(key, "dir", character.getDirection().ordinal());
 		ini.put(key, "sprite", character.getSprite());
 
+		// Save the chat channels
+		Set<ChatChannel> subscriptions = character
+				.getChatChannelSubscriptions();
+		for (ChatChannel channel : ChatChannel.values()) {
+			ini.put(key, "channel_" + channel,
+					subscriptions.contains(channel) ? 1 : 0);
+		}
+
 	}
 
 	/*
@@ -411,6 +421,15 @@ public class FileDataStore implements DataStore {
 		character.setDirection(Direction.values()[ini
 				.get(key, "dir", int.class)]);
 		character.setSprite(ini.get(key, "sprite", short.class));
+
+		// Load set of channel subscriptions
+		Set<ChatChannel> subscriptions = new HashSet<ChatChannel>();
+		for (ChatChannel channel : ChatChannel.values()) {
+			if (ini.get(key, "channel_" + channel, int.class) == 1) {
+				subscriptions.add(channel);
+			}
+		}
+		character.setChatChannelSubscriptions(subscriptions);
 
 		return character;
 	}

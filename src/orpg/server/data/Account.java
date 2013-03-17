@@ -70,6 +70,16 @@ public class Account {
 		this.characters = characters;
 	}
 
+	public AccountCharacter findCharacter(String name) {
+		for (AccountCharacter character : characters) {
+			if (character.getName().equals(name)) {
+				return character;
+			}
+		}
+
+		return null;
+	}
+
 	private String hashPassword(char[] password, String salt)
 			throws NoSuchAlgorithmException {
 		MessageDigest digest = MessageDigest.getInstance("SHA-512");

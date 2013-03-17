@@ -20,6 +20,7 @@ import orpg.server.net.DestinationMatcher;
 import orpg.server.net.packets.ConnectedPacket;
 import orpg.server.net.packets.ServerPacket;
 import orpg.shared.Constants;
+import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.Map;
 import orpg.shared.data.Pair;
 import orpg.shared.data.Segment;
@@ -65,9 +66,11 @@ public class ServerSessionManager implements Runnable {
 	}
 
 	public void removeSession(ServerSession session) {
-		// If the client was in game, remove from in game sessions as well
+		// If the client was in game, remove from in game sessions as well and
+		// notify appropriate controllers.
 		if (session.getSessionType() == SessionType.GAME) {
 			inGameSessions.remove(session.getCharacterName());
+			baseServer.getChatController().removeSession(session);
 		}
 
 		// If the session had an account, remove from the accountSessions
@@ -124,9 +127,13 @@ public class ServerSessionManager implements Runnable {
 
 	public synchronized boolean registerInGameSession(ServerSession session)
 			throws IllegalStateException {
+		AccountCharacter character;
+
 		if (session.getSessionType() != SessionType.GAME
 				|| session.getAccount() == null
-				|| session.getCharacterName() == null) {
+				|| session.getCharacterName() == null
+				|| (character = session.getAccount().findCharacter(
+						session.getCharacterName())) == null) {
 			this.baseServer
 					.getConfigManager()
 					.getErrorLogger()
@@ -142,6 +149,11 @@ public class ServerSessionManager implements Runnable {
 		}
 
 		inGameSessions.put(session.getCharacterName(), session);
+
+		// Register the user in the chat channels
+		baseServer.getChatController().addSession(session,
+				character.getChatChannelSubscriptions());
+
 		return true;
 	}
 

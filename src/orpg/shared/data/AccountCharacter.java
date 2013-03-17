@@ -1,5 +1,13 @@
 package orpg.shared.data;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import orpg.shared.ChatChannel;
+import orpg.shared.Constants;
+
 public class AccountCharacter {
 
 	private String name;
@@ -9,6 +17,7 @@ public class AccountCharacter {
 	private int x;
 	private int y;
 	private Direction direction;
+	private int chatChannelSubscriptions;
 
 	public AccountCharacter() {
 	}
@@ -59,6 +68,40 @@ public class AccountCharacter {
 
 	public void setY(int y) {
 		this.y = y;
+	}
+
+	public Set<ChatChannel> getChatChannelSubscriptions() {
+		// Convert the bitset into a list of chat channels
+		Set<ChatChannel> subscriptions = new HashSet<ChatChannel>(
+				ChatChannel.values().length);
+		int pos = 0;
+
+		// Chat channel subscriptions are stored as a bitset
+		// where each bit corresponds to the ordinal chat channel. If
+		// a bit is on, then the user is subscribed to that channel.
+		int currentChannels = this.chatChannelSubscriptions;
+		while (currentChannels != 0) {
+			if (currentChannels % 2 == 1) {
+				subscriptions.add(ChatChannel.values()[pos]);
+			}
+			pos++;
+			currentChannels >>= 1;
+		}
+
+		return subscriptions;
+	}
+
+	public void setChatChannelSubscriptions(Set<ChatChannel> channels) {
+		int results = 0;
+
+		// Chat channel subscriptions are stored as a bitset
+		// where each bit corresponds to the ordinal chat channel. If
+		// a bit is on, then the user is subscribed to that channel.
+		for (ChatChannel channel : channels) {
+			results |= Constants.TWO_POWERS[channel.ordinal()];
+		}
+
+		this.chatChannelSubscriptions = results;
 	}
 
 	public Direction getDirection() {
