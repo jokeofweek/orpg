@@ -1,7 +1,7 @@
 package orpg.server.net.packets;
 
 import orpg.server.ServerSession;
-import orpg.server.data.DestinationType;
+import orpg.server.net.DestinationType;
 
 public abstract class GlobalExceptForPacket extends ServerPacket {
 

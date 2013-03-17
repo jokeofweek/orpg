@@ -15,6 +15,7 @@ import orpg.server.data.ServerReceivedPacket;
 import orpg.server.data.components.SystemEventProcessor;
 import orpg.server.data.controllers.AccountController;
 import orpg.server.data.controllers.AutoTileController;
+import orpg.server.data.controllers.ChatController;
 import orpg.server.data.controllers.MapController;
 import orpg.server.data.entity.EntityFactory;
 import orpg.server.data.entity.EntityPreprocessor;
@@ -36,6 +37,7 @@ public class BaseServer {
 	private MapController mapController;
 	private AccountController accountController;
 	private AutoTileController autoTileController;
+	private ChatController chatController;
 	private DataStore dataStore;
 
 	// World and entity datas
@@ -147,6 +149,10 @@ public class BaseServer {
 		return autoTileController;
 	}
 
+	public ChatController getChatController() {
+		return chatController;
+	}
+
 	public World getWorld() {
 		return world;
 	}
@@ -176,6 +182,9 @@ public class BaseServer {
 		if (!this.autoTileController.setup()) {
 			return false;
 		}
+
+		console.out().println("Setting up chat...");
+		this.chatController = new ChatController(this);
 
 		return true;
 	}

@@ -1,6 +1,6 @@
 package orpg.server.net.packets;
 
-import orpg.server.data.DestinationType;
+import orpg.server.net.DestinationType;
 
 public abstract class GlobalPacket extends ServerPacket {
 

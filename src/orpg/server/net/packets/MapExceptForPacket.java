@@ -1,7 +1,7 @@
 package orpg.server.net.packets;
 
 import orpg.server.ServerSession;
-import orpg.server.data.DestinationType;
+import orpg.server.net.DestinationType;
 import orpg.shared.data.Map;
 import orpg.shared.data.Pair;
 

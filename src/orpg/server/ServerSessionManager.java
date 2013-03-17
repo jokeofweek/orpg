@@ -1,6 +1,7 @@
 package orpg.server;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +16,7 @@ import com.artemis.managers.PlayerManager;
 import com.artemis.utils.ImmutableBag;
 
 import orpg.server.data.SessionType;
+import orpg.server.net.DestinationMatcher;
 import orpg.server.net.packets.ConnectedPacket;
 import orpg.server.net.packets.ServerPacket;
 import orpg.shared.Constants;
@@ -112,8 +114,7 @@ public class ServerSessionManager implements Runnable {
 		// there is at least one other session with that account, else
 		// create a new list.
 		if (accountSessions.containsKey(session.getAccount().getName())) {
-			accountSessions.get(session.getAccount().getName()).add(
-					session);
+			accountSessions.get(session.getAccount().getName()).add(session);
 		} else {
 			List<ServerSession> sessions = new ArrayList<ServerSession>(1);
 			sessions.add(session);
@@ -195,13 +196,12 @@ public class ServerSessionManager implements Runnable {
 							.getWorld()
 							.getManager(GroupManager.class)
 							.getEntities(
-									String.format(
-											Constants.GROUP_MAP_PLAYERS,
+									String.format(Constants.GROUP_MAP_PLAYERS,
 											id));
 
 					for (int i = 0; i < entities.size(); i++) {
-						getEntitySession(entities.get(i)).getOutputQueue()
-								.add(rawBytes);
+						getEntitySession(entities.get(i)).getOutputQueue().add(
+								rawBytes);
 					}
 
 					break;
@@ -215,8 +215,7 @@ public class ServerSessionManager implements Runnable {
 							.getWorld()
 							.getManager(GroupManager.class)
 							.getEntities(
-									String.format(
-											Constants.GROUP_MAP_PLAYERS,
+									String.format(Constants.GROUP_MAP_PLAYERS,
 											destinationObject.getSecond()));
 
 					for (int i = 0; i < entities.size(); i++) {
@@ -224,6 +223,14 @@ public class ServerSessionManager implements Runnable {
 						if (session != toExclude) {
 							session.getOutputQueue().add(rawBytes);
 						}
+					}
+					break;
+				case GLOBAL_MATCHING:
+					Collection<ServerSession> recipients = ((DestinationMatcher) packet
+							.getDestinationObject())
+							.getReceivingSessions(baseServer);
+					for (ServerSession recipient : recipients) {
+						recipient.getOutputQueue().add(rawBytes);
 					}
 					break;
 				}

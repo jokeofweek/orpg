@@ -6,7 +6,7 @@ import com.artemis.ComponentType;
 import com.artemis.Entity;
 
 import orpg.server.ServerSession;
-import orpg.server.data.DestinationType;
+import orpg.server.net.DestinationType;
 import orpg.shared.data.component.Position;
 import orpg.shared.data.component.SynchronizebleComponent;
 import orpg.shared.net.ServerPacketType;
