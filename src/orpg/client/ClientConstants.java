@@ -16,6 +16,12 @@ public final class ClientConstants {
 	// Messages to keep in chat history.
 	public static final int CHAT_HISTORY = 100;
 
+	// Chat constants
+	public static final int CHAT_LINES = 6;
+	public static final int CHAT_X = 8;
+	public static final int CHAT_Y = GAME_HEIGHT + 20;
+	public static final int CHAT_WIDTH = 1006;
+
 	private ClientConstants() {
 	}
 

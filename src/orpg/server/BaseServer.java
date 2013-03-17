@@ -61,7 +61,7 @@ public class BaseServer {
 		world.setManager(new GroupManager());
 		world.setManager(new PlayerManager());
 		world.setManager(new EntityPreprocessor());
-		world.setSystem(new MapProcessSystem(this, 100));
+		world.setSystem(new MapProcessSystem(this, 5000));
 		world.setSystem(new MovementSystem(this));
 		world.initialize();
 		this.entityFactory = new EntityFactory(this, this.world);

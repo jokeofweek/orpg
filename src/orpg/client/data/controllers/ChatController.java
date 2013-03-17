@@ -2,13 +2,14 @@ package orpg.client.data.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 import orpg.client.BaseClient;
 import orpg.client.ClientConstants;
 import orpg.server.BaseServer;
 import orpg.shared.data.Message;
 
-public class ChatController {
+public class ChatController extends Observable {
 
 	private BaseClient baseClient;
 	private List<Message> messages;
@@ -20,12 +21,19 @@ public class ChatController {
 
 	public void addMessage(Message message) {
 		// Remove message if at limit
-		synchronized (this.messages) {
+		synchronized (messages) {
 			if (this.messages.size() == ClientConstants.CHAT_HISTORY) {
 				this.messages.remove(0);
 			}
 
 			this.messages.add(message);
+
+			this.setChanged();
+			this.notifyObservers(message);
 		}
+	}
+
+	public List<Message> getMessages() {
+		return messages;
 	}
 }

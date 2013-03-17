@@ -9,7 +9,7 @@ import java.util.Set;
 
 import orpg.server.BaseServer;
 import orpg.server.ServerSession;
-import orpg.shared.ChatChannel;
+import orpg.shared.data.ChatChannel;
 
 public class ChatController {
 

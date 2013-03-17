@@ -66,8 +66,8 @@ public class GameState extends ClientState {
 
 		this.stage.addActor(new BackgroundTextureActor(backgroundTexture, 1024,
 				768, true));
-		this.stage.addActor(new ChatActor(baseClient, skin, 20,
-				ClientConstants.GAME_HEIGHT + 10));
+		this.stage.addActor(new ChatActor(baseClient, skin, ClientConstants.CHAT_X,
+				ClientConstants.CHAT_Y, ClientConstants.CHAT_WIDTH));
 
 		// Setup the camera
 		this.camera = new OrthographicCamera(Gdx.graphics.getWidth(),

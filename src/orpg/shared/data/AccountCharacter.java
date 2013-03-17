@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import orpg.shared.ChatChannel;
 import orpg.shared.Constants;
 
 public class AccountCharacter {

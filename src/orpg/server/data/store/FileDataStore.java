@@ -22,10 +22,10 @@ import org.ini4j.Wini;
 
 import orpg.server.BaseServer;
 import orpg.server.data.Account;
-import orpg.shared.ChatChannel;
 import orpg.shared.Constants;
 import orpg.shared.data.AccountCharacter;
 import orpg.shared.data.AutoTileType;
+import orpg.shared.data.ChatChannel;
 import orpg.shared.data.Direction;
 import orpg.shared.data.Map;
 import orpg.shared.data.Segment;

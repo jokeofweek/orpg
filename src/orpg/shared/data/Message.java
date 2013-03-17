@@ -2,7 +2,6 @@ package orpg.shared.data;
 
 import com.badlogic.gdx.utils.Json.Serializer;
 
-import orpg.shared.ChatChannel;
 import orpg.shared.net.serialize.InputByteBuffer;
 import orpg.shared.net.serialize.OutputByteBuffer;
 import orpg.shared.net.serialize.SerializableValue;
@@ -52,7 +51,7 @@ public class Message implements SerializableValue<Message> {
 		@Override
 		public void put(OutputByteBuffer out, Message obj) {
 			out.putString(obj.getEmitter());
-			out.putString(obj.getEmitter());
+			out.putString(obj.getContents());
 			out.putByte((byte) obj.getChannel().ordinal());
 		}
 

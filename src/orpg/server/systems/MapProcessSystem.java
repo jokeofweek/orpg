@@ -12,9 +12,12 @@ import orpg.server.data.components.SystemEventProcessor;
 import orpg.server.event.EventProcessor;
 import orpg.server.event.MapEvent;
 import orpg.server.event.MovementEvent;
+import orpg.server.net.packets.ClientMessagePacket;
 import orpg.shared.Constants;
+import orpg.shared.data.ChatChannel;
 import orpg.shared.data.ComponentList;
 import orpg.shared.data.Map;
+import orpg.shared.data.Message;
 import orpg.shared.data.Segment;
 
 import com.artemis.Aspect;
@@ -42,7 +45,7 @@ public class MapProcessSystem extends IntervalEntitySystem implements
 	public void addEvent(MapEvent event) {
 		this.events.add(event);
 	}
-	
+
 	@Override
 	protected void processEntities(ImmutableBag<Entity> arg0) {
 		int remaining = EVENTS_PER_CYCLE;
@@ -51,18 +54,19 @@ public class MapProcessSystem extends IntervalEntitySystem implements
 			event.process(baseServer, this);
 			remaining--;
 		}
+
+		// Send a message
+		baseServer.sendPacket(new ClientMessagePacket(new Message("Server",
+				"Tick tock. " + System.currentTimeMillis(), ChatChannel.GOSSIP)));
 	}
 
-	public void spawnSegmentEntities(int mapId, short segmentX,
-			short segmentY) {
+	public void spawnSegmentEntities(int mapId, short segmentX, short segmentY) {
 		Map map = baseServer.getMapController().get(mapId);
-		if (segmentX < 0 || segmentY < 0
-				|| segmentX >= map.getSegmentsWide()
+		if (segmentX < 0 || segmentY < 0 || segmentX >= map.getSegmentsWide()
 				|| segmentY >= map.getSegmentsHigh()) {
 			throw new IllegalArgumentException(
 					"Could not spawn segment entities for map " + mapId
-							+ " segment [" + segmentX + "][" + segmentY
-							+ "]");
+							+ " segment [" + segmentX + "][" + segmentY + "]");
 		}
 
 		// Iterate through all segment entities if it is loaded, spawning them
@@ -88,10 +92,9 @@ public class MapProcessSystem extends IntervalEntitySystem implements
 			}
 
 			// Tag the entity with segment info
-			groupManager.add(entity,
-					String.format(Constants.GROUP_MAP, mapId));
-			groupManager.add(entity, String.format(
-					Constants.GROUP_SEGMENT, mapId, segmentX, segmentY));
+			groupManager.add(entity, String.format(Constants.GROUP_MAP, mapId));
+			groupManager.add(entity, String.format(Constants.GROUP_SEGMENT,
+					mapId, segmentX, segmentY));
 			world.addEntity(entity);
 		}
 
@@ -131,8 +134,7 @@ public class MapProcessSystem extends IntervalEntitySystem implements
 		}
 
 		// Notify sessions that we want to refresh the map
-		MovementSystem movementSystem = world
-				.getSystem(MovementSystem.class);
+		MovementSystem movementSystem = world.getSystem(MovementSystem.class);
 		for (ServerSession playerSession : playerSessions) {
 			synchronized (playerSession) {
 				if (playerSession.getSessionType() == SessionType.GAME) {
