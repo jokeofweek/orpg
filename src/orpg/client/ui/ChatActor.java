@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.sun.org.apache.xml.internal.serialize.LineSeparator;
 
 public class ChatActor extends Actor implements Observer {
 
@@ -109,7 +110,7 @@ public class ChatActor extends Actor implements Observer {
 
 		// remove from the front of the list until we have enough space
 		synchronized (updateLock) {
-			while (cachedLines.size() + lineSpan > ClientConstants.CHAT_LINES) {
+			while (cachedLines.size() + lineSpan > ClientConstants.CHAT_HISTORY) {
 				cachedLines.remove(0);
 			}
 			for (String line : lines) {
@@ -123,7 +124,10 @@ public class ChatActor extends Actor implements Observer {
 	public void draw(SpriteBatch batch, float parentAlpha) {
 		int offset = 0;
 		synchronized (updateLock) {
-			for (Pair<String, Color> line : cachedLines) {
+			Pair<String, Color> line;
+			for (int i = Math.max(0, cachedLines.size()
+					- ClientConstants.CHAT_LINES); i < cachedLines.size(); i++) {
+				line = cachedLines.get(i);
 				bitmapFont.setColor(line.getSecond());
 				bitmapFont.draw(batch, line.getFirst(), x, y + offset);
 				offset += lineHeight;
@@ -139,5 +143,4 @@ public class ChatActor extends Actor implements Observer {
 		// y).width;
 
 	}
-
 }
