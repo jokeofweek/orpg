@@ -13,6 +13,7 @@ import orpg.shared.Constants;
 import orpg.shared.state.StateManager;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 
 public class ClientGame extends Game {
 
@@ -42,11 +43,16 @@ public class ClientGame extends Game {
 		}
 
 		// Set up the queue of actions to perfor
-		StateManager stateManager = new ClientStateManager(this);
+		ClientStateManager stateManager = new ClientStateManager(this);
 		this.baseClient = new BaseClient(this, s, new ClientProcessThread(),
 				stateManager, config);
 		stateManager.pushState(new MainMenuState(baseClient));
 
+	}
+	
+	@Override
+	public void resize(int width, int height) {
+		super.resize(width, height);
 	}
 
 }

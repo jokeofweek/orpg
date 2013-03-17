@@ -9,6 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 
 import orpg.client.BaseClient;
+import orpg.client.ClientConstants;
 import orpg.client.Paths;
 import orpg.client.data.ClientReceivedPacket;
 import orpg.client.data.component.Camera;
@@ -48,8 +49,8 @@ public class SegmentDataHandler implements ClientPacketHandler {
 		System.out.println("Using local? " + usingLocal);
 
 		final Segment segment = (usingLocal ? baseClient.getLocalMap()
-				.getSegment(tmpSegmentX, tmpSegmentY) : packet
-				.getByteBuffer().getSegment());
+				.getSegment(tmpSegmentX, tmpSegmentY) : packet.getByteBuffer()
+				.getSegment());
 
 		final short segmentX = usingLocal ? tmpSegmentX : segment.getX();
 		final short segmentY = usingLocal ? tmpSegmentY : segment.getY();
@@ -58,8 +59,7 @@ public class SegmentDataHandler implements ClientPacketHandler {
 		baseClient.getMap().updateSegment(segment, false);
 		baseClient.getAutoTileController().updateAutoTileCache(
 				baseClient.getMap(), segment, true);
-		baseClient.getSegmentRequestManager().receivedResponse(mapId,
-				segment);
+		baseClient.getSegmentRequestManager().receivedResponse(mapId, segment);
 
 		// Switch to game state if we aren't already in game state
 		if (!(baseClient.getStateManager().getCurrentState() instanceof GameState)) {
@@ -125,8 +125,7 @@ public class SegmentDataHandler implements ClientPacketHandler {
 					// Can assume named if is player
 					if (baseClient.getEntity() == null
 							&& isPlayerMapper.getSafe(entity) != null
-							&& namedMapper.get(entity).getName()
-									.equals(name)) {
+							&& namedMapper.get(entity).getName().equals(name)) {
 						baseClient.setEntity(entity);
 
 						// If we were presently changing maps, we are done now
@@ -135,8 +134,10 @@ public class SegmentDataHandler implements ClientPacketHandler {
 						// If it is the player, add the camera if it is not
 						// already present
 						Position position = positionMapper.get(entity);
-						entity.addComponent(new Camera(800, 446,
-								baseClient.getMap().getWidth()
+						entity.addComponent(new Camera(
+								ClientConstants.GAME_WIDTH,
+								ClientConstants.GAME_HEIGHT, baseClient
+										.getMap().getWidth()
 										* Constants.TILE_WIDTH, baseClient
 										.getMap().getHeight()
 										* Constants.TILE_HEIGHT, position

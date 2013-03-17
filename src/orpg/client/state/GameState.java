@@ -1,6 +1,7 @@
 package orpg.client.state;
 
 import orpg.client.BaseClient;
+import orpg.client.ClientConstants;
 import orpg.client.Paths;
 import orpg.client.ui.BackgroundTextureActor;
 import orpg.client.ui.MapEntitiesActor;
@@ -32,6 +33,10 @@ public class GameState extends ClientState {
 			Texture loadingTileTexture, Texture[] spritesets) {
 		this.baseClient = baseClient;
 
+		// Update the size of the game screen
+		((ClientStateManager) (baseClient.getStateManager())).getGame().resize(
+				1024, 768);
+
 		// Setup the stage
 		this.stage = new Stage();
 
@@ -39,27 +44,22 @@ public class GameState extends ClientState {
 		this.loadingTileTexture = loadingTileTexture;
 		this.spritesets = spritesets;
 
-		Actor bottomLayersActor = new MapLayerActor(
-				baseClient,
-				tilesets,
-				loadingTileTexture,
-				new int[] { MapLayer.GROUND.ordinal(),
+		Actor bottomLayersActor = new MapLayerActor(baseClient, tilesets,
+				loadingTileTexture, new int[] { MapLayer.GROUND.ordinal(),
 						MapLayer.MASK.ordinal(), MapLayer.MASK_2.ordinal() },
-				0, 800, 0, 446);
-		Actor mapEntitiesActor = new MapEntitiesActor(baseClient,
-				spritesets);
+				0, ClientConstants.GAME_WIDTH, 0, ClientConstants.GAME_HEIGHT);
+		Actor mapEntitiesActor = new MapEntitiesActor(baseClient, spritesets);
 		Actor topLayersActor = new MapLayerActor(baseClient, tilesets,
-				loadingTileTexture,
-				new int[] { MapLayer.FRINGE.ordinal() }, 0, 800, 0, 446);
+				loadingTileTexture, new int[] { MapLayer.FRINGE.ordinal() }, 0,
+				ClientConstants.GAME_WIDTH, 0, ClientConstants.GAME_HEIGHT);
 
 		this.stage.addActor(bottomLayersActor);
 		this.stage.addActor(mapEntitiesActor);
 		this.stage.addActor(topLayersActor);
 
-		this.backgroundTexture = new Texture(
-				Paths.asset("game_background.png"));
-		this.stage.addActor(new BackgroundTextureActor(backgroundTexture,
-				800, 600, true));
+		this.backgroundTexture = new Texture(Paths.asset("game_background.png"));
+		this.stage.addActor(new BackgroundTextureActor(backgroundTexture, 1024,
+				768, true));
 
 		// Setup the camera
 		this.camera = new OrthographicCamera(Gdx.graphics.getWidth(),
@@ -94,6 +94,7 @@ public class GameState extends ClientState {
 
 	@Override
 	public void resize(int width, int height) {
+
 	}
 
 	@Override

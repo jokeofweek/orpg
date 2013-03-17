@@ -14,6 +14,10 @@ public class ClientStateManager extends StateManager  {
 		this.game = game;
 	}
 
+	public Game getGame() {
+		return game;
+	}
+	
 	@Override
 	protected void onChangeState() {
 		try {

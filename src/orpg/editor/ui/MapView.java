@@ -36,8 +36,8 @@ import orpg.shared.data.MapLayer;
 import orpg.shared.data.TileFlag;
 import orpg.shared.data.component.Position;
 
-public class MapView extends JComponent implements Observer,
-		MouseListener, MouseMotionListener {
+public class MapView extends JComponent implements Observer, MouseListener,
+		MouseMotionListener {
 
 	private static final AlphaComposite ATTRIBUTE_COMPOSITE = AlphaComposite
 			.getInstance(AlphaComposite.SRC_OVER,
@@ -96,10 +96,9 @@ public class MapView extends JComponent implements Observer,
 		this.addMouseMotionListener(this);
 
 		// Setup the scroll bars to make requests for segments
-		AdjustmentListener listener = new MapViewAdjustmentListener(
-				controller, editorController, scrollPane);
-		scrollPane.getHorizontalScrollBar()
-				.addAdjustmentListener(listener);
+		AdjustmentListener listener = new MapViewAdjustmentListener(controller,
+				editorController, scrollPane);
+		scrollPane.getHorizontalScrollBar().addAdjustmentListener(listener);
 		scrollPane.getVerticalScrollBar().addAdjustmentListener(listener);
 
 		// Setup autotile renderers
@@ -136,8 +135,8 @@ public class MapView extends JComponent implements Observer,
 
 		g.drawImage(this.images[(tile / Constants.TILESET_WIDTH)
 				/ Constants.TILESET_HEIGHT], x, y, x + tileWidth, y
-				+ tileHeight, srcX, srcY, srcX + Constants.TILE_WIDTH,
-				srcY + Constants.TILE_HEIGHT, null);
+				+ tileHeight, srcX, srcY, srcX + Constants.TILE_WIDTH, srcY
+				+ Constants.TILE_HEIGHT, null);
 
 	}
 
@@ -166,13 +165,12 @@ public class MapView extends JComponent implements Observer,
 		// Determine renderable area
 		int startX = Math.max(0, (scrollPane.getHorizontalScrollBar()
 				.getValue() / tileWidth) - 4);
-		int startY = Math.max(0, (scrollPane.getVerticalScrollBar()
-				.getValue() / tileHeight) - 4);
-		int endX = Math.min(startX + 6
-				+ (scrollPane.getWidth() / tileWidth),
+		int startY = Math
+				.max(0,
+						(scrollPane.getVerticalScrollBar().getValue() / tileHeight) - 4);
+		int endX = Math.min(startX + 6 + (scrollPane.getWidth() / tileWidth),
 				mapController.getMapWidth());
-		int endY = Math.min(startY + 6
-				+ (scrollPane.getHeight() / tileHeight),
+		int endY = Math.min(startY + 6 + (scrollPane.getHeight() / tileHeight),
 				mapController.getMapHeight());
 		short tile;
 
@@ -196,17 +194,16 @@ public class MapView extends JComponent implements Observer,
 						}
 					} else if (tile == Map.LOADING_TILE) {
 						if (z == 0) {
-							graphics.drawImage(this.loadingTile, dX, dY,
-									dX + tileWidth, dY + tileHeight, 0, 0,
+							graphics.drawImage(this.loadingTile, dX, dY, dX
+									+ tileWidth, dY + tileHeight, 0, 0,
 									Constants.TILE_WIDTH,
 									Constants.TILE_HEIGHT, null);
 						}
 					} else {
 						if (autoTiles.containsKey(tile)) {
-							autoTileRenderers.get(autoTiles.get(tile))
-									.draw(graphics, x, y, z, tile, dX, dY,
-											tileWidth, tileHeight,
-											mapController, this.images);
+							autoTileRenderers.get(autoTiles.get(tile)).draw(
+									graphics, x, y, z, tile, dX, dY, tileWidth,
+									tileHeight, mapController, this.images);
 						} else {
 							renderTile(graphics, dX, dY, tile);
 						}
@@ -234,14 +231,13 @@ public class MapView extends JComponent implements Observer,
 
 		// Render grid above everything if necessary
 		if (editorController.isGridEnabled()) {
-			renderGrid(graphics, regularComposite, startX, startY, endX,
-					endY);
+			renderGrid(graphics, regularComposite, startX, startY, endX, endY);
 		}
 
 		// Render attributes if we are in the attributes tab
 		if (editorController.getCurrentTab() == MapEditorTab.ATTRIBUTES) {
-			renderAttributes(graphics, regularComposite, startX, startY,
-					endX, endY);
+			renderAttributes(graphics, regularComposite, startX, startY, endX,
+					endY);
 		}
 
 	}
@@ -287,15 +283,15 @@ public class MapView extends JComponent implements Observer,
 	 * @param endY
 	 */
 	private void renderGrid(Graphics2D graphics,
-			AlphaComposite regularComposite, int startX, int startY,
-			int endX, int endY) {
+			AlphaComposite regularComposite, int startX, int startY, int endX,
+			int endY) {
 		graphics.setComposite(GRID_COMPOSITE);
 		graphics.setColor(Color.gray);
 		// Render the entire tilerange
 		for (int y = startY; y < endY; y++) {
 			for (int x = startX; x < endX; x++) {
-				graphics.drawRect(x * tileWidth, y * tileHeight,
-						tileWidth, tileHeight);
+				graphics.drawRect(x * tileWidth, y * tileHeight, tileWidth,
+						tileHeight);
 			}
 		}
 		graphics.setComposite(regularComposite);
@@ -312,8 +308,8 @@ public class MapView extends JComponent implements Observer,
 	 * @param endY
 	 */
 	private void renderEntities(Graphics2D graphics,
-			AlphaComposite regularComposite, int startX, int startY,
-			int endX, int endY) {
+			AlphaComposite regularComposite, int startX, int startY, int endX,
+			int endY) {
 		graphics.setComposite(ENTITY_COMPOSITE);
 		Color fillColor = Color.blue.brighter();
 		Color borderColor = Color.gray.darker();
@@ -325,8 +321,10 @@ public class MapView extends JComponent implements Observer,
 
 		List<ComponentList> entities;
 		Position position;
-		for (int sX = startSegmentX; sX <= endSegmentX; sX++) {
-			for (int sY = startSegmentY; sY <= endSegmentY; sY++) {
+		for (int sX = startSegmentX; sX <= Math.min(endSegmentX, mapController
+				.getMap().getSegmentsWide() - 1); sX++) {
+			for (int sY = startSegmentY; sY <= Math.min(endSegmentX,
+					mapController.getMap().getSegmentsHigh() - 1); sY++) {
 				if (mapController.getSegments()[sX][sY] != null) {
 					entities = mapController.getSegments()[sX][sY]
 							.getEntities();
@@ -337,15 +335,13 @@ public class MapView extends JComponent implements Observer,
 									&& position.getY() >= startY
 									&& position.getY() < endY) {
 								graphics.setColor(fillColor);
-								graphics.fillRect(position.getX()
-										* tileWidth, position.getY()
-										* tileHeight, tileWidth,
-										tileHeight);
+								graphics.fillRect(position.getX() * tileWidth,
+										position.getY() * tileHeight,
+										tileWidth, tileHeight);
 								graphics.setColor(borderColor);
-								graphics.drawRect(position.getX()
-										* tileWidth, position.getY()
-										* tileHeight, tileWidth,
-										tileHeight);
+								graphics.drawRect(position.getX() * tileWidth,
+										position.getY() * tileHeight,
+										tileWidth, tileHeight);
 							}
 						}
 					}
@@ -357,16 +353,16 @@ public class MapView extends JComponent implements Observer,
 	}
 
 	private void renderAttributes(Graphics2D graphics,
-			AlphaComposite regularComposite, int startX, int startY,
-			int endX, int endY) {
+			AlphaComposite regularComposite, int startX, int startY, int endX,
+			int endY) {
 		TileFlag flag = editorController.getCurrentTileFlag();
 		graphics.setComposite(ATTRIBUTE_COMPOSITE);
 		for (int y = startY; y < endY; y++) {
 			for (int x = startX; x < endX; x++) {
 				if (mapController.hasFlag(x, y, flag)) {
 					graphics.setColor(Color.red);
-					graphics.fillRect(x * tileWidth, y * tileHeight,
-							tileWidth, tileHeight);
+					graphics.fillRect(x * tileWidth, y * tileHeight, tileWidth,
+							tileHeight);
 				}
 			}
 		}

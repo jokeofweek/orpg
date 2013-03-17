@@ -10,6 +10,9 @@ public final class ClientConstants {
 	public static final String GROUP_MAP = "map";
 	public static final String GROUP_MAP_SEGMENT = "map_%d_%d";
 	
+	public static final int GAME_WIDTH = 1024;
+	public static final int GAME_HEIGHT = 542;
+	
 	private ClientConstants() {}
 	
 }

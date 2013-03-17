@@ -23,8 +23,6 @@ public class LoadingState extends ClientState {
 		this.stage.addActor(root);
 
 		root.add("Loading...");
-		
-		
 
 	}
 
@@ -55,8 +53,7 @@ public class LoadingState extends ClientState {
 
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
-
+		Gdx.graphics.setDisplayMode(1024, 768, false);
 	}
 
 	@Override
