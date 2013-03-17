@@ -6,6 +6,7 @@ import orpg.server.BaseServer;
 import orpg.server.ServerSession;
 import orpg.server.data.SessionType;
 import orpg.server.net.packets.ClientSegmentDataPacket;
+import orpg.server.systems.MapProcessSystem;
 import orpg.server.systems.MovementSystem;
 import orpg.shared.data.Map;
 import orpg.shared.data.Segment;
@@ -31,28 +32,36 @@ public class NeedSegmentMovementEvent implements MovementEvent {
 	}
 
 	@Override
-	public void process(BaseServer baseServer,
-			MovementSystem movementSystem) {
+	public void process(BaseServer baseServer, MovementSystem movementSystem) {
 		if (session.getSessionType() != SessionType.GAME) {
 			return;
 		}
 
-		Position position = baseServer.getWorld()
-				.getMapper(Position.class).get(session.getEntity());
+		Position position = baseServer.getWorld().getMapper(Position.class)
+				.get(session.getEntity());
 
 		// Drop the request if map id doesn't match
 		if (position.getMap() != mapId) {
 			return;
 		}
 
+		// Ensure the segment is loaded and spawn entities if necessary
+		boolean needsSpawn = baseServer.getMapController().get(mapId)
+				.getSegment(segmentX, segmentY) == null;
+
 		// Load the segment
 		Segment segment = baseServer.getMapController().getSegment(mapId,
 				segmentX, segmentY);
 
+		if (needsSpawn) {
+			baseServer.getWorld().getSystem(MapProcessSystem.class)
+					.spawnSegmentEntities(mapId, segmentX, segmentY);
+		}
+
 		// Match the revisions to see if we need to send
 
-		boolean revisionsMatch = segment.revisionMatches(revision,
-				revisionTime);
+		boolean revisionsMatch = segment
+				.revisionMatches(revision, revisionTime);
 
 		// Send the segment to the player.
 		baseServer.sendPacket(new ClientSegmentDataPacket(session, mapId,
