@@ -4,6 +4,7 @@ import orpg.client.BaseClient;
 import orpg.client.ClientConstants;
 import orpg.client.Paths;
 import orpg.client.ui.BackgroundTextureActor;
+import orpg.client.ui.ChatActor;
 import orpg.client.ui.MapEntitiesActor;
 import orpg.client.ui.MapLayerActor;
 import orpg.client.ui.ViewBox;
@@ -16,6 +17,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class GameState extends ClientState {
 
@@ -28,10 +30,13 @@ public class GameState extends ClientState {
 	private Texture[] tilesets;
 	private Texture loadingTileTexture;
 	private Texture[] spritesets;
+	private Skin skin;
 
 	public GameState(BaseClient baseClient, Texture[] tilesets,
 			Texture loadingTileTexture, Texture[] spritesets) {
 		this.baseClient = baseClient;
+
+		Skin skin = new Skin(Paths.asset("uiskin.json"));
 
 		// Update the size of the game screen
 		((ClientStateManager) (baseClient.getStateManager())).getGame().resize(
@@ -58,8 +63,11 @@ public class GameState extends ClientState {
 		this.stage.addActor(topLayersActor);
 
 		this.backgroundTexture = new Texture(Paths.asset("game_background.png"));
+
 		this.stage.addActor(new BackgroundTextureActor(backgroundTexture, 1024,
 				768, true));
+		this.stage.addActor(new ChatActor(baseClient, skin, 20,
+				ClientConstants.GAME_HEIGHT + 10));
 
 		// Setup the camera
 		this.camera = new OrthographicCamera(Gdx.graphics.getWidth(),
@@ -126,6 +134,7 @@ public class GameState extends ClientState {
 			spritesets[i].dispose();
 		}
 		loadingTileTexture.dispose();
+		skin.dispose();
 	}
 
 	public void centerOnPlayer() {

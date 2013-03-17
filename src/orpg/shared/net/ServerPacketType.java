@@ -22,6 +22,7 @@ public enum ServerPacketType {
 	CLIENT_LEFT_MAP,
 	CLIENT_MOVE,
 	CLIENT_SYNC_ENTITY_PROPERTIES,
+	CLIENT_MESSAGE,
 	
 	// Editor packet types
 	EDITOR_MAP_LIST,
