@@ -20,7 +20,10 @@ public final class ClientConstants {
 	public static final int CHAT_LINES = 7;
 	public static final int CHAT_X = 8;
 	public static final int CHAT_Y = GAME_HEIGHT + 20;
-	public static final int CHAT_WIDTH = 1006;
+	public static final int CHAT_WIDTH = 1016;
+	public static final int CHAT_INPUT_HEIGHT = 20;
+	public static final int CHAT_INPUT_X = 4;
+	public static final int CHAT_INPUT_Y = 743;
 
 	private ClientConstants() {
 	}

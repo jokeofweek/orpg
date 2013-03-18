@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 
 public class GameState extends ClientState {
 
@@ -30,6 +31,7 @@ public class GameState extends ClientState {
 	private Texture[] tilesets;
 	private Texture loadingTileTexture;
 	private Texture[] spritesets;
+	private TextField chatInputTextField;
 	private Skin skin;
 
 	public GameState(BaseClient baseClient, Texture[] tilesets,
@@ -66,8 +68,16 @@ public class GameState extends ClientState {
 
 		this.stage.addActor(new BackgroundTextureActor(backgroundTexture, 1024,
 				768, true));
-		this.stage.addActor(new ChatActor(baseClient, skin, ClientConstants.CHAT_X,
-				ClientConstants.CHAT_Y, ClientConstants.CHAT_WIDTH));
+		this.stage.addActor(new ChatActor(baseClient, skin,
+				ClientConstants.CHAT_X, ClientConstants.CHAT_Y,
+				ClientConstants.CHAT_WIDTH));
+
+		chatInputTextField = new TextField("", skin);
+		chatInputTextField.setPosition(ClientConstants.CHAT_INPUT_X,
+				ClientConstants.CHAT_INPUT_Y);
+		chatInputTextField.setWidth(ClientConstants.CHAT_WIDTH);
+		chatInputTextField.setHeight(ClientConstants.CHAT_INPUT_HEIGHT);
+		this.stage.addActor(chatInputTextField);
 
 		// Setup the camera
 		this.camera = new OrthographicCamera(Gdx.graphics.getWidth(),
