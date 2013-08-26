@@ -3,19 +3,10 @@ package orpg.server.event;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.artemis.ComponentMapper;
-import com.artemis.Entity;
-import com.artemis.World;
-import com.artemis.managers.GroupManager;
-import com.artemis.utils.Bag;
-import com.artemis.utils.ImmutableBag;
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
-
 import orpg.server.BaseServer;
 import orpg.server.ServerSession;
 import orpg.server.data.SessionType;
 import orpg.server.net.packets.ClientMovePacket;
-import orpg.server.net.packets.ClientSyncEntityPropertiesPacket;
 import orpg.server.systems.MovementSystem;
 import orpg.shared.Constants;
 import orpg.shared.data.Direction;
@@ -24,6 +15,11 @@ import orpg.shared.data.Pair;
 import orpg.shared.data.component.Collidable;
 import orpg.shared.data.component.Moveable;
 import orpg.shared.data.component.Position;
+
+import com.artemis.ComponentMapper;
+import com.artemis.Entity;
+import com.artemis.managers.GroupManager;
+import com.artemis.utils.ImmutableBag;
 
 public class PlayerRequestMovementEvent implements MovementEvent {
 
